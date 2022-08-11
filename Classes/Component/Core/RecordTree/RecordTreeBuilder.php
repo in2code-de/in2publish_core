@@ -36,6 +36,10 @@ class RecordTreeBuilder
 
     protected RawRecordService $rawRecordService;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectRawRecordService(RawRecordService $rawRecordService): void
     {
         $this->rawRecordService = $rawRecordService;
