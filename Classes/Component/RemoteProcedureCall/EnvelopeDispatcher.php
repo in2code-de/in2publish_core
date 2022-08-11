@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall;
 
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Exception\StorageIsOfflineException;
 use InvalidArgumentException;
 use ReflectionProperty;
@@ -42,27 +43,12 @@ use function method_exists;
 class EnvelopeDispatcher
 {
     use ResourceFactoryInjection;
+    use FileSystemInfoServiceInjection;
 
     public const CMD_FOLDER_EXISTS = 'folderExists';
     public const CMD_FILE_EXISTS = 'fileExists';
     public const CMD_LIST_FOLDER_CONTENTS = 'listFolderContents';
     public const CMD_GET_FILE_INFO = 'getFileInfo';
-    /**
-     * Limits the amount of files in a folder for pre-fetching. If there are more than $prefetchLimit files in
-     * the selected folder they will not be processed when not requested explicitly.
-     */
-    private FileSystemInfoService $fileSystemEnumerationService;
-    private FileSystemInfoService $fileSystemInfoService;
-
-    public function injectFileSystemEnumerationService(FileSystemInfoService $fileSystemEnumerationService): void
-    {
-        $this->fileSystemEnumerationService = $fileSystemEnumerationService;
-    }
-
-    public function injectFileSystemInfoService(FileSystemInfoService $fileSystemInfoService): void
-    {
-        $this->fileSystemInfoService = $fileSystemInfoService;
-    }
 
     public function dispatch(Envelope $envelope): bool
     {
@@ -92,7 +78,7 @@ class EnvelopeDispatcher
         $storageUid = $request['storageUid'];
         $identifier = $request['identifier'];
         try {
-            return $this->fileSystemEnumerationService->listFolderContents($storageUid, $identifier);
+            return $this->fileSystemInfoService->listFolderContents($storageUid, $identifier);
         } catch (InvalidArgumentException $e) {
             return [];
         }

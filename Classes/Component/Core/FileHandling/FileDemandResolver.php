@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 
@@ -16,13 +16,7 @@ class FileDemandResolver
 {
     use RecordFactoryInjection;
     use ForeignFileSystemInfoServiceInjection;
-
-    protected FileSystemInfoService $fileSystemInfoService;
-
-    public function injectFileSystemInfoService(FileSystemInfoService $fileSystemInfoService): void
-    {
-        $this->fileSystemInfoService = $fileSystemInfoService;
-    }
+    use FileSystemInfoServiceInjection;
 
     public function resolveDemand(Demands $demands): void
     {
