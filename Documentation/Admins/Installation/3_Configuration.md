@@ -2,10 +2,10 @@
 
 The configuration is split into three parts:
 
-* **Extension Configuration** Which defines configuration values so basic they can't be set any later.
-* **[LocalConfiguration.yaml](../../Configuration/Yaml/LocalConfiguration.yaml.example)** configuration on Local (Stage)
-  to connect to the production server and configure the modules and behaviour.
-* **[ForeignConfiguration.yaml](../../Configuration/Yaml/ForeignConfiguration.yaml.example)** for the configuration on
+* **Extension Configuration**: Configuration values that are so fundamental that they cannot be set later on.
+* **[LocalConfiguration.yaml](../../Configuration/Yaml/LocalConfiguration.yaml.example)**: configuration on Local to
+  connect to the production server and configure the modules and behaviour.
+* **[ForeignConfiguration.yaml](../../Configuration/Yaml/ForeignConfiguration.yaml.example)**: for the configuration on
   Foreign (production).
 
 As of in2publish_core 7.0 you don't need to copy the whole file anymore.
@@ -87,17 +87,18 @@ recommended, especially for the database credentials. Example:
 
 ```yaml
 foreign:
-  database:
-    name: '%env(FOREIGN_DB_NAME)%'
-    username: '%env(FOREIGN_DB_USER)%'
-    password: '%env(FOREIGN_DB_PASS)%'
-    hostname: '%env(FOREIGN_DB_HOST)%'
-    port: '%env(FOREIGN_DB_PORT)%'
+    database:
+        name: '%env(FOREIGN_DB_NAME)%'
+        username: '%env(FOREIGN_DB_USER)%'
+        password: '%env(FOREIGN_DB_PASS)%'
+        hostname: '%env(FOREIGN_DB_HOST)%'
+        port: '%env(FOREIGN_DB_PORT)%'
 ```
 
 You can see which dynamic configuration provider are available in the Publish Tools Module -> "Show Configuration".
 The system info export contains this information, too.
-Read more about dynamic configuration provider in the [Dynamic Configuration Guide](../Guides/DynamicConfiguration.md)
+Read more about dynamic configuration provider in
+the [Dynamic Configuration Guide](../Developers/Guides/DynamicConfiguration.md)
 
 ## Configuration post processing (since 9.2.0)
 
@@ -105,7 +106,7 @@ Configuration post processing can be required when even custom dynamic configura
 A config post processor has the power to alter the complete configuration before it is casted and returned.
 You should use this feature with care.
 Read more about custom configuration post processors in
-the [Configuration Post Processing Guide](../Guides/ConfigurationPostProcessing.md)
+the [Configuration Post Processing Guide](../Developers/Guides/ConfigurationPostProcessing.md)
 
 ## <a name="unset"></a>Removing default values
 
@@ -120,8 +121,8 @@ Now you create or edit your LocalConfiguration.yaml file and add the following s
 
 ```yaml
 excludeRelatedTables:
-  0: __UNSET
-  1: __UNSET
+    0: __UNSET
+    1: __UNSET
 ```
 
 Now the values do not appear anymore in the configuration
@@ -180,5 +181,7 @@ tx_in2publish {
 * Tasks (tasks.*)
 * Backup settings (backup.*)
 * Factory FAL settings (factory.fal.* except factory.fal.folderFileLimit)
+
+---
 
 **Continue with [Testing](4_Testing.md)**

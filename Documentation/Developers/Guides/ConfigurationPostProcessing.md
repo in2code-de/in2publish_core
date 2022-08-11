@@ -1,6 +1,6 @@
 # Configuration Post Processing Guide
 
-Configuration post processing allows the complete alteration of the configuration array.
+Configuration post-processing allows the complete alteration of the configuration array.
 
 ## Custom Post Processor
 

@@ -2,7 +2,7 @@ Hint:
 
 > This manual is currently in progress
 
-# Introduction to in2publish
+# Introduction to in2publish_core
 
 ## What is the Content Publisher?
 
@@ -26,7 +26,3 @@ The color codes are as follows:
 * Red: The page has been deleted on Local but still exists on Foreign
 
 You can publish a page by clicking on the arrow in the middle of the row with the pages name.
-
-## Compoment specific manuals:
-
-* [Command Controller Exit Codes](Command/ExitCodes.md)
