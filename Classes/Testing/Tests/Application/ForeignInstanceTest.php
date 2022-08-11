@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  */
 
 use In2code\In2publishCore\Command\Foreign\Status\AllCommand;
+use In2code\In2publishCore\CommonInjection\Typo3VersionInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
@@ -37,20 +38,19 @@ use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ExtensionUtility;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function strpos;
 
 class ForeignInstanceTest implements TestCaseInterface
 {
-    protected RemoteCommandDispatcher $rceDispatcher;
-    protected Typo3Version $typo3Version;
+    use Typo3VersionInjection;
 
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Typo3Version $typo3Version)
+    protected RemoteCommandDispatcher $rceDispatcher;
+
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
     {
         $this->rceDispatcher = $remoteCommandDispatcher;
-        $this->typo3Version = $typo3Version;
     }
 
     /**
