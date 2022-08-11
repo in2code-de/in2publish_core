@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\CommonInjection\FlexFormToolsInjection;
-use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService;
+use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningServiceInjection;
 use In2code\In2publishCore\Component\Core\Resolver\FlexResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidIdentifierException;
-use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 
 use function array_key_exists;
 use function array_keys;
@@ -20,8 +19,8 @@ use const JSON_THROW_ON_ERROR;
 class FlexProcessor extends AbstractProcessor
 {
     use FlexFormToolsInjection;
+    use FlexFormFlatteningServiceInjection;
 
-    protected FlexFormFlatteningService $flexFormFlatteningService;
     protected string $type = 'flex';
     protected array $forbidden = [
         'ds_pointerField_searchParent' => 'ds_pointerField_searchParent is not supported',
@@ -34,11 +33,6 @@ class FlexProcessor extends AbstractProcessor
         'search',
         'ds_pointerField',
     ];
-
-    public function injectFlexFormFlatteningService(FlexFormFlatteningService $flexFormFlatteningService): void
-    {
-        $this->flexFormFlatteningService = $flexFormFlatteningService;
-    }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {

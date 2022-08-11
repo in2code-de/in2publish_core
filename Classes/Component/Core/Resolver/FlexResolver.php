@@ -8,6 +8,7 @@ use In2code\In2publishCore\CommonInjection\FlexFormServiceInjection;
 use In2code\In2publishCore\CommonInjection\FlexFormToolsInjection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService;
+use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\Record\Model\VirtualFlexFormRecord;
@@ -31,17 +32,12 @@ class FlexResolver extends AbstractResolver
 {
     use FlexFormToolsInjection;
     use FlexFormServiceInjection;
+    use FlexFormFlatteningServiceInjection;
 
-    protected FlexFormFlatteningService $flexFormFlatteningService;
     protected ResolverService $resolverService;
     protected string $table;
     protected string $column;
     protected array $processedTca;
-
-    public function injectFlexFormFlatteningService(FlexFormFlatteningService $flexFormFlatteningService): void
-    {
-        $this->flexFormFlatteningService = $flexFormFlatteningService;
-    }
 
     public function injectResolverService(ResolverService $resolverService): void
     {
