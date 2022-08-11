@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
  */
 
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
-use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
 use In2code\In2publishCore\Service\Permission\PermissionService;
@@ -45,14 +45,10 @@ use function json_encode;
 
 class PublishPageAjaxController
 {
-    private RecordTreeBuilder $recordTreeBuilder;
+    use RecordTreeBuilderInjection;
+
     private PublisherService $publisherService;
     private PermissionService $permissionService;
-
-    public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
-    {
-        $this->recordTreeBuilder = $recordTreeBuilder;
-    }
 
     public function injectPublisherService(PublisherService $publisherService): void
     {

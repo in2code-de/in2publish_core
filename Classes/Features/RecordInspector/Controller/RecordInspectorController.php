@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Features\RecordInspector\Controller;
 use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinder;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
-use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
@@ -20,14 +20,9 @@ use function array_merge;
 class RecordInspectorController extends ActionController
 {
     use AdminToolsModuleTemplate;
+    use RecordTreeBuilderInjection;
 
-    protected RecordTreeBuilder $recordTreeBuilder;
     protected DefaultFalFinder $defaultFalFinder;
-
-    public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
-    {
-        $this->recordTreeBuilder = $recordTreeBuilder;
-    }
 
     public function injectDefaultFalFinder(DefaultFalFinder $defaultFalFinder): void
     {

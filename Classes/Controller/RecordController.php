@@ -33,7 +33,7 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
 use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
-use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
@@ -73,10 +73,10 @@ class RecordController extends ActionController
     use DeactivateErrorFlashMessage;
     use CommonViewVariables;
     use RecordIndexInjection;
+    use RecordTreeBuilderInjection;
 
     protected FailureCollector $failureCollector;
     protected PermissionService $permissionService;
-    protected RecordTreeBuilder $recordTreeBuilder;
     protected PublisherService $publisherService;
     protected SimpleStopwatch $simpleStopwatch;
 
@@ -88,11 +88,6 @@ class RecordController extends ActionController
     public function injectPermissionService(PermissionService $permissionService): void
     {
         $this->permissionService = $permissionService;
-    }
-
-    public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
-    {
-        $this->recordTreeBuilder = $recordTreeBuilder;
     }
 
     public function injectPublisherService(PublisherService $publisherService): void

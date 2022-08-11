@@ -42,7 +42,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
-use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -61,13 +61,7 @@ class DefaultFalFinder
     use ForeignFileSystemInfoServiceInjection;
     use FalDriverServiceInjection;
     use FileSystemInfoServiceInjection;
-
-    protected RecordTreeBuilder $recordTreeBuilder;
-
-    public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
-    {
-        $this->recordTreeBuilder = $recordTreeBuilder;
-    }
+    use RecordTreeBuilderInjection;
 
     /**
      * Creates a Record instance representing the current chosen folder in the
