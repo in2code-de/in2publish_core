@@ -8,7 +8,7 @@ use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\FolderRecordPublisher;
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,14 +22,9 @@ use function explode;
 class FalPublisherCommand extends Command
 {
     use LocalDatabaseInjection;
+    use ContextServiceInjection;
 
-    protected ContextService $contextService;
     protected FalDriverService $falDriverService;
-
-    public function injectContextService(ContextService $contextService): void
-    {
-        $this->contextService = $contextService;
-    }
 
     public function injectFalDriverService(FalDriverService $falDriverService): void
     {

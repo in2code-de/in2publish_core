@@ -36,7 +36,7 @@ use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\PostProcessorInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ContextualProvider;
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderInterface;
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -51,7 +51,8 @@ use function count;
 
 class ConfigContainer implements SingletonInterface
 {
-    protected ContextService $contextService;
+    use ContextServiceInjection;
+
     protected array $providers = [];
     /** @var array<class-string<DefinerInterface>, DefinerInterface|null> */
     protected array $definers = [];
@@ -65,11 +66,6 @@ class ConfigContainer implements SingletonInterface
         'local' => null,
         'foreign' => null,
     ];
-
-    public function __construct(ContextService $contextService)
-    {
-        $this->contextService = $contextService;
-    }
 
     /** @return mixed */
     public function get(string $path = '')

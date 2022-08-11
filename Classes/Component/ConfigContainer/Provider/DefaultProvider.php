@@ -30,18 +30,12 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 
 class DefaultProvider implements ProviderInterface
 {
     use ConfigContainerInjection;
-
-    private ContextService $contextService;
-
-    public function __construct(ContextService $contextService)
-    {
-        $this->contextService = $contextService;
-    }
+    use ContextServiceInjection;
 
     public function isAvailable(): bool
     {

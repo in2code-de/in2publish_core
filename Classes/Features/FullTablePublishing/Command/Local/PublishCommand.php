@@ -10,30 +10,24 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatc
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Features\FullTablePublishing\Command\BackupCommand;
 use In2code\In2publishCore\Features\FullTablePublishing\Service\TableTransferService;
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Database\Connection;
 
 class PublishCommand extends Command
 {
     use LocalDatabaseInjection;
     use ForeignDatabaseInjection;
+    use ContextServiceInjection;
 
     public const ARG_TABLE = 'table';
     public const ARG_TABLE_DESCRIPTION = 'The table to write to the foreign database.';
     public const IDENTIFIER = 'in2publish_core:fulltablepublishing:publish';
-    private ContextService $contextService;
     private TableTransferService $tableTransferService;
     private RemoteCommandDispatcher $remoteCommandDispatcher;
-
-    public function injectContextService(ContextService $contextService): void
-    {
-        $this->contextService = $contextService;
-    }
 
     public function injectTableTransferService(TableTransferService $tableTransferService): void
     {

@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Command\Tools;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use In2code\In2publishCore\Service\Environment\EnvironmentServiceInjection;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
@@ -44,16 +44,11 @@ use const PHP_EOL;
 class TestCommand extends Command
 {
     use EnvironmentServiceInjection;
+    use ContextServiceInjection;
 
     public const EXIT_TESTS_FAILED = 240;
     public const IDENTIFIER = 'in2publish_core:tools:test';
-    private ContextService $contextService;
     private TestingService $testingService;
-
-    public function injectContextService(ContextService $contextService): void
-    {
-        $this->contextService = $contextService;
-    }
 
     public function injectTestingService(TestingService $testingService): void
     {

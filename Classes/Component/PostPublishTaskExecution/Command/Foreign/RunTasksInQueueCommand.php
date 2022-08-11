@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Fore
  */
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,14 +40,10 @@ use function json_encode;
 
 class RunTasksInQueueCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
-    protected ContextService $contextService;
-    protected TaskRepository $taskRepository;
+    use ContextServiceInjection;
 
-    public function injectContextService(ContextService $contextService): void
-    {
-        $this->contextService = $contextService;
-    }
+    public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
+    protected TaskRepository $taskRepository;
 
     public function injectTaskRepository(TaskRepository $taskRepository): void
     {

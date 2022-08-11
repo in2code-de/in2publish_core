@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall;
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -47,14 +47,17 @@ use function unserialize;
 class Letterbox implements LoggerAwareInterface, SingletonInterface
 {
     use LoggerAwareTrait;
+    use ContextServiceInjection;
 
     protected const CHUNK_SIZE = 65000;
-    protected ContextService $contextService;
     protected bool $keepEnvelopes;
 
-    public function __construct(ContextService $contextService, ConfigContainer $configContainer)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectConfigContainer(ConfigContainer $configContainer): void
     {
-        $this->contextService = $contextService;
         // Type cast this value because this class is also used on foreign and there's no such setting.
         $this->keepEnvelopes = (bool)$configContainer->get('debug.keepEnvelopes');
     }

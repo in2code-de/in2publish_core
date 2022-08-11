@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Spyc;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -46,13 +46,13 @@ use const E_USER_DEPRECATED;
 
 class FileProvider implements ProviderInterface
 {
+    use ContextServiceInjection;
+
     protected const DEPRECATION_CONFIG_PATH_TYPO3CONF = 'Storing the content publisher config file in typo3conf is deprecated and considered insecure. Please consider storing your config in the TYPO3\'s config folder.';
-    protected ContextService $contextService;
     protected array $extConf;
 
-    public function __construct(ContextService $contextService, array $extConf)
+    public function __construct(array $extConf)
     {
-        $this->contextService = $contextService;
         if (!class_exists(Spyc::class)) {
             $spyc = ExtensionManagementUtility::extPath('in2publish_core', 'Resources/Private/Libraries/Spyc/Spyc.php');
             if (file_exists($spyc)) {

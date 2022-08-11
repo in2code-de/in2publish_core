@@ -8,7 +8,7 @@ use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Features\FullTablePublishing\Service\TableBackupService;
 use In2code\In2publishCore\Features\FullTablePublishing\Service\TableTransferService;
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,18 +18,13 @@ class ImportCommand extends Command
 {
     use LocalDatabaseInjection;
     use ForeignDatabaseInjection;
+    use ContextServiceInjection;
 
     public const ARG_TABLE = 'table';
     public const ARG_TABLE_DESCRIPTION = 'The table which should be truncated and filled with data from the foreign database.';
     public const IDENTIFIER = 'in2publish_core:fulltablepublishing:import';
-    private ContextService $contextService;
     private TableBackupService $tableBackupService;
     private TableTransferService $tableTransferService;
-
-    public function injectContextService(ContextService $contextService): void
-    {
-        $this->contextService = $contextService;
-    }
 
     public function injectTableBackupService(TableBackupService $tableBackupService): void
     {

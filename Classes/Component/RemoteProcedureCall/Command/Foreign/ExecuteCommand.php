@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall\Command\Foreign;
 
 use In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Letterbox;
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Console\Command\Command;
@@ -43,6 +43,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ExecuteCommand extends Command implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use ContextServiceInjection;
 
     public const ARG_UID = 'uid';
     public const ARG_UID_DESCRIPTION = 'Uid of the envelope to execute';
@@ -50,14 +51,8 @@ class ExecuteCommand extends Command implements LoggerAwareInterface
     public const EXIT_UID_MISSING = 231;
     public const EXIT_EXECUTION_FAILED = 232;
     public const IDENTIFIER = 'in2publish_core:rpc:execute';
-    protected ContextService $contextService;
     protected Letterbox $letterbox;
     protected EnvelopeDispatcher $envelopeDispatcher;
-
-    public function injectContextService(ContextService $contextService): void
-    {
-        $this->contextService = $contextService;
-    }
 
     public function injectLetterbox(Letterbox $letterbox): void
     {
