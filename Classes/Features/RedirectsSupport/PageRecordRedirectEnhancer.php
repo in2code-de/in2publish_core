@@ -71,14 +71,21 @@ class PageRecordRedirectEnhancer
             }
 
             $localProps = $node->getLocalProps();
-            $defaultPageId = (int)$localProps['sys_language_uid'] > 0 ? (int)$localProps['l10n_parent'] : $pid;
-            $languageField = $GLOBALS['TCA']['pages']['ctrl']['languageField'];
-            $language = $localProps[$languageField];
-            $targetLink = $this->linkService->asString([
-                'type' => 'page',
-                'pageuid' => $defaultPageId,
-                'parameters' => '_language=' . $language,
-            ]);
+            if (isset($localProps['sys_language_uid'])) {
+                $defaultPageId = (int)$localProps['sys_language_uid'] > 0 ? (int)$localProps['l10n_parent'] : $pid;
+                $languageField = $GLOBALS['TCA']['pages']['ctrl']['languageField'];
+                $language = $localProps[$languageField];
+                $targetLink = $this->linkService->asString([
+                    'type' => 'page',
+                    'pageuid' => $defaultPageId,
+                    'parameters' => '_language=' . $language,
+                ]);
+            } else {
+                $targetLink = $this->linkService->asString([
+                    'type' => 'page',
+                    'pageuid' => $pid,
+                ]);
+            }
 
             $demands->addSelect(
                 'sys_redirect',
