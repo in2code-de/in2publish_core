@@ -16,6 +16,10 @@ class RelevantTablesService
 
     protected TableContentService $tableContentService;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectTableContentService(TableContentService $tableContentService): void
     {
         $this->tableContentService = $tableContentService;
