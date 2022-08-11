@@ -9,7 +9,7 @@ use In2code\In2publishCore\Component\Core\Demand\CallerAwareDemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\DemandResolver\Exception\InvalidDemandException;
-use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
+use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepository;
@@ -21,10 +21,11 @@ use function array_unique;
 
 class SelectDemandResolver implements DemandResolver
 {
+    use RecordFactoryInjection;
+
     protected DualDatabaseRepository $dualDatabaseRepository;
     protected SingleDatabaseRepository $localRepository;
     protected SingleDatabaseRepository $foreignRepository;
-    protected RecordFactory $recordFactory;
     protected RecordIndex $recordIndex;
 
     public function injectDualDatabaseRepository(DualDatabaseRepository $dualDatabaseRepository): void
@@ -40,11 +41,6 @@ class SelectDemandResolver implements DemandResolver
     public function injectForeignSingleDatabaseRepository(SingleDatabaseRepository $foreignRepository): void
     {
         $this->foreignRepository = $foreignRepository;
-    }
-
-    public function injectRecordFactory(RecordFactory $recordFactory): void
-    {
-        $this->recordFactory = $recordFactory;
     }
 
     public function injectRecordIndex(RecordIndex $recordIndex): void

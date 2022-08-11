@@ -35,7 +35,7 @@ use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotEx
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
-use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
+use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
@@ -53,8 +53,9 @@ use function sha1;
 
 class DefaultFalFinder
 {
+    use RecordFactoryInjection;
+
     protected ResourceFactory $resourceFactory;
-    protected RecordFactory $recordFactory;
     protected FileSystemInfoService $fileSystemInfoService;
     protected ForeignFileSystemInfoService $foreignFileSystemInfoService;
     protected DemandsFactory $demandsFactory;
@@ -66,11 +67,6 @@ class DefaultFalFinder
     public function injectResourceFactory(ResourceFactory $resourceFactory): void
     {
         $this->resourceFactory = $resourceFactory;
-    }
-
-    public function injectRecordFactory(RecordFactory $recordFactory): void
-    {
-        $this->recordFactory = $recordFactory;
     }
 
     public function injectFileSystemInfoService(FileSystemInfoService $fileSystemInfoService): void

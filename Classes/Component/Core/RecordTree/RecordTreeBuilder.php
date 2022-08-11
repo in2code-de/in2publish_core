@@ -9,6 +9,7 @@ use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
+use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndex;
@@ -25,11 +26,11 @@ use function in_array;
 class RecordTreeBuilder
 {
     use ConfigContainerInjection;
+    use RecordFactoryInjection;
 
     protected RelevantTablesService $relevantTablesService;
     protected DemandResolver $demandResolver;
     protected DemandBuilder $demandBuilder;
-    protected RecordFactory $recordFactory;
     protected RecordIndex $recordIndex;
     protected EventDispatcher $eventDispatcher;
     protected DemandsFactory $demandsFactory;
@@ -49,11 +50,6 @@ class RecordTreeBuilder
     public function injectDemandBuilder(DemandBuilder $demandBuilder): void
     {
         $this->demandBuilder = $demandBuilder;
-    }
-
-    public function injectRecordFactory(RecordFactory $recordFactory): void
-    {
-        $this->recordFactory = $recordFactory;
     }
 
     public function injectRecordIndex(RecordIndex $recordIndex): void
