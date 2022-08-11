@@ -7,12 +7,11 @@ namespace In2code\In2publishCore\Component\Core\Resolver;
 use In2code\In2publishCore\CommonInjection\FlexFormServiceInjection;
 use In2code\In2publishCore\CommonInjection\FlexFormToolsInjection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
-use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService;
+use In2code\In2publishCore\Component\Core\Demand\ResolverServiceInjection;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\Record\Model\VirtualFlexFormRecord;
-use In2code\In2publishCore\Component\Core\Service\ResolverService;
 
 use function array_keys;
 use function array_merge;
@@ -33,16 +32,11 @@ class FlexResolver extends AbstractResolver
     use FlexFormToolsInjection;
     use FlexFormServiceInjection;
     use FlexFormFlatteningServiceInjection;
+    use ResolverServiceInjection;
 
-    protected ResolverService $resolverService;
     protected string $table;
     protected string $column;
     protected array $processedTca;
-
-    public function injectResolverService(ResolverService $resolverService): void
-    {
-        $this->resolverService = $resolverService;
-    }
 
     public function configure(string $table, string $column, array $processedTca): void
     {

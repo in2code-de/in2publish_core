@@ -5,17 +5,12 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Demand;
 
 use In2code\In2publishCore\Component\Core\RecordCollection;
-use In2code\In2publishCore\Component\Core\Service\ResolverService;
 
 class DemandBuilder
 {
-    protected ResolverService $resolverService;
-    protected DemandsFactory $demandsFactory;
+    use ResolverServiceInjection;
 
-    public function injectResolverService(ResolverService $resolverService): void
-    {
-        $this->resolverService = $resolverService;
-    }
+    protected DemandsFactory $demandsFactory;
 
     public function injectDemandsFactory(DemandsFactory $demandsFactory): void
     {
