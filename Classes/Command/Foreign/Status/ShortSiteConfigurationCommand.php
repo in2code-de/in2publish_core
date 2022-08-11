@@ -29,23 +29,19 @@ namespace In2code\In2publishCore\Command\Foreign\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Site\SiteFinder;
 
 use function base64_encode;
 use function json_encode;
 
 class ShortSiteConfigurationCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:shortsiteconfiguration';
-    protected SiteFinder $siteFinder;
+    use SiteFinderInjection;
 
-    public function injectSiteFinder(SiteFinder $siteFinder): void
-    {
-        $this->siteFinder = $siteFinder;
-    }
+    public const IDENTIFIER = 'in2publish_core:status:shortsiteconfiguration';
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

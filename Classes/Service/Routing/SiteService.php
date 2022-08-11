@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Service\Routing;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\ForeignSiteFinder;
 use LogicException;
@@ -45,19 +46,17 @@ use function array_key_exists;
 class SiteService implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use SiteFinderInjection;
 
     protected array $cache = [];
     protected RawRecordService $rawRecordService;
-    protected SiteFinder $siteFinder;
     protected ForeignSiteFinder $foreignSiteFinder;
 
     public function __construct(
         RawRecordService $rawRecordService,
-        SiteFinder $siteFinder,
         ForeignSiteFinder $foreignSiteFinder
     ) {
         $this->rawRecordService = $rawRecordService;
-        $this->siteFinder = $siteFinder;
         $this->foreignSiteFinder = $foreignSiteFinder;
     }
 

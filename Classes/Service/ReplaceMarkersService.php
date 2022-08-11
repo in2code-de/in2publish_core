@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Service;
 
 use In2code\In2publishCore\CommonInjection\FlexFormToolsInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
@@ -41,7 +42,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\Exception\MissingArrayPathException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -66,19 +66,16 @@ class ReplaceMarkersService implements LoggerAwareInterface
     use LoggerAwareTrait;
     use LocalDatabaseInjection;
     use FlexFormToolsInjection;
+    use SiteFinderInjection;
 
     // Also replace optional quotes around the REC_FIELD_ because we will quote the actual value
     protected const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
     protected const SITE_FIELD_REGEX = '(###SITE:([^#]+)###)';
     protected TcaPreProcessingService $tcaPreProcessingService;
-    protected SiteFinder $siteFinder;
 
-    public function __construct(
-        TcaPreProcessingService $tcaPreProcessingService,
-        SiteFinder $siteFinder
-    ) {
+    public function injectTcaPreProcessingService(TcaPreProcessingService $tcaPreProcessingService): void
+    {
         $this->tcaPreProcessingService = $tcaPreProcessingService;
-        $this->siteFinder = $siteFinder;
     }
 
     /**

@@ -29,13 +29,13 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
 use In2code\In2publishCore\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\Site\SiteFinder;
 
 use function array_diff;
 use function array_key_exists;
@@ -47,14 +47,14 @@ use function sprintf;
 
 class SiteConfigurationTest implements TestCaseInterface
 {
+    use SiteFinderInjection;
+
     protected FrontendInterface $cache;
-    protected SiteFinder $siteFinder;
     protected ForeignSiteFinder $foreignSiteFinder;
 
-    public function __construct(FrontendInterface $cache, SiteFinder $siteFinder, ForeignSiteFinder $foreignSiteFinder)
+    public function __construct(FrontendInterface $cache, ForeignSiteFinder $foreignSiteFinder)
     {
         $this->cache = $cache;
-        $this->siteFinder = $siteFinder;
         $this->foreignSiteFinder = $foreignSiteFinder;
     }
 

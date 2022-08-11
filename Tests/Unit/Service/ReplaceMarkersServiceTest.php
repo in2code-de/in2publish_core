@@ -154,11 +154,11 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $connection->method('quote')->willReturnCallback(static fn(string $input): string => "'$input'");
 
         $replaceMarkerService = new ReplaceMarkersService(
-            $tcaProcessingService,
-            $siteFinder
+            $tcaProcessingService
         );
         $replaceMarkerService->injectLocalDatabase($connection);
         $replaceMarkerService->injectFlexFormTools($flexFormTools);
+        $replaceMarkerService->injectSiteFinder($siteFinder);
 
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,

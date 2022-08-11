@@ -30,22 +30,17 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  */
 
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Site\SiteFinder;
 
 class LocalDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
     use LocalDatabaseInjection;
+    use SiteFinderInjection;
 
-    protected SiteFinder $siteFinder;
     protected string $prefix = 'local';
-
-    public function __construct(SiteFinder $siteFinder)
-    {
-        $this->siteFinder = $siteFinder;
-    }
 
     protected function getPageToSiteBaseMapping(): array
     {
