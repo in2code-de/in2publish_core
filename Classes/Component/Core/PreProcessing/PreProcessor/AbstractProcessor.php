@@ -29,6 +29,10 @@ abstract class AbstractProcessor implements TcaPreProcessor
         $this->tcaPreProcessingService = $tcaPreProcessingService;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectContainer(ContainerInterface $container): void
     {
         $this->container = $container;
