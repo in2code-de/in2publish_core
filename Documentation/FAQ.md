@@ -14,14 +14,13 @@ or AdditionalConfiguration.php:
 putenv('IN2PUBLISH_CONTEXT=Local');
 ```
 
-See https://github.com/in2code-de/in2publish_core/blob/master/Documentation/Installation/Preparation.md#os-requirements
+See https://github.com/in2code-de/in2publish_core/blob/feature/v12/Documentation/Admins/Installation/1_Preparation.md#typo3-requirements
 for details
 
 ## How to delete caches of a page in production?
 
-in2publish (Enterprise Version) includes the Remote Cache Control (short: RCC) feature.
-This allows you to clear specific caches on remote as easy an configurable as the clear cache controls in you Local's
-backend.
+Manually clearing a page cache should not be necessary, because the Content Publisher clears all related caches after
+publishing.
 
 If you publish a page, frontend-caches of the same page on production will be cleaned.
 Special case: For sysfolders, e.g. with news-records, you want to clean the cache of another page than the sysfolder
@@ -39,6 +38,12 @@ that was published. In this case you can use clearCacheCmd in Page TSConfig on t
 See https://docs.typo3.org/typo3cms/TSconfigReference/PageTsconfig/TCEmain/Index.html#clearcachecmd for the original
 documentation
 
+**If you need to manually clear the caches:**
+
+The Content Publisher Enterprise Version includes the Remote Cache Control (short: RCC) feature. This allows you to
+clear page and system caches of the Foreign instance. It is easy and configurable as the clear cache controls in you
+normal TYPO3 Backend.
+
 ## Scheduler: Can't call commandController from the cli or cronjob but it works in the scheduler module?
 
 You have to add the environment variable for all CLI calls of commandControllers
@@ -49,8 +54,7 @@ Example call with environment variable (for the stage system):
 ## Where can i get the Foreign Key Fingerprint
 
 The Foreign Key Fingerprint is, as the name states, a hash of the public ssh key from the **foreign** system's ssh
-server.
-You can generate the hash with following command on your **foreign** server (example
+server. You can get the hash with following command on your **foreign** server (example
 command!): `ssh-keygen -E md5 -lf /etc/ssh/ssh_host_rsa_key.pub`
 
 Hint:
@@ -70,31 +74,31 @@ Go to "System Preferences" -> "Internet & Networking" -> "Sharing" -> enable "Re
 ## How can i publish content from Live to Stage?
 
 You can't (kind of).
+
 If you want to transfer user generated content from Live to Stage you can use the TableCommandController (available in
-the Scheduler for example) or write your own scripts.
-But be aware that the table:import command overwrites one table with another. It does not keep relations (it does not
-even resolve them) and it does not merge data. It is just a simple and stupid table copy task.
+the Scheduler for example) or write your own scripts. But be aware that the table:import command overwrites one table
+with another. It does not keep relations (it does not even resolve them) and it does not merge data. It is just a simple
+task that copies a whole table.
 
 ## How do i handle user generated content?
 
 **CAUTION: in2publish_core does not handle user generated content. If record UIDs match any data will be overwritten!**
 
 The TYPO3 core does not provide a frontend user image upload or any other plugin that enables frontend users to create,
-update or remove data, therefore any implementation is a 3rd party extension.
-Please note that we can not provide generic ("out-of-the-box") support for any 3rd party extension.
-If you have problems with a specific 3rd party extension you can contact [service@in2code.de](mailto:service@in2code.de)
-to ask for a consulting/support quote.
+update or remove data, therefore any implementation is a 3rd party extension. Please note that we can not provide
+generic ("out-of-the-box") support for any 3rd party extension. If you have problems with a specific 3rd party extension
+you can contact [service@in2code.de](mailto:service@in2code.de) to ask for a consulting/support quote.
 
-First of all: Ensure all tables that are affected by user generated content are included in `excludeRelatedTables`.
-Some tables like `sys_file`, `sys_file_reference` and `sys_file_metadata`, however, must not be included
-in `excludeRelatedTables` or publishing content with images will not work.
-Since these tables are also affected by frontend user interaction on live (if there is an image upload or a forum or
-something like that [3rd party!]) there will be uid conflicts. This means that a file uploaded by an editor and another
-file uploaded by a user will get the same uid. When the file is published the file from local will be published and the
-one uploaded by the user will be deleted.
-**Be aware that unhandled conflicts might lead to data disclosure!**
+First of all: Ensure all tables that are affected by user generated content are included in `excludeRelatedTables`. Some
+tables like `sys_file`, `sys_file_reference` and `sys_file_metadata`, however, must not be included
+in `excludeRelatedTables` or publishing content with images will not work. Since these tables are also affected by
+frontend user interaction on live (if there is an image upload or a forum or something like that [3rd party!]) there
+will be uid conflicts. This means that a file uploaded by an editor and another file uploaded by a user will get the
+same uid. When the file is published the file from local will be published and the one uploaded by the user will be
+deleted. **Be aware that unhandled conflicts might lead to data disclosure!**
 
 **You can solve this by setting the AUTO_INCREMENT value of the affected tables to a high value.**
+
 You have to set the auto_increment of the tables `sys_file`, `sys_file_reference` and `sys_file_metadata` to a high
 value **on foreign (and only on foreign!)**. The distance between the local and foreign auto_increment denominates the
 number of entries, which can be created on the local system. In case you set the auto_increment too low (e.g. 1000) you
