@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\PreProcessing;
 
-use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
+use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesServiceInjection;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function array_flip;
@@ -14,7 +14,8 @@ use function ksort;
 
 class TcaPreProcessingService implements SingletonInterface
 {
-    protected ExcludedTablesService $excludedTablesService;
+    use ExcludedTablesServiceInjection;
+
     protected bool $initialized = false;
     /**
      * @var array<TcaPreProcessor>
@@ -32,11 +33,6 @@ class TcaPreProcessingService implements SingletonInterface
      * @var array[]
      */
     protected array $incompatibleTca = [];
-
-    public function injectExcludedTablesService(ExcludedTablesService $excludedTablesService): void
-    {
-        $this->excludedTablesService = $excludedTablesService;
-    }
 
     public function register(TcaPreProcessor $processor): void
     {

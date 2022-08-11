@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Service;
 
-use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
+use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesServiceInjection;
 use In2code\In2publishCore\Component\Core\Service\Database\TableContentService;
 
 use function array_merge;
@@ -12,17 +12,13 @@ use function array_unique;
 
 class RelevantTablesService
 {
+    use ExcludedTablesServiceInjection;
+
     protected TableContentService $tableContentService;
-    protected ExcludedTablesService $excludedTablesService;
 
     public function injectTableContentService(TableContentService $tableContentService): void
     {
         $this->tableContentService = $tableContentService;
-    }
-
-    public function injectExcludedTablesService(ExcludedTablesService $excludedTablesService): void
-    {
-        $this->excludedTablesService = $excludedTablesService;
     }
 
     public function getEmptyAndExcludedTables(): array
