@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Component\Core\FileHandling;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
@@ -43,7 +44,6 @@ use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
-use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
@@ -57,17 +57,12 @@ class DefaultFalFinder
     use RecordIndexInjection;
     use DemandsFactoryInjection;
     use DemandResolverInjection;
+    use ResourceFactoryInjection;
 
-    protected ResourceFactory $resourceFactory;
     protected FileSystemInfoService $fileSystemInfoService;
     protected ForeignFileSystemInfoService $foreignFileSystemInfoService;
     protected RecordTreeBuilder $recordTreeBuilder;
     protected FalDriverService $falDriverService;
-
-    public function injectResourceFactory(ResourceFactory $resourceFactory): void
-    {
-        $this->resourceFactory = $resourceFactory;
-    }
 
     public function injectFileSystemInfoService(FileSystemInfoService $fileSystemInfoService): void
     {

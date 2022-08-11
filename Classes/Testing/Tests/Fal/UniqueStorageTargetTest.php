@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  */
 
 use Doctrine\DBAL\Driver\Exception as DriverException;
+use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
@@ -40,7 +41,6 @@ use ReflectionException;
 use ReflectionProperty;
 use RuntimeException;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
-use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_keys;
@@ -56,9 +56,10 @@ use function uniqid;
  */
 class UniqueStorageTargetTest implements TestCaseInterface
 {
+    use ResourceFactoryInjection;
+
     protected ForeignFileSystemInfoService $foreignFileSystemInfoService;
     protected FalStorageTestSubjectsProvider $testSubjectProvider;
-    protected ResourceFactory $resourceFactory;
 
     public function injectForeignFileSystemInfoService(ForeignFileSystemInfoService $foreignFileSystemInfoService): void
     {
@@ -68,11 +69,6 @@ class UniqueStorageTargetTest implements TestCaseInterface
     public function injectFalStorageTestSubjectProvider(FalStorageTestSubjectsProvider $testSubjectProvider): void
     {
         $this->testSubjectProvider = $testSubjectProvider;
-    }
-
-    public function injectResourceFactory(ResourceFactory $resourceFactory): void
-    {
-        $this->resourceFactory = $resourceFactory;
     }
 
     /**

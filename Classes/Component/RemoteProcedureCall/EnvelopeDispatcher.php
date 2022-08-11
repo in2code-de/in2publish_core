@@ -29,18 +29,20 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Exception\StorageIsOfflineException;
 use InvalidArgumentException;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
-use TYPO3\CMS\Core\Resource\ResourceFactory;
 
 use function get_class;
 use function method_exists;
 
 class EnvelopeDispatcher
 {
+    use ResourceFactoryInjection;
+
     public const CMD_FOLDER_EXISTS = 'folderExists';
     public const CMD_FILE_EXISTS = 'fileExists';
     public const CMD_LIST_FOLDER_CONTENTS = 'listFolderContents';
@@ -49,14 +51,8 @@ class EnvelopeDispatcher
      * Limits the amount of files in a folder for pre-fetching. If there are more than $prefetchLimit files in
      * the selected folder they will not be processed when not requested explicitly.
      */
-    private ResourceFactory $resourceFactory;
     private FileSystemInfoService $fileSystemEnumerationService;
     private FileSystemInfoService $fileSystemInfoService;
-
-    public function injectResourceFactory(ResourceFactory $resourceFactory): void
-    {
-        $this->resourceFactory = $resourceFactory;
-    }
 
     public function injectFileSystemEnumerationService(FileSystemInfoService $fileSystemEnumerationService): void
     {
