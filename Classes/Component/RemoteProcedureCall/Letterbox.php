@@ -29,14 +29,11 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\DatabaseOfForeignInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
-use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Service\Context\ContextServiceInjection;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Throwable;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function is_string;
@@ -47,7 +44,7 @@ use function unserialize;
 class Letterbox implements LoggerAwareInterface, SingletonInterface
 {
     use LoggerAwareTrait;
-    use ContextServiceInjection;
+    use DatabaseOfForeignInjection;
 
     protected const CHUNK_SIZE = 65000;
     protected bool $keepEnvelopes;
@@ -68,20 +65,11 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
      */
     public function sendEnvelope(Envelope $envelope)
     {
-        if ($this->contextService->isLocal()) {
-            $database = DatabaseUtility::buildForeignDatabaseConnection();
-        } else {
-            $database = DatabaseUtility::buildLocalDatabaseConnection();
-        }
-        if (null === $database) {
-            throw new In2publishCoreException('Can\'t use the letterbox when the DB is not available', 1631020705);
-        }
-
         $uid = $envelope->getUid();
 
-        if (0 === $uid || 0 === $database->count('uid', 'tx_in2code_rpc_request', ['uid' => $uid])) {
+        if (0 === $uid || 0 === $this->databaseOfForeign->count('uid', 'tx_in2code_rpc_request', ['uid' => $uid])) {
             try {
-                return $this->insertNewEnvelope($database, $envelope);
+                return $this->insertNewEnvelope($envelope);
             } catch (Throwable $exception) {
                 $this->logger->error(
                     'Failed to send envelope [' . $uid . ']',
@@ -92,7 +80,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
         }
 
         try {
-            $this->updateEnvelope($database, $envelope, $uid);
+            $this->updateEnvelope($envelope, $uid);
             return true;
         } catch (Throwable $exception) {
             $this->logger->error(
@@ -114,16 +102,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
      */
     public function receiveEnvelope(int $uid, bool $burnEnvelope = true)
     {
-        if ($this->contextService->isForeign()) {
-            $database = DatabaseUtility::buildLocalDatabaseConnection();
-        } else {
-            $database = DatabaseUtility::buildForeignDatabaseConnection();
-        }
-        if (null === $database) {
-            throw new In2publishCoreException('Can\'t use the letterbox when the DB is not available', 1631020888);
-        }
-
-        $query = $database->createQueryBuilder();
+        $query = $this->databaseOfForeign->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('req.uid', 'req.command', 'data.payload', 'data.data_type', 'data.sorting')
               ->from('tx_in2code_rpc_request', 'req')
@@ -164,63 +143,49 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
         $envelope = new Envelope($command, unserialize($request), $response, $uid);
 
         if (!$this->keepEnvelopes && $burnEnvelope) {
-            $database->delete('tx_in2code_rpc_request', ['uid' => $uid]);
-            $database->delete('tx_in2code_rpc_data', ['request' => $uid]);
+            $this->databaseOfForeign->delete('tx_in2code_rpc_request', ['uid' => $uid]);
+            $this->databaseOfForeign->delete('tx_in2code_rpc_data', ['request' => $uid]);
         }
         return $envelope;
     }
 
     public function hasUnAnsweredEnvelopes(): bool
     {
-        if ($this->contextService->isLocal()) {
-            $database = DatabaseUtility::buildForeignDatabaseConnection();
-        } else {
-            $database = DatabaseUtility::buildLocalDatabaseConnection();
-        }
-
-        if ($database instanceof Connection && $database->isConnected()) {
-            $query = $database->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->count('uid')
-                  ->from('tx_in2code_rpc_request', 'req')
-                  ->join('req', 'tx_in2code_rpc_data', 'data', 'req.uid = data.request')
-                  ->where($query->expr()->eq('data.data_type', $query->createNamedParameter('response')));
-            return $query->execute()->fetchOne() > 0;
-        }
-        return false;
+        $query = $this->databaseOfForeign->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->count('uid')
+              ->from('tx_in2code_rpc_request', 'req')
+              ->join('req', 'tx_in2code_rpc_data', 'data', 'req.uid = data.request')
+              ->where($query->expr()->eq('data.data_type', $query->createNamedParameter('response')));
+        return $query->execute()->fetchOne() > 0;
     }
 
     public function removeAnsweredEnvelopes(): void
     {
-        if ($this->contextService->isLocal()) {
-            $database = DatabaseUtility::buildForeignDatabaseConnection();
-        } else {
-            $database = DatabaseUtility::buildLocalDatabaseConnection();
-        }
-        $query = $database->createQueryBuilder();
+        $query = $this->databaseOfForeign->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('uid')
               ->from('tx_in2code_rpc_request', 'req')
               ->join('req', 'tx_in2code_rpc_data', 'data', 'req.uid = data.request')
               ->where($query->expr()->eq('data.data_type', $query->createNamedParameter('response')));
         $uid = $query->execute()->fetchColumn();
-        $database->delete('tx_in2code_rpc_request', ['uid' => $uid]);
-        $database->delete('tx_in2code_rpc_data', ['request' => $uid]);
+        $this->databaseOfForeign->delete('tx_in2code_rpc_request', ['uid' => $uid]);
+        $this->databaseOfForeign->delete('tx_in2code_rpc_data', ['request' => $uid]);
     }
 
-    protected function insertNewEnvelope(Connection $database, Envelope $envelope): int
+    protected function insertNewEnvelope(Envelope $envelope): int
     {
-        $database->beginTransaction();
+        $this->databaseOfForeign->beginTransaction();
 
-        $database->insert('tx_in2code_rpc_request', [
+        $this->databaseOfForeign->insert('tx_in2code_rpc_request', [
             'command' => $envelope->getCommand(),
         ]);
-        $uid = (int)$database->lastInsertId();
+        $uid = (int)$this->databaseOfForeign->lastInsertId();
 
         $request = serialize($envelope->getRequest());
         $chunks = str_split($request, self::CHUNK_SIZE);
         foreach ($chunks as $sorting => $chunk) {
-            $database->insert('tx_in2code_rpc_data', [
+            $this->databaseOfForeign->insert('tx_in2code_rpc_data', [
                 'request' => $uid,
                 'data_type' => 'request',
                 'payload' => $chunk,
@@ -228,24 +193,24 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
             ]);
         }
 
-        $database->commit();
+        $this->databaseOfForeign->commit();
         return $uid;
     }
 
-    protected function updateEnvelope(Connection $database, Envelope $envelope, int $uid): void
+    protected function updateEnvelope(Envelope $envelope, int $uid): void
     {
-        $database->beginTransaction();
+        $this->databaseOfForeign->beginTransaction();
 
         $response = serialize($envelope->getResponse());
         $chunks = str_split($response, self::CHUNK_SIZE);
         foreach ($chunks as $sorting => $chunk) {
-            $database->insert('tx_in2code_rpc_data', [
+            $this->databaseOfForeign->insert('tx_in2code_rpc_data', [
                 'request' => $uid,
                 'data_type' => 'response',
                 'payload' => $chunk,
                 'sorting' => $sorting,
             ]);
         }
-        $database->commit();
+        $this->databaseOfForeign->commit();
     }
 }

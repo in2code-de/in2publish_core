@@ -3,6 +3,8 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $databaseOfForeign: '@=service("In2code\\In2publishCore\\Factory\\ConnectionFactory").createOtherConnection()'
 
   In2code\In2publishCore\Component\PostPublishTaskExecution\:
     resource: '../../../Classes/Component/PostPublishTaskExecution/*'

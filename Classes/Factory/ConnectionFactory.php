@@ -31,10 +31,13 @@ namespace In2code\In2publishCore\Factory;
 
 use Doctrine\DBAL\Driver\Connection;
 use In2code\In2publishCore\Factory\Exception\ConnectionUnavailableException;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 
 class ConnectionFactory
 {
+    use ContextServiceInjection;
+
     /** @throws ConnectionUnavailableException */
     public function createLocalConnection(): Connection
     {
@@ -53,5 +56,16 @@ class ConnectionFactory
             throw new ConnectionUnavailableException('foreign');
         }
         return $connection;
+    }
+
+    /**
+     * @throws ConnectionUnavailableException
+     */
+    public function createOtherConnection(): Connection
+    {
+        if ($this->contextService->isLocal()) {
+            return $this->createForeignConnection();
+        }
+        return $this->createLocalConnection();
     }
 }

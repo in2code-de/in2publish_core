@@ -32,38 +32,33 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repos
 
 use DateTime;
 use DateTimeImmutable;
+use In2code\In2publishCore\CommonInjection\DatabaseOfForeignInjection;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Factory\TaskFactory;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;
-use In2code\In2publishCore\Service\Context\ContextService;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\Connection;
 
 use function array_merge;
 
 class TaskRepository
 {
+    use DatabaseOfForeignInjection;
+
     public const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
-    protected ContextService $contextService;
     protected TaskFactory $taskFactory;
-    protected ?Connection $connection;
     protected string $creationDate;
 
-    public function __construct(ContextService $contextService, TaskFactory $taskFactory)
+    public function injectTaskFactory(TaskFactory $taskFactory): void
     {
-        $this->contextService = $contextService;
         $this->taskFactory = $taskFactory;
-        if ($this->contextService->isForeign()) {
-            $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
-        } elseif ($this->contextService->isLocal()) {
-            $this->connection = DatabaseUtility::buildForeignDatabaseConnection();
-        }
-        $now = new DateTime('now');
-        $this->creationDate = $now->format('Y-m-d H:i:s');
+    }
+
+    public function __construct()
+    {
+        $this->creationDate = (new DateTime('now'))->format('Y-m-d H:i:s');
     }
 
     public function add(AbstractTask $task): void
     {
-        $this->connection->insert(
+        $this->databaseOfForeign->insert(
             self::TASK_TABLE_NAME,
             array_merge($task->toArray(), ['creation_date' => $this->creationDate])
         );
@@ -71,7 +66,7 @@ class TaskRepository
 
     public function update(AbstractTask $task): void
     {
-        $this->connection->update(
+        $this->databaseOfForeign->update(
             self::TASK_TABLE_NAME,
             $task->toArray(),
             ['uid' => $task->getUid()]
@@ -88,7 +83,7 @@ class TaskRepository
      */
     public function findByExecutionBegin(DateTime $executionBegin = null): array
     {
-        $query = $this->connection->createQueryBuilder();
+        $query = $this->databaseOfForeign->createQueryBuilder();
         $query->getRestrictions()->removeAll();
 
         if ($executionBegin instanceof DateTime) {
@@ -120,7 +115,7 @@ class TaskRepository
      */
     public function deleteObsolete(): void
     {
-        $query = $this->connection->createQueryBuilder();
+        $query = $this->databaseOfForeign->createQueryBuilder();
         $executionEnd = (new DateTimeImmutable('1 week ago'))->format('Y-m-d H:i:s');
         $query->delete('tx_in2code_in2publish_task')
               ->where(
