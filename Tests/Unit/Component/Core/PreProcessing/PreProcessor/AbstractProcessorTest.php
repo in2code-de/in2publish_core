@@ -97,7 +97,6 @@ class AbstractProcessorTest extends UnitTestCase
         $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
         $container = $this->createMock(ContainerInterface::class);
         $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
-        $abstractProcessor->setTcaPreProcessingService($tcaProcessingService);
         $abstractProcessor->injectContainer($container);
         $abstractProcessor->method('buildResolver')->willReturn(null);
 
@@ -116,7 +115,6 @@ class AbstractProcessorTest extends UnitTestCase
         $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
         $container = $this->createMock(ContainerInterface::class);
         $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
-        $abstractProcessor->setTcaPreProcessingService($tcaProcessingService);
         $abstractProcessor->injectContainer($container);
 
 
@@ -140,7 +138,6 @@ class AbstractProcessorTest extends UnitTestCase
         $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
         $container = $this->createMock(ContainerInterface::class);
         $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
-        $abstractProcessor->setTcaPreProcessingService($tcaProcessingService);
         $abstractProcessor->injectContainer($container);
         $abstractProcessor->method('buildResolver')->willReturn($this->createMock(StaticJoinResolver::class));
         return $abstractProcessor;

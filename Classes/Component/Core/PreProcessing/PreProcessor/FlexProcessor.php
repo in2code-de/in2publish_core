@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\CommonInjection\FlexFormToolsInjection;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningServiceInjection;
+use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingServiceInjection;
 use In2code\In2publishCore\Component\Core\Resolver\FlexResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidIdentifierException;
@@ -20,6 +21,7 @@ class FlexProcessor extends AbstractProcessor
 {
     use FlexFormToolsInjection;
     use FlexFormFlatteningServiceInjection;
+    use TcaPreProcessingServiceInjection;
 
     protected string $type = 'flex';
     protected array $forbidden = [

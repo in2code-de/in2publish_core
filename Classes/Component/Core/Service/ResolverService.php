@@ -4,23 +4,18 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Service;
 
-use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingServiceInjection;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 
 class ResolverService
 {
     use RelevantTablesServiceInjection;
+    use TcaPreProcessingServiceInjection;
 
-    protected TcaPreProcessingService $tcaPreProcessingService;
     /**
      * @var array<string, array<string, Resolver>>
      */
     protected array $resolvers;
-
-    public function injectTcaPreProcessingService(TcaPreProcessingService $tcaPreProcessingService): void
-    {
-        $this->tcaPreProcessingService = $tcaPreProcessingService;
-    }
 
     public function initializeObject(): void
     {

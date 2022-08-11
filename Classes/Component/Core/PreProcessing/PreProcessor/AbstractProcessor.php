@@ -6,7 +6,6 @@ namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\Exception\MissingPreProcessorTypeException;
 use In2code\In2publishCore\Component\Core\PreProcessing\ProcessingResult;
-use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessor;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use Psr\Container\ContainerInterface;
@@ -18,16 +17,7 @@ use function array_merge;
 abstract class AbstractProcessor implements TcaPreProcessor
 {
     public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
-    protected TcaPreProcessingService $tcaPreProcessingService;
     protected ContainerInterface $container;
-
-    /**
-     * Injected when PreProcessor are registered
-     */
-    public function setTcaPreProcessingService(TcaPreProcessingService $tcaPreProcessingService): void
-    {
-        $this->tcaPreProcessingService = $tcaPreProcessingService;
-    }
 
     /**
      * @codeCoverageIgnore

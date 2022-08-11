@@ -37,7 +37,6 @@ class TcaPreProcessingService implements SingletonInterface
     public function register(TcaPreProcessor $processor): void
     {
         $this->processors[$processor->getType()][$processor->getTable()][$processor->getColumn()] = $processor;
-        $processor->setTcaPreProcessingService($this);
     }
 
     protected function getProcessor(string $type, string $table, string $column): ?TcaPreProcessor

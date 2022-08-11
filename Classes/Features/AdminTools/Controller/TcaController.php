@@ -33,6 +33,7 @@ use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingServiceInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -42,14 +43,9 @@ class TcaController extends ActionController
     use AdminToolsModuleTemplate;
     use ConfigContainerInjection;
     use DemandBuilderInjection;
+    use TcaPreProcessingServiceInjection;
 
-    protected TcaPreProcessingService $tcaPreProcessingService;
     protected SelectDemandResolver $queryService;
-
-    public function __construct(TcaPreProcessingService $tcaPreProcessingService)
-    {
-        $this->tcaPreProcessingService = $tcaPreProcessingService;
-    }
 
     public function injectQueryService(SelectDemandResolver $queryService): void
     {

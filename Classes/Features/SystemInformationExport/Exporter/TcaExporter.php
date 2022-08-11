@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingServiceInjection;
 use ReflectionObject;
 
 use function get_class;
@@ -38,12 +38,7 @@ use function is_object;
 
 class TcaExporter implements SystemInformationExporter
 {
-    protected TcaPreProcessingService $tcaPreProcessingService;
-
-    public function __construct(TcaPreProcessingService $tcaPreProcessingService)
-    {
-        $this->tcaPreProcessingService = $tcaPreProcessingService;
-    }
+    use TcaPreProcessingServiceInjection;
 
     public function getUniqueKey(): string
     {

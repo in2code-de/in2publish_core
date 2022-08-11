@@ -54,7 +54,7 @@ class FlexProcessorTest extends UnitTestCase
         $flexProcessor->injectContainer($container);
         $flexProcessor->injectFlexFormTools($flexFormTools);
         $flexProcessor->injectFlexFormFlatteningService($flexFormFlatteningService);
-        $flexProcessor->setTcaPreProcessingService($tcaPreProcessingService);
+        $flexProcessor->injectTcaPreProcessingService($tcaPreProcessingService);
 
         $flexFieldTca = [
             'type' => 'flex',
@@ -112,7 +112,7 @@ class FlexProcessorTest extends UnitTestCase
         $flexProcessor->injectContainer($container);
         $flexProcessor->injectFlexFormTools($flexFormTools);
         $flexProcessor->injectFlexFormFlatteningService($flexFormFlatteningService);
-        $flexProcessor->setTcaPreProcessingService($tcaPreProcessingService);
+        $flexProcessor->injectTcaPreProcessingService($tcaPreProcessingService);
 
         $flexFieldTca = [
             'type' => 'flex',
@@ -215,7 +215,7 @@ class FlexProcessorTest extends UnitTestCase
         $flexProcessor->injectContainer($container);
         $flexProcessor->injectFlexFormTools($flexFormTools);
         $flexProcessor->injectFlexFormFlatteningService($flexFormFlatteningService);
-        $flexProcessor->setTcaPreProcessingService($tcaPreProcessingService);
+        $flexProcessor->injectTcaPreProcessingService($tcaPreProcessingService);
 
         $flexFieldTca = [
             'type' => 'flex',
