@@ -58,7 +58,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder, $connection) extends
+        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder) extends
             ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
@@ -73,6 +73,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
                 ];
             }
         };
+        $replaceMarkerService->injectLocalDatabase($connection);
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,
             'foo ###PAGE_TSCONFIG_ID### bar',
@@ -95,7 +96,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder, $connection) extends
+        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder) extends
             ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
@@ -110,6 +111,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
                 ];
             }
         };
+        $replaceMarkerService->injectLocalDatabase($connection);
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,
             'foo ###PAGE_TSCONFIG_IDLIST### bar',
@@ -152,9 +154,9 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $replaceMarkerService = new ReplaceMarkersService(
             $flexFormTools,
             $tcaProcessingService,
-            $siteFinder,
-            $connection
+            $siteFinder
         );
+        $replaceMarkerService->injectLocalDatabase($connection);
 
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,

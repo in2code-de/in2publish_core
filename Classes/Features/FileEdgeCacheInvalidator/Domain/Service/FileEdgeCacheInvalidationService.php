@@ -30,8 +30,7 @@ namespace In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Servic
  */
 
 use Doctrine\DBAL\Result;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\Connection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -40,12 +39,7 @@ use function in_array;
 
 class FileEdgeCacheInvalidationService
 {
-    protected ?Connection $connection;
-
-    public function __construct()
-    {
-        $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
-    }
+    use LocalDatabaseInjection;
 
     public function flushCachesForFiles(array $uidList): void
     {
@@ -80,7 +74,7 @@ class FileEdgeCacheInvalidationService
      */
     protected function selectSysRefIndexRecords(array $uidList): Result
     {
-        $query = $this->connection->createQueryBuilder();
+        $query = $this->localDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('tablename as table', 'recuid as uid')->from('sys_refindex')->where(
             $query->expr()->andX(
@@ -98,7 +92,7 @@ class FileEdgeCacheInvalidationService
      */
     protected function selectSysFileReferenceRecords(array $uidList): Result
     {
-        $query = $this->connection->createQueryBuilder();
+        $query = $this->localDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('tablenames as table', 'uid_foreign as uid')
               ->from('sys_file_reference')
@@ -122,7 +116,7 @@ class FileEdgeCacheInvalidationService
 
     protected function resolveRecordsToPages(RecordCollection $recordCollection): void
     {
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->localDatabase->getSchemaManager();
         $tableNames = $schemaManager->listTableNames();
 
         foreach ($recordCollection->getRecords() as $table => $recordUidList) {
@@ -132,7 +126,7 @@ class FileEdgeCacheInvalidationService
             ) {
                 continue;
             }
-            $query = $this->connection->createQueryBuilder();
+            $query = $this->localDatabase->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $query->select('pid')->from($table);
             $query->where($query->expr()->in('uid', $recordUidList));

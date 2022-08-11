@@ -49,6 +49,7 @@ class LocalDatabaseTest implements TestCaseInterface
 
     public function run(): TestResult
     {
+        // Don't use injection because it will throw an exception. We need to allow the method to fail.
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
 
         if (!($localDatabase instanceof Connection)) {

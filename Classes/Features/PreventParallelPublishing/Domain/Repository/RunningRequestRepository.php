@@ -30,19 +30,15 @@ namespace In2code\In2publishCore\Features\PreventParallelPublishing\Domain\Repos
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use TYPO3\CMS\Core\Database\Connection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 
 class RunningRequestRepository
 {
+    use LocalDatabaseInjection;
+
     public const RUNNING_REQUEST_TABLE_NAME = 'tx_in2publishcore_running_request';
-    protected Connection $localDatabase;
     protected array $inserts = [];
     protected array $rtc = [];
-
-    public function injectLocalDatabase(Connection $localDatabase): void
-    {
-        $this->localDatabase = $localDatabase;
-    }
 
     public function add(string $recordId, string $tableName, string $token): void
     {

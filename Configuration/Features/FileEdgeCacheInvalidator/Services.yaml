@@ -3,6 +3,8 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $localDatabase: '@In2code.In2publishCore.Database.Local'
 
   In2code\In2publishCore\Features\FileEdgeCacheInvalidator\:
     resource: '../../../Classes/Features/FileEdgeCacheInvalidator/*'

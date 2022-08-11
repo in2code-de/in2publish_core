@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\PreProcessing\Service;
 
-use TYPO3\CMS\Core\Database\Connection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 
 use function preg_replace_callback;
 
 class TcaEscapingMarkerService
 {
-    protected Connection $localDatabase;
-
-    public function __construct(Connection $localDatabase)
-    {
-        $this->localDatabase = $localDatabase;
-    }
+    use LocalDatabaseInjection;
 
     public function escapeMarkedIdentifier(string $sql): string
     {

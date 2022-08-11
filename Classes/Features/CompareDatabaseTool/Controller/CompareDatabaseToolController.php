@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Features\CompareDatabaseTool\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
@@ -55,18 +56,16 @@ class CompareDatabaseToolController extends ActionController
 {
     use AdminToolsModuleTemplate;
     use ConfigContainerInjection;
+    use LocalDatabaseInjection;
 
     protected IgnoredFieldsService $ignoredFieldsService;
-    protected Connection $localDatabase;
     protected Connection $foreignDatabase;
 
     public function __construct(
         IgnoredFieldsService $ignoredFieldsService,
-        Connection $localDatabase,
         Connection $foreignDatabase
     ) {
         $this->ignoredFieldsService = $ignoredFieldsService;
-        $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
     }
 

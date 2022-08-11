@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher\Command;
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\FolderRecordPublisher;
@@ -13,7 +14,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function array_keys;
@@ -21,18 +21,14 @@ use function explode;
 
 class FalPublisherCommand extends Command
 {
+    use LocalDatabaseInjection;
+
     protected ContextService $contextService;
-    protected Connection $localDatabase;
     protected FalDriverService $falDriverService;
 
     public function injectContextService(ContextService $contextService): void
     {
         $this->contextService = $contextService;
-    }
-
-    public function injectLocalDatabase(Connection $localDatabase): void
-    {
-        $this->localDatabase = $localDatabase;
     }
 
     public function injectFalDriverService(FalDriverService $falDriverService): void

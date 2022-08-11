@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core;
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
-use TYPO3\CMS\Core\Database\Connection;
 
 use function array_key_first;
 use function array_search;
@@ -16,12 +16,13 @@ use function implode;
 
 class RecordIndex
 {
+    use LocalDatabaseInjection;
+
     /**
      * @var RecordCollection<int, Record>
      */
     private RecordCollection $records;
     private DemandsFactory $demandsFactory;
-    private Connection $localDatabase;
     private DemandResolver $demandResolver;
 
     public function __construct()
@@ -32,11 +33,6 @@ class RecordIndex
     public function injectDemandsFactory(DemandsFactory $demandsFactory): void
     {
         $this->demandsFactory = $demandsFactory;
-    }
-
-    public function injectLocalDatabase(Connection $localDatabase): void
-    {
-        $this->localDatabase = $localDatabase;
     }
 
     public function injectDemandResolver(DemandResolver $demandResolver): void

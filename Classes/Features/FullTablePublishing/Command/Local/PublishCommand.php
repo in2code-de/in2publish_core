@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\FullTablePublishing\Command\Local;
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Features\FullTablePublishing\Command\BackupCommand;
@@ -18,19 +19,15 @@ use TYPO3\CMS\Core\Database\Connection;
 
 class PublishCommand extends Command
 {
+    use LocalDatabaseInjection;
+
     public const ARG_TABLE = 'table';
     public const ARG_TABLE_DESCRIPTION = 'The table to write to the foreign database.';
     public const IDENTIFIER = 'in2publish_core:fulltablepublishing:publish';
-    protected Connection $localDatabase;
     private Connection $foreignDatabase;
     private ContextService $contextService;
     private TableTransferService $tableTransferService;
     private RemoteCommandDispatcher $remoteCommandDispatcher;
-
-    public function injectLocalDatabase(Connection $localDatabase): void
-    {
-        $this->localDatabase = $localDatabase;
-    }
 
     public function injectForeignDatabase(Connection $foreignDatabase): void
     {

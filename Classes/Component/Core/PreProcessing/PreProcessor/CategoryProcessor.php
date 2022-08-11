@@ -4,22 +4,17 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerServiceInjection;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
-use TYPO3\CMS\Core\Database\Connection;
 
 class CategoryProcessor extends AbstractProcessor
 {
     use TcaEscapingMarkerServiceInjection;
+    use LocalDatabaseInjection;
 
-    protected Connection $localDatabase;
     protected string $type = 'category';
-
-    public function injectLocalDatabase(Connection $localDatabase): void
-    {
-        $this->localDatabase = $localDatabase;
-    }
 
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {

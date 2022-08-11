@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Command\Foreign\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,13 +42,9 @@ use function json_encode;
 
 class DbConfigTestCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
-    protected Connection $localDatabase;
+    use LocalDatabaseInjection;
 
-    public function injectConnection(Connection $localDatabase): void
-    {
-        $this->localDatabase = $localDatabase;
-    }
+    public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

@@ -29,19 +29,14 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Dto\Redirect;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 
 class SysRedirectRepository
 {
-    private ConnectionPool $connectionPool;
-
-    public function injectConnectionPool(ConnectionPool $connectionPool): void
-    {
-        $this->connectionPool = $connectionPool;
-    }
+    use LocalDatabaseInjection;
 
     public function findRawByUris(Connection $connection, array $uris, array $exceptUid): array
     {
@@ -155,14 +150,14 @@ class SysRedirectRepository
 
     protected function getQueryBuilder(): QueryBuilder
     {
-        $queryBuilder = $this->connectionPool->getQueryBuilderForTable('sys_redirect');
+        $queryBuilder = $this->localDatabase->createQueryBuilder();
         $queryBuilder->getRestrictions()->removeAll();
         return $queryBuilder;
     }
 
     public function update(Redirect $redirect): void
     {
-        $this->connectionPool->getConnectionForTable('sys_redirect')->update(
+        $this->localDatabase->update(
             'sys_redirect',
             (array)$redirect,
             ['uid' => $redirect->uid]

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\FullTablePublishing\Command\Local;
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Features\FullTablePublishing\Service\TableBackupService;
 use In2code\In2publishCore\Features\FullTablePublishing\Service\TableTransferService;
 use In2code\In2publishCore\Service\Context\ContextService;
@@ -15,19 +16,15 @@ use TYPO3\CMS\Core\Database\Connection;
 
 class ImportCommand extends Command
 {
+    use LocalDatabaseInjection;
+
     public const ARG_TABLE = 'table';
     public const ARG_TABLE_DESCRIPTION = 'The table which should be truncated and filled with data from the foreign database.';
     public const IDENTIFIER = 'in2publish_core:fulltablepublishing:import';
-    protected Connection $localDatabase;
     private Connection $foreignDatabase;
     private ContextService $contextService;
     private TableBackupService $tableBackupService;
     private TableTransferService $tableTransferService;
-
-    public function injectLocalDatabase(Connection $localDatabase): void
-    {
-        $this->localDatabase = $localDatabase;
-    }
 
     public function injectForeignDatabase(Connection $foreignDatabase): void
     {

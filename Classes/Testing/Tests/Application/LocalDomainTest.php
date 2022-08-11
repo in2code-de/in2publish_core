@@ -29,21 +29,21 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
 class LocalDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
-    protected Connection $localConnection;
+    use LocalDatabaseInjection;
+
     protected SiteFinder $siteFinder;
     protected string $prefix = 'local';
 
     public function __construct(SiteFinder $siteFinder)
     {
-        $this->localConnection = DatabaseUtility::buildLocalDatabaseConnection();
         $this->siteFinder = $siteFinder;
     }
 
@@ -58,7 +58,7 @@ class LocalDomainTest extends AbstractDomainTest implements TestCaseInterface
 
     protected function getConnection(): Connection
     {
-        return $this->localConnection;
+        return $this->localDatabase;
     }
 
     public function getDependencies(): array

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\FileHandling\Service;
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Driver\DriverRegistry;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
@@ -16,9 +16,10 @@ use function in_array;
 
 class FalDriverService
 {
+    use LocalDatabaseInjection;
+
     protected DriverRegistry $driverRegistry;
     protected FlexFormService $flexFormService;
-    protected Connection $localDatabase;
     protected array $rtc = [];
 
     public function injectDriverRegistry(DriverRegistry $driverRegistry): void
@@ -29,11 +30,6 @@ class FalDriverService
     public function injectFlexFormService(FlexFormService $flexFormService): void
     {
         $this->flexFormService = $flexFormService;
-    }
-
-    public function injectLocalDatabase(Connection $localDatabase): void
-    {
-        $this->localDatabase = $localDatabase;
     }
 
     public function getDriver(int $storage): DriverInterface

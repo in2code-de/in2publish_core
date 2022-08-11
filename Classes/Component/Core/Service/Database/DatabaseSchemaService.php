@@ -4,23 +4,19 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Service\Database;
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class DatabaseSchemaService implements SingletonInterface
 {
+    use LocalDatabaseInjection;
+
     protected const CACHE_ID = 'component_database_info';
-    protected Connection $localDatabase;
     protected FrontendInterface $cache;
     protected array $columns = [];
     protected array $tables = [];
     protected bool $infoChanged = false;
-
-    public function injectLocalDatabase(Connection $localDatabase): void
-    {
-        $this->localDatabase = $localDatabase;
-    }
 
     public function injectCache(FrontendInterface $cache): void
     {

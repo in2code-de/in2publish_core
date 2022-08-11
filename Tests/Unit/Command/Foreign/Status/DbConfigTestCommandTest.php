@@ -45,7 +45,7 @@ class DbConfigTestCommandTest extends UnitTestCase
         $output = new BufferedOutput();
 
         $command = new DbConfigTestCommand();
-        $command->injectConnection($connection);
+        $command->injectLocalDatabase($connection);
 
         $code = $command->run($input, $output);
 

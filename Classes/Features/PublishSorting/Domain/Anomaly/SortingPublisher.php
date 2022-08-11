@@ -29,20 +29,17 @@ namespace In2code\In2publishCore\Features\PublishSorting\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use TYPO3\CMS\Core\Database\Connection;
 
 class SortingPublisher
 {
-    protected Connection $localDatabase;
+    use LocalDatabaseInjection;
+
     protected Connection $foreignDatabase;
     /** @var array<string, array<int, int>> */
     protected array $sortingsToBePublished = [];
-
-    public function injectLocalDatabase(Connection $localDatabase): void
-    {
-        $this->localDatabase = $localDatabase;
-    }
 
     public function injectForeignDatabase(Connection $foreignDatabase): void
     {

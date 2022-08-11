@@ -33,7 +33,8 @@ class TcaEscapingMarkerServiceTest extends UnitTestCase
             '`field`',
             '`value`'
         );
-        $tcaEscapingMarkerService = new TcaEscapingMarkerService($database);
+        $tcaEscapingMarkerService = new TcaEscapingMarkerService();
+        $tcaEscapingMarkerService->injectLocalDatabase($database);
         $result = $tcaEscapingMarkerService->escapeMarkedIdentifier($sql);
         $this->assertSame($expected, $result);
     }
@@ -56,7 +57,8 @@ class TcaEscapingMarkerServiceTest extends UnitTestCase
                 '\'field\'',
                 '\'value\''
             );
-        $tcaEscapingMarkerService = new TcaEscapingMarkerService($database);
+        $tcaEscapingMarkerService = new TcaEscapingMarkerService();
+        $tcaEscapingMarkerService->injectLocalDatabase($database);
         $result = $tcaEscapingMarkerService->escapeMarkedIdentifier($sql);
         $this->assertSame($expected, $result);
     }
