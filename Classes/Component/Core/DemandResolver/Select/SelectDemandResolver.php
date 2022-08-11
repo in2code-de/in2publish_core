@@ -15,7 +15,6 @@ use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepositoryInjection;
 use In2code\In2publishCore\Component\Core\Repository\ForeignSingleDatabaseRepositoryInjection;
 use In2code\In2publishCore\Component\Core\Repository\LocalSingleDatabaseRepositoryInjection;
-use In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository;
 
 use function array_key_exists;
 use function array_keys;

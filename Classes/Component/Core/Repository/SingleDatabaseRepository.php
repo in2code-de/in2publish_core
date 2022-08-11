@@ -16,6 +16,13 @@ use function hash;
 use function json_encode;
 use function substr;
 
+/**
+ * Configured in the Services Configuration for local ond foreign.
+ * Always inject `$localRepository` or `$foreignRepository` or by the service names
+ * `In2code.In2publishCore.Component.Core.LocalDatabaseRepository`
+ * or
+ * `In2code.In2publishCore.Component.Core.ForeignDatabaseRepository`
+ */
 class SingleDatabaseRepository
 {
     use DatabaseSchemaServiceInjection;
