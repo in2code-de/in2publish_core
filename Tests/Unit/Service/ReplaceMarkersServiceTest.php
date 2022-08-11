@@ -58,7 +58,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder) extends
+        $replaceMarkerService = new class ($tcaPreProcessingService, $siteFinder) extends
             ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
@@ -74,6 +74,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             }
         };
         $replaceMarkerService->injectLocalDatabase($connection);
+        $replaceMarkerService->injectFlexFormTools($flexFormTools);
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,
             'foo ###PAGE_TSCONFIG_ID### bar',
@@ -96,7 +97,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder) extends
+        $replaceMarkerService = new class ($tcaPreProcessingService, $siteFinder) extends
             ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
@@ -112,6 +113,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             }
         };
         $replaceMarkerService->injectLocalDatabase($connection);
+        $replaceMarkerService->injectFlexFormTools($flexFormTools);
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,
             'foo ###PAGE_TSCONFIG_IDLIST### bar',
@@ -152,11 +154,11 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $connection->method('quote')->willReturnCallback(static fn(string $input): string => "'$input'");
 
         $replaceMarkerService = new ReplaceMarkersService(
-            $flexFormTools,
             $tcaProcessingService,
             $siteFinder
         );
         $replaceMarkerService->injectLocalDatabase($connection);
+        $replaceMarkerService->injectFlexFormTools($flexFormTools);
 
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,

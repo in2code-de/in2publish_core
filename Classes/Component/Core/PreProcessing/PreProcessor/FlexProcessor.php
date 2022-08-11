@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 
+use In2code\In2publishCore\CommonInjection\FlexFormToolsInjection;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Component\Core\Resolver\FlexResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
@@ -18,7 +19,8 @@ use const JSON_THROW_ON_ERROR;
 
 class FlexProcessor extends AbstractProcessor
 {
-    protected FlexFormTools $flexFormTools;
+    use FlexFormToolsInjection;
+
     protected FlexFormFlatteningService $flexFormFlatteningService;
     protected string $type = 'flex';
     protected array $forbidden = [
@@ -32,11 +34,6 @@ class FlexProcessor extends AbstractProcessor
         'search',
         'ds_pointerField',
     ];
-
-    public function injectFlexFormTools(FlexFormTools $flexFormTools): void
-    {
-        $this->flexFormTools = $flexFormTools;
-    }
 
     public function injectFlexFormFlatteningService(FlexFormFlatteningService $flexFormFlatteningService): void
     {

@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
+use In2code\In2publishCore\CommonInjection\FlexFormToolsInjection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\Record\Model\VirtualFlexFormRecord;
 use In2code\In2publishCore\Component\Core\Service\ResolverService;
-use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
 
-use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function array_pop;
@@ -30,18 +29,14 @@ use const JSON_THROW_ON_ERROR;
 
 class FlexResolver extends AbstractResolver
 {
-    protected FlexFormTools $flexFormTools;
+    use FlexFormToolsInjection;
+
     protected FlexFormService $flexFormService;
     protected FlexFormFlatteningService $flexFormFlatteningService;
     protected ResolverService $resolverService;
     protected string $table;
     protected string $column;
     protected array $processedTca;
-
-    public function injectFlexFormTools(FlexFormTools $flexFormTools): void
-    {
-        $this->flexFormTools = $flexFormTools;
-    }
 
     public function injectFlexFormService(FlexFormService $flexFormService): void
     {
