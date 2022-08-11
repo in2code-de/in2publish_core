@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
-use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
+use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
@@ -41,19 +41,14 @@ class TcaController extends ActionController
 {
     use AdminToolsModuleTemplate;
     use ConfigContainerInjection;
+    use DemandBuilderInjection;
 
     protected TcaPreProcessingService $tcaPreProcessingService;
-    protected DemandBuilder $demandBuilder;
     protected SelectDemandResolver $queryService;
 
     public function __construct(TcaPreProcessingService $tcaPreProcessingService)
     {
         $this->tcaPreProcessingService = $tcaPreProcessingService;
-    }
-
-    public function injectDemandBuilder(DemandBuilder $demandBuilder): void
-    {
-        $this->demandBuilder = $demandBuilder;
     }
 
     public function injectQueryService(SelectDemandResolver $queryService): void
