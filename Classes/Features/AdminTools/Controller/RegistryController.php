@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\RegistryInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Registry;
@@ -39,13 +40,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 class RegistryController extends ActionController
 {
     use AdminToolsModuleTemplate;
-
-    protected Registry $registry;
-
-    public function __construct(Registry $registry)
-    {
-        $this->registry = $registry;
-    }
+    use RegistryInjection;
 
     public function indexAction(): ResponseInterface
     {
