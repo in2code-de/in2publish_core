@@ -22,6 +22,10 @@ class FalDriverService
     protected DriverRegistry $driverRegistry;
     protected array $rtc = [];
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectDriverRegistry(DriverRegistry $driverRegistry): void
     {
         $this->driverRegistry = $driverRegistry;
