@@ -30,20 +30,14 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  */
 
 use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
-use In2code\In2publishCore\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use Throwable;
 use TYPO3\CMS\Core\Site\Entity\Site;
 
 class SitesConfigurationExporter implements SystemInformationExporter
 {
     use SiteFinderInjection;
-
-    protected ForeignSiteFinder $foreignSiteFinder;
-
-    public function injectForeignSiteFinder(ForeignSiteFinder $foreignSiteFinder)
-    {
-        $this->foreignSiteFinder = $foreignSiteFinder;
-    }
+    use ForeignSiteFinderInjection;
 
     public function getUniqueKey(): string
     {

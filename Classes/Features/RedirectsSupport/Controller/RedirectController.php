@@ -40,7 +40,7 @@ use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\BackButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
-use In2code\In2publishCore\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -64,15 +64,10 @@ class RedirectController extends ActionController
     use IconFactoryInjection;
     use DemandsFactoryInjection;
     use DemandResolverInjection;
+    use ForeignSiteFinderInjection;
 
-    protected ForeignSiteFinder $foreignSiteFinder;
     protected SysRedirectRepository $sysRedirectRepo;
     private PublisherService $publisherService;
-
-    public function injectForeignSiteFinder(ForeignSiteFinder $foreignSiteFinder): void
-    {
-        $this->foreignSiteFinder = $foreignSiteFinder;
-    }
 
     public function injectSysRedirectRepo(SysRedirectRepository $sysRedirectRepo): void
     {

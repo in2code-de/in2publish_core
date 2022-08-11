@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\DataBender;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
-use In2code\In2publishCore\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -43,18 +43,13 @@ use function in_array;
 class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use ForeignSiteFinderInjection;
 
     protected const CHANGED_STATES = [
         Record::S_CHANGED,
         Record::S_ADDED,
         Record::S_MOVED,
     ];
-    protected ForeignSiteFinder $siteFinder;
-
-    public function __construct(ForeignSiteFinder $siteFinder)
-    {
-        $this->siteFinder = $siteFinder;
-    }
 
     public function replaceLocalWithForeignSourceHost(PublishingOfOneRecordBegan $event): void
     {
@@ -79,7 +74,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
             $record->setLocalProps($properties);
         }
         if (null !== $siteId) {
-            $site = $this->siteFinder->getSiteByIdentifier($siteId);
+            $site = $this->foreignSiteFinder->getSiteByIdentifier($siteId);
             if (null === $site) {
                 $this->logger->alert(
                     'A redirect has an associated site, but that site does not exist',

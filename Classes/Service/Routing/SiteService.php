@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Service\Routing;
 use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use LogicException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -47,17 +48,14 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use SiteFinderInjection;
+    use ForeignSiteFinderInjection;
 
     protected array $cache = [];
     protected RawRecordService $rawRecordService;
-    protected ForeignSiteFinder $foreignSiteFinder;
 
-    public function __construct(
-        RawRecordService $rawRecordService,
-        ForeignSiteFinder $foreignSiteFinder
-    ) {
+    public function injectRawRecordService(RawRecordService $rawRecordService): void
+    {
         $this->rawRecordService = $rawRecordService;
-        $this->foreignSiteFinder = $foreignSiteFinder;
     }
 
     public function getSiteForPidAndStagingLevel(int $pid, string $side): ?Site

@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  */
 
 use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
-use In2code\In2publishCore\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
@@ -48,14 +48,13 @@ use function sprintf;
 class SiteConfigurationTest implements TestCaseInterface
 {
     use SiteFinderInjection;
+    use ForeignSiteFinderInjection;
 
     protected FrontendInterface $cache;
-    protected ForeignSiteFinder $foreignSiteFinder;
 
-    public function __construct(FrontendInterface $cache, ForeignSiteFinder $foreignSiteFinder)
+    public function injectCache(FrontendInterface $cache): void
     {
         $this->cache = $cache;
-        $this->foreignSiteFinder = $foreignSiteFinder;
     }
 
     public function run(): TestResult
