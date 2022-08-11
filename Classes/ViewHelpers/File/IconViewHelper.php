@@ -27,9 +27,9 @@ namespace In2code\In2publishCore\ViewHelpers\File;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use TYPO3\CMS\Core\Imaging\Icon;
-use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -37,16 +37,15 @@ use function explode;
 
 class IconViewHelper extends AbstractViewHelper
 {
+    use IconFactoryInjection;
+
     private const ARG_RECORD = 'record';
-    protected IconFactory $iconFactory;
     protected IconRegistry $iconRegistry;
     protected $escapeOutput = false;
 
-    public function injectIconFactory(IconFactory $iconFactory): void
-    {
-        $this->iconFactory = $iconFactory;
-    }
-
+    /**
+     * @codeCoverageIgnore
+     */
     public function injectIconRegistry(IconRegistry $iconRegistry): void
     {
         $this->iconRegistry = $iconRegistry;

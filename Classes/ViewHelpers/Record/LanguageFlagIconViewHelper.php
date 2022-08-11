@@ -27,29 +27,29 @@ namespace In2code\In2publishCore\ViewHelpers\Record;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Backend\Configuration\TranslationConfigurationProvider;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Imaging\Icon;
-use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function array_filter;
 
 class LanguageFlagIconViewHelper extends AbstractViewHelper
 {
+    use IconFactoryInjection;
+
     private const ARG_RECORD = 'record';
     private const ARG_SIDE = 'side';
     private const ARG_OVERLAY = 'overlay';
     protected $escapeOutput = false;
-    protected IconFactory $iconFactory;
     protected TranslationConfigurationProvider $translateTools;
     protected BackendUserAuthentication $backendUser;
 
-    public function __construct(IconFactory $iconFactory, TranslationConfigurationProvider $translateTools)
+    public function __construct(TranslationConfigurationProvider $translateTools)
     {
-        $this->iconFactory = $iconFactory;
         $this->translateTools = $translateTools;
         $this->backendUser = $GLOBALS['BE_USER'];
     }

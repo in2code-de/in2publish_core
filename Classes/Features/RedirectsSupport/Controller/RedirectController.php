@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverCollection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Join\JoinDemandResolver;
@@ -45,7 +46,6 @@ use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedire
 use In2code\In2publishCore\Service\ForeignSiteFinder;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
-use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
@@ -64,10 +64,10 @@ use function sprintf;
 class RedirectController extends ActionController
 {
     use ControllerModuleTemplate;
+    use IconFactoryInjection;
 
     protected ForeignSiteFinder $foreignSiteFinder;
     protected SysRedirectRepository $sysRedirectRepo;
-    protected IconFactory $iconFactory;
     private DemandsFactory $demandsFactory;
     protected DemandResolverCollection $demandResolverCollection;
     protected SelectDemandResolver $selectDemandResolver;
@@ -94,11 +94,6 @@ class RedirectController extends ActionController
             '',
             false
         );
-    }
-
-    public function injectIconFactory(IconFactory $iconFactory): void
-    {
-        $this->iconFactory = $iconFactory;
     }
 
     public function injectDemandsFactory(DemandsFactory $demandsFactory): void
