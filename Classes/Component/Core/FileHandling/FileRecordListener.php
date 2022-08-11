@@ -18,6 +18,10 @@ class FileRecordListener
      */
     protected array $fileRecords = [];
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectFileDemandResolver(FileDemandResolver $fileDemandResolver): void
     {
         $this->fileDemandResolver = $fileDemandResolver;
