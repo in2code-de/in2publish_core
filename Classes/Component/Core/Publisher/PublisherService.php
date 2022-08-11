@@ -7,11 +7,11 @@ namespace In2code\In2publishCore\Component\Core\Publisher;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
+use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
-use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use Throwable;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
