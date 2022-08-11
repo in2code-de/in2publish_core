@@ -31,20 +31,16 @@ namespace In2code\In2publishCore\Service\TableConfiguration;
  */
 
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Service\Configuration\TcaService;
+use In2code\In2publishCore\Service\Configuration\TcaServiceInjection;
 
 use function sprintf;
 use function trim;
 
 class LabelService
 {
-    protected string $emptyFieldValue = '---';
-    protected TcaService $tcaService;
+    use TcaServiceInjection;
 
-    public function __construct(TcaService $tcaService)
-    {
-        $this->tcaService = $tcaService;
-    }
+    protected string $emptyFieldValue = '---';
 
     /**
      * Get label field from record

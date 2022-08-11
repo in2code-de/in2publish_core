@@ -15,7 +15,7 @@ use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesServiceInjection;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
-use In2code\In2publishCore\Service\Configuration\TcaService;
+use In2code\In2publishCore\Service\Configuration\TcaServiceInjection;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 
 use function array_flip;
@@ -32,14 +32,9 @@ class RecordTreeBuilder
     use DemandsFactoryInjection;
     use DemandResolverInjection;
     use DemandBuilderInjection;
+    use TcaServiceInjection;
 
-    protected TcaService $tcaService;
     protected RawRecordService $rawRecordService;
-
-    public function injectTcaService(TcaService $tcaService): void
-    {
-        $this->tcaService = $tcaService;
-    }
 
     public function injectRawRecordService(RawRecordService $rawRecordService): void
     {
