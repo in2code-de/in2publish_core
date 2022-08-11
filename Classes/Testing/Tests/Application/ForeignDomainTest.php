@@ -31,12 +31,11 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 
 use In2code\In2publishCore\Command\Foreign\Status\ShortSiteConfigurationCommand;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -47,18 +46,14 @@ use function json_decode;
 
 class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
+    use ForeignDatabaseInjection;
+
     protected RemoteCommandDispatcher $rceDispatcher;
-    protected Connection $foreignConnection;
     protected string $prefix = 'foreign';
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
     {
         $this->rceDispatcher = $remoteCommandDispatcher;
-        try {
-            $this->foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
-        } catch (Throwable $throwable) {
-            // Dependency ForeignDatabaseTest will fail if this fails
-        }
     }
 
     protected function getPageToSiteBaseMapping(): array
@@ -84,7 +79,7 @@ class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 
     protected function getConnection(): Connection
     {
-        return $this->foreignConnection;
+        return $this->foreignDatabase;
     }
 
     public function getDependencies(): array

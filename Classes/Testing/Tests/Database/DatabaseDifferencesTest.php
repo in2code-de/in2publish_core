@@ -29,9 +29,10 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function array_diff;
@@ -47,6 +48,9 @@ use const PHP_INT_MAX;
 
 class DatabaseDifferencesTest implements TestCaseInterface
 {
+    use LocalDatabaseInjection;
+    use ForeignDatabaseInjection;
+
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -54,15 +58,12 @@ class DatabaseDifferencesTest implements TestCaseInterface
      */
     public function run(): TestResult
     {
-        $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-
-        if ($this->areDifferentDatabases($localDatabase, $foreignDatabase)) {
+        if ($this->areDifferentDatabases($this->localDatabase, $this->foreignDatabase)) {
             return new TestResult('database.local_and_foreign_identical', TestResult::ERROR);
         }
 
-        $localTableInfo = $this->readTableStructure($localDatabase);
-        $foreignTableInfo = $this->readTableStructure($foreignDatabase);
+        $localTableInfo = $this->readTableStructure($this->localDatabase);
+        $foreignTableInfo = $this->readTableStructure($this->foreignDatabase);
 
         $localTables = array_keys($localTableInfo);
         $foreignTables = array_keys($foreignTableInfo);

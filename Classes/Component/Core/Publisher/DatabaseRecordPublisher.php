@@ -4,20 +4,15 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\AbstractDatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use TYPO3\CMS\Core\Database\Connection;
 
 use function array_diff_assoc;
 
 class DatabaseRecordPublisher implements Publisher, TransactionalPublisher
 {
-    protected Connection $foreignDatabase;
-
-    public function injectForeignDatabase(Connection $foreignDatabase): void
-    {
-        $this->foreignDatabase = $foreignDatabase;
-    }
+    use ForeignDatabaseInjection;
 
     public function canPublish(Record $record): bool
     {

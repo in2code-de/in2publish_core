@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseReconnectedInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\Core\Publisher\Exception\FalPublisherExecutionFailedException;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
@@ -11,7 +12,6 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function bin2hex;
@@ -20,6 +20,8 @@ use function unlink;
 
 class FileRecordPublisher implements Publisher, FinishablePublisher
 {
+    use ForeignDatabaseReconnectedInjection;
+
     // All A_* constant values must be 6 chars
     public const A_DELETE = 'delete';
     public const A_INSERT = 'insert';
@@ -27,7 +29,6 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     public const A_RENAME = 'rename';
     protected AssetTransmitter $assetTransmitter;
     protected FalDriverService $falDriverService;
-    protected Connection $foreignDatabase;
     protected RemoteCommandDispatcher $remoteCommandDispatcher;
     protected string $requestToken;
     protected bool $hasTasks = false;
@@ -45,15 +46,6 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     public function injectFalDriverService(FalDriverService $falDriverService): void
     {
         $this->falDriverService = $falDriverService;
-    }
-
-    public function injectForeignDatabase(Connection $foreignDatabase): void
-    {
-        // Clone the database and create a new session.
-        // Otherwise, we would interfere with transactions of other connections.
-        $this->foreignDatabase = clone $foreignDatabase;
-        $this->foreignDatabase->close();
-        $this->foreignDatabase->connect();
     }
 
     public function injectRemoteCommandDispatcher(RemoteCommandDispatcher $remoteCommandDispatcher): void

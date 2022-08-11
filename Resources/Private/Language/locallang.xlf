@@ -566,9 +566,6 @@
 			<trans-unit id="compare_database.transfer.success">
 				<source>Success</source>
 			</trans-unit>
-			<trans-unit id="compare_database.transfer.db_error">
-				<source>Could not connect to the databases</source>
-			</trans-unit>
 			<trans-unit id="compare_database.transfer.record_missing">
 				<source>The record which should be transferred does not exist anymore.</source>
 			</trans-unit>

@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Component\Core\Service\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
@@ -42,20 +43,15 @@ use function array_unique;
 class TableContentService implements SingletonInterface
 {
     use LocalDatabaseInjection;
+    use ForeignDatabaseInjection;
 
     protected DatabaseSchemaService $databaseSchemaService;
-    protected Connection $foreignDatabase;
     /** @var array<string, array<string, array<int|bool>>> */
     protected array $tableInfo = [];
 
     public function injectDatabaseSchemaService(DatabaseSchemaService $databaseSchemaService): void
     {
         $this->databaseSchemaService = $databaseSchemaService;
-    }
-
-    public function injectForeignDatabase(Connection $foreignDatabase): void
-    {
-        $this->foreignDatabase = $foreignDatabase;
     }
 
     public function getAllEmptyTables(): array

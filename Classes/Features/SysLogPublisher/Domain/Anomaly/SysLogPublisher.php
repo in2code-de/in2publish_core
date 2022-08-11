@@ -30,21 +30,16 @@ namespace In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
-use TYPO3\CMS\Core\Database\Connection;
 
 class SysLogPublisher
 {
     use LocalDatabaseInjection;
+    use ForeignDatabaseInjection;
 
     protected const TABLE_SYS_LOG = 'sys_log';
-    protected Connection $foreignDatabase;
-
-    public function __construct(Connection $foreignDatabase)
-    {
-        $this->foreignDatabase = $foreignDatabase;
-    }
 
     public function publishSysLog(PublishingOfOneRecordEnded $event): void
     {

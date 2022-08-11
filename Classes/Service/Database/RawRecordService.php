@@ -29,10 +29,11 @@ namespace In2code\In2publishCore\Service\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\In2publishCoreException;
 use PDO;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function is_array;
@@ -40,17 +41,14 @@ use function sprintf;
 
 class RawRecordService implements SingletonInterface
 {
-    /** @var array<string, Connection> */
-    protected array $databases;
+    use LocalDatabaseInjection;
+    use ForeignDatabaseInjection;
+
     protected array $cache = [];
     protected RecordIndex $recordIndex;
 
-    public function __construct(Connection $localDatabase, Connection $foreignDatabase, RecordIndex $recordIndex)
+    public function __construct(RecordIndex $recordIndex)
     {
-        $this->databases = [
-            'local' => $localDatabase,
-            'foreign' => $foreignDatabase,
-        ];
         $this->recordIndex = $recordIndex;
     }
 
@@ -77,7 +75,13 @@ class RawRecordService implements SingletonInterface
 
     protected function fetchRecord(string $table, int $uid, string $side): ?array
     {
-        $database = $this->databases[$side] ?? null;
+        $database = null;
+        if ('local' === $side) {
+            $database = $this->localDatabase;
+        }
+        if ('foreign' === $side) {
+            $database = $this->foreignDatabase;
+        }
         if (null === $database) {
             throw new In2publishCoreException(
                 sprintf('Invalid side "%s" or database is not available', $side),

@@ -31,10 +31,10 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 
 use In2code\In2publishCore\Command\Foreign\Status\DbConfigTestCommand;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -46,6 +46,8 @@ use function strpos;
 
 class ForeignDatabaseConfigTest implements TestCaseInterface
 {
+    use ForeignDatabaseInjection;
+
     public const DB_CONFIG_TEST_TYPE = 'DB Config Test';
     protected RemoteCommandDispatcher $rceDispatcher;
     protected Random $random;
@@ -58,11 +60,10 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
 
     public function run(): TestResult
     {
-        $connection = DatabaseUtility::buildForeignDatabaseConnection();
-        $connection->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);
+        $this->foreignDatabase->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);
         $random = $this->random->generateRandomHexString(32);
         $row = ['task_type' => self::DB_CONFIG_TEST_TYPE, 'configuration' => $random];
-        $connection->insert('tx_in2code_in2publish_task', $row);
+        $this->foreignDatabase->insert('tx_in2code_in2publish_task', $row);
 
         $request = new RemoteCommandRequest(DbConfigTestCommand::IDENTIFIER);
         $response = $this->rceDispatcher->dispatch($request);
@@ -86,7 +87,7 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
                 [$response->getErrorsString(), $response->getOutputString()]
             );
         }
-        $connection->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);
+        $this->foreignDatabase->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);
         return $testResult;
     }
 

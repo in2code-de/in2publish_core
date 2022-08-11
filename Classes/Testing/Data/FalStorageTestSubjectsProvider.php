@@ -29,8 +29,9 @@ namespace In2code\In2publishCore\Testing\Data;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Event\StoragesForTestingWereFetched;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -40,6 +41,9 @@ use function array_combine;
 
 class FalStorageTestSubjectsProvider implements SingletonInterface
 {
+    use LocalDatabaseInjection;
+    use ForeignDatabaseInjection;
+
     public const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';
     public const PURPOSE_DRIVER = 'driver';
     public const PURPOSE_MISSING = 'missing';
@@ -78,8 +82,8 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     {
         if (false === $this->initialized) {
             $this->initialized = true;
-            $this->localStorages = $this->fetchStorages(DatabaseUtility::buildLocalDatabaseConnection());
-            $this->foreignStorages = $this->fetchStorages(DatabaseUtility::buildForeignDatabaseConnection());
+            $this->localStorages = $this->fetchStorages($this->localDatabase);
+            $this->foreignStorages = $this->fetchStorages($this->foreignDatabase);
         }
 
         $event = new StoragesForTestingWereFetched($this->localStorages, $this->foreignStorages, $purpose);
