@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core;
 
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
+use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
@@ -17,22 +17,17 @@ use function implode;
 class RecordIndex
 {
     use LocalDatabaseInjection;
+    use DemandsFactoryInjection;
 
     /**
      * @var RecordCollection<int, Record>
      */
     private RecordCollection $records;
-    private DemandsFactory $demandsFactory;
     private DemandResolver $demandResolver;
 
     public function __construct()
     {
         $this->records = new RecordCollection();
-    }
-
-    public function injectDemandsFactory(DemandsFactory $demandsFactory): void
-    {
-        $this->demandsFactory = $demandsFactory;
     }
 
     public function injectDemandResolver(DemandResolver $demandResolver): void

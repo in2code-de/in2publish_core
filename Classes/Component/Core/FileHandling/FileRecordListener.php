@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\FileHandling;
 
-use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
+use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Event\RecordWasCreated;
 
 class FileRecordListener
 {
+    use DemandsFactoryInjection;
+
     protected FileDemandResolver $fileDemandResolver;
-    protected DemandsFactory $demandsFactory;
     /**
      * @var list<Record>
      */
@@ -20,11 +21,6 @@ class FileRecordListener
     public function injectFileDemandResolver(FileDemandResolver $fileDemandResolver): void
     {
         $this->fileDemandResolver = $fileDemandResolver;
-    }
-
-    public function injectDemandsFactory(DemandsFactory $demandsFactory): void
-    {
-        $this->demandsFactory = $demandsFactory;
     }
 
     public function onRecordWasCreated(RecordWasCreated $event): void

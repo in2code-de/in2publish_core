@@ -9,13 +9,7 @@ use In2code\In2publishCore\Component\Core\RecordCollection;
 class DemandBuilder
 {
     use ResolverServiceInjection;
-
-    protected DemandsFactory $demandsFactory;
-
-    public function injectDemandsFactory(DemandsFactory $demandsFactory): void
-    {
-        $this->demandsFactory = $demandsFactory;
-    }
+    use DemandsFactoryInjection;
 
     public function buildDemandForRecords(RecordCollection $records): Demands
     {

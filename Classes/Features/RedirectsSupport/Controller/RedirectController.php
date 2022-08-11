@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  */
 
 use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
-use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
+use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverCollection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Join\JoinDemandResolver;
 use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
@@ -65,10 +65,10 @@ class RedirectController extends ActionController
 {
     use ControllerModuleTemplate;
     use IconFactoryInjection;
+    use DemandsFactoryInjection;
 
     protected ForeignSiteFinder $foreignSiteFinder;
     protected SysRedirectRepository $sysRedirectRepo;
-    private DemandsFactory $demandsFactory;
     protected DemandResolverCollection $demandResolverCollection;
     protected SelectDemandResolver $selectDemandResolver;
     protected JoinDemandResolver $joinDemandResolver;
@@ -94,11 +94,6 @@ class RedirectController extends ActionController
             '',
             false
         );
-    }
-
-    public function injectDemandsFactory(DemandsFactory $demandsFactory): void
-    {
-        $this->demandsFactory = $demandsFactory;
     }
 
     public function injectDemandResolverCollection(DemandResolverCollection $demandResolverCollection): void
