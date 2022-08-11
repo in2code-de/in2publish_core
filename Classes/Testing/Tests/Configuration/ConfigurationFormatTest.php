@@ -30,20 +30,14 @@ namespace In2code\In2publishCore\Testing\Tests\Configuration;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
-use In2code\In2publishCore\Component\ConfigContainer\ValidationContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ValidationContainerInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
 class ConfigurationFormatTest implements TestCaseInterface
 {
     use ConfigContainerInjection;
-
-    private ValidationContainer $validationContainer;
-
-    public function __construct(ValidationContainer $validationContainer)
-    {
-        $this->validationContainer = $validationContainer;
-    }
+    use ValidationContainerInjection;
 
     public function run(): TestResult
     {

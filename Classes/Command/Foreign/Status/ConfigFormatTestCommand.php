@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Command\Foreign\Status;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
-use In2code\In2publishCore\Component\ConfigContainer\ValidationContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ValidationContainerInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,14 +42,9 @@ use function json_encode;
 class ConfigFormatTestCommand extends Command
 {
     use ConfigContainerInjection;
+    use ValidationContainerInjection;
 
     public const IDENTIFIER = 'in2publish_core:status:configformattest';
-    protected ValidationContainer $validationContainer;
-
-    public function injectValidationContainer(ValidationContainer $validationContainer): void
-    {
-        $this->validationContainer = $validationContainer;
-    }
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
