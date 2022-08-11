@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
-use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitterInjection;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
 use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
@@ -53,13 +53,7 @@ use function unlink;
 class TransmissionAdapterTest implements TestCaseInterface
 {
     use RemoteCommandDispatcherInjection;
-
-    protected AssetTransmitter $assetTransmitter;
-
-    public function __construct(AssetTransmitter $assetTransmitter)
-    {
-        $this->assetTransmitter = $assetTransmitter;
-    }
+    use AssetTransmitterInjection;
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)

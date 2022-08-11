@@ -11,7 +11,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
-use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitterInjection;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function bin2hex;
@@ -23,24 +23,19 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     use ForeignDatabaseReconnectedInjection;
     use FalDriverServiceInjection;
     use RemoteCommandDispatcherInjection;
+    use AssetTransmitterInjection;
 
     // All A_* constant values must be 6 chars
     public const A_DELETE = 'delete';
     public const A_INSERT = 'insert';
     public const A_UPDATE = 'update';
     public const A_RENAME = 'rename';
-    protected AssetTransmitter $assetTransmitter;
     protected string $requestToken;
     protected bool $hasTasks = false;
 
     public function __construct()
     {
         $this->requestToken = bin2hex(random_bytes(16));
-    }
-
-    public function injectAssetTransmitter(AssetTransmitter $assetTransmitter): void
-    {
-        $this->assetTransmitter = $assetTransmitter;
     }
 
     public function canPublish(Record $record): bool
