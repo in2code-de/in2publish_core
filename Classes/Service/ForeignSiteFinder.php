@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Service;
 use Closure;
 use In2code\In2publishCore\Command\Foreign\Status\AllSitesCommand;
 use In2code\In2publishCore\Command\Foreign\Status\SiteConfigurationCommand;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\In2publishCoreException;
@@ -54,19 +54,14 @@ use function unserialize;
 class ForeignSiteFinder implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use RemoteCommandDispatcherInjection;
 
     private const UNSERIALIZE_ALLOWED_CLASS = [Site::class, Uri::class, SiteLanguage::class];
-    protected RemoteCommandDispatcher $rceDispatcher;
     protected FrontendInterface $cache;
 
     public function __construct(FrontendInterface $cache)
     {
         $this->cache = $cache;
-    }
-
-    public function injectRemoteCommandDispatcher(RemoteCommandDispatcher $rceDispatcher): void
-    {
-        $this->rceDispatcher = $rceDispatcher;
     }
 
     public function getSiteByPageId(int $pageId): Site
@@ -76,7 +71,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
             $request->setCommand(SiteConfigurationCommand::IDENTIFIER);
             $request->setOption((string)$pageId);
 
-            $response = $this->rceDispatcher->dispatch($request);
+            $response = $this->remoteCommandDispatcher->dispatch($request);
 
             if ($response->getExitStatus() === SiteConfigurationCommand::EXIT_PAGE_HIDDEN_OR_DISCONNECTED) {
                 throw new PageNotFoundException('PageNotFound on foreign during site identification', 1619783372);
@@ -106,7 +101,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
         $closure = function (): array {
             $request = new RemoteCommandRequest();
             $request->setCommand(AllSitesCommand::IDENTIFIER);
-            $response = $this->rceDispatcher->dispatch($request);
+            $response = $this->remoteCommandDispatcher->dispatch($request);
 
             if ($response->isSuccessful()) {
                 return $this->processCommandResult($response);

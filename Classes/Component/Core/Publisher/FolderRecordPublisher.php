@@ -8,7 +8,7 @@ use In2code\In2publishCore\CommonInjection\ForeignDatabaseReconnectedInjection;
 use In2code\In2publishCore\Component\Core\Publisher\Exception\FalPublisherExecutionFailedException;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 
 use function bin2hex;
@@ -17,22 +17,17 @@ use function random_bytes;
 class FolderRecordPublisher implements Publisher, FinishablePublisher
 {
     use ForeignDatabaseReconnectedInjection;
+    use RemoteCommandDispatcherInjection;
 
     // All A_* constant values must be 6 chars
     public const A_DELETE = 'delete';
     public const A_INSERT = 'insert';
     protected string $requestToken;
-    protected RemoteCommandDispatcher $remoteCommandDispatcher;
     protected bool $hasTasks = false;
 
     public function __construct()
     {
         $this->requestToken = bin2hex(random_bytes(16));
-    }
-
-    public function injectRemoteCommandDispatcher(RemoteCommandDispatcher $remoteCommandDispatcher): void
-    {
-        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     public function canPublish(Record $record): bool

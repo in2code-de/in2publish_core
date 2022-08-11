@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
@@ -44,13 +44,7 @@ use function preg_match;
 class SshConnectionTest implements TestCaseInterface
 {
     use ConfigContainerInjection;
-
-    protected RemoteCommandDispatcher $rceDispatcher;
-
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
-    {
-        $this->rceDispatcher = $remoteCommandDispatcher;
-    }
+    use RemoteCommandDispatcherInjection;
 
     public function run(): TestResult
     {
@@ -61,7 +55,7 @@ class SshConnectionTest implements TestCaseInterface
         $request->setEnvironmentVariables([]);
 
         try {
-            $response = $this->rceDispatcher->dispatch($request);
+            $response = $this->remoteCommandDispatcher->dispatch($request);
         } catch (Throwable $exception) {
             return new TestResult(
                 'ssh_connection.connection_failed',
@@ -84,7 +78,7 @@ class SshConnectionTest implements TestCaseInterface
         $request = new RemoteCommandRequest();
         $request->setDispatcher('');
         $request->setCommand('-v');
-        $response = $this->rceDispatcher->dispatch($request);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
             return new TestResult(
@@ -98,7 +92,7 @@ class SshConnectionTest implements TestCaseInterface
         $request = new RemoteCommandRequest('ls');
         $request->usePhp(false);
         $request->setDispatcher('');
-        $response = $this->rceDispatcher->dispatch($request);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
             $documentRootFiles = GeneralUtility::trimExplode("\n", $response->getOutputString());
@@ -126,7 +120,7 @@ class SshConnectionTest implements TestCaseInterface
 
         // Actually call the foreign cli dispatcher
         $request = new RemoteCommandRequest('help');
-        $response = $this->rceDispatcher->dispatch($request);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
         if (!$response->isSuccessful()) {
             if (1 === preg_match('~The given context "(.*)" was not valid~', $response->getOutputString(), $match)) {
                 return new TestResult(

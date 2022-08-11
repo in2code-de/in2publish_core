@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\FileHandling\Service;
 
 use In2code\In2publishCore\Component\Core\FileHandling\Service\Exception\EnvelopeSendingFailedException;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Command\Foreign\ExecuteCommand;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Envelope;
@@ -20,13 +20,7 @@ use function sprintf;
 class ForeignFileSystemInfoService
 {
     use LetterboxInjection;
-
-    protected RemoteCommandDispatcher $rceDispatcher;
-
-    public function injectRceDispatcher(RemoteCommandDispatcher $rceDispatcher): void
-    {
-        $this->rceDispatcher = $rceDispatcher;
-    }
+    use RemoteCommandDispatcherInjection;
 
     public function folderExists(int $storageUid, string $identifier): bool
     {
@@ -71,7 +65,7 @@ class ForeignFileSystemInfoService
             throw new EnvelopeSendingFailedException();
         }
         $request = new RemoteCommandRequest(ExecuteCommand::IDENTIFIER, [], [$uid]);
-        $response = $this->rceDispatcher->dispatch($request);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
             throw new RuntimeException(

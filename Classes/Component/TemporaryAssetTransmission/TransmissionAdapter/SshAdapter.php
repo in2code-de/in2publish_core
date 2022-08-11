@@ -29,8 +29,7 @@ namespace In2code\In2publishCore\Component\TemporaryAssetTransmission\Transmissi
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\Shared\SshBaseAdapter;
 use In2code\In2publishCore\In2publishCoreException;
@@ -56,9 +55,10 @@ use const PHP_MAJOR_VERSION;
 
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
+    use RemoteCommandDispatcherInjection;
+
     public const ADAPTER_KEY = 'ssh';
     private ForeignEnvironmentService $foreignEnvironmentService;
-    private RemoteCommandDispatcher $remoteCommandDispatcher;
     /** @var resource|null */
     protected $sshSession;
     /** @var resource|null */
@@ -68,12 +68,9 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
         'decimalFolderMask' => 0000,
     ];
 
-    public function __construct(
-        ForeignEnvironmentService $foreignEnvironmentService,
-        RemoteCommandDispatcher $remoteCommandDispatcher
-    ) {
+    public function injectForeignEnvironmentService(ForeignEnvironmentService $foreignEnvironmentService): void
+    {
         $this->foreignEnvironmentService = $foreignEnvironmentService;
-        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     /** @throws In2publishCoreException */

@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  */
 
 use In2code\In2publishCore\Command\Foreign\Status\ShortSiteConfigurationCommand;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
@@ -47,21 +47,16 @@ use function json_decode;
 class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
     use ForeignDatabaseInjection;
+    use RemoteCommandDispatcherInjection;
 
-    protected RemoteCommandDispatcher $rceDispatcher;
     protected string $prefix = 'foreign';
-
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
-    {
-        $this->rceDispatcher = $remoteCommandDispatcher;
-    }
 
     protected function getPageToSiteBaseMapping(): array
     {
         $request = new RemoteCommandRequest();
         $request->setCommand(ShortSiteConfigurationCommand::IDENTIFIER);
 
-        $response = $this->rceDispatcher->dispatch($request);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
             $responseParts = GeneralUtility::trimExplode(':', $response->getOutputString());

@@ -9,7 +9,7 @@ use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceI
 use In2code\In2publishCore\Component\Core\Publisher\Exception\FalPublisherExecutionFailedException;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -22,6 +22,7 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
 {
     use ForeignDatabaseReconnectedInjection;
     use FalDriverServiceInjection;
+    use RemoteCommandDispatcherInjection;
 
     // All A_* constant values must be 6 chars
     public const A_DELETE = 'delete';
@@ -29,7 +30,6 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     public const A_UPDATE = 'update';
     public const A_RENAME = 'rename';
     protected AssetTransmitter $assetTransmitter;
-    protected RemoteCommandDispatcher $remoteCommandDispatcher;
     protected string $requestToken;
     protected bool $hasTasks = false;
 
@@ -41,11 +41,6 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     public function injectAssetTransmitter(AssetTransmitter $assetTransmitter): void
     {
         $this->assetTransmitter = $assetTransmitter;
-    }
-
-    public function injectRemoteCommandDispatcher(RemoteCommandDispatcher $remoteCommandDispatcher): void
-    {
-        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     public function canPublish(Record $record): bool

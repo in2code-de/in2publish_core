@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Service\Environment;
 use In2code\In2publishCore\Command\Foreign\Status\CreateMasksCommand;
 use In2code\In2publishCore\Command\Foreign\Status\DbInitQueryEncodedCommand;
 use In2code\In2publishCore\Command\Foreign\Status\EncryptionKeyCommand;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -50,14 +50,13 @@ use function strpos;
 class ForeignEnvironmentService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use RemoteCommandDispatcherInjection;
 
     protected FrontendInterface $cache;
-    protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
-    public function __construct(FrontendInterface $cache, RemoteCommandDispatcher $remoteCommandDispatcher)
+    public function __construct(FrontendInterface $cache)
     {
         $this->cache = $cache;
-        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     public function getDatabaseInitializationCommands(): string

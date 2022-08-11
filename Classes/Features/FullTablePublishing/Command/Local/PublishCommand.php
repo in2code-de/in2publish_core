@@ -6,7 +6,7 @@ namespace In2code\In2publishCore\Features\FullTablePublishing\Command\Local;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Features\FullTablePublishing\Command\BackupCommand;
 use In2code\In2publishCore\Features\FullTablePublishing\Service\TableTransferService;
@@ -22,21 +22,16 @@ class PublishCommand extends Command
     use LocalDatabaseInjection;
     use ForeignDatabaseInjection;
     use ContextServiceInjection;
+    use RemoteCommandDispatcherInjection;
 
     public const ARG_TABLE = 'table';
     public const ARG_TABLE_DESCRIPTION = 'The table to write to the foreign database.';
     public const IDENTIFIER = 'in2publish_core:fulltablepublishing:publish';
     private TableTransferService $tableTransferService;
-    private RemoteCommandDispatcher $remoteCommandDispatcher;
 
     public function injectTableTransferService(TableTransferService $tableTransferService): void
     {
         $this->tableTransferService = $tableTransferService;
-    }
-
-    public function injectRemoteCommandDispatcher(RemoteCommandDispatcher $remoteCommandDispatcher): void
-    {
-        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     protected function configure(): void

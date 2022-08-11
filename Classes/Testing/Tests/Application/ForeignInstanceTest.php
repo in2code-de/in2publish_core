@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 
 use In2code\In2publishCore\Command\Foreign\Status\AllCommand;
 use In2code\In2publishCore\CommonInjection\Typo3VersionInjection;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
@@ -45,13 +45,7 @@ use function strpos;
 class ForeignInstanceTest implements TestCaseInterface
 {
     use Typo3VersionInjection;
-
-    protected RemoteCommandDispatcher $rceDispatcher;
-
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
-    {
-        $this->rceDispatcher = $remoteCommandDispatcher;
-    }
+    use RemoteCommandDispatcherInjection;
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -60,7 +54,7 @@ class ForeignInstanceTest implements TestCaseInterface
     public function run(): TestResult
     {
         $request = new RemoteCommandRequest(AllCommand::IDENTIFIER);
-        $response = $this->rceDispatcher->dispatch($request);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
             if (false !== strpos($response->getOutputString(), '_cli_lowlevel')) {

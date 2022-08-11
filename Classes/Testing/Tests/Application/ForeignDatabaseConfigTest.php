@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  */
 
 use In2code\In2publishCore\Command\Foreign\Status\DbConfigTestCommand;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
@@ -47,14 +47,13 @@ use function strpos;
 class ForeignDatabaseConfigTest implements TestCaseInterface
 {
     use ForeignDatabaseInjection;
+    use RemoteCommandDispatcherInjection;
 
     public const DB_CONFIG_TEST_TYPE = 'DB Config Test';
-    protected RemoteCommandDispatcher $rceDispatcher;
     protected Random $random;
 
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Random $random)
+    public function __construct(Random $random)
     {
-        $this->rceDispatcher = $remoteCommandDispatcher;
         $this->random = $random;
     }
 
@@ -66,7 +65,7 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
         $this->foreignDatabase->insert('tx_in2code_in2publish_task', $row);
 
         $request = new RemoteCommandRequest(DbConfigTestCommand::IDENTIFIER);
-        $response = $this->rceDispatcher->dispatch($request);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
             $result = $this->tokenizeResponse($response->getOutput());

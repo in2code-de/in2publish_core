@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
@@ -52,13 +52,13 @@ use function unlink;
 
 class TransmissionAdapterTest implements TestCaseInterface
 {
-    protected AssetTransmitter $assetTransmitter;
-    protected RemoteCommandDispatcher $remoteCommandDispatcher;
+    use RemoteCommandDispatcherInjection;
 
-    public function __construct(AssetTransmitter $assetTransmitter, RemoteCommandDispatcher $remoteCommandDispatcher)
+    protected AssetTransmitter $assetTransmitter;
+
+    public function __construct(AssetTransmitter $assetTransmitter)
     {
         $this->assetTransmitter = $assetTransmitter;
-        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     /**
