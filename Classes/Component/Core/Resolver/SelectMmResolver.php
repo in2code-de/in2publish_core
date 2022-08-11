@@ -7,23 +7,19 @@ namespace In2code\In2publishCore\Component\Core\Resolver;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Service\ReplaceMarkersServiceInject;
 
 use function preg_match;
 
 class SelectMmResolver extends AbstractResolver
 {
-    protected ReplaceMarkersService $replaceMarkersService;
+    use ReplaceMarkersServiceInject;
+
     protected string $foreignTableWhere;
     protected string $column;
     protected string $mmTable;
     protected string $foreignTable;
     protected string $selectField;
-
-    public function injectReplaceMarkersService(ReplaceMarkersService $replaceMarkersService): void
-    {
-        $this->replaceMarkersService = $replaceMarkersService;
-    }
 
     public function configure(
         string $foreignTableWhere,

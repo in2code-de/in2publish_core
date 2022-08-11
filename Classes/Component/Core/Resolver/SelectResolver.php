@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Component\Core\Resolver;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Service\ReplaceMarkersServiceInject;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function preg_match;
@@ -16,15 +16,11 @@ use function trim;
 
 class SelectResolver extends AbstractResolver
 {
-    protected ReplaceMarkersService $replaceMarkersService;
+    use ReplaceMarkersServiceInject;
+
     protected string $column;
     protected string $foreignTable;
     protected string $foreignTableWhere;
-
-    public function injectReplaceMarkersService(ReplaceMarkersService $replaceMarkersService): void
-    {
-        $this->replaceMarkersService = $replaceMarkersService;
-    }
 
     public function configure(string $column, string $foreignTable, string $foreignTableWhere): void
     {
