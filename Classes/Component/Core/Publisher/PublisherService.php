@@ -27,6 +27,10 @@ class PublisherService
         $this->publisherCollection = new PublisherCollection();
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectTaskExecutionService(TaskExecutionService $taskExecutionService): void
     {
         $this->taskExecutionService = $taskExecutionService;
