@@ -8,7 +8,7 @@ use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
-use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
+use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
@@ -30,16 +30,11 @@ class RecordTreeBuilder
     use RecordIndexInjection;
     use EventDispatcherInjection;
     use DemandsFactoryInjection;
+    use DemandResolverInjection;
 
-    protected DemandResolver $demandResolver;
     protected DemandBuilder $demandBuilder;
     protected TcaService $tcaService;
     protected RawRecordService $rawRecordService;
-
-    public function injectDemandResolver(DemandResolver $demandResolver): void
-    {
-        $this->demandResolver = $demandResolver;
-    }
 
     public function injectDemandBuilder(DemandBuilder $demandBuilder): void
     {

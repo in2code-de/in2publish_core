@@ -6,7 +6,7 @@ namespace In2code\In2publishCore\Component\Core;
 
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
-use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
+use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 
@@ -18,21 +18,16 @@ class RecordIndex
 {
     use LocalDatabaseInjection;
     use DemandsFactoryInjection;
+    use DemandResolverInjection;
 
     /**
      * @var RecordCollection<int, Record>
      */
     private RecordCollection $records;
-    private DemandResolver $demandResolver;
 
     public function __construct()
     {
         $this->records = new RecordCollection();
-    }
-
-    public function injectDemandResolver(DemandResolver $demandResolver): void
-    {
-        $this->demandResolver = $demandResolver;
     }
 
     /**

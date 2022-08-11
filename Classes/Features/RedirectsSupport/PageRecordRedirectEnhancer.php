@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport;
  */
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
-use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
+use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Node;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
@@ -39,17 +39,13 @@ use TYPO3\CMS\Core\LinkHandling\LinkService;
 
 class PageRecordRedirectEnhancer
 {
+    use DemandResolverInjection;
+
     protected LinkService $linkService;
-    protected SelectDemandResolver $selectDemandResolver;
 
     public function injectLinkService(LinkService $linkService): void
     {
         $this->linkService = $linkService;
-    }
-
-    public function injectSelectDemandResolver(SelectDemandResolver $selectDemandResolver): void
-    {
-        $this->selectDemandResolver = $selectDemandResolver;
     }
 
     public function addRedirectsToPageRecord(RecordRelationsWereResolved $event): void
@@ -58,7 +54,7 @@ class PageRecordRedirectEnhancer
         $demands = new DemandsCollection();
         $this->collectDemandsForPages($recordTree, $demands);
         $recordCollection = new RecordCollection();
-        $this->selectDemandResolver->resolveDemand($demands, $recordCollection);
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
     }
 
     public function collectDemandsForPages(Node $node, DemandsCollection $demands): void
