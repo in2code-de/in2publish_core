@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Middleware;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Event\ExtTablesPostProcessingEvent;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -39,7 +40,6 @@ use TYPO3\CMS\Backend\Routing\Exception\ResourceNotFoundException;
 use TYPO3\CMS\Backend\Routing\Router;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Core\Bootstrap;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -59,13 +59,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class BackendRouteInitialization implements MiddlewareInterface
 {
-    protected Router $router;
-    private EventDispatcher $eventDispatcher;
+    use EventDispatcherInjection;
 
-    public function __construct(Router $router, EventDispatcher $eventDispatcher)
+    protected Router $router;
+
+    public function __construct(Router $router)
     {
         $this->router = $router;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**

@@ -29,20 +29,16 @@ namespace In2code\In2publishCore\Testing\Data;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Event\RequiredTablesWereIdentified;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class RequiredTablesDataProvider implements SingletonInterface
 {
-    protected EventDispatcher $eventDispatcher;
+    use EventDispatcherInjection;
+
     /** * @var array */
     protected array $cache = [];
-
-    public function __construct(EventDispatcher $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
 
     public function getRequiredTables(): array
     {

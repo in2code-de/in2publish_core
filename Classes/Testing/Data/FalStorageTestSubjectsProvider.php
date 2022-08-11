@@ -31,9 +31,9 @@ namespace In2code\In2publishCore\Testing\Data;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Event\StoragesForTestingWereFetched;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function array_column;
@@ -43,20 +43,15 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
 {
     use LocalDatabaseInjection;
     use ForeignDatabaseInjection;
+    use EventDispatcherInjection;
 
     public const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';
     public const PURPOSE_DRIVER = 'driver';
     public const PURPOSE_MISSING = 'missing';
     public const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
-    protected EventDispatcher $eventDispatcher;
     protected array $localStorages = [];
     protected array $foreignStorages = [];
     protected bool $initialized = false;
-
-    public function __construct(EventDispatcher $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
 
     public function getStoragesForCaseSensitivityTest(): array
     {

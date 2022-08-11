@@ -4,23 +4,19 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\DemandResolver;
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Event\DemandsWereCollected;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 class DemandResolverCollection implements DemandResolver
 {
-    protected EventDispatcher $eventDispatcher;
+    use EventDispatcherInjection;
+
     /**
      * @var array<DemandResolver>
      */
     private array $demandResolvers = [];
-
-    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
 
     public function addDemandResolver(DemandResolver $demandResolver): void
     {

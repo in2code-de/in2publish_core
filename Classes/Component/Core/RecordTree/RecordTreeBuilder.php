@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\RecordTree;
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
-use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
-use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
-use In2code\In2publishCore\Component\Core\Service\RelevantTablesService;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesServiceInjection;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 use function array_flip;
 use function array_values;
@@ -31,10 +28,10 @@ class RecordTreeBuilder
     use RecordFactoryInjection;
     use RelevantTablesServiceInjection;
     use RecordIndexInjection;
+    use EventDispatcherInjection;
 
     protected DemandResolver $demandResolver;
     protected DemandBuilder $demandBuilder;
-    protected EventDispatcher $eventDispatcher;
     protected DemandsFactory $demandsFactory;
     protected TcaService $tcaService;
     protected RawRecordService $rawRecordService;
@@ -47,11 +44,6 @@ class RecordTreeBuilder
     public function injectDemandBuilder(DemandBuilder $demandBuilder): void
     {
         $this->demandBuilder = $demandBuilder;
-    }
-
-    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
-    {
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function injectDemandsFactory(DemandsFactory $demandsFactory): void

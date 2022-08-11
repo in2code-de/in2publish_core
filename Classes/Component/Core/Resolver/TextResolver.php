@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Event\DemandsForTextWereCollected;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 use function htmlspecialchars_decode;
 use function parse_str;
@@ -17,14 +17,10 @@ use function strpos;
 
 class TextResolver extends AbstractResolver
 {
-    private const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)(?:#[\w\d\-\_\!]+)?~';
-    protected EventDispatcher $eventDispatcher;
-    protected string $column;
+    use EventDispatcherInjection;
 
-    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
+    private const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)(?:#[\w\d\-\_\!]+)?~';
+    protected string $column;
 
     public function configure(string $column): void
     {

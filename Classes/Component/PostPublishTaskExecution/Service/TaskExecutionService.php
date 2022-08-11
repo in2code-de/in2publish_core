@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Foreign\RunTasksInQueueCommand;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
@@ -37,15 +38,14 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest
 use In2code\In2publishCore\Event\TaskExecutionWasFinished;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 class TaskExecutionService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use EventDispatcherInjection;
 
     protected RemoteCommandDispatcher $remoteCommandDispatcher;
     protected TaskRepository $taskRepository;
-    protected EventDispatcher $eventDispatcher;
 
     public function injectRemoteCommandDispatcher(RemoteCommandDispatcher $remoteCommandDispatcher): void
     {
@@ -55,11 +55,6 @@ class TaskExecutionService implements LoggerAwareInterface
     public function injectTaskRepository(TaskRepository $taskRepository): void
     {
         $this->taskRepository = $taskRepository;
-    }
-
-    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
-    {
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function runTasks(): void

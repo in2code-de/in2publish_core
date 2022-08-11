@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
@@ -13,22 +14,17 @@ use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use Throwable;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 class PublisherService
 {
+    use EventDispatcherInjection;
+
     protected PublisherCollection $publisherCollection;
-    protected EventDispatcher $eventDispatcher;
     protected TaskExecutionService $taskExecutionService;
 
     public function __construct()
     {
         $this->publisherCollection = new PublisherCollection();
-    }
-
-    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
-    {
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function injectTaskExecutionService(TaskExecutionService $taskExecutionService): void

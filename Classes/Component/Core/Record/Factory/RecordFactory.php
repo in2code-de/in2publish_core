@@ -29,34 +29,29 @@ namespace In2code\In2publishCore\Component\Core\Record\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\MmDatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\PageTreeRootRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\RecordWasCreated;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 class RecordFactory
 {
     use RecordIndexInjection;
+    use EventDispatcherInjection;
+
     protected IgnoredFieldsService $ignoredFieldsService;
-    protected EventDispatcher $eventDispatcher;
     protected DatabaseRecordFactoryFactory $databaseRecordFactoryFactory;
 
     public function injectIgnoredFieldsService(IgnoredFieldsService $ignoredFieldsService): void
     {
         $this->ignoredFieldsService = $ignoredFieldsService;
-    }
-
-    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
-    {
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function injectDatabaseRecordFactoryFactory(DatabaseRecordFactoryFactory $databaseRecordFactoryFactory): void
