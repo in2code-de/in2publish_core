@@ -11,9 +11,8 @@ use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\DemandResolver\Exception\InvalidDemandException;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\RecordCollection;
-use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
-use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepository;
+use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepositoryInjection;
 use In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository;
 
 use function array_key_exists;
@@ -24,15 +23,10 @@ class SelectDemandResolver implements DemandResolver
 {
     use RecordFactoryInjection;
     use RecordIndexInjection;
+    use DualDatabaseRepositoryInjection;
 
-    protected DualDatabaseRepository $dualDatabaseRepository;
     protected SingleDatabaseRepository $localRepository;
     protected SingleDatabaseRepository $foreignRepository;
-
-    public function injectDualDatabaseRepository(DualDatabaseRepository $dualDatabaseRepository): void
-    {
-        $this->dualDatabaseRepository = $dualDatabaseRepository;
-    }
 
     public function injectLocalSingleDatabaseRepository(SingleDatabaseRepository $localRepository): void
     {

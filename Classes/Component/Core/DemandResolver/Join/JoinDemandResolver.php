@@ -12,7 +12,7 @@ use In2code\In2publishCore\Component\Core\DemandResolver\Exception\InvalidDemand
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
-use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepository;
+use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepositoryInjection;
 use In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository;
 
 use function array_keys;
@@ -21,15 +21,10 @@ class JoinDemandResolver implements DemandResolver
 {
     use RecordFactoryInjection;
     use RecordIndexInjection;
+    use DualDatabaseRepositoryInjection;
 
-    protected DualDatabaseRepository $dualDatabaseRepository;
     protected SingleDatabaseRepository $localRepository;
     protected SingleDatabaseRepository $foreignRepository;
-
-    public function injectDualDatabaseRepository(DualDatabaseRepository $dualDatabaseRepository): void
-    {
-        $this->dualDatabaseRepository = $dualDatabaseRepository;
-    }
 
     public function injectLocalSingleDatabaseRepository(SingleDatabaseRepository $localRepository): void
     {
