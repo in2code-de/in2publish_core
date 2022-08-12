@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\CacheInjection;
 use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
 use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
@@ -49,13 +50,7 @@ class SiteConfigurationTest implements TestCaseInterface
 {
     use SiteFinderInjection;
     use ForeignSiteFinderInjection;
-
-    protected FrontendInterface $cache;
-
-    public function injectCache(FrontendInterface $cache): void
-    {
-        $this->cache = $cache;
-    }
+    use CacheInjection;
 
     public function run(): TestResult
     {

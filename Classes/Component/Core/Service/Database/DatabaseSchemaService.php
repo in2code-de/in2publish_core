@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Service\Database;
 
+use In2code\In2publishCore\CommonInjection\CacheInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -11,17 +12,22 @@ use TYPO3\CMS\Core\SingletonInterface;
 class DatabaseSchemaService implements SingletonInterface
 {
     use LocalDatabaseInjection;
+    use CacheInjection {
+        injectCache as actualInjectCache;
+    }
 
     protected const CACHE_ID = 'component_database_info';
-    protected FrontendInterface $cache;
     protected array $columns = [];
     protected array $tables = [];
     protected bool $infoChanged = false;
 
+    /**
+     * @noinspection PhpUnused
+     */
     public function injectCache(FrontendInterface $cache): void
     {
-        $this->cache = $cache;
-        $cacheData = $this->cache->get(self::CACHE_ID);
+        $this->actualInjectCache($cache);
+        $cacheData = $cache->get(self::CACHE_ID);
         if (isset($cacheData['columns'])) {
             $this->columns = $cacheData['columns'];
         }

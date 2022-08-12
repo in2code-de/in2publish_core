@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Service;
 use Closure;
 use In2code\In2publishCore\Command\Foreign\Status\AllSitesCommand;
 use In2code\In2publishCore\Command\Foreign\Status\SiteConfigurationCommand;
+use In2code\In2publishCore\CommonInjection\CacheInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
@@ -55,14 +56,9 @@ class ForeignSiteFinder implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use RemoteCommandDispatcherInjection;
+    use CacheInjection;
 
     private const UNSERIALIZE_ALLOWED_CLASS = [Site::class, Uri::class, SiteLanguage::class];
-    protected FrontendInterface $cache;
-
-    public function __construct(FrontendInterface $cache)
-    {
-        $this->cache = $cache;
-    }
 
     public function getSiteByPageId(int $pageId): Site
     {
