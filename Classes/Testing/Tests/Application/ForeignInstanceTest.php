@@ -33,11 +33,11 @@ use In2code\In2publishCore\Command\Foreign\Status\AllCommand;
 use In2code\In2publishCore\CommonInjection\Typo3VersionInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Service\Extension\ExtensionServiceInjection;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function strpos;
@@ -46,6 +46,7 @@ class ForeignInstanceTest implements TestCaseInterface
 {
     use Typo3VersionInjection;
     use RemoteCommandDispatcherInjection;
+    use ExtensionServiceInjection;
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -90,7 +91,7 @@ class ForeignInstanceTest implements TestCaseInterface
 
         $foreign = $this->tokenizeResponse($response->getOutput());
 
-        $localVersion = ExtensionUtility::getExtensionVersion('in2publish_core');
+        $localVersion = $this->extensionService->getExtensionVersion('in2publish_core');
         if (!isset($foreign['Version'])) {
             return new TestResult(
                 'application.foreign_version_not_detectable',

@@ -29,7 +29,8 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Utility\ExtensionUtility;
+use In2code\In2publishCore\Service\Extension\ExtensionService;
+use In2code\In2publishCore\Service\Extension\ExtensionServiceInjection;
 use Spyc;
 
 use function explode;
@@ -38,11 +39,13 @@ use function implode;
 
 class VersionedFileProvider extends FileProvider
 {
+    use ExtensionServiceInjection;
+
     public function getConfig(): array
     {
         $path = $this->getResolvedFilePath();
 
-        $version = ExtensionUtility::getExtensionVersion('in2publish_core');
+        $version = $this->extensionService->getExtensionVersion('in2publish_core');
         [$major, $minor, $patch] = explode('.', $version);
         $candidates = [
             implode('.', [$major, $minor, $patch]),
