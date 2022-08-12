@@ -54,6 +54,10 @@ class ExecuteCommand extends Command implements LoggerAwareInterface
     public const IDENTIFIER = 'in2publish_core:rpc:execute';
     protected EnvelopeDispatcher $envelopeDispatcher;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectEnvelopeDispatcher(EnvelopeDispatcher $envelopeDispatcher): void
     {
         $this->envelopeDispatcher = $envelopeDispatcher;
