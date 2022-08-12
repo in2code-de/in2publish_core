@@ -3,6 +3,12 @@
 namespace PHPSTORM_META {
 
     registerArgumentsSet('side', 'local', 'foreign');
+    registerArgumentsSet(
+        'DependencyRequirement',
+        \In2code\In2publishCore\Component\Core\Record\Model\Dependency::REQ_EXISTING,
+        \In2code\In2publishCore\Component\Core\Record\Model\Dependency::REQ_ENABLECOLUMNS,
+        \In2code\In2publishCore\Component\Core\Record\Model\Dependency::REQ_FULL_PUBLISHED,
+    );
 
     expectedReturnValues(
         \In2code\In2publishCore\Component\Core\Record\Model\Record::getState(),
@@ -17,6 +23,10 @@ namespace PHPSTORM_META {
         \In2code\In2publishCore\Service\Context\ContextService::getContext(),
         \In2code\In2publishCore\Service\Context\ContextService::LOCAL,
         \In2code\In2publishCore\Service\Context\ContextService::FOREIGN
+    );
+    expectedReturnValues(
+        \In2code\In2publishCore\Component\Core\Record\Model\Dependency::getRequirement(),
+        argumentsSet('DependencyRequirement')
     );
 
     override(\Psr\Container\ContainerInterface::get(), type(0));
@@ -64,6 +74,11 @@ namespace PHPSTORM_META {
         \In2code\In2publishCore\Service\Database\RawRecordService::fetchRecord(),
         2,
         argumentsSet('side')
+    );
+    expectedArguments(
+        \In2code\In2publishCore\Component\Core\Record\Model\Dependency::__construct(),
+        3,
+        argumentsSet('DependencyRequirement')
     );
 }
 
