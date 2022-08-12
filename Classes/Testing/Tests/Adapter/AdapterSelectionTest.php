@@ -40,11 +40,19 @@ class AdapterSelectionTest implements TestCaseInterface
     protected RemoteAdapterRegistry $remoteAdapterRegistry;
     protected TransmissionAdapterRegistry $transmissionAdapterRegistry;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectRemoteAdapterRegistry(RemoteAdapterRegistry $remoteAdapterRegistry): void
     {
         $this->remoteAdapterRegistry = $remoteAdapterRegistry;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectTransmissionAdapterRegistry(TransmissionAdapterRegistry $transmissionAdapterRegistry): void
     {
         $this->transmissionAdapterRegistry = $transmissionAdapterRegistry;
