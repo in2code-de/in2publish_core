@@ -45,13 +45,22 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
     private const ARG_SIDE = 'side';
     private const ARG_OVERLAY = 'overlay';
     protected $escapeOutput = false;
-    protected TranslationConfigurationProvider $translateTools;
+    protected TranslationConfigurationProvider $translationConfigurationProvider;
     protected BackendUserAuthentication $backendUser;
 
-    public function __construct(TranslationConfigurationProvider $translateTools)
+    public function __construct()
     {
-        $this->translateTools = $translateTools;
         $this->backendUser = $GLOBALS['BE_USER'];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectTranslationConfigurationProvider(
+        TranslationConfigurationProvider $translationConfigurationProvider
+    ): void {
+        $this->translationConfigurationProvider = $translationConfigurationProvider;
     }
 
     public function initializeArguments(): void
@@ -76,7 +85,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
         }
 
         $systemLanguages = array_filter(
-            $this->translateTools->getSystemLanguages(),
+            $this->translationConfigurationProvider->getSystemLanguages(),
             fn(array $languageRecord): bool => $this->backendUser->checkLanguageAccess($languageRecord['uid'])
         );
 
