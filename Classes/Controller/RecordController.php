@@ -43,7 +43,7 @@ use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\StopwatchWasNotStartedException;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatch;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Service\Error\FailureCollector;
+use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
@@ -78,16 +78,11 @@ class RecordController extends ActionController
     use PageRendererInjection {
         injectPageRenderer as actualInjectPageRenderer;
     }
+    use FailureCollectorInjection;
 
-    protected FailureCollector $failureCollector;
     protected PermissionService $permissionService;
     protected PublisherService $publisherService;
     protected SimpleStopwatch $simpleStopwatch;
-
-    public function injectFailureCollector(FailureCollector $failureCollector): void
-    {
-        $this->failureCollector = $failureCollector;
-    }
 
     public function injectPermissionService(PermissionService $permissionService): void
     {

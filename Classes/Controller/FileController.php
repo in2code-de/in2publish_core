@@ -39,7 +39,7 @@ use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
-use In2code\In2publishCore\Service\Error\FailureCollector;
+use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
@@ -76,8 +76,8 @@ class FileController extends ActionController
     }
     use DefaultFalFinderInjection;
     use ModuleTemplateFactoryInjection;
+    use FailureCollectorInjection;
 
-    private FailureCollector $failureCollector;
     private PublisherService $publisherService;
 
     /**
@@ -98,11 +98,6 @@ class FileController extends ActionController
             '',
             false
         );
-    }
-
-    public function injectFailureCollector(FailureCollector $failureCollector): void
-    {
-        $this->failureCollector = $failureCollector;
     }
 
     public function injectPublisherService(PublisherService $publisherService): void
