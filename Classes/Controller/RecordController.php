@@ -44,7 +44,7 @@ use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\Stopwatc
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatch;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
-use In2code\In2publishCore\Service\Permission\PermissionService;
+use In2code\In2publishCore\Service\Permission\PermissionServiceInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
@@ -80,14 +80,9 @@ class RecordController extends ActionController
     }
     use FailureCollectorInjection;
     use PublisherServiceInjection;
+    use PermissionServiceInjection;
 
-    protected PermissionService $permissionService;
     protected SimpleStopwatch $simpleStopwatch;
-
-    public function injectPermissionService(PermissionService $permissionService): void
-    {
-        $this->permissionService = $permissionService;
-    }
 
     /**
      * @codeCoverageIgnore

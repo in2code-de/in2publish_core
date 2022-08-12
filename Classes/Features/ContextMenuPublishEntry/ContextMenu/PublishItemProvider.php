@@ -51,6 +51,7 @@ class PublishItemProvider extends AbstractProvider
     public function __construct(string $table, string $identifier, string $context = '')
     {
         parent::__construct($table, $identifier, $context);
+        // Sorry, no DI available for Context Menu Item Provider
         $this->permissionService = GeneralUtility::makeInstance(PermissionService::class);
     }
 

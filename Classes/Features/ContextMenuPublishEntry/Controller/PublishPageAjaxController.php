@@ -33,7 +33,7 @@ use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
-use In2code\In2publishCore\Service\Permission\PermissionService;
+use In2code\In2publishCore\Service\Permission\PermissionServiceInjection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -47,13 +47,7 @@ class PublishPageAjaxController
 {
     use RecordTreeBuilderInjection;
     use PublisherServiceInjection;
-
-    private PermissionService $permissionService;
-
-    public function injectPermissionService(PermissionService $permissionService): void
-    {
-        $this->permissionService = $permissionService;
-    }
+    use PermissionServiceInjection;
 
     public function publishPage(ServerRequestInterface $request): ResponseInterface
     {
