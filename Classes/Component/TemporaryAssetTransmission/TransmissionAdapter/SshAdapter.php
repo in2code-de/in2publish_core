@@ -68,6 +68,10 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
         'decimalFolderMask' => 0000,
     ];
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectForeignEnvironmentService(ForeignEnvironmentService $foreignEnvironmentService): void
     {
         $this->foreignEnvironmentService = $foreignEnvironmentService;
