@@ -46,6 +46,10 @@ class TaskRepository
     protected TaskFactory $taskFactory;
     protected string $creationDate;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectTaskFactory(TaskFactory $taskFactory): void
     {
         $this->taskFactory = $taskFactory;
