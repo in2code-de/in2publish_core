@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ModuleTemplateFactoryInjection;
 use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinderInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
@@ -43,7 +44,6 @@ use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
-use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -75,8 +75,8 @@ class FileController extends ActionController
         injectPageRenderer as actualInjectPageRenderer;
     }
     use DefaultFalFinderInjection;
+    use ModuleTemplateFactoryInjection;
 
-    private ModuleTemplateFactory $moduleTemplateFactory;
     private FailureCollector $failureCollector;
     private PublisherService $publisherService;
 
@@ -98,11 +98,6 @@ class FileController extends ActionController
             '',
             false
         );
-    }
-
-    public function injectModuleTemplateFactory(ModuleTemplateFactory $moduleTemplateFactory): void
-    {
-        $this->moduleTemplateFactory = $moduleTemplateFactory;
     }
 
     public function injectFailureCollector(FailureCollector $failureCollector): void

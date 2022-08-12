@@ -30,10 +30,10 @@ namespace In2code\In2publishCore\Controller\Traits;
  */
 
 use In2code\In2publishCore\Backend\Button\ModuleShortcutButton;
+use In2code\In2publishCore\CommonInjection\ModuleTemplateFactoryInjection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
-use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
@@ -46,13 +46,9 @@ use function strtolower;
  */
 trait ControllerModuleTemplate
 {
-    protected ModuleTemplateFactory $moduleTemplateFactory;
-    protected ModuleTemplate $moduleTemplate;
+    use ModuleTemplateFactoryInjection;
 
-    public function injectModuleTemplateFactory(ModuleTemplateFactory $moduleTemplateFactory): void
-    {
-        $this->moduleTemplateFactory = $moduleTemplateFactory;
-    }
+    protected ModuleTemplate $moduleTemplate;
 
     public function processRequest(RequestInterface $request): ResponseInterface
     {
