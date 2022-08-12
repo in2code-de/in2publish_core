@@ -59,7 +59,11 @@ class SystemInformationExportController extends ActionController
 
     protected SystemInformationExportService $sysInfoExportService;
 
-    public function __construct(SystemInformationExportService $sysInfoExportService)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectSystemInformationExportService(SystemInformationExportService $sysInfoExportService): void
     {
         $this->sysInfoExportService = $sysInfoExportService;
     }
