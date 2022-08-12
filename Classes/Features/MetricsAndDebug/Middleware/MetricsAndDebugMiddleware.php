@@ -29,6 +29,10 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
 
     protected StreamFactory $streamFactory;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectStreamFactory(StreamFactory $streamFactory): void
     {
         $this->streamFactory = $streamFactory;
