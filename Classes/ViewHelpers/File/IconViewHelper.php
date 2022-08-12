@@ -45,6 +45,7 @@ class IconViewHelper extends AbstractViewHelper
 
     /**
      * @codeCoverageIgnore
+     * @noinspection PhpUnused
      */
     public function injectIconRegistry(IconRegistry $iconRegistry): void
     {
