@@ -35,13 +35,14 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatc
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function base64_decode;
+use function bin2hex;
 use function in_array;
 use function is_array;
 use function json_decode;
+use function random_bytes;
 use function strpos;
 
 class ForeignDatabaseConfigTest implements TestCaseInterface
@@ -50,17 +51,11 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
     use RemoteCommandDispatcherInjection;
 
     public const DB_CONFIG_TEST_TYPE = 'DB Config Test';
-    protected Random $random;
-
-    public function __construct(Random $random)
-    {
-        $this->random = $random;
-    }
 
     public function run(): TestResult
     {
         $this->foreignDatabase->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);
-        $random = $this->random->generateRandomHexString(32);
+        $random = bin2hex(random_bytes(32));
         $row = ['task_type' => self::DB_CONFIG_TEST_TYPE, 'configuration' => $random];
         $this->foreignDatabase->insert('tx_in2code_in2publish_task', $row);
 
