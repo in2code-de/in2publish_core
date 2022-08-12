@@ -49,7 +49,11 @@ class EnvironmentService implements SingletonInterface
     public const STATE_CONFIGURATION_CHANGED = 'configuration_changed';
     protected PackageManager $packageManager;
 
-    public function __construct(PackageManager $packageManager)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectPackageManager(PackageManager $packageManager): void
     {
         $this->packageManager = $packageManager;
     }
