@@ -42,6 +42,10 @@ class RemoteCommandDispatcher implements SingletonInterface, LoggerAwareInterfac
 
     protected AdapterInterface $adapter;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectAdapter(AdapterInterface $adapter): void
     {
         $this->adapter = $adapter;

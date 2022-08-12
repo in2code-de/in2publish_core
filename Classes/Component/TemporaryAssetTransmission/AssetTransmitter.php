@@ -56,6 +56,10 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
         $this->foreignVarPath = rtrim($configContainer->get('foreign.varPath'), '/');
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectAdapter(AdapterInterface $adapter): void
     {
         $this->adapter = $adapter;
