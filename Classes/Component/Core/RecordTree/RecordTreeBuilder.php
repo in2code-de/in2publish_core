@@ -16,7 +16,7 @@ use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesServiceInjection;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Service\Configuration\TcaServiceInjection;
-use In2code\In2publishCore\Service\Database\RawRecordService;
+use In2code\In2publishCore\Service\Database\RawRecordServiceInjection;
 
 use function array_flip;
 use function array_values;
@@ -33,17 +33,7 @@ class RecordTreeBuilder
     use DemandResolverInjection;
     use DemandBuilderInjection;
     use TcaServiceInjection;
-
-    protected RawRecordService $rawRecordService;
-
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
-    public function injectRawRecordService(RawRecordService $rawRecordService): void
-    {
-        $this->rawRecordService = $rawRecordService;
-    }
+    use RawRecordServiceInjection;
 
     public function buildRecordTree(RecordTreeBuildRequest $request): RecordTree
     {

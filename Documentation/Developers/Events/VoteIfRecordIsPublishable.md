@@ -31,16 +31,11 @@ custom flag set.
 
 ```php
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
-use In2code\In2publishCore\Service\Database\RawRecordService;
+use In2code\In2publishCore\Service\Database\RawRecordServiceInjection;
 
 class RecordIsPublishableVoter
 {
-    protected RawRecordService $rawRecordService;
-
-    public function __construct(RawRecordService $rawRecordService)
-    {
-        $this->rawRecordService = $rawRecordService;
-    }
+    use RawRecordServiceInjection;
 
     public function __invoke(VoteIfRecordIsPublishable $event): void
     {

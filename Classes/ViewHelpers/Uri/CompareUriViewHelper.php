@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\ViewHelpers\Uri;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Service\Database\RawRecordService;
+use In2code\In2publishCore\Service\Database\RawRecordServiceInjection;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use Throwable;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
@@ -38,15 +38,14 @@ use function array_key_exists;
 
 class CompareUriViewHelper extends AbstractTagBasedViewHelper
 {
+    use RawRecordServiceInjection;
+
     protected const ARG_IDENTIFIER = 'identifier';
-    protected RawRecordService $rawRecordService;
     protected SiteService $siteService;
     protected $tagName = 'a';
 
-    public function __construct(RawRecordService $rawRecordService, SiteService $siteService)
+    public function injectSiteService(SiteService $siteService): void
     {
-        parent::__construct();
-        $this->rawRecordService = $rawRecordService;
         $this->siteService = $siteService;
     }
 
