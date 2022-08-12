@@ -35,7 +35,11 @@ class InstalledExtensionsExporter implements SystemInformationExporter
 {
     protected ListUtility $listUtility;
 
-    public function __construct(ListUtility $listUtility)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectListUtility(ListUtility $listUtility): void
     {
         $this->listUtility = $listUtility;
     }
