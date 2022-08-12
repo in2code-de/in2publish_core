@@ -41,16 +41,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class TcaController extends ActionController
 {
     use AdminToolsModuleTemplate;
-    use ConfigContainerInjection;
-    use DemandBuilderInjection;
     use TcaPreProcessingServiceInjection;
-
-    protected SelectDemandResolver $queryService;
-
-    public function injectQueryService(SelectDemandResolver $queryService): void
-    {
-        $this->queryService = $queryService;
-    }
 
     public function indexAction(): ResponseInterface
     {
