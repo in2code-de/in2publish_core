@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\CommonInjection\PageRendererInjection;
-use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinder;
+use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinderInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
@@ -74,9 +74,9 @@ class FileController extends ActionController
     use PageRendererInjection {
         injectPageRenderer as actualInjectPageRenderer;
     }
+    use DefaultFalFinderInjection;
 
     private ModuleTemplateFactory $moduleTemplateFactory;
-    private DefaultFalFinder $defaultFalFinder;
     private FailureCollector $failureCollector;
     private PublisherService $publisherService;
 
@@ -98,11 +98,6 @@ class FileController extends ActionController
             '',
             false
         );
-    }
-
-    public function injectDefaultFalFinder(DefaultFalFinder $defaultFalFinder): void
-    {
-        $this->defaultFalFinder = $defaultFalFinder;
     }
 
     public function injectModuleTemplateFactory(ModuleTemplateFactory $moduleTemplateFactory): void

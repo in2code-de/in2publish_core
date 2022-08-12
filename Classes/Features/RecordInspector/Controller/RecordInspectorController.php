@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\RecordInspector\Controller;
 
-use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinder;
+use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinderInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
@@ -21,13 +21,7 @@ class RecordInspectorController extends ActionController
 {
     use AdminToolsModuleTemplate;
     use RecordTreeBuilderInjection;
-
-    protected DefaultFalFinder $defaultFalFinder;
-
-    public function injectDefaultFalFinder(DefaultFalFinder $defaultFalFinder): void
-    {
-        $this->defaultFalFinder = $defaultFalFinder;
-    }
+    use DefaultFalFinderInjection;
 
     public function indexAction(): ResponseInterface
     {
