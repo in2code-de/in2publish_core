@@ -43,6 +43,10 @@ class PageRecordRedirectEnhancer
 
     protected LinkService $linkService;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectLinkService(LinkService $linkService): void
     {
         $this->linkService = $linkService;
