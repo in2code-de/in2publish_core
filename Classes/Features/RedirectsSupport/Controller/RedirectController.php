@@ -73,6 +73,10 @@ class RedirectController extends ActionController
 
     protected SysRedirectRepository $sysRedirectRepo;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectSysRedirectRepo(SysRedirectRepository $sysRedirectRepo): void
     {
         $this->sysRedirectRepo = $sysRedirectRepo;
