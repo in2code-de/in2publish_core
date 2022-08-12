@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Testing\Data\RequiredTablesDataProvider;
+use In2code\In2publishCore\Testing\Data\RequiredTablesDataProviderInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -40,12 +40,7 @@ use function in_array;
 
 class LocalDatabaseTest implements TestCaseInterface
 {
-    protected RequiredTablesDataProvider $requiredTablesDataProvider;
-
-    public function __construct(RequiredTablesDataProvider $requiredTablesDataProvider)
-    {
-        $this->requiredTablesDataProvider = $requiredTablesDataProvider;
-    }
+    use RequiredTablesDataProviderInjection;
 
     public function run(): TestResult
     {

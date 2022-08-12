@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
 
 use In2code\In2publishCore\Factory\ConnectionFactory;
 use In2code\In2publishCore\Factory\Exception\ConnectionUnavailableException;
-use In2code\In2publishCore\Testing\Data\RequiredTablesDataProvider;
+use In2code\In2publishCore\Testing\Data\RequiredTablesDataProviderInjection;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
@@ -42,13 +42,9 @@ use function in_array;
 
 class ForeignDatabaseTest implements TestCaseInterface
 {
-    protected RequiredTablesDataProvider $requiredTablesDataProvider;
-    protected ConnectionFactory $connectionFactory;
+    use RequiredTablesDataProviderInjection;
 
-    public function __construct(RequiredTablesDataProvider $requiredTablesDataProvider)
-    {
-        $this->requiredTablesDataProvider = $requiredTablesDataProvider;
-    }
+    protected ConnectionFactory $connectionFactory;
 
     public function injectConnectionFactory(ConnectionFactory $connectionFactory): void
     {
