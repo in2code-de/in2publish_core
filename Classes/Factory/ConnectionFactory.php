@@ -38,7 +38,9 @@ class ConnectionFactory
 {
     use ContextServiceInjection;
 
-    /** @throws ConnectionUnavailableException */
+    /**
+     * @throws ConnectionUnavailableException
+     */
     public function createLocalConnection(): Connection
     {
         $connection = DatabaseUtility::buildLocalDatabaseConnection();
@@ -48,7 +50,9 @@ class ConnectionFactory
         return $connection;
     }
 
-    /** @throws ConnectionUnavailableException */
+    /**
+     * @throws ConnectionUnavailableException
+     */
     public function createForeignConnection(): Connection
     {
         $connection = DatabaseUtility::buildForeignDatabaseConnection();
