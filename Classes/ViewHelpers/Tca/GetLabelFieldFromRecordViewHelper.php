@@ -36,7 +36,11 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
 {
     protected LabelService $labelService;
 
-    public function __construct(LabelService $labelService)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectLabelService(LabelService $labelService): void
     {
         $this->labelService = $labelService;
     }
