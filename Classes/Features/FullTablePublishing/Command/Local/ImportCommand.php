@@ -6,7 +6,7 @@ namespace In2code\In2publishCore\Features\FullTablePublishing\Command\Local;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\Features\FullTablePublishing\Service\TableBackupService;
+use In2code\In2publishCore\Features\FullTablePublishing\Service\TableBackupServiceInjection;
 use In2code\In2publishCore\Features\FullTablePublishing\Service\TableTransferService;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Symfony\Component\Console\Command\Command;
@@ -19,17 +19,12 @@ class ImportCommand extends Command
     use LocalDatabaseInjection;
     use ForeignDatabaseInjection;
     use ContextServiceInjection;
+    use TableBackupServiceInjection;
 
     public const ARG_TABLE = 'table';
     public const ARG_TABLE_DESCRIPTION = 'The table which should be truncated and filled with data from the foreign database.';
     public const IDENTIFIER = 'in2publish_core:fulltablepublishing:import';
-    private TableBackupService $tableBackupService;
     private TableTransferService $tableTransferService;
-
-    public function injectTableBackupService(TableBackupService $tableBackupService): void
-    {
-        $this->tableBackupService = $tableBackupService;
-    }
 
     public function injectTableTransferService(TableTransferService $tableTransferService): void
     {
