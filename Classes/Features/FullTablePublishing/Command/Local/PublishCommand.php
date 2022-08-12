@@ -9,7 +9,7 @@ use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Features\FullTablePublishing\Command\BackupCommand;
-use In2code\In2publishCore\Features\FullTablePublishing\Service\TableTransferService;
+use In2code\In2publishCore\Features\FullTablePublishing\Service\TableTransferServiceInjection;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,16 +23,11 @@ class PublishCommand extends Command
     use ForeignDatabaseInjection;
     use ContextServiceInjection;
     use RemoteCommandDispatcherInjection;
+    use TableTransferServiceInjection;
 
     public const ARG_TABLE = 'table';
     public const ARG_TABLE_DESCRIPTION = 'The table to write to the foreign database.';
     public const IDENTIFIER = 'in2publish_core:fulltablepublishing:publish';
-    private TableTransferService $tableTransferService;
-
-    public function injectTableTransferService(TableTransferService $tableTransferService): void
-    {
-        $this->tableTransferService = $tableTransferService;
-    }
 
     protected function configure(): void
     {
