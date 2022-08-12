@@ -49,6 +49,10 @@ class RecordFactory
 
     protected DatabaseRecordFactoryFactory $databaseRecordFactoryFactory;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectDatabaseRecordFactoryFactory(DatabaseRecordFactoryFactory $databaseRecordFactoryFactory): void
     {
         $this->databaseRecordFactoryFactory = $databaseRecordFactoryFactory;
