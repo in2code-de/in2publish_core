@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
 use Doctrine\DBAL\Driver\Exception as DriverException;
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoServiceInjection;
-use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
+use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProviderInjection;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
@@ -58,13 +58,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
 {
     use ResourceFactoryInjection;
     use ForeignFileSystemInfoServiceInjection;
-
-    protected FalStorageTestSubjectsProvider $testSubjectProvider;
-
-    public function injectFalStorageTestSubjectProvider(FalStorageTestSubjectsProvider $testSubjectProvider): void
-    {
-        $this->testSubjectProvider = $testSubjectProvider;
-    }
+    use FalStorageTestSubjectsProviderInjection;
 
     /**
      * @return TestResult
@@ -76,7 +70,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
      */
     public function run(): TestResult
     {
-        $storages = $this->testSubjectProvider->getStoragesForUniqueTargetTest();
+        $storages = $this->falStorageTestSubjectsProvider->getStoragesForUniqueTargetTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
 
         $messages = [];

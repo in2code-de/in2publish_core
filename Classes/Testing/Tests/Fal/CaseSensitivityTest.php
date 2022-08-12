@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  */
 
 use In2code\In2publishCore\CommonInjection\FlexFormServiceInjection;
-use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
+use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProviderInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
@@ -42,18 +42,11 @@ use function sprintf;
 class CaseSensitivityTest implements TestCaseInterface
 {
     use FlexFormServiceInjection;
-
-    protected FalStorageTestSubjectsProvider $testSubjectProvider;
-
-    public function __construct(
-        FalStorageTestSubjectsProvider $falStorageTestSubjectsProvider
-    ) {
-        $this->testSubjectProvider = $falStorageTestSubjectsProvider;
-    }
+    use FalStorageTestSubjectsProviderInjection;
 
     public function run(): TestResult
     {
-        $storages = $this->testSubjectProvider->getStoragesForCaseSensitivityTest();
+        $storages = $this->falStorageTestSubjectsProvider->getStoragesForCaseSensitivityTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
         $affected = [];
 
