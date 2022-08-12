@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Config\Definer;
 use In2code\In2publishCore\Config\Builder;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 use In2code\In2publishCore\Config\Validator\FileExistsValidator as FEV;
-use In2code\In2publishCore\Config\Validator\HostNameValidator;
 use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
 
 class SshConnectionDefiner implements DefinerInterface
@@ -43,7 +42,7 @@ class SshConnectionDefiner implements DefinerInterface
                       ->addArray(
                           'sshConnection',
                           Builder::start()
-                                 ->addString('host', 'www.example.com', [HostNameValidator::class => [22]])
+                                 ->addString('host', 'www.example.com')
                                  ->addInteger('port', 22, [IPv4PortValidator::class])
                                  ->addString('username', 'ssh-account')
                                  ->addString('privateKeyFileAndPathName', '/home/ssh-account/.ssh/id_rsa', [FEV::class])
