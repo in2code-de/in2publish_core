@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Features\MetricsAndDebug\Middleware;
 use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
 use In2code\In2publishCore\Features\MetricsAndDebug\Database\Logging\ContentPublisherSqlLogger;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\StopwatchWasNotStartedException;
-use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatch;
+use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatchInjection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -25,14 +25,9 @@ use function str_starts_with;
 class MetricsAndDebugMiddleware implements MiddlewareInterface
 {
     use ExtensionConfigurationInjection;
+    use SimpleStopwatchInjection;
 
-    protected SimpleStopwatch $simpleStopwatch;
     protected StreamFactory $streamFactory;
-
-    public function injectSimpleStopwatch(SimpleStopwatch $simpleStopwatch): void
-    {
-        $this->simpleStopwatch = $simpleStopwatch;
-    }
 
     public function injectStreamFactory(StreamFactory $streamFactory): void
     {

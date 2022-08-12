@@ -41,7 +41,7 @@ use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\StopwatchWasNotStartedException;
-use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatch;
+use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatchInjection;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
 use In2code\In2publishCore\Service\Permission\PermissionServiceInjection;
@@ -81,8 +81,7 @@ class RecordController extends ActionController
     use FailureCollectorInjection;
     use PublisherServiceInjection;
     use PermissionServiceInjection;
-
-    protected SimpleStopwatch $simpleStopwatch;
+    use SimpleStopwatchInjection;
 
     /**
      * @codeCoverageIgnore
@@ -102,11 +101,6 @@ class RecordController extends ActionController
             '',
             false
         );
-    }
-
-    public function injectSimpleStopwatch(SimpleStopwatch $simpleStopwatch): void
-    {
-        $this->simpleStopwatch = $simpleStopwatch;
     }
 
     public function initializeIndexAction(): void
