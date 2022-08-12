@@ -51,6 +51,10 @@ trait AdminToolsModuleTemplate
 
     protected ToolsRegistry $toolsRegistry;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectToolsRegistry(ToolsRegistry $toolsRegistry): void
     {
         $this->toolsRegistry = $toolsRegistry;
