@@ -34,7 +34,7 @@ use In2code\In2publishCore\CommonInjection\ModuleTemplateFactoryInjection;
 use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinderInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
-use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
@@ -77,8 +77,7 @@ class FileController extends ActionController
     use DefaultFalFinderInjection;
     use ModuleTemplateFactoryInjection;
     use FailureCollectorInjection;
-
-    private PublisherService $publisherService;
+    use PublisherServiceInjection;
 
     /**
      * @codeCoverageIgnore
@@ -98,11 +97,6 @@ class FileController extends ActionController
             '',
             false
         );
-    }
-
-    public function injectPublisherService(PublisherService $publisherService): void
-    {
-        $this->publisherService = $publisherService;
     }
 
     /**

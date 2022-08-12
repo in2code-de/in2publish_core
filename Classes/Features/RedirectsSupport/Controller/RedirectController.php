@@ -33,7 +33,7 @@ use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
 use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
-use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
@@ -69,9 +69,9 @@ class RedirectController extends ActionController
     use PageRendererInjection {
         injectPageRenderer as actualInjectPageRenderer;
     }
+    use PublisherServiceInjection;
 
     protected SysRedirectRepository $sysRedirectRepo;
-    private PublisherService $publisherService;
 
     public function injectSysRedirectRepo(SysRedirectRepository $sysRedirectRepo): void
     {
@@ -92,11 +92,6 @@ class RedirectController extends ActionController
             '',
             false
         );
-    }
-
-    public function injectPublisherService(PublisherService $publisherService): void
-    {
-        $this->publisherService = $publisherService;
     }
 
     /** @throws Throwable */

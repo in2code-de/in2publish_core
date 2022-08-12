@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\CommonInjection\PageRendererInjection;
-use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
 use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
@@ -79,19 +79,14 @@ class RecordController extends ActionController
         injectPageRenderer as actualInjectPageRenderer;
     }
     use FailureCollectorInjection;
+    use PublisherServiceInjection;
 
     protected PermissionService $permissionService;
-    protected PublisherService $publisherService;
     protected SimpleStopwatch $simpleStopwatch;
 
     public function injectPermissionService(PermissionService $permissionService): void
     {
         $this->permissionService = $permissionService;
-    }
-
-    public function injectPublisherService(PublisherService $publisherService): void
-    {
-        $this->publisherService = $publisherService;
     }
 
     /**

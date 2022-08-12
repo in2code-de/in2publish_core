@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
@@ -46,14 +46,9 @@ use function json_encode;
 class PublishPageAjaxController
 {
     use RecordTreeBuilderInjection;
+    use PublisherServiceInjection;
 
-    private PublisherService $publisherService;
     private PermissionService $permissionService;
-
-    public function injectPublisherService(PublisherService $publisherService): void
-    {
-        $this->publisherService = $publisherService;
-    }
 
     public function injectPermissionService(PermissionService $permissionService): void
     {
