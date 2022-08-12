@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
 use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
@@ -74,6 +75,9 @@ class RecordController extends ActionController
     use CommonViewVariables;
     use RecordIndexInjection;
     use RecordTreeBuilderInjection;
+    use PageRendererInjection {
+        injectPageRenderer as actualInjectPageRenderer;
+    }
 
     protected FailureCollector $failureCollector;
     protected PermissionService $permissionService;
@@ -95,13 +99,18 @@ class RecordController extends ActionController
         $this->publisherService = $publisherService;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
-        $pageRenderer->addInlineLanguageLabelFile(
+        $this->actualInjectPageRenderer($pageRenderer);
+        $this->pageRenderer->addInlineLanguageLabelFile(
             'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf'
         );
-        $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
-        $pageRenderer->addCssFile(
+        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
+        $this->pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
             'stylesheet',
             'all',

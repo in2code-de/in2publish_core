@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinder;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
@@ -70,16 +71,22 @@ class FileController extends ActionController
     use ControllerFilterStatus;
     use DeactivateErrorFlashMessage;
     use CommonViewVariables;
+    use PageRendererInjection {
+        injectPageRenderer as actualInjectPageRenderer;
+    }
 
     private ModuleTemplateFactory $moduleTemplateFactory;
-    private PageRenderer $pageRenderer;
     private DefaultFalFinder $defaultFalFinder;
     private FailureCollector $failureCollector;
     private PublisherService $publisherService;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
-        $this->pageRenderer = $pageRenderer;
+        $this->actualInjectPageRenderer($pageRenderer);
         $this->pageRenderer->addInlineLanguageLabelFile(
             'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf'
         );

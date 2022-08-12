@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  */
 
 use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
+use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
@@ -65,6 +66,9 @@ class RedirectController extends ActionController
     use DemandsFactoryInjection;
     use DemandResolverInjection;
     use ForeignSiteFinderInjection;
+    use PageRendererInjection {
+        injectPageRenderer as actualInjectPageRenderer;
+    }
 
     protected SysRedirectRepository $sysRedirectRepo;
     private PublisherService $publisherService;
@@ -74,9 +78,14 @@ class RedirectController extends ActionController
         $this->sysRedirectRepo = $sysRedirectRepo;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
-        $pageRenderer->addCssFile(
+        $this->actualInjectPageRenderer($pageRenderer);
+        $this->pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
             'stylesheet',
             'all',
