@@ -53,6 +53,10 @@ class RunningRequestService implements SingletonInterface
         $this->requestToken = bin2hex(random_bytes(16));
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectRunningRequestRepository(RunningRequestRepository $runningRequestRepository): void
     {
         $this->runningRequestRepository = $runningRequestRepository;
