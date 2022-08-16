@@ -40,7 +40,6 @@ interface ProcessorInterface
     public const MM_OPPOSITE_USAGE = 'MM_oppositeUsage';
     public const MM_OPPOSITE_FIELD = 'MM_opposite_field';
     public const ROOT_LEVEL = 'rootLevel';
-    public const ITEMS_PROC_FUNC = 'itemsProcFunc';
 
     /**
      * Returns TRUE if the type the processor is made for is suitable for relations

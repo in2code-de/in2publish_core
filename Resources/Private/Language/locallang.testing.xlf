@@ -134,6 +134,9 @@
 			<trans-unit id="database.garbage_collector_task_exists">
 				<source>A table garbage collector task for table tx_in2publishcore_running_request exists</source>
 			</trans-unit>
+			<trans-unit id="database.scheduler_missing">
+				<source>The Content Publisher requires a table garbage collector, which requires EXT:scheduler, but the extension is not installed.</source>
+			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest -->
 

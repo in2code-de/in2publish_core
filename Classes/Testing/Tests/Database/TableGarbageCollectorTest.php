@@ -34,11 +34,15 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class TableGarbageCollectorTest implements TestCaseInterface
 {
     public function run(): TestResult
     {
+        if (!ExtensionManagementUtility::isLoaded('scheduler')) {
+            return new TestResult('database.scheduler_missing', TestResult::ERROR);
+        }
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
 
         if (!($localDatabase instanceof Connection)) {

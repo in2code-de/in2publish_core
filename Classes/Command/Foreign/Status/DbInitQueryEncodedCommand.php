@@ -47,6 +47,6 @@ class DbInitQueryEncodedCommand extends Command
             $dbInit = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'];
         }
         $output->writeln('DBinit: ' . base64_encode(json_encode($dbInit)));
-        return Command::SUCCESS;
+        return 0;
     }
 }

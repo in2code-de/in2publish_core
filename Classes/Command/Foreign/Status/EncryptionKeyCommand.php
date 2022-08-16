@@ -42,6 +42,6 @@ class EncryptionKeyCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('EKey: ' . base64_encode($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']));
-        return Command::SUCCESS;
+        return 0;
     }
 }

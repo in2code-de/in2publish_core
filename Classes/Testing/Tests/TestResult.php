@@ -105,7 +105,9 @@ class TestResult
     {
         $translatedMessages = [];
         foreach ($this->messages as $message) {
-            $translatedMessages[] = TestLabelLocalizer::translate($message);
+            if (is_string($message)) {
+                $translatedMessages[] = TestLabelLocalizer::translate($message);
+            }
         }
         return implode(PHP_EOL, $translatedMessages);
     }

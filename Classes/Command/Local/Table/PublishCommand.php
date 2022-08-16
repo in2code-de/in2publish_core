@@ -145,6 +145,6 @@ class PublishCommand extends Command implements LoggerAwareInterface
             $errOutput->writeln(sprintf('Could not truncate foreign table "%s". Skipping import', $tableName));
         }
 
-        return Command::SUCCESS;
+        return 0;
     }
 }

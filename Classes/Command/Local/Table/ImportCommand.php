@@ -124,6 +124,6 @@ class ImportCommand extends Command implements LoggerAwareInterface
             $errOutput->writeln(sprintf('Could not truncate local table "%s". Skipping import', $tableName));
         }
 
-        return Command::SUCCESS;
+        return 0;
     }
 }

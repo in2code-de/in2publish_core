@@ -103,6 +103,6 @@ class TestCommand extends Command
         }
 
         $output->writeln('All tests passed', OutputInterface::VERBOSITY_VERBOSE);
-        return Command::SUCCESS;
+        return 0;
     }
 }

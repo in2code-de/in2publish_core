@@ -52,6 +52,8 @@ class RunningRequestService implements SingletonInterface
 
     protected $shutdownFunctionRegistered = false;
 
+    protected $registeredRecords = [];
+
     public function __construct(RunningRequestRepository $runningRequestRepository)
     {
         $this->runningRequestRepository = $runningRequestRepository;
@@ -81,8 +83,13 @@ class RunningRequestService implements SingletonInterface
 
     protected function writeToRunningRequestsTable(RecordInterface $record): void
     {
-        $recordId = $record->getIdentifier();
+        $recordId = (string)$record->getIdentifier();
         $tableName = $record->getTableName();
+
+        if (isset($this->registeredRecords[$tableName][$recordId])) {
+            return;
+        }
+        $this->registeredRecords[$tableName][$recordId] = true;
 
         $this->runningRequestRepository->add($recordId, $tableName, $this->requestToken);
 

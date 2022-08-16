@@ -66,6 +66,6 @@ class ConfigFormatTestCommand extends Command
         $definition->validate($this->validationContainer, $actual);
         $errors = $this->validationContainer->getErrors();
         $output->writeln('Config Format Test: ' . base64_encode(json_encode(array_column($errors, 'configuration'))));
-        return Command::SUCCESS;
+        return 0;
     }
 }

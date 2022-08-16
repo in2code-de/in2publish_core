@@ -32,10 +32,19 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 class InputProcessor extends AbstractProcessor
 {
     public const WIZARDS = 'wizards';
+    public const INPUT_LINK = 'inputLink';
+    public const RENDER_TYPE = 'renderType';
 
     protected $canHoldRelations = true;
 
-    protected $required = [
-        'inputs without wizards most likely do not hold relations' => self::WIZARDS,
-    ];
+    public function canPreProcess(array $config): bool
+    {
+        $can = array_key_exists(self::WIZARDS, $config)
+            || (array_key_exists(self::RENDER_TYPE, $config) && $config[self::RENDER_TYPE] === self::INPUT_LINK);
+        if (!$can) {
+            $this->lastReasons['wizards'] = 'This field does not have a wizard';
+            $this->lastReasons['renderType'] = 'This fields renderType is not inputLink';
+        }
+        return $can;
+    }
 }
