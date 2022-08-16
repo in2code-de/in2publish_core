@@ -136,6 +136,36 @@
 - [CLEANUP] Remove outdated compatibility class SignalSlotReplacement
 - [!!!][UPDATE] Require TYPO3 v11
 
+10.2.4:
+
+- [META] Set the EM conf version number to 10.2.4
+- [BUGFIX] Prevent infinite recursion when collecting records that are going to be published
+- [BUGFIX] Remove the HostNameValidator
+- [BUGFIX] Override database state if sys_file records have been changed
+- [BUGFIX] Early fail the UniqueStorageTargetTest when EXT:scheduler is not installed
+- [BUGFIX] Remove duplicate line which should have been removed
+- [BUGFIX] Prevent undefined array key access in DatabaseUtility
+- [TASK] Fix TestLabelLocalizer error
+- [BUGFIX] Allow input fields with renderType inputLink
+- [BUGFIX] Do not exclude columns which have an itemsProcFunc
+- [BUGFIX] Do not ignore MM-records to excluded tables
+- [BUGFIX] Use the group MM tablenames field instead of true/false
+- [BUGFIX] Fix type error in FileEdgeCacheInvalidationService class
+- [BUGFIX] Fallback to the foreignUid if localUid is null
+- [BUGFIX] Add conditions to not break resetting backend user preferences
+- [BUGFIX] Update the list of required tables
+- [BUGFIX] Allow envelopes to grow arbitrarily huge
+- [TESTS] Add missing ticket annotations for command tests
+- [TESTS] Add functional test to assert that MM records can be marked as publishing
+- [BUGFIX] Allow MM records to be marked as running
+- [BUGFIX] Make RunTasksInQueueCommand compatible with symfony/console 4.4 and add test
+- [TESTS] Fix tests for different dbal and TYPO3 versions
+- [TESTS] Mock Result class which exists in composerMinInstall
+- [TESTS] Fix DbConfigTestCommandTest, remove BackupCommandTest
+- [BUGFIX] Ensure all (testable) commands are executable
+- [BUGFIX] Modify FAL folder identifier to work with most 3rd party drivers
+- [RELEASE] Version 10.2.3 with publishing indicator
+
 10.2.3:
 
 - [META] Set the EM conf version number to 10.2.3
