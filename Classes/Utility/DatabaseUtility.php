@@ -317,7 +317,7 @@ class DatabaseUtility
             $query = $fromDatabase->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $queryResult = $query->select('*')->from($tableName)->execute();
-            $rows = $queryResult->rowCount();
+            $rows = (int)$queryResult->rowCount();
             while ($row = $queryResult->fetchAssociative()) {
                 if (1 !== static::insertRow($toDatabase, $tableName, $row)) {
                     throw new In2publishCoreException('Failed to import row into "' . $tableName . '"', 1562570305);
