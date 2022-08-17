@@ -37,7 +37,7 @@ class RebuildRedirectCacheTask extends AbstractTask
 {
     protected function executeTask(): bool
     {
-        GeneralUtility::makeInstance(RedirectCacheService::class)->rebuild();
+        GeneralUtility::makeInstance(RedirectCacheService::class)->rebuildAll();
         $this->addMessage('Rebuilt redirects cache');
         return true;
     }
