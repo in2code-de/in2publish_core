@@ -109,7 +109,7 @@ class PageRecordRedirectEnhancer
     }
 
     /**
-     * @return array<RecordInterface>
+     * @return array<array{local?: mixed, foreign?: mixed}>
      */
     protected function findRedirectsByDynamicTarget(RecordInterface $record): array
     {

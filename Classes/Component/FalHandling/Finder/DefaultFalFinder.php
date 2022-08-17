@@ -57,6 +57,7 @@ use function array_intersect;
 use function array_map;
 use function array_merge;
 use function array_values;
+use function ltrim;
 use function sprintf;
 
 /**
@@ -498,7 +499,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
         if ($driver->folderExists($identifier)) {
             $info = $driver->getFolderInfoByIdentifier($identifier);
             $info['identifier'] = trim($info['identifier'], '/') . '/';
-            $info['uid'] = sprintf('%d:%s', $info['storage'], $info['identifier']);
+            $info['uid'] = sprintf('%d:/%s', $info['storage'], ltrim($info['identifier'], '/'));
         } else {
             $info = [];
         }

@@ -49,7 +49,7 @@ class RunningRequestRepository
         $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
     }
 
-    public function add($recordId, $tableName, $token): void
+    public function add(string $recordId, string $tableName, string $token): void
     {
         $uniqueKey = $tableName . '/' . $recordId;
         $this->inserts[$uniqueKey] = [
@@ -63,8 +63,10 @@ class RunningRequestRepository
 
     public function flush(): void
     {
-        $this->connection->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
-        $this->inserts = [];
+        if (!empty($this->inserts)) {
+            $this->connection->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
+            $this->inserts = [];
+        }
     }
 
     /**

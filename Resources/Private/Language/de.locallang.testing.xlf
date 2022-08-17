@@ -167,6 +167,10 @@
 				<source>A table garbage collector task for table tx_in2publishcore_running_request exists</source>
 				<target state="translated">Ein Table Garbage Collector Task für die Tabelle tx_in2publishcore_running_request ist vorhanden</target>
 			</trans-unit>
+			<trans-unit id="database.scheduler_missing">
+				<source>The Content Publisher requires a table garbage collector, which requires EXT:scheduler, but the extension is not installed.</source>
+				<target state="translated">Der Content Publisher erfordert einen Garbage Collector für Tabellen, der EXT:scheduler erfordert, aber die Erweiterung ist nicht installiert.</target>
+			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest -->
 

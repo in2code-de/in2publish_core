@@ -39,6 +39,8 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use In2code\In2publishCore\Service\Error\FailureCollector;
+use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Throwable;
@@ -49,11 +51,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
+use function array_keys;
 use function count;
 use function dirname;
-use function json_encode;
 use function explode;
+use function implode;
 use function is_string;
+use function json_encode;
 use function reset;
 use function strlen;
 use function strpos;
@@ -67,16 +71,12 @@ use function trim;
 class FileController extends AbstractController
 {
     protected bool $forcePidInteger = false;
-
     protected RecordPublisher $recordPublisher;
-
     private ModuleTemplateFactory $moduleTemplateFactory;
-
     private PageRenderer $pageRenderer;
-
     private FalFinder $falFinder;
-
     protected FalPublisher $falPublisher;
+    protected FailureCollector $failureCollector;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -85,7 +85,8 @@ class FileController extends AbstractController
         RemoteCommandDispatcher $remoteCommandDispatcher,
         RecordPublisher $recordPublisher,
         PageRenderer $pageRenderer,
-        ModuleTemplateFactory $moduleTemplateFactory
+        ModuleTemplateFactory $moduleTemplateFactory,
+        FailureCollector $failureCollector
     ) {
         parent::__construct(
             $configContainer,
@@ -95,8 +96,11 @@ class FileController extends AbstractController
         );
         $this->recordPublisher = $recordPublisher;
         $this->moduleTemplateFactory = $moduleTemplateFactory;
+        $this->failureCollector = $failureCollector;
         $this->pageRenderer = $pageRenderer;
-        $this->pageRenderer->addInlineLanguageLabelFile('EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf');
+        $this->pageRenderer->addInlineLanguageLabelFile(
+            'EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf'
+        );
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
         $this->pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
@@ -180,18 +184,7 @@ class FileController extends AbstractController
         if (null !== $record) {
             $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
 
-            $recordsCount = count($relatedRecords);
-
-            if (0 === $recordsCount) {
-                throw new RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
-            }
-            if (1 === $recordsCount) {
-                $relatedRecord = reset($relatedRecords);
-            } elseif (isset($relatedRecords[$uid])) {
-                $relatedRecord = $relatedRecords[$uid];
-            } else {
-                throw new RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
-            }
+            $relatedRecord = $this->getRecordToPublish($relatedRecords, $uid);
 
             try {
                 $this->falPublisher->publishFile($relatedRecord);
@@ -209,9 +202,21 @@ class FileController extends AbstractController
                             'in2publish_core',
                             [$identifier]
                         ),
-                        LocalizationUtility::translate('file_publishing.failure', 'in2publish_core')
+                        LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
+                        AbstractMessage::ERROR
                     );
                 }
+            }
+        }
+
+        if (!$skipNotification) {
+            $failures = $this->failureCollector->getFailures();
+            if (!empty($failures)) {
+                $message = '"' . implode('"; "', array_keys($failures)) . '"';
+                $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core');
+                $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
+                $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
+                $this->addFlashMessage($message, $title, $severity);
             }
         }
 
@@ -263,5 +268,22 @@ class FileController extends AbstractController
         );
         $arguments['exception'] = $exception;
         $this->logger->warning('The folder file limit has been exceeded', $arguments);
+    }
+
+    protected function getRecordToPublish(array $relatedRecords, int $uid): RecordInterface
+    {
+        $recordsCount = count($relatedRecords);
+
+        if (0 === $recordsCount) {
+            throw new RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
+        }
+        if (1 === $recordsCount) {
+            $relatedRecord = reset($relatedRecords);
+        } elseif (isset($relatedRecords[$uid])) {
+            $relatedRecord = $relatedRecords[$uid];
+        } else {
+            throw new RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
+        }
+        return $relatedRecord;
     }
 }

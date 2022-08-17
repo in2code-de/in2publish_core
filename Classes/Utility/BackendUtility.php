@@ -147,21 +147,24 @@ class BackendUtility
             if (
                 is_array($data[$table])
                 && is_string(key($data[$table]))
+                && is_array(current($data[$table]))
                 && array_key_exists('pid', current($data[$table]))
                 && 0 === strpos(key($data[$table]), 'NEW_')
             ) {
                 return (int)current($data[$table])['pid'];
             }
-            $query = $localConnection->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $result = $query->select('pid')
-                            ->from($table)
-                            ->where($query->expr()->eq('uid', (int)key($data[$table])))
-                            ->setMaxResults(1)
-                            ->execute()
-                            ->fetchAssociative();
-            if (false !== $result && isset($result['pid'])) {
-                return (int)$result['pid'];
+            if (is_array($data[$table]) && MathUtility::canBeInterpretedAsFloat(key($data[$table]))) {
+                $query = $localConnection->createQueryBuilder();
+                $query->getRestrictions()->removeAll();
+                $result = $query->select('pid')
+                                ->from($table)
+                                ->where($query->expr()->eq('uid', (int)key($data[$table])))
+                                ->setMaxResults(1)
+                                ->execute()
+                                ->fetchAssociative();
+                if (false !== $result && isset($result['pid'])) {
+                    return (int)$result['pid'];
+                }
             }
         }
 
