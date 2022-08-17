@@ -375,6 +375,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         array $foreignProperties
     ): bool {
         $hasBeenMoved = false;
+        $sortField = $GLOBALS['TCA'][$tableName]['ctrl']['sortby'] ?? null;
         // 1. it was created already
         if (
             !empty($this->runtimeCache[$tableName][$identifier])
@@ -426,7 +427,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
             if ($localProperties['pid'] !== $foreignProperties['pid']) {
                 $hasBeenMoved = true;
             } elseif (
-                ($sortField = ($GLOBALS['TCA'][$tableName]['ctrl']['sortby'] ?? null))
+                null !== $sortField
                 && ($localProperties[$sortField] ?? null) !== ($foreignProperties[$sortField] ?? null)
             ) {
                 $hasBeenMoved = true;

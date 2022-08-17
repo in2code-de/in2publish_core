@@ -184,18 +184,7 @@ class FileController extends AbstractController
         if (null !== $record) {
             $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
 
-            $recordsCount = count($relatedRecords);
-
-            if (0 === $recordsCount) {
-                throw new RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
-            }
-            if (1 === $recordsCount) {
-                $relatedRecord = reset($relatedRecords);
-            } elseif (isset($relatedRecords[$uid])) {
-                $relatedRecord = $relatedRecords[$uid];
-            } else {
-                throw new RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
-            }
+            $relatedRecord = $this->getRecordToPublish($relatedRecords, $uid);
 
             try {
                 $this->falPublisher->publishFile($relatedRecord);
@@ -279,5 +268,22 @@ class FileController extends AbstractController
         );
         $arguments['exception'] = $exception;
         $this->logger->warning('The folder file limit has been exceeded', $arguments);
+    }
+
+    protected function getRecordToPublish(array $relatedRecords, int $uid): array
+    {
+        $recordsCount = count($relatedRecords);
+
+        if (0 === $recordsCount) {
+            throw new RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
+        }
+        if (1 === $recordsCount) {
+            $relatedRecord = reset($relatedRecords);
+        } elseif (isset($relatedRecords[$uid])) {
+            $relatedRecord = $relatedRecords[$uid];
+        } else {
+            throw new RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
+        }
+        return $relatedRecord;
     }
 }

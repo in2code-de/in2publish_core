@@ -78,27 +78,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
 
         if (0 === $uid || 0 === $database->count('uid', 'tx_in2code_rpc_request', ['uid' => $uid])) {
             try {
-                $database->beginTransaction();
-
-                $database->insert('tx_in2code_rpc_request', [
-                    'command' => $envelope->getCommand(),
-                ]);
-                $uid = (int)$database->lastInsertId();
-
-                $request = serialize($envelope->getRequest());
-                $chunks = str_split($request, self::CHUNK_SIZE);
-                foreach ($chunks as $sorting => $chunk) {
-                    $database->insert('tx_in2code_rpc_data', [
-                        'request' => $uid,
-                        'data_type' => 'request',
-                        'payload' => $chunk,
-                        'sorting' => $sorting,
-                    ]);
-                }
-
-                $database->commit();
-
-                return $uid;
+                return $this->insertNewEnvelope($database, $envelope);
             } catch (Throwable $exception) {
                 $this->logger->error(
                     'Failed to send envelope [' . $uid . ']',
@@ -109,19 +89,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
         }
 
         try {
-            $database->beginTransaction();
-
-            $response = serialize($envelope->getResponse());
-            $chunks = str_split($response, self::CHUNK_SIZE);
-            foreach ($chunks as $sorting => $chunk) {
-                $database->insert('tx_in2code_rpc_data', [
-                    'request' => $uid,
-                    'data_type' => 'response',
-                    'payload' => $chunk,
-                    'sorting' => $sorting,
-                ]);
-            }
-            $database->commit();
+            $this->updateEnvelope($database, $envelope, $uid);
             return true;
         } catch (Throwable $exception) {
             $this->logger->error(
@@ -235,5 +203,46 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
         $uid = $query->execute()->fetchColumn();
         $database->delete('tx_in2code_rpc_request', ['uid' => $uid]);
         $database->delete('tx_in2code_rpc_data', ['request' => $uid]);
+    }
+
+    protected function insertNewEnvelope(Connection $database, Envelope $envelope): int
+    {
+        $database->beginTransaction();
+
+        $database->insert('tx_in2code_rpc_request', [
+            'command' => $envelope->getCommand(),
+        ]);
+        $uid = (int)$database->lastInsertId();
+
+        $request = serialize($envelope->getRequest());
+        $chunks = str_split($request, self::CHUNK_SIZE);
+        foreach ($chunks as $sorting => $chunk) {
+            $database->insert('tx_in2code_rpc_data', [
+                'request' => $uid,
+                'data_type' => 'request',
+                'payload' => $chunk,
+                'sorting' => $sorting,
+            ]);
+        }
+
+        $database->commit();
+        return $uid;
+    }
+
+    protected function updateEnvelope(Connection $database, Envelope $envelope, int $uid): void
+    {
+        $database->beginTransaction();
+
+        $response = serialize($envelope->getResponse());
+        $chunks = str_split($response, self::CHUNK_SIZE);
+        foreach ($chunks as $sorting => $chunk) {
+            $database->insert('tx_in2code_rpc_data', [
+                'request' => $uid,
+                'data_type' => 'response',
+                'payload' => $chunk,
+                'sorting' => $sorting,
+            ]);
+        }
+        $database->commit();
     }
 }
