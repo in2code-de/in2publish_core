@@ -63,8 +63,10 @@ class RunningRequestRepository
 
     public function flush(): void
     {
-        $this->connection->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
-        $this->inserts = [];
+        if (!empty($this->inserts)) {
+            $this->connection->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
+            $this->inserts = [];
+        }
     }
 
     /**
