@@ -47,12 +47,12 @@ help:
 install: .prepare
 	chmod +x .project/githooks/*
 	git config core.hooksPath .project/githooks/
-	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.phive:/tmp/phive in2code/php:7.4-fpm phive install
+	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.phive:/tmp/phive in2code/php:7.4-fpm phive install --force-accept-unsigned
 	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.composer/cache:/tmp/composer/cache -v $$HOME/.composer/auth.json:/tmp/composer/auth.json in2code/php:7.4-fpm composer install
 
 ## Run grumphp which will run all code quality tools concurrently
 qa-code-quality:
-	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.phive:/tmp/phive in2code/php:7.4-fpm .project/phars/grumphp -c .project/qa/grumphp.yml run
+	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.phive:/tmp/phive in2code/php:7.4-fpm bash -c "PATH=\"$$PWD/.project/phars:\$$PATH\" .project/phars/grumphp -c .project/qa/grumphp.yml run"
 
 ## Run all automated tests in the in2publish_core test suite
 qa-tests: .prepare-tests qa-tests-unit qa-tests-functional
