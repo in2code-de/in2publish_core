@@ -270,7 +270,7 @@ class FileController extends AbstractController
         $this->logger->warning('The folder file limit has been exceeded', $arguments);
     }
 
-    protected function getRecordToPublish(array $relatedRecords, int $uid): array
+    protected function getRecordToPublish(array $relatedRecords, int $uid): RecordInterface
     {
         $recordsCount = count($relatedRecords);
 
