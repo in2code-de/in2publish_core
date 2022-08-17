@@ -1,7 +1,4 @@
 <?php
-
-use TYPO3\TestingFramework\Core\Testbase;
-
 /*
  * This file is part of the TYPO3 CMS project.
  *
