@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
 use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
@@ -50,7 +51,6 @@ use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-
 use function count;
 use function implode;
 use function reset;
@@ -70,6 +70,7 @@ class RedirectController extends ActionController
         injectPageRenderer as actualInjectPageRenderer;
     }
     use PublisherServiceInjection;
+    use ForeignDatabaseInjection;
 
     protected SysRedirectRepository $sysRedirectRepo;
 
@@ -121,7 +122,12 @@ class RedirectController extends ActionController
      */
     public function listAction(Filter $filter = null, int $page = 1): ResponseInterface
     {
-        $additionalWhere = '';
+        $query = $this->foreignDatabase->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
+        $uidList = implode(',', array_column($query->execute()->fetchAll(), 'uid'));
+
+        $additionalWhere = "deleted = 0 OR uid NOT IN ($uidList)";
         if (null !== $filter) {
             $additionalWhere = $filter->toAdditionWhere();
         }

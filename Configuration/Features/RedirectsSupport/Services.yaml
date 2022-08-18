@@ -5,6 +5,7 @@ services:
     public: false
     bind:
       $localDatabase: '@In2code.In2publishCore.Database.Local'
+      $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
 
   In2code\In2publishCore\Features\RedirectsSupport\:
     resource: '../../../Classes/Features/RedirectsSupport/*'
