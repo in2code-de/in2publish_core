@@ -1,6 +1,7 @@
 # .gitattributes
 
 /.github                       export-ignore
+/.project                      export-ignore
 /Build                         export-ignore
 .gitkeep                       export-ignore
 /.editorconfig                 export-ignore
@@ -8,11 +9,12 @@
 /.gitignore                    export-ignore
 /.eslintrc                     export-ignore
 /.travis.yml                   export-ignore
-/phpunit.xml.dist              export-ignore
-/Tests                         export-ignore
 /Resources/Private/Sass        export-ignore
 /Resources/Private/config.rb   export-ignore
 /Resources/Private/Clickdummy  export-ignore
+/Tests                         export-ignore
+/Makefile                      export-ignore
+/phive.xml                     export-ignore
 
 # Handle line endings automatically for files detected as text
 # and leave all files detected as binary untouched.
