@@ -188,7 +188,8 @@ class FileController extends ActionController
                         'file_publishing.failure.file',
                         'in2publish_core',
                         [$combinedIdentifier]
-                    ),
+                    )
+                    . $e->getMessage(),
                     LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
                     AbstractMessage::ERROR
                 );
