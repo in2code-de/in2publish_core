@@ -1,5 +1,416 @@
 # In2publish Core Change Log
 
+12.0.0:
+
+- [META] Set the branch alias version number to 12.0.x-dev
+- [META] Set the EM conf version number to 12.0.0
+- [META] Mark as compatible with PHP 8.1
+- [META] Update branch alias
+- [!!!][FEATURE] Aggregate Queries to improve performance and reduce stability
+- [CLEANUP] Remove unused imports
+- [BUGFIX] Import all functions and constants
+- [BUGFIX] Output the exception message when file publishing failed
+- [BUGFIX] Make the FileEdgeCacheInvalidationService public to be instantiable in the task
+- [BUGFIX] Exclude fully deleted redirects from the list
+- [TASK] Add data attribute record-identifier required for acceptance tests
+- [META] Update branch-alias
+- [COMMENT] Ignore TranslationConfigurationProvider injection for CodeCov
+- [COMMENT] Ignore LabelService injection for CodeCov
+- [COMMENT] Ignore UriBuilder injection for CodeCov
+- [REFACTOR] Introduce trait to inject the RequiredTablesDataProvider
+- [COMMENT] Ignore TestCaseService injection for CodeCov
+- [COMMENT] Ignore PackageManager injection for CodeCov
+- [REFACTOR] Extract ExtensionUtility::getExtensionVersion to ExtensionService with injection trait
+- [COMMENT] Ignore ConnectionPool injection for CodeCov
+- [COMMENT] Ignore ListUtility injection for CodeCov
+- [COMMENT] Ignore SystemInformationExportService injection for CodeCov
+- [REFACTOR] Introduce trait to inject the RawRecordService
+- [REFACTOR] Replace the static call to DatabaseUtility with the ConnectionFactory
+- [REFACTOR] Replace TYPO3 Random class with two function calls
+- [DOCS] Add v11 to v12 UPGRADING section
+- [DEV] Add PhpStorm meta for Dependency constants
+- [REFACTOR] Introduce trait to inject the FalStorageTestSubjectsProvider
+- [COMMENT] Ignore IconRegistry injection PhpUnused inspection
+- [COMMENT] Ignore Remote- and TransmissionAdapterRegistry injection for CodeCov
+- [COMMENT] Ignore SysRedirectRepository injection for CodeCov
+- [COMMENT] Ignore LinkService injection for CodeCov
+- [COMMENT] Ignore RunningRequestRepository injection for CodeCov
+- [COMMENT] Ignore StreamFactory injection for CodeCov
+- [REFACTOR] Introduce trait to inject the TableTransferService
+- [REFACTOR] Introduce trait to inject the TableBackupService
+- [COMMENT] Ignore ToolsRegistry injection for CodeCov
+- [CLEANUP] Remove unused injections from TcaController
+- [REFACTOR] Introduce trait to inject the SimpleStopwatch
+- [REFACTOR] Introduce trait to inject the PermissionService
+- [REFACTOR] Introduce trait to inject the PublisherService
+- [REFACTOR] Introduce trait to inject the FailureCollector
+- [REFACTOR] Introduce trait to inject the ModuleTemplateFactory
+- [REFACTOR] Introduce trait to inject the DefaultFalFinder
+- [REFACTOR] Introduce trait to inject the PageRenderer
+- [COMMENT] Ignore ForeignEnvironmentService injection for CodeCov
+- [COMMENT] Ignore EnvelopeDispatcher injection for CodeCov
+- [COMMENT] Ignore AdapterInterfaces injection for CodeCov
+- [COMMENT] Ignore TaskFactory injection for CodeCov
+- [COMMENT] Reformat DocBlocks in ConnectionFactory
+- [REFACTOR] Introduce trait to inject the cache
+- [TEST] Test that the cache populates columns and tables of the DatabaseSchemaService
+- [COMMENT] Ignore DatabaseRecordFactoryFactory injection for CodeCov
+- [REFACTOR] Introduce trait to inject the ForeignSiteFinder
+- [CLEANUP] Remove unused class DatabaseSchemaService
+- [REFACTOR] Introduce trait to inject the TaskRepository
+- [REFACTOR] Introduce trait to inject the ExtensionConfiguration
+- [REFACTOR] Introduce trait to inject the Registry
+- [COMMENT] Add comment about the service config of the SingleDatabaseRepository
+- [REFACTOR] Use DI to configure the injection of the "other" connection
+- [REFACTOR] Inject the ExtensionConfiguration object instead of the configured accessed value
+- [REFACTOR] Introduce trait to inject the DynamicValueProviderRegistry
+- [REFACTOR] Introduce trait to inject the TcaPreProcessingService
+- [REFACTOR] Introduce trait to inject the ReplaceMarkersService
+- [REFACTOR] Introduce trait to inject the DatabaseSchemaService
+- [COMMENT] Ignore RawRecordService injection for CodeCov
+- [COMMENT] Ignore TcaService injection for CodeCov
+- [REFACTOR] Introduce trait to inject the DemandBuilder
+- [REFACTOR] Introduce trait to inject the IgnoredFieldsService
+- [COMMENT] Ignore TaskExecutionService injection for CodeCov
+- [COMMENT] Ignore AssetTransmitter injection for CodeCov
+- [REFACTOR] Introduce trait to inject the RemoteCommandDispatcher
+- [COMMENT] Ignore DriverRegistry injection for CodeCov
+- [COMMENT] Ignore TableContentService injection for CodeCov
+- [REFACTOR] Introduce trait to inject the ExcludedTablesService
+- [COMMENT] Ignore FileDemandResolver injection for CodeCov
+- [REFACTOR] Introduce trait to inject the Letterbox
+- [REFACTOR] Introduce trait to inject the RecordTreeBuilder
+- [REFACTOR] Introduce trait to inject the FileSystemInfoService
+- [REFACTOR] Introduce trait to inject the FalDriverService
+- [REFACTOR] Introduce trait to inject the ForeignFileSystemInfoService
+- [REFACTOR] Introduce trait to inject the ResourceFactory
+- [REFACTOR] Introduce trait to inject the SingleDatabaseRepository
+- [REFACTOR] Introduce trait to inject the DemandResolverCollection
+- [REFACTOR] Introduce trait to inject the DemandResolver
+- [REFACTOR] Introduce trait to inject the ValidationContainer
+- [REFACTOR] Introduce trait to inject the Typo3Version
+- [REFACTOR] Introduce trait to inject the TestingService
+- [REFACTOR] Introduce trait to inject the DemandsFactory
+- [REFACTOR] Introduce trait to inject the SiteFinder
+- [COMMENT] Ignore CommandRegistry injection for CodeCov
+- [COMMENT] Ignore Container injection for CodeCov
+- [REFACTOR] Introduce trait to inject the DualDatabaseRepository
+- [REFACTOR] Introduce trait to inject the ContextService
+- [REFACTOR] Introduce trait to inject the ResolverService
+- [REFACTOR] Introduce trait to inject the FlexFormFlatteningService
+- [REFACTOR] Introduce trait to inject the IconFactory
+- [REFACTOR] Introduce trait to inject the FlexFormService
+- [REFACTOR] Introduce trait to inject the FlexFormTools
+- [REFACTOR] Introduce trait to inject the EventDispatcher
+- [REFACTOR] Introduce trait to inject the RecordIndex
+- [REFACTOR] Introduce trait to inject the ForeignDatabase and the reconnected variant
+- [REFACTOR] Introduce trait to inject the LocalDatabase
+- [REFACTOR] Introduce trait to inject the TcaEscapingMarkerService
+- [REFACTOR] Introduce trait to inject the RelevantTablesService
+- [REFACTOR] Introduce trait to inject the RecordFactory
+- [REFACTOR] Introduce trait to inject the EnvironmentService
+- [CLEANUP] Remove old commented code
+- [REFACTOR] Introduce trait to inject the config container
+- [DOCS] Update docs with ssh adapter hints, remove old or resolved known issues, update FAQ
+- [BUGFIX] Pass a RecordTreeBuildRequest to the method buildRecordTree
+- [DOCS] Update all docs for v12
+- [BUGFIX] Find the execution line number for the first frame when dumping queries
+- [BUGFIX] Fix undefined array key warning in PublishOverviewModule
+- [FEATURE] Improve query logs for smaller memory usage, and added args
+- [BUGFIX] Use the enableField's name if the field does not have a defined label
+- [BUGFIX] Use a bound closure to be able to use $this
+- [BUGFIX] Correctly check if pages is the only child classification
+- [FEATURE] Allow editors to publish pages with unreachable dependencies
+- [FEATURE] Detect moved files and display them accordingly
+- [BUGFIX] Update the default setting for excludeRelatedTables
+- [BUGFIX] Ignore legacy options ignoreFieldsForDifferenceView if it's empty
+- [BUGFIX] Fix error when publishing renamed files
+- [FEATURE] Support files and folders in the RecordInspector admin tool
+- [TEST] Fix InputProcessorUnitTest
+- [BUGFIX] Fix undefined array key exception in InputProcessor
+- [CLEANUP] Remove unused classes
+- [BUGFIX] Ignore invalid flex form identifier
+- [BUGFIX] Early return when a FlexFormStructure does not have a dataStructureKey
+- [BUGFIX] Restore the publish arrow icon
+- [BUGFIX] Use envelopes instead of a another crappy implementation of rFALd
+- [BUGFIX] Use the "transient" folder to temporary publish files
+- Revert "[BUGFIX] Fix classification for FileRecords"
+- [BUGFIX] Extract the identifier hash from the temporary file path
+- [TEST] Fix test failing due to lower PHP version in test setup
+- [TEST] Add RecordTreeBuilderTest
+- [BUGFIX] Fix name of injection method for DemandResolver
+- [TEST] Fix unit tests
+- [TEST] Add RecordTreeTest and RecordTreeBuildRequestTest
+- [CLEANUP] Remove superfluous comma in FileDemandResolverTest
+- [TEST] Add FolderRecordTest and TtContentDatabaseRecordTest
+- [TEST] Add more unit tests in folder Component/Core/Record
+- [TEST] Add DatabaseRecordFactoryFactoryTest and FileRecordTest
+- [TEST] Fix covers annotations
+- [TEST] Add dependency test
+- [WIP][TEST] Add RecordFactoryTest
+- [TEST] Fix covers annotation for FileDemandResolver and cleanup code
+- [WIP][TEST] Add FileDemandResolverTest
+- [TEST] Add FileRecordListenerTest
+- [BUGFIX] Fix classification for FileRecords
+- [TEST] Add FlexResolverTest
+- [TEST] Add test for resolve with additionalWhereClause to SelectMmResolverTest
+- [TEST] Add more resolver unit tests
+- [API] Add getter for dependency properties
+- [REFACTOR] Simplify code to get unfulfilled dependencies as strings
+- [FEATURE] Add superseding of dependencies and list all unfulfilled in the DirtyPropertiesList
+- [FEATURE] Add reduce to FlatCollection
+- [BUGFIX] Fix labels for dependencies
+- [BUGFIX] Initialize the FlatCollection objects property with an empty array
+- [BUGFIX] Mark pages as publishable if their children's dependencies would be fulfilled by publishing the page
+- [FEATURE] Display the reasons a record is not publishable in the record details
+- [FEATURE] Make the dependencyRecursionLimit dynamically
+- [BUGFIX] Resolve CType shortcut record dependencies only once
+- [REFACTOR] Extract common collection properties to FlatCollection
+- [FEATURE] Use the record index to query less records in the RawRecordService
+- [META] Add expected arguments for all RawRecordService methods
+- [FEATURE] Additionally group queries by caller when debugging queries
+- [BUGFIX] Recursively resolve 3 levels of dependencies
+- [CLEANUP] Remove the experimental RecordDependencyResolver
+- [CODESTYLE] Reformat the labelArgumentsFactory of the AbstractDatabaseRecord
+- [BUGFIX] Early return for added/deleted records in dependency check
+- [BUGFIX] Use the correct recordCollection to find pages recursively
+- [CLEANUP] Remove unused imports from RecordController and AbstractDatabaseRecord
+- [BUGFIX] Correctly use the decision of CollectReasonsWhyTheRecordIsNotPublishable
+- [FEATURE] Collect and debug SQL queries, replace ExecutionTimeService with SimpleStopwatch
+- Wip: [FEATURE] Introduce dependencies between records that prohibit unsafe publishing
+- [TEST] Adjust covers annotations, refactor variable names
+- [TEST] Add testIsSysCategoryField to SelectProcessorTest
+- [TEST] Add ExtNewsRelatedProcessorTest
+- [TEST] Add missing strict_types declaration in test classes
+- [TEST] Add CategoryProcessorTest
+- [TEST] Add some more test cases to GroupProcessorTest
+- [TEST] Use camel case for table and field names in GroupProcessorTest
+- [TEST] Add some more tests to GroupProcessorTest
+- [TEST] Add TcaEscapingMarkerServiceTest
+- [TEST] Fix InlineProcessorTest
+- [TEST] Fix GroupProcessorTest
+- [TEST] Add InlineProcessorTest
+- [TEST] Add some more tests to AbstractProcessorTest
+- [META] Add overrides for factory methods
+- [META] Remove redundant phpstorm meta
+- [TEST] Add AbstractProcessorTest
+- [TEST] Add test for mmTableRelations with MM_match_fields
+- [TEST] Refactor GroupProcessorTest and add some more tests
+- [TEST] Add GroupProcessorTest
+- [TEST] Test calling of cancel, reverse and finish method
+- [TEST] Unset global variables after test completion
+- [TESTS] Fix all coverage annotations
+- [TEST] Add PublisherServiceTest
+- [TEST] Remove unused global variable in PublisherCollectionTest
+- [TEST] Test publish method in PublisherCollectionTest
+- [TEST] Fix covers annotations
+- [TEST] Add tests for finish, cancel and reverse to PublisherCollectionTest
+- [TEST] Add additional test to DatabaseRecordPublisherTest
+- [TEST] Add PublisherCollectionTest
+- [TEST] Add more tests to FileRecordPublisherTest
+- [TEST] Add FolderRecordPublisherTest
+- [TEST] Add DatabaseRecordPublisherTest and FileRecordPublisherTest
+- [CLEANUP] Remove refactoring remnants
+- [REFACTOR] Move all record models to Component/Core/Record and Domain/Services to Services
+- [FEATURE] Add the execution time to the publishing result flash message
+- [BUGFIX] Always return a RecordTree of the requested record
+- [FEATURE] Set the maximum page recursion in the Publish Overview Module
+- [REFACTOR] Rename TcaHandling to Core
+- [BUGFIX] Revert change to WeakReference in RecordColletion to prevent unintentional record dropping
+- [BUGFIX] Assign common variables to all admin tools templates
+- [FEATURE] Add AdminTool to inspect record trees
+- [DOCS] Add missing view.breadcrumb setting to LocalConf file
+- [CLEANUP] Remove unused fluid template imports
+- [BUGFIX] Get a record from the index instead of using a generator as array
+- [CLEANUP] Remove debug.disableParentRecords
+- [REFACTOR] Resolve todo to refactor to AbstractTask::toArray
+- [META] Add return values meta for ContextService::getContext
+- [CODESYTLE] Chop down Builder::addOptionalArray
+- [REFACTOR] Move the ConfigContainer to the component folder
+- [META] Add metadata for all remaining methods that expect constants
+- [BUGFIX] Add missing parameter type hint for FalStorageTestSubjectsProvider::getStorages
+- [CLEANUP] Remove unused adapter type constants from adapter interfaces
+- [BUGFIX] Fix inheritance of RedirectController and use BE_USER
+- [BUGFIX] Configure cache injection of ForeignSiteFinder
+- [BUGFIX] Add missing property type hints
+- [META] Add expectedArguments for ProcessingResult::__construct
+- [BUGFIX] Remove superfluous space after regex delimiter
+- [BUGFIX] Add JSON_THROW_ON_ERROR flag where possible
+- [BUGFIX] Explicitly use '/' as regex delimiter
+- [COMMENT] Ignore false-positive UnsupportedStringOffsetOperationsInspection
+- [REFACTOR] Use php language features to reduce code
+- [BUGFIX] Add missing return type hints
+- [BUGFIX] Add exceptions classes for all missing concrete exceptions
+- [BUGFIX] Set correct return type of Envelope::getRequest
+- [CLEANUP] Remove redundant type annotation from FlexResolver
+- [BUGFIX] Streamline parameter name of Node::addChild
+- [COMMENT] Ignore false-positive unnecessary curly braces
+- [BUGFIX] Unwrap condition which is always true
+- [CLEANUP] Use the actual Connection class to reference dbal constants
+- [CLEANUP] Remove redundant default parameters
+- [BUGFIX] Add missing return in getSysRedirectSelect
+- [CLEANUP] Remove unused parameters
+- [CLEANUP] Remove unused methods from AbstractTask and BackendUtility
+- [TEST] Fix DbInitQueryEncodedCommandTest namespace
+- [REFACTOR] Move the ExecuteCommand into its component folder
+- [REFACTOR] Move all "communication" parts to "component"
+- [REFACTOR] Rewrite the RecordCollection to use Generators
+- [CLEANUP] Remove all performance tests, they have never contributed anything else that confusion
+- [DOCS] Add missing event documentation
+- [BUGFIX] Add the option the ignore file and folder records
+- [CLEANUP] Remove leftover PhysicalFileWasPublished.md
+- [CLEANUP] Remove unused event FolderWasPublished
+- [CLEANUP] Remove unused event FolderInstanceWasCreated
+- [CLEANUP] Remove unused event RootRecordCreationWasFinished
+- [FEATURE] Extract table publishing commands to a feature and improve service loading
+- [CODESTYLE] Reformat code to fit PSR-12
+- [CLEANUP] Remove unused utilities/utility methods and UidReservationService
+- [FEATURE] Display the environment status information in the footer
+- [BUGFIX] Strip the executionTime microsendonds to the first 4 digits
+- [FEATURE] Reorganize demand resolver and create a factory for easier injection
+- [BUGFIX] Actually implement JoinResolver findMissingTableRecords which was only copied from the SelectDemandResolver
+- [BUGFIX] Correctly access an array with square brackets
+- [BUGFIX] Set correct order of joinTables/tables in JoinRowCollection
+- [BUGFIX] Early return in the FlexResolver when a record has no flexform data
+- [BUGFIX] Strictly check if the deleteField value is null
+- [REFACTOR] Replace anonymous functions with arrow functions
+- [CLEANUP] Remove unused method getAllTableNamesAllowedOnRootLevel from TcaService
+- [FEATURE] Restore the filter of allowed tables per doktype for searching in all tables
+- [REFACTOR] Inline one-line-methods from TcaService
+- [CLEANUP] Remove unused MissingArgumentException
+- [CLEANUP] Remove abstract controllers from the hierarchy, always show the executionTime
+- [BUGFIX] Don't use the RecordCollection as array anymore
+- [BUGFIX] Detect renamed files and publish them as such
+- [BUGFIX] Restore the filelist comparison view
+- [CLEANUP] Remove unused viewhelpers and nesting of partials
+- [REFACTOR] Move RunningRequests to feature PreventParallelPublishing
+- [REFACTOR] Create BackButton class to transfer logic from RedirectController
+- [CLEANUP] Remove the unused class PageSlugService and table tx_in2publishcore_pages_slug_data
+- [CLEANUP] Remove unused event class AllRelatedRecordsWereAddedToOneRecord
+- [FEATURE] Restore the PageRecordRedirectEnhancer (with dynamic target urls only)
+- [BUGFIX] Remove runTasks call from the RedirectController, it's now part of the publishing process
+- [BUGFIX] Restore the selectSiteAndPublish function of feature SysRedirectSupport
+- [CLEANUP] Inline TcaService::getNameOfSortingField
+- [FEATURE] Reduce data written to the task table by the NewsSupport feature
+- [BUGFIX] Restore the FileEdgeCacheInvalidator feature
+- [COMMENT] Clarify why a clone of the foreignDatabase is made
+- [BUGFIX] Create the parent folder if necessary before publishing a file
+- [BUGFIX] Restore feature ContextMenuPublishEntry
+- [BUGFIX] Restore task execution feature after everything was published
+- [CLEANUP] Remove unused imports from RecordController
+- [BUGFIX] Strip objects from the compatible TCA export
+- [TESTS] Add missing covers annotations to command tests
+- [TESTS] Remove unused EventDispatcher from QueryServiceTest
+- [CLEANUP] Remove unused imports from DefaultFalFinder
+- [TESTS] Revert changes to DemandsCollection/SelectDemands
+- [FEATURE] Use new demand/resolver to find and publish sys_redirects
+- [BUGFIX] Fix TATAPI return value and UniqueStorageTargetTest
+- [BUGFIX] Delete folders recursively
+- [BUGFIX] Redirect user if selected folder was deleted on both sides
+- [BUGFIX] Add fallback if no folder was selected in the publish files module
+- [BUGFIX] Use type array instead of string for argument messages in UniqueStorageTargetTest
+- [CLEANUP] Remove FalHandling and RecordHandling
+- [FEATURE] Finish file publishing in the File Publish Module
+- [BUGFIX] Restore the edit metadata functionality in the Publish Files Module
+- [FEATURE] Rewrite folder publishing by using the new publishing service
+- [FEATURE] Remove FalPublisher and use RecordTree as Publish Files Module root node
+- [BUGFIX] Fix displaying of folder names and subfolders
+- [BUGFIX] Use file extension to determine the file icon when there is no mimetype
+- [FEATURE] Rewrite DefaultFalFinder
+- [REFACTOR] Replace controller constructor injection with setter injection
+- [REFACTOR] Replace constructor injections with setter injections for all commands
+- [FEATURE] Migrate all publishing-related events to the new PublisherService
+- [META] Add phpstorm meta file
+- [BUGFIX] Remove unused parameter from FileDemandResolver::resolveDemand
+- [FEATURE] Split resolver, use objects to collect rows, pass RecordCollections instead of creating them
+- [COMMENT] Add missing type hint for RecordCollection's record property
+- [REFACTOR] Rename THE SERVICE to RecordTreeBuilder
+- [BUGFIX] Explicitly provide the delimiter for preg_quote
+- [CODESTYLE] Import all DBAL exceptions and wrap long signatures/calls
+- [CODESTYLE] Remove superfluous empty lines
+- [CLEANUP] Remove unused imports
+- [BUGFIX] Add missing return type to PublisherCollection::addPublisher
+- [CLEANUP] Remove unused methods from SingleDatabaseRepository
+- [REFACTOR] Rename DatabaseIdentifierQuotingService to TcaEscapingMarkerService
+- [TESTS] Don't mock the Demand in DemandServiceTest to actually collect demands
+- [TESTS] Fix FlexFormFlatteningServiceTest by expecting the right return value
+- [BUGFIX] Search for table records of JOIN queries which were missed
+- [BUGFIX] Correctly check if the record collection is empty
+- [TESTS] Add TextResolverTest
+- [TESTS] Add missing covers annotations
+- [WIP] Add FlexFormFlatteningServiceTest
+- [TESTS] Add missing annotations
+- [TESTS] Move PreProcessorTests to separate directory
+- [TEST] Fix dependencies in Unit tests
+- [BUGFIX] Add missing return CallerAwareDemandsCollection::getFiles
+- [BUGFIX] Do not skip resolvers for empty tables, that is what ResolverService does
+- [BUGFIX] Make getColumnNames return all columns properly typed
+- [FEATURE] Support arbitrary FlexForm sections
+- [FEATURE] Add option to trace the origin of demands for easier debugging
+- [BUGFIX] Fix correct order of arguments
+- [FEATURE] Support inline relations without foreign_field
+- [CLEANUP] Remove wrong copyright notices
+- [BUGFIX] Do not create resolver that would build demands on excluded tables
+- [BUGFIX] Do not search for sys_file and sys_file_metadata by PID
+- [FEATURE] Resolve TCA escape characters once in the processors instead of the resolver
+- [FEATURE] Add CategoryProcessor for categorized tables
+- [TESTS] Enable forceCoversAnnotation and add missinf covers annotations to DemandServiceTest
+- [TESTS] Add test for Demands
+- [TESTS] Fix tests, remove Record Test
+- [FEATURE] Finish basic file publishing (without edge cases)
+- Wip: [FEATURE] Create file records and attach them to sys_files
+- Wip: [FEATURE] Begin FAL handling
+- [FEATURE] Finish simple record publishing process with transaction
+- [CLEANUP] Remove tca pre processor config which was replaced by DI container features
+- [FEATURE] Replace ignoreFieldsForDifferenceView with more powerful ignoredFields
+- [FEATURE] Add optional array for deprecation of configuration trees
+- [BUGFIX] Re-add removed import which breaks LSP when building the DI container
+- [BUGFIX] Reset state after getStateRecursive and exclude pages from recursive state
+- [BUGFIX] Support single table group relations which contain the table in the value
+- Wip: [FEATURE] Develop publishing strategy
+- [CLEANUP] Remove event VoteIfSearchingForRelatedRecordsShouldBeSkipped
+- [CLEANUP] Remove event VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped
+- [CLEANUP] Remove event VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped
+- [FEATURE] Replace VoteIfRecordShouldBeIgnored with DecideIfRecordShouldBeIgnored
+- [CLEANUP] Remove event VoteIfPageRecordEnrichingShouldBeSkipped
+- [CLEANUP] Remove event VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped
+- [CLEANUP] Remove event VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped
+- [CLEANUP] Remove event VoteIfFindingByPropertyShouldBeSkipped
+- [FEATURE] Refactor services to follow SRP, skip resolver for empty and excluded tables
+- [CLEANUP] Remove unnecessary empty lines from RecordFactory
+- [BUGFIX] Use the correct EventDispatcher in TextResolver
+- [REFACTOR] Inject database connection in TableInfoService instead of using static access
+- [REFACTOR] Move ColumnNameService to TcaHandling Component
+- [BUGFIX] Replace event VoteIfFindingByIdentifierShouldBeSkipped with DemandsWereCollected
+- [FEATURE] Replace event RelatedRecordsByRteWereFetched with DemandsForTextWereCollected
+- [CLEANUP] Remove event RelatedRecordsByRteWereFetched
+- [CLEANUP] Remove event RecordWasEnriched
+- [CLEANUP] Remove unused methods from DualDatabaseRepository
+- [REFACTOR] Inject dependencies in resolvers, make resolvers injectable
+- [CLEANUP] Remove feature SimplifiedOverviewAndPublishing
+- [REFACTOR] Move Dual-/SingleDatabaseRepository classes to TcaHandling component
+- [BUGFIX] Search records that have not been found by properties because these are different in the other database
+- [BUGFIX] Correctly detect if records are moved by their PID or sortBy field if it exists
+- [BUGFIX] Prevent infinite recursion when calling Record::getStateRecursive
+- [REFACTOR] Extract resolver logic to classes
+- [BUGFIX] Fix tests and replace demand array with object for better readability
+- [BUGFIX] Add records found by join demand to the list of found records
+- [BUGFIX] Add missing record keys to demands
+- [FEATURE] Introduce RecordCollection to replace the structured array
+- [TEST] Fix tests by including global functions
+- [BUGFIX] Fix records overwriting demand target records
+- [BUGFIX] Return '---' for sys_file_references that do not exist
+- [BUGFIX] Use deeply nested array for collecting records, remove showRecordDepth and allInformation feature
+- [BUGFIX] Update replaceSiteMarker method to work with the new DatabaseRecord
+- Wip: [FEATURE] Create the central service for the core process, show the new record tree in html
+- Wip: [FEATURE] Create a RecordIndex of all records found, support RegEx in excluded table
+- [TEST] Add DemandServiceTest and FlexProcessorTest
+- Wip: [FEATURE] Create TcaHandling component to resolve TCA into closures
+- [GIT] Ignore build and qa files when creating a production dist
+- [GIT] Ignore the .github folder when creating a production dist
+
+
+
 11.0.3:
 
 - [META] Set the EM conf version number to 11.0.3
