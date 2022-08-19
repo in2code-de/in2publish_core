@@ -25,6 +25,19 @@
 				<target state="translated">Tools für Administratoren</target>
 			</trans-unit>
 
+			<trans-unit id="m1.page_recursion">
+				<source>Depth</source>
+				<target state="translated">Tiefe</target>
+			</trans-unit>
+			<trans-unit id="m1.page_recursion.depth">
+				<source>%d level</source>
+				<target state="translated">%d Ebene</target>
+			</trans-unit>
+			<trans-unit id="m1.page_recursion.depths">
+				<source>%d levels</source>
+				<target state="translated">%d Ebenen</target>
+			</trans-unit>
+
 			<trans-unit id="label_stage">
 				<source>Stage System</source>
 				<target state="translated">Redaktionssystem</target>
@@ -33,21 +46,13 @@
 				<source>Production System</source>
 				<target state="translated">Produktivsystem</target>
 			</trans-unit>
-			<trans-unit id="error_not_connected">
-				<source>Error: Could not connect to production database!</source>
-				<target state="translated">Fehler: Konnte nicht mit Datenbank auf Produktionssystem verbinden!</target>
-			</trans-unit>
-			<trans-unit id="error_connecting">
-				<source>Error: Could not establish a connection!</source>
-				<target state="translated">Fehler: Verbindung konnte nicht aufgebaut werden!</target>
-			</trans-unit>
 			<trans-unit id="record_published">
-				<source>The selected record has been published successfully.</source>
-				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht.</target>
+				<source>The selected record has been published successfully. (Duration: %s)</source>
+				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht. (Dauer: %s)</target>
 			</trans-unit>
 			<trans-unit id="record_publishing_failure">
-				<source>One or more errors occurred during publishing. Please check the logs.</source>
-				<target state="translated">Ein oder mehrere Fehler traten während des Publizierungsvorgangs auf. Bitte prüfen Sie die Fehlerlogs.</target>
+				<source>One or more errors occurred during publishing. Please check the logs. (Duration: %s)</source>
+				<target state="translated">Ein oder mehrere Fehler traten während des Publizierungsvorgangs auf. Bitte prüfen Sie die Fehlerlogs. (Dauer: %s)</target>
 			</trans-unit>
 			<trans-unit id="relation_resolving_errors">
 				<source>One or more errors occurred during relation resolving. Please check the logs.</source>
@@ -234,6 +239,14 @@
 				<source>The compare tool scans the whole database for differences. This tool is ought to help administrators clean up UID conflicts.</source>
 				<target state="translated">Zeigt unterschiede zwischen den Datenbanken an. Dieses Tools soll Administratoren dabei helfen UID-Konflikte zu lösen.</target>
 			</trans-unit>
+			<trans-unit id="moduleselector.record_inspector">
+				<source>Inspect a record tree</source>
+				<target state="translated">RecordTree Untersuchen</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.record_inspector.description">
+				<source>You can query for a record tree by classification and identifier and inspect it with all of its properties and children.</source>
+				<target state="translated">Hier kann ein RecordTree mittels Klassifikation und Identifikation aufgebaut und untersucht werden..</target>
+			</trans-unit>
 
 			<trans-unit id="system_info.show">
 				<source>Show the system info</source>
@@ -414,18 +427,14 @@
 				<source>The Content Publisher stores various information in the registry, like the outcome of the last test run. You can force the removal of these entries here.</source>
 				<target state="translated">Der Content Publisher speichert Informationen wie das Ergebnis des letzten Testlaufs in der Registry. Sie können die Löschung dieser Einträge hier erzwingen.</target>
 			</trans-unit>
-			<trans-unit id="module.m4.flush_tca">
-				<source>Flush processed TCA cache</source>
-				<target state="translated">Cache des verarbeiteten TCA leeren</target>
-			</trans-unit>
 
 			<trans-unit id="test_state_error">
 				<source>In2publish might not work as expected.</source>
 				<target state="translated">In2publish könnte vom erwarteten Verhalten abweichen.</target>
 			</trans-unit>
 			<trans-unit id="test_state_error.tests_never_ran">
-				<source>The In2publish tests were never executed.</source>
-				<target state="translated">Die In2publish Tests wurde noch nie ausgeführt.</target>
+				<source>Unknown test state. Please execute the tests in the Publish Tools Module.</source>
+				<target state="translated">Unbekannter Teststatus. Bitte führen sie die Tests im Publish Tools Modul aus.</target>
 			</trans-unit>
 			<trans-unit id="test_state_error.tests_failing">
 				<source>Some In2publish tests are failing.</source>
@@ -472,10 +481,6 @@
 			<trans-unit id="file_publishing.failure.file">
 				<source>The selected file %s could not be fully published.</source>
 				<target state="translated">Die Datei %s konnte nicht vollständig publiziert werden.</target>
-			</trans-unit>
-			<trans-unit id="file_publishing.too_many_files">
-				<source>The folder %s contains too many files (%d) to process. The limit of files in a folder is %d files per folder.</source>
-				<target state="translated">Das Verzeichnis %s enthält zu viele Dateien (%d) um es zu verarbeiten. Das Dateilimit beträgt %d Dateien pro Verzeichnis.</target>
 			</trans-unit>
 
 			<trans-unit id="publishing.tasks_failure">
@@ -741,10 +746,6 @@
 				<source>Success</source>
 				<target state="translated">Erfolg</target>
 			</trans-unit>
-			<trans-unit id="compare_database.transfer.db_error">
-				<source>Could not connect to the databases</source>
-				<target state="translated">Unterschiede</target>
-			</trans-unit>
 			<trans-unit id="compare_database.transfer.record_missing">
 				<source>The record which should be transferred does not exist anymore.</source>
 				<target state="translated">Der Datensatz der übertragen werden sollte existiert nicht mehr.</target>
@@ -777,6 +778,31 @@
 			<trans-unit id="module_m3_index_content">
 				<source>Admin tools</source>
 				<target state="translated">Administrationswerkzeuge</target>
+			</trans-unit>
+
+			<trans-unit id="record.reason.requires_translation_parent.existing">
+				<source>"%s" requires that the record "%s" (which is the default language version) is published first.</source>
+				<target state="translated">"%s" erfordert, dass der Datensatz "%s" (das ist die Standardsprachversion) zuerst veröffentlicht wird.</target>
+			</trans-unit>
+			<trans-unit id="record.reason.requires_translation_parent.enablecolumns">
+				<source>"%s" requires that the record "%s" (which is the default language version) has all of its properties published (%s) which determine if the record is visible.</source>
+				<target state="translated">"%s" erfordert, dass der Datensatz "%s" (das ist die Standardsprachversion) alle seine Eigenschaften veröffentlicht hat (%s), die bestimmen, ob der Datensatz sichtbar ist.</target>
+			</trans-unit>
+			<trans-unit id="record.reason.requires_published_page.existing">
+				<source>"%s" requires that the page "%s" is published first.</source>
+				<target state="translated">"%s" erfordert, dass die Seite "%s" zuerst veröffentlicht wird.</target>
+			</trans-unit>
+			<trans-unit id="record.reason.requires_published_page.enablecolumns">
+				<source>"%s" requires that the page "%s" has all of its properties published (%s) which determine if the record is visible.</source>
+				<target state="translated">"%s" setzt voraus, dass die Seite "%s" alle seine Eigenschaften veröffentlicht hat (%s), die bestimmen, ob der Datensatz sichtbar ist.</target>
+			</trans-unit>
+			<trans-unit id="record.reason.missing_dependency">
+				<source>The record with classification "%s" and properties "%s" does not exist.</source>
+				<target state="translated">Der Datensatz mit der klassifizierung "%s" und Eigenschaften "%s" existiert nicht.</target>
+			</trans-unit>
+			<trans-unit id="record.reason.shortcut_record">
+				<source>The record "%s" is a target of the shortcut record "%s". The target must be published before the shortcut record can be published.</source>
+				<target state="translated">Der Datensatz "%s" ist ein Ziel des Verknüpfungsdatensatzes "%s". Das Ziel muss veröffentlicht werden, bevor der Verknüpfungsdatensatz veröffentlicht werden kann.</target>
 			</trans-unit>
 		</body>
 	</file>

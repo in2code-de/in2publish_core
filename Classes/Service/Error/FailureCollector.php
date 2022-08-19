@@ -39,7 +39,6 @@ use function min;
 class FailureCollector implements SingletonInterface
 {
     protected array $failures = [];
-
     protected int $highestSeverity = 7;
 
     public function addLogRecord(LogRecord $logRecord): void

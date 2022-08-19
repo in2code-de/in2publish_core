@@ -29,55 +29,62 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\AdapterRegistry;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface as RemoteAdapter;
-use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface as TransAdapt;
-use In2code\In2publishCore\In2publishCoreException;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistry;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistry;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-
-use function array_key_exists;
-use function class_exists;
+use Throwable;
 
 class AdapterSelectionTest implements TestCaseInterface
 {
-    protected AdapterRegistry $adapterRegistry;
+    protected RemoteAdapterRegistry $remoteAdapterRegistry;
+    protected TransmissionAdapterRegistry $transmissionAdapterRegistry;
 
-    public function __construct(AdapterRegistry $adapterRegistry)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectRemoteAdapterRegistry(RemoteAdapterRegistry $remoteAdapterRegistry): void
     {
-        $this->adapterRegistry = $adapterRegistry;
+        $this->remoteAdapterRegistry = $remoteAdapterRegistry;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectTransmissionAdapterRegistry(TransmissionAdapterRegistry $transmissionAdapterRegistry): void
+    {
+        $this->transmissionAdapterRegistry = $transmissionAdapterRegistry;
     }
 
     public function run(): TestResult
     {
-        $config = $this->adapterRegistry->getConfig();
-        if (!array_key_exists('remote', $config) || !array_key_exists('transmission', $config)) {
-            return new TestResult('adapter.adapter_selection.config_error', TestResult::ERROR);
-        }
-
-        $missingAdapter = [];
         try {
-            if (!class_exists($this->adapterRegistry->getAdapter(RemoteAdapter::class))) {
-                $missingAdapter[] = 'remote';
-            }
-        } catch (In2publishCoreException $e) {
-            $missingAdapter[] = 'remote';
+            $this->remoteAdapterRegistry->createSelectedAdapter();
+        } catch (Throwable $exception) {
+            return new TestResult(
+                'adapter.adapter_selection.missing_adapter_or_implementation',
+                TestResult::ERROR,
+                [
+                    'remote',
+                    (string)$exception,
+                ]
+            );
         }
         try {
-            if (!class_exists($this->adapterRegistry->getAdapter(TransAdapt::class))) {
-                $missingAdapter[] = 'transmission';
-            }
-        } catch (In2publishCoreException $e) {
-            $missingAdapter[] = 'transmission';
+            $this->transmissionAdapterRegistry->createSelectedAdapter();
+        } catch (Throwable $exception) {
+            return new TestResult(
+                'adapter.adapter_selection.missing_adapter_or_implementation',
+                TestResult::ERROR,
+                [
+                    'transmission',
+                    (string)$exception,
+                ]
+            );
         }
-        if (empty($missingAdapter)) {
-            return new TestResult('adapter.adapter_selection.valid');
-        }
-        return new TestResult(
-            'adapter.adapter_selection.missing_adapter_or_implementation',
-            TestResult::ERROR,
-            $missingAdapter
-        );
+        return new TestResult('adapter.adapter_selection.valid');
     }
 
     public function getDependencies(): array

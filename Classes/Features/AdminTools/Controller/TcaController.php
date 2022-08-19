@@ -29,34 +29,21 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingServiceInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class TcaController extends ActionController
 {
     use AdminToolsModuleTemplate;
-
-    protected TcaProcessingService $tcaProcessingService;
-
-    public function __construct(TcaProcessingService $tcaProcessingService)
-    {
-        $this->tcaProcessingService = $tcaProcessingService;
-    }
+    use TcaPreProcessingServiceInjection;
 
     public function indexAction(): ResponseInterface
     {
-        $this->view->assign('incompatibleTca', $this->tcaProcessingService->getIncompatibleTcaParts());
-        $this->view->assign('compatibleTca', $this->tcaProcessingService->getCompatibleTcaParts());
-        return $this->htmlResponse();
-    }
+        $this->view->assign('incompatibleTca', $this->tcaPreProcessingService->getIncompatibleTcaParts());
+        $this->view->assign('compatibleTca', $this->tcaPreProcessingService->getCompatibleTcaParts());
 
-    /** @throws StopActionException */
-    public function clearTcaCachesAction(): void
-    {
-        $this->tcaProcessingService->flushCaches();
-        $this->redirect('index');
+        return $this->htmlResponse();
     }
 }

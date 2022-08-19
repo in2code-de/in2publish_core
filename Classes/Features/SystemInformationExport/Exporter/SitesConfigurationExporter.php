@@ -29,22 +29,15 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
+use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use Throwable;
 use TYPO3\CMS\Core\Site\Entity\Site;
-use TYPO3\CMS\Core\Site\SiteFinder;
 
 class SitesConfigurationExporter implements SystemInformationExporter
 {
-    protected SiteFinder $siteFinder;
-
-    protected ForeignSiteFinder $foreignSiteFinder;
-
-    public function __construct(SiteFinder $siteFinder, ForeignSiteFinder $foreignSiteFinder)
-    {
-        $this->siteFinder = $siteFinder;
-        $this->foreignSiteFinder = $foreignSiteFinder;
-    }
+    use SiteFinderInjection;
+    use ForeignSiteFinderInjection;
 
     public function getUniqueKey(): string
     {
@@ -69,7 +62,9 @@ class SitesConfigurationExporter implements SystemInformationExporter
                 foreach ($site->getAllLanguages() as $language) {
                     $languageId = $language->getLanguageId();
                     try {
-                        $uri = $site->getRouter()->generateUri((string)$rootPageId, ['_language' => $languageId])->__toString();
+                        $uri = $site->getRouter()
+                                    ->generateUri((string)$rootPageId, ['_language' => $languageId])
+                                    ->__toString();
                     } catch (Throwable $throwable) {
                         $uri = (string)$throwable;
                     }

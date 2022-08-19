@@ -30,75 +30,71 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
-use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\CommonInjection\PageRendererInjection;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
+use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
+use In2code\In2publishCore\Component\Core\RecordIndexInjection;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
+use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
+use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use In2code\In2publishCore\Domain\Service\TcaProcessingService;
-use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
-use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
+use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
+use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\StopwatchWasNotStartedException;
+use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatchInjection;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Service\Environment\EnvironmentService;
-use In2code\In2publishCore\Service\Error\FailureCollector;
-use In2code\In2publishCore\Service\Permission\PermissionService;
+use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
+use In2code\In2publishCore\Service\Permission\PermissionServiceInjection;
+use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
-use Throwable;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
-use function array_merge;
 use function implode;
+use function is_int;
 use function json_encode;
-use function rawurldecode;
-use function strpos;
+
+use const JSON_THROW_ON_ERROR;
 
 /**
  * Content publishing Controller. Any action is for the "Publish Records" Backend module "m1"
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RecordController extends AbstractController
+class RecordController extends ActionController
 {
+    use ControllerFilterStatus;
     use ControllerModuleTemplate;
+    use DeactivateErrorFlashMessage;
+    use CommonViewVariables;
+    use RecordIndexInjection;
+    use RecordTreeBuilderInjection;
+    use PageRendererInjection {
+        injectPageRenderer as actualInjectPageRenderer;
+    }
+    use FailureCollectorInjection;
+    use PublisherServiceInjection;
+    use PermissionServiceInjection;
+    use SimpleStopwatchInjection;
 
-    protected FailureCollector $failureCollector;
-
-    protected PermissionService $permissionService;
-
-    protected RecordFinder $recordFinder;
-
-    protected RecordPublisher $recordPublisher;
-
-    public function __construct(
-        ConfigContainer $configContainer,
-        ExecutionTimeService $executionTimeService,
-        EnvironmentService $environmentService,
-        RemoteCommandDispatcher $remoteCommandDispatcher,
-        FailureCollector $failureCollector,
-        PermissionService $permissionService,
-        RecordFinder $recordFinder,
-        RecordPublisher $recordPublisher,
-        PageRenderer $pageRenderer
-    ) {
-        parent::__construct(
-            $configContainer,
-            $executionTimeService,
-            $environmentService,
-            $remoteCommandDispatcher
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectPageRenderer(PageRenderer $pageRenderer): void
+    {
+        $this->actualInjectPageRenderer($pageRenderer);
+        $this->pageRenderer->addInlineLanguageLabelFile(
+            'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf'
         );
-        $this->failureCollector = $failureCollector;
-        $this->permissionService = $permissionService;
-        $this->recordFinder = $recordFinder;
-        $this->recordPublisher = $recordPublisher;
-        $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
-        $pageRenderer->addCssFile(
+        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
+        $this->pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
             'stylesheet',
             'all',
@@ -107,41 +103,53 @@ class RecordController extends AbstractController
         );
     }
 
+    public function initializeIndexAction(): void
+    {
+        /** @var BackendUserAuthentication $BE_USER */
+        $BE_USER = $GLOBALS['BE_USER'];
+        $data = $BE_USER->getModuleData('tx_in2publishcore_m1') ?? ['pageRecursionLimit' => 1];
+        if ($this->request->hasArgument('pageRecursionLimit')) {
+            $pageRecursionLimit = (int)$this->request->getArgument('pageRecursionLimit');
+            $data['pageRecursionLimit'] = $pageRecursionLimit;
+            $BE_USER->pushModuleData('tx_in2publishcore_m1', $data);
+        } else {
+            $this->request->setArgument('pageRecursionLimit', $data['pageRecursionLimit'] ?? 1);
+        }
+
+        $menuRegistry = $this->moduleTemplate->getDocHeaderComponent()->getMenuRegistry();
+        $menu = $menuRegistry->makeMenu();
+        $menu->setIdentifier('depth');
+        $menu->setLabel(LocalizationUtility::translate('m1.page_recursion', 'in2publish_core'));
+        for ($i = 0; $i <= 10; $i++) {
+            $menuItem = $menu->makeMenuItem();
+            $menuItem->setActive($i === $data['pageRecursionLimit']);
+            if ($i > 1) {
+                $title = LocalizationUtility::translate('m1.page_recursion.depths', 'in2publish_core', [$i]);
+            } else {
+                $title = LocalizationUtility::translate('m1.page_recursion.depth', 'in2publish_core', [$i]);
+            }
+            $menuItem->setTitle($title);
+            $menuItem->setHref($this->uriBuilder->uriFor('index', ['pageRecursionLimit' => $i]));
+            $menu->addMenuItem($menuItem);
+        }
+        $menuRegistry->addMenu($menu);
+    }
+
     /**
      * Create a Record instance of the current selected page
      * If none is chosen, a Record with uid = 0 is created which
      * represents the instance root
      */
-    public function indexAction(): ResponseInterface
+    public function indexAction(int $pageRecursionLimit): ResponseInterface
     {
-        GeneralUtility::makeInstance(TcaProcessingService::class);
-        $record = $this->recordFinder->findRecordByUidForOverview($this->pid, 'pages');
-        $failures = $this->failureCollector->getFailures();
-
-        if (!empty($failures)) {
-            $message = '"' . implode('"; "', array_keys($failures)) . '"';
-            $title = LocalizationUtility::translate('relation_resolving_errors', 'in2publish_core');
-            $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
-            $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
-            $this->addFlashMessage($message, $title, $severity);
+        $pid = BackendUtility::getPageIdentifier();
+        if (!is_int($pid)) {
+            $pid = 0;
         }
-        $this->view->assign('record', $record);
-        return $this->htmlResponse();
-    }
+        $request = new RecordTreeBuildRequest('pages', $pid, $pageRecursionLimit);
+        $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
 
-    /**
-     * Show record details (difference view) to a page
-     * Normally called via AJAX
-     *
-     * @param int $identifier record identifier
-     */
-    public function detailAction(int $identifier, string $tableName): ResponseInterface
-    {
-        $record = $this->recordFinder->findRecordByUidForPublishing($identifier, $tableName);
-
-        $this->eventDispatcher->dispatch(new RecordWasCreatedForDetailAction($this, $record));
-
-        $this->view->assign('record', $record);
+        $this->view->assign('recordTree', $recordTree);
         return $this->htmlResponse();
     }
 
@@ -157,24 +165,14 @@ class RecordController extends AbstractController
         }
     }
 
-    /**
-     * Publish the selected page record with all related content records
-     *
-     * @param int $identifier
-     * @param string|null $returnUrl
-     *
-     * @throws StopActionException
-     */
-    public function publishRecordAction(int $identifier, string $returnUrl = null): void
+    public function publishRecordAction(int $id): void
     {
-        $this->logger->info('publishing record in ' . $this->request->getPluginName(), ['identifier' => $identifier]);
-        $this->publishRecord($identifier, ['pages']);
-        if ($returnUrl !== null) {
-            while (strpos($returnUrl, '/') === false || strpos($returnUrl, 'typo3') === false) {
-                $returnUrl = rawurldecode($returnUrl);
-            }
-            $this->redirectToUri($returnUrl);
-        }
+        $request = new RecordTreeBuildRequest('pages', $id, 0);
+        $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
+
+        $publishingContext = new PublishingContext($recordTree);
+        $this->publisherService->publish($publishingContext);
+
         $this->addFlashMessagesAndRedirectToIndex();
     }
 
@@ -190,24 +188,6 @@ class RecordController extends AbstractController
         return $this->jsonResponse(json_encode($return, JSON_THROW_ON_ERROR));
     }
 
-    protected function publishRecord(int $identifier, array $exceptTableNames = []): void
-    {
-        $record = $this->recordFinder->findRecordByUidForPublishing($identifier, 'pages');
-
-        $this->eventDispatcher->dispatch(new RecordWasSelectedForPublishing($record, $this));
-
-        try {
-            $this->recordPublisher->publishRecordRecursive(
-                $record,
-                array_merge($this->configContainer->get('excludeRelatedTables'), $exceptTableNames)
-            );
-        } catch (Throwable $exception) {
-            $this->logger->error('Error while publishing', ['exception' => $exception]);
-            $this->addFlashMessage($exception->getMessage(), '', AbstractMessage::ERROR);
-        }
-        $this->runTasks();
-    }
-
     /**
      * Add success message and redirect to indexAction
      *
@@ -217,13 +197,18 @@ class RecordController extends AbstractController
     {
         $failures = $this->failureCollector->getFailures();
 
+        try {
+            $executionTime = $this->simpleStopwatch->getTime();
+        } catch (StopwatchWasNotStartedException $e) {
+            $executionTime = 'Timer was never started';
+        }
         if (empty($failures)) {
             $message = '';
-            $title = LocalizationUtility::translate('record_published', 'in2publish_core');
+            $title = LocalizationUtility::translate('record_published', 'in2publish_core', [$executionTime]);
             $severity = AbstractMessage::OK;
         } else {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
-            $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core');
+            $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core', [$executionTime]);
             $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
             $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
         }

@@ -36,6 +36,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function json_decode;
 
+use const JSON_THROW_ON_ERROR;
+
 /**
  * converts database rows from tx_in2code_in2publish_task into Task objects
  */

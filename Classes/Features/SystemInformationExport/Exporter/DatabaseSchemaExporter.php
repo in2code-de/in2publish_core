@@ -29,10 +29,14 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Utility\DatabaseUtility;
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 
 class DatabaseSchemaExporter implements SystemInformationExporter
 {
+    use LocalDatabaseInjection;
+    use ForeignDatabaseInjection;
+
     public function getUniqueKey(): string
     {
         return 'schema';
@@ -41,8 +45,8 @@ class DatabaseSchemaExporter implements SystemInformationExporter
     public function getInformation(): array
     {
         $schema = [];
-        foreach (['local', 'foreign'] as $side) {
-            $schemaManager = DatabaseUtility::buildDatabaseConnectionForSide($side)->getSchemaManager();
+        foreach (['local' => $this->localDatabase, 'foreign' => $this->foreignDatabase] as $side => $database) {
+            $schemaManager = $database->getSchemaManager();
             foreach ($schemaManager->listTables() as $table) {
                 $schema[$side][$table->getName()]['options'] = $table->getOptions();
                 foreach ($table->getColumns() as $column) {

@@ -9,7 +9,7 @@ $EM_CONF[$_EXTKEY] = [
     'title' => 'in2publish Core',
     'description' => 'Content publishing extension to connect stage and production server',
     'category' => 'plugin',
-    'version' => '11.0.3',
+    'version' => '12.0.0',
     'state' => 'stable',
     'clearCacheOnLoad' => true,
     'author' => 'Alex Kellner, Oliver Eglseder, Thomas Scheibitz, Stefan Busemann',
@@ -17,7 +17,7 @@ $EM_CONF[$_EXTKEY] = [
     'author_company' => 'in2code.de',
     'constraints' => [
         'depends' => [
-            'php' => '7.4.0-8.0.99',
+            'php' => '7.4.0-8.99.99',
             'typo3' => '11.5.0-11.99.99',
         ],
         'conflicts' => [],

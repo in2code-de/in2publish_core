@@ -29,29 +29,27 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
-use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
-use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Controller\AbstractController;
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
+use In2code\In2publishCore\CommonInjection\PageRendererInjection;
+use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
+use In2code\In2publishCore\Component\Core\RecordCollection;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
-use In2code\In2publishCore\Event\RecordsWereSelectedForPublishing;
+use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\BackButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
-use In2code\In2publishCore\Service\Environment\EnvironmentService;
-use In2code\In2publishCore\Utility\DatabaseUtility;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
-use TYPO3\CMS\Core\Imaging\Icon;
-use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
-use TYPO3\CMS\Extbase\Pagination\QueryResultPaginator;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_column;
@@ -63,53 +61,44 @@ use function sprintf;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) I probably really need all these classes.
  */
-class RedirectController extends AbstractController
+class RedirectController extends ActionController
 {
     use ControllerModuleTemplate;
-
-    protected ForeignSiteFinder $foreignSiteFinder;
+    use IconFactoryInjection;
+    use DemandsFactoryInjection;
+    use DemandResolverInjection;
+    use ForeignSiteFinderInjection;
+    use PageRendererInjection {
+        injectPageRenderer as actualInjectPageRenderer;
+    }
+    use PublisherServiceInjection;
+    use ForeignDatabaseInjection;
 
     protected SysRedirectRepository $sysRedirectRepo;
 
-    protected RecordFinder $recordFinder;
-
-    protected RecordPublisher $recordPublisher;
-
-    protected IconFactory $iconFactory;
-
-    protected LanguageService $languageService;
-
-    public function __construct(
-        ConfigContainer $configContainer,
-        ExecutionTimeService $executionTimeService,
-        EnvironmentService $environmentService,
-        RemoteCommandDispatcher $remoteCommandDispatcher,
-        ForeignSiteFinder $foreignSiteFinder,
-        SysRedirectRepository $sysRedirectRepo,
-        RecordFinder $recordFinder,
-        RecordPublisher $recordPublisher,
-        PageRenderer $pageRenderer,
-        IconFactory $iconFactory
-    ) {
-        parent::__construct(
-            $configContainer,
-            $executionTimeService,
-            $environmentService,
-            $remoteCommandDispatcher
-        );
-        $this->foreignSiteFinder = $foreignSiteFinder;
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectSysRedirectRepo(SysRedirectRepository $sysRedirectRepo): void
+    {
         $this->sysRedirectRepo = $sysRedirectRepo;
-        $this->recordFinder = $recordFinder;
-        $this->recordPublisher = $recordPublisher;
-        $pageRenderer->addCssFile(
+    }
+
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectPageRenderer(PageRenderer $pageRenderer): void
+    {
+        $this->actualInjectPageRenderer($pageRenderer);
+        $this->pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
             'stylesheet',
             'all',
             '',
             false
         );
-        $this->iconFactory = $iconFactory;
-        $this->languageService = $GLOBALS['LANG'];
     }
 
     /** @throws Throwable */
@@ -117,9 +106,9 @@ class RedirectController extends AbstractController
     {
         if ($this->request->hasArgument('filter')) {
             $filter = $this->request->getArgument('filter');
-            $this->backendUser->setAndSaveSessionData('tx_in2publishcore_redirects_filter', $filter);
+            $GLOBALS['BE_USER']->setAndSaveSessionData('tx_in2publishcore_redirects_filter', $filter);
         } else {
-            $filter = $this->backendUser->getSessionData('tx_in2publishcore_redirects_filter');
+            $filter = $GLOBALS['BE_USER']->getSessionData('tx_in2publishcore_redirects_filter');
             if (null !== $filter) {
                 $this->request->setArgument('filter', $filter);
             }
@@ -135,16 +124,26 @@ class RedirectController extends AbstractController
      */
     public function listAction(Filter $filter = null, int $page = 1): ResponseInterface
     {
-        $foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
-        $uidList = [];
-        if (null !== $foreignConnection) {
-            $query = $foreignConnection->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
-            $uidList = array_column($query->execute()->fetchAllAssociative(), 'uid');
+        $query = $this->foreignDatabase->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
+        $uidList = implode(',', array_column($query->execute()->fetchAll(), 'uid'));
+
+        $additionalWhere = "deleted = 0 OR uid NOT IN ($uidList)";
+        if (null !== $filter) {
+            $additionalWhere = $filter->toAdditionWhere();
         }
-        $redirects = $this->sysRedirectRepo->findForPublishing($uidList, $filter);
-        $paginator = new QueryResultPaginator($redirects, $page, 15);
+
+        $recordTree = new RecordTree();
+
+        $demands = $this->demandsFactory->createDemand();
+        $demands->addSysRedirectSelect('sys_redirect', $additionalWhere, $recordTree);
+
+        $recordCollection = new RecordCollection();
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
+
+        $redirects = $recordTree->getChildren()['sys_redirect'] ?? [];
+        $paginator = new ArrayPaginator($redirects, $page, 15);
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple(
             [
@@ -170,26 +169,18 @@ class RedirectController extends AbstractController
             $this->redirect('list');
         }
 
-        foreach ($redirects as &$redirect) {
-            $redirect = (int)$redirect;
-        }
-        unset($redirect);
+        $recordTree = new RecordTree();
 
-        $records = [];
+        $demands = $this->demandsFactory->createDemand();
         foreach ($redirects as $redirect) {
-            $record = $this->recordFinder->findRecordByUidForPublishing($redirect, 'sys_redirect');
-            if (null !== $record) {
-                $records[] = $record;
-            }
+            $demands->addSelect('sys_redirect', '', 'uid', $redirect, $recordTree);
         }
 
-        $this->eventDispatcher->dispatch(new RecordsWereSelectedForPublishing($records));
+        $recordCollection = new RecordCollection();
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
 
-        foreach ($records as $record) {
-            $this->recordPublisher->publishRecordRecursive($record);
-        }
+        $this->publisherService->publishRecordTree($recordTree);
 
-        $this->runTasks();
         if (count($redirects) === 1) {
             $this->addFlashMessage(sprintf('Redirect %s published', reset($redirects)));
         } else {
@@ -206,19 +197,23 @@ class RedirectController extends AbstractController
      */
     public function selectSiteAction(int $redirect, array $properties = null): ResponseInterface
     {
-        $redirectObj = $this->sysRedirectRepo->findUnrestrictedByIdentifier($redirect);
-        if (null === $redirectObj) {
+        $redirectDto = $this->sysRedirectRepo->findLocalRawByUid($redirect);
+        if (null === $redirectDto) {
             $this->redirect('list');
         }
 
         if ($this->request->getMethod() === 'POST') {
-            $redirectObj->setSiteId($properties['siteId']);
-            $this->sysRedirectRepo->update($redirectObj);
+            $redirectDto->tx_in2publishcore_foreign_site_id = $properties['siteId'];
+            $this->sysRedirectRepo->update($redirectDto);
             $this->addFlashMessage(
-                sprintf('Associated redirect %s with site %s', $redirectObj->__toString(), $redirectObj->getSiteId())
+                sprintf(
+                    'Associated redirect %s with site %s',
+                    $redirectDto->__toString(),
+                    $redirectDto->tx_in2publishcore_foreign_site_id
+                )
             );
             if (isset($_POST['_saveandpublish'])) {
-                $this->redirect('publish', null, null, ['redirects' => [$redirectObj->getUid()]]);
+                $this->redirect('publish', null, null, ['redirects' => [$redirectDto->uid]]);
             }
             $this->redirect('list');
         }
@@ -232,17 +227,11 @@ class RedirectController extends AbstractController
             $identifier = $site->getIdentifier();
             $siteOptions[$identifier] = $identifier . ' (' . $site->getBase() . ')';
         }
-        $this->view->assign('redirect', $redirectObj);
+        $this->view->assign('redirect', $redirectDto);
         $this->view->assign('siteOptions', $siteOptions);
 
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
-        $button = $buttonBar->makeLinkButton();
-        $button->setIcon($this->iconFactory->getIcon('actions-close', Icon::SIZE_SMALL));
-        $button->setClasses('btn btn-sm');
-        $button->setHref($this->uriBuilder->reset()->uriFor('list'));
-        $title = $this->languageService->sL('LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:back');
-        $button->setTitle($title);
-        $buttonBar->addButton($button);
+        $buttonBar->addButton(new BackButton($this->iconFactory, $this->uriBuilder));
         $buttonBar->addButton(new SaveAndPublishButton($this->iconFactory));
 
         return $this->htmlResponse();

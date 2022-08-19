@@ -28,17 +28,12 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Service\Configuration\TcaService;
+use In2code\In2publishCore\Service\Configuration\TcaServiceInjection;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
 {
-    protected TcaService $tcaService;
-
-    public function __construct(TcaService $tcaService)
-    {
-        $this->tcaService = $tcaService;
-    }
+    use TcaServiceInjection;
 
     public function initializeArguments(): void
     {

@@ -30,10 +30,10 @@ namespace In2code\In2publishCore\Controller\Traits;
  */
 
 use In2code\In2publishCore\Backend\Button\ModuleShortcutButton;
+use In2code\In2publishCore\CommonInjection\ModuleTemplateFactoryInjection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
-use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
@@ -46,14 +46,9 @@ use function strtolower;
  */
 trait ControllerModuleTemplate
 {
-    protected ModuleTemplateFactory $moduleTemplateFactory;
+    use ModuleTemplateFactoryInjection;
 
     protected ModuleTemplate $moduleTemplate;
-
-    public function injectModuleTemplateFactory(ModuleTemplateFactory $moduleTemplateFactory): void
-    {
-        $this->moduleTemplateFactory = $moduleTemplateFactory;
-    }
 
     public function processRequest(RequestInterface $request): ResponseInterface
     {
@@ -66,10 +61,9 @@ trait ControllerModuleTemplate
 
     protected function htmlResponse(string $html = null): ResponseInterface
     {
-        return $this->responseFactory
-            ->createResponse()
-            ->withHeader('Content-Type', 'text/html; charset=utf-8')
-            ->withBody($this->streamFactory->createStream($html ?? $this->render()));
+        return $this->responseFactory->createResponse()
+                                     ->withHeader('Content-Type', 'text/html; charset=utf-8')
+                                     ->withBody($this->streamFactory->createStream($html ?? $this->render()));
     }
 
     protected function jsonResponse(string $json = null): ResponseInterface

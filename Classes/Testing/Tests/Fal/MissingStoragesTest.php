@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
+use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProviderInjection;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
@@ -41,16 +41,11 @@ use function sprintf;
 
 class MissingStoragesTest implements TestCaseInterface
 {
-    protected FalStorageTestSubjectsProvider $testSubjectProvider;
-
-    public function __construct(FalStorageTestSubjectsProvider $testSubjectProvider)
-    {
-        $this->testSubjectProvider = $testSubjectProvider;
-    }
+    use FalStorageTestSubjectsProviderInjection;
 
     public function run(): TestResult
     {
-        $storages = $this->testSubjectProvider->getStoragesForMissingStoragesTest();
+        $storages = $this->falStorageTestSubjectsProvider->getStoragesForMissingStoragesTest();
         $messages = $this->getMissing($storages, [], 'local');
         $messages = $this->getMissing($storages, $messages, 'foreign');
 

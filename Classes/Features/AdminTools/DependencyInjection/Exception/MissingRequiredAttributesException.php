@@ -41,14 +41,10 @@ class MissingRequiredAttributesException extends In2publishCoreException
     public const CODE = 1636557893;
     private const MESSAGE_1 = 'The service %s defines the tag "%s" which requires the attributes %s to be defined, but the attribute %s is missing';
     private const MESSAGE_N = 'The service %s defines the tag "%s" which requires the attributes %s to be defined, but the attributes %s are missing';
-
     protected string $serviceName;
-
     protected string $tagName;
-
     /** @var array<string> */
     protected array $requiredAttributes;
-
     /** @var array<string> */
     protected array $missingRequiredKeys;
 

@@ -37,7 +37,6 @@ class PreviewRecordViewHelper extends AbstractTagBasedViewHelper
     public const ARG_IDENTIFIER = 'identifier';
     public const ARG_STAGING_LEVEL = 'stagingLevel';
     public const ARG_TABLE = 'table';
-
     protected $tagName = 'a';
 
     public function initializeArguments(): void

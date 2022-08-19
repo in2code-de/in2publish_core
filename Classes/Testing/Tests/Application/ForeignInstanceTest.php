@@ -30,29 +30,23 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  */
 
 use In2code\In2publishCore\Command\Foreign\Status\AllCommand;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\CommonInjection\Typo3VersionInjection;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Service\Extension\ExtensionServiceInjection;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\ExtensionUtility;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function strpos;
 
 class ForeignInstanceTest implements TestCaseInterface
 {
-    protected RemoteCommandDispatcher $rceDispatcher;
-
-    protected Typo3Version $typo3Version;
-
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Typo3Version $typo3Version)
-    {
-        $this->rceDispatcher = $remoteCommandDispatcher;
-        $this->typo3Version = $typo3Version;
-    }
+    use Typo3VersionInjection;
+    use RemoteCommandDispatcherInjection;
+    use ExtensionServiceInjection;
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -61,7 +55,7 @@ class ForeignInstanceTest implements TestCaseInterface
     public function run(): TestResult
     {
         $request = new RemoteCommandRequest(AllCommand::IDENTIFIER);
-        $response = $this->rceDispatcher->dispatch($request);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
             if (false !== strpos($response->getOutputString(), '_cli_lowlevel')) {
@@ -97,7 +91,7 @@ class ForeignInstanceTest implements TestCaseInterface
 
         $foreign = $this->tokenizeResponse($response->getOutput());
 
-        $localVersion = ExtensionUtility::getExtensionVersion('in2publish_core');
+        $localVersion = $this->extensionService->getExtensionVersion('in2publish_core');
         if (!isset($foreign['Version'])) {
             return new TestResult(
                 'application.foreign_version_not_detectable',

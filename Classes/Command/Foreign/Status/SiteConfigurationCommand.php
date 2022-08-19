@@ -30,13 +30,13 @@ namespace In2code\In2publishCore\Command\Foreign\Status;
  */
 
 use In2code\In2publishCore\Command\Foreign\Status\Exception\InvalidPageIdArgumentTypeException;
+use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 
@@ -45,19 +45,13 @@ use function serialize;
 
 class SiteConfigurationCommand extends Command
 {
+    use SiteFinderInjection;
+
     public const ARG_PAGE_ID = 'pageId';
     public const ARG_PAGE_ID_DESCRIPTION = 'The page id to retrieve the site config for';
     public const EXIT_NO_SITE = 250;
     public const EXIT_PAGE_HIDDEN_OR_DISCONNECTED = 251;
     public const IDENTIFIER = 'in2publish_core:status:siteconfiguration';
-
-    protected SiteFinder $siteFinder;
-
-    public function __construct(SiteFinder $siteFinder, string $name = null)
-    {
-        parent::__construct($name);
-        $this->siteFinder = $siteFinder;
-    }
 
     protected function configure(): void
     {

@@ -10,7 +10,7 @@
 	"type": "typo3-cms-extension",
 	"license": "GPL-3.0-or-later",
 	"require": {
-		"php": "^7.4 || ^8.0 <8.1",
+		"php": "^7.4 || ^8.0",
 		"ext-json": "*",
 		"ext-pdo": "*",
 		"ext-zip": "*",
@@ -54,8 +54,8 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master-v11": "11.0.x-dev",
-			"dev-develop-v11": "11.0.x-dev"
+			"dev-develop-v12": "12.0.x-dev",
+			"dev-master-v12": "12.0.x-dev"
 		},
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",

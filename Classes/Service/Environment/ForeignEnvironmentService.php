@@ -32,16 +32,18 @@ namespace In2code\In2publishCore\Service\Environment;
 use In2code\In2publishCore\Command\Foreign\Status\CreateMasksCommand;
 use In2code\In2publishCore\Command\Foreign\Status\DbInitQueryEncodedCommand;
 use In2code\In2publishCore\Command\Foreign\Status\EncryptionKeyCommand;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\CommonInjection\CacheInjection;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function base64_decode;
 use function json_decode;
 use function strpos;
+
+use const JSON_THROW_ON_ERROR;
 
 /**
  * Used to receive static information about the foreign environment like
@@ -50,16 +52,8 @@ use function strpos;
 class ForeignEnvironmentService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
-    protected FrontendInterface $cache;
-
-    protected RemoteCommandDispatcher $remoteCommandDispatcher;
-
-    public function __construct(FrontendInterface $cache, RemoteCommandDispatcher $remoteCommandDispatcher)
-    {
-        $this->cache = $cache;
-        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
-    }
+    use RemoteCommandDispatcherInjection;
+    use CacheInjection;
 
     public function getDatabaseInitializationCommands(): string
     {

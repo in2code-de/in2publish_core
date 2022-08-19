@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
+use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProviderInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -41,16 +41,11 @@ use function sprintf;
 
 class IdenticalDriverTest implements TestCaseInterface
 {
-    protected FalStorageTestSubjectsProvider $testSubjectProvider;
-
-    public function __construct(FalStorageTestSubjectsProvider $testSubjectProvider)
-    {
-        $this->testSubjectProvider = $testSubjectProvider;
-    }
+    use FalStorageTestSubjectsProviderInjection;
 
     public function run(): TestResult
     {
-        $storages = $this->testSubjectProvider->getStoragesForDriverTest();
+        $storages = $this->falStorageTestSubjectsProvider->getStoragesForDriverTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
         $affected = [];
 

@@ -11,10 +11,14 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 use const PHP_EOL;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\CreateMasksCommand
+ */
 class CreateMasksCommandTest extends UnitTestCase
 {
     /**
      * @ticket https://projekte.in2code.de/issues/51213
+     * @covers ::execute
      */
     public function testCommandCanBeExecuted(): void
     {

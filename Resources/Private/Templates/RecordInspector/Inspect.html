@@ -1,0 +1,11 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:layout name="Default" />
+
+	<f:section name="Main">
+		<button class="btn btn-default" onclick="document.querySelectorAll('.extbase-debugger-tree > input[type=\'checkbox\']').forEach(el => {
+						if (!['ignoredProps', 'changedProps', 'localProps', 'foreignProps'].includes(el.parentElement?.previousSibling?.previousElementSibling?.textContent))
+							el.click()
+						});">Toggle all relations</button>
+		<f:debug inline="true" maxDepth="20">{recordTree}</f:debug>
+	</f:section>
+</html>

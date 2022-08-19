@@ -29,27 +29,23 @@ namespace In2code\In2publishCore\Command\Foreign\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Database\Connection;
 
 use function array_column;
 use function base64_encode;
 use function json_encode;
 
+use const JSON_THROW_ON_ERROR;
+
 class DbConfigTestCommand extends Command
 {
+    use LocalDatabaseInjection;
+
     public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
-
-    protected Connection $localDatabase;
-
-    public function __construct(Connection $localDatabase, string $name = null)
-    {
-        parent::__construct($name);
-        $this->localDatabase = $localDatabase;
-    }
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

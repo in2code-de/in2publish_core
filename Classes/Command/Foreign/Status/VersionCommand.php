@@ -29,13 +29,15 @@ namespace In2code\In2publishCore\Command\Foreign\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Utility\ExtensionUtility;
+use In2code\In2publishCore\Service\Extension\ExtensionServiceInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class VersionCommand extends Command
 {
+    use ExtensionServiceInjection;
+
     public const IDENTIFIER = 'in2publish_core:status:version';
 
     /**
@@ -43,7 +45,7 @@ class VersionCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('Version: ' . ExtensionUtility::getExtensionVersion('in2publish_core'));
+        $output->writeln('Version: ' . $this->extensionService->getExtensionVersion('in2publish_core'));
         return Command::SUCCESS;
     }
 }

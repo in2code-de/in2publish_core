@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Features\LogsIntegration\Controller;
  */
 
 use CoStack\Logs\Controller\LogController as LogsController;
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3Fluid\Fluid\View\ViewInterface;
@@ -38,11 +37,6 @@ use TYPO3Fluid\Fluid\View\ViewInterface;
 class LogController extends LogsController
 {
     use AdminToolsModuleTemplate;
-
-    public function __construct(ExecutionTimeService $executionTimeService)
-    {
-        $executionTimeService->start();
-    }
 
     protected function initializeAction(): void
     {

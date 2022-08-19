@@ -4,6 +4,9 @@ pathToConfiguration = CONF:in2publish_core/
 # cat=basic//030; type=options[Emergency=0,Alert=1,Critical=2,Error=3,Warning=4,Notice=5,Info=6,Debug=7]; label=LLL:EXT:in2publish_core/Resources/Private/Language/locallang.extconf.xlf:log_level
 logLevel = 5
 
+# cat=basic//035; type=boolean; label=LLL:EXT:in2publish_core/Resources/Private/Language/locallang.extconf.xlf:debug_queries
+debugQueries = 0
+
 # cat=local//020; type=boolean; label=LLL:EXT:in2publish_core/Resources/Private/Language/locallang.extconf.xlf:disable_user_config
 disableUserConfig = 0
 

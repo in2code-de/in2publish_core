@@ -1,0 +1,162 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
+	<f:if condition="{record}">
+		<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive}"
+			data-type="file"
+			data-id="{record.id}"
+			data-name="{publish:record.getMergedProperty(record:record, propertyName: 'name')}"
+			data-identifier-local="{record.localProps.identifier}"
+			data-identifier-foreign="{record.foreignProps.identifier}"
+			data-identifier="{publish:record.getMergedProperty(record:record, propertyName: 'identifier')}"
+			data-storage="{publish:record.getMergedProperty(record:record, propertyName: 'storage')}"
+			data-searchable="{record.localProps.name}|{record.foreignProps.name}">
+			<f:comment>Left</f:comment>
+			<td class="col-icon">
+				<publish:file.icon record="{record}" />
+			</td>
+			<td class="col-filename col-filename--local col-responsive nowrap">
+				<span class="in2publish-stagelisting__item-filename">
+					<f:if condition="{record.localProps.name}">
+						<f:then>
+							<f:if condition="{record.movedToDifferentFolder}">
+								<f:then>
+									{record.localProps.identifier}
+								</f:then>
+								<f:else>
+									{record.localProps.name}
+								</f:else>
+							</f:if>
+						</f:then>
+						<f:else>
+							{record.foreignProps.name}
+						</f:else>
+					</f:if>
+				</span>
+			</td>
+			<td class="col-control">
+				<div class="btn-group">
+					<a class="btn btn-default" data-bs-toggle="collapse" href="#file-{record.id -> publish:security.hash()}">
+						<core:icon identifier="actions-info" />
+					</a>
+					<f:if condition="{record.localProps.publicUrl}">
+						<f:then>
+							<a target="_blank" class="btn btn-default" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:view')}" href="{record.foreignProps.publicUrl}">
+								<core:icon identifier="actions-eye" />
+							</a>
+						</f:then>
+						<f:else>
+							<span class="btn btn-default disabled" aria-hidden="true">
+								<core:icon identifier="empty-empty" />
+							</span>
+						</f:else>
+					</f:if>
+					<f:if condition="{record.state} != 'deleted' && {record.children.sys_file}">
+						<f:then>
+							<f:for each="{record.children.sys_file}" as="sys_file">
+								<f:if condition="{sys_file.children.sys_file_metadata -> f:count()} > 1">
+									<f:then>
+										<button class="btn btn-default dropdown-toggle dropdown-toggle-no-chevron" type="button" id="translations_{record.id}" data-bs-toggle="dropdown" data-bs-boundary="window" aria-expanded="false">
+											<core:icon identifier="actions-translate" />
+										</button>
+										<ul class="dropdown-menu dropdown-list" aria-labelledby="translations_{record.id}">
+											<f:for each="{sys_file.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
+												<li>
+													<a href="{publish:uri.editUri(uid: metaRecord.id, tableName: metaRecord.classification)}" class="dropdown-item" title="{publish:record.getMergedProperty(record: record, propertyName: 'name')}">
+														<publish:record.languageFlagIcon record="{metaRecord}" overlay="overlay-edit" side="local" /> <publish:record.getMergedProperty record="{record}" propertyName="name" />
+													</a>
+												</li>
+											</f:for>
+										</ul>
+									</f:then>
+									<f:else>
+										<f:for each="{sys_file.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
+											<f:if condition="{iterator.isFirst}">
+												<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProps.uid, tableName: metaRecord.classification)}" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
+													<core:icon identifier="actions-pencil" />
+												</a>
+											</f:if>
+										</f:for>
+									</f:else>
+								</f:if>
+							</f:for>
+						</f:then>
+						<f:else>
+							<span class="btn btn-default disabled" aria-hidden="true">
+								<core:icon identifier="empty-empty" />
+							</span>
+						</f:else>
+					</f:if>
+				</div>
+			</td>
+			<td class="col-control col-publish">
+				<f:if condition="{record.publishing}">
+					<f:then>
+						<a href="#" class="btn btn-default disabled" title="{f:translate(key:'publishing_file', default:'this file is currently being published')}">
+							<core:icon identifier="spinner-circle" />
+						</a>
+					</f:then>
+					<f:else>
+						<f:if condition="{record.stateRecursive} !== 'unchanged'">
+							<f:link.action
+								class="js-publish-trigger js-publish-overlay btn btn-default"
+								action="publishFile"
+								arguments="{combinedIdentifier:record.id}"
+								data="{type: 'file', name: '{publish:record.getMergedProperty(record: record, propertyName: \'id\')}'}"
+							>
+								<f:translate key="publish"/>
+								<core:icon identifier="actions-arrow-right" />
+							</f:link.action>
+						</f:if>
+					</f:else>
+				</f:if>
+			</td>
+
+			<f:comment>Right</f:comment>
+			<td class="col-icon">
+				<publish:file.icon record="{record}" />
+			</td>
+			<td class="col-filename col-filename--foreign col-responsive nowrap">
+				<f:if condition="{record.foreignProps.name}">
+					<f:then>
+						<f:if condition="{record.movedToDifferentFolder}">
+							<f:then>
+								{record.foreignProps.identifier}
+							</f:then>
+							<f:else>
+								{record.foreignProps.name}
+							</f:else>
+						</f:if>
+					</f:then>
+					<f:else>
+						---
+					</f:else>
+				</f:if>
+			</td>
+			<td class="col-control">
+				<f:if condition="{record.foreignProps.publicUrl}">
+					<f:then>
+						<a target="_blank" class="btn btn-default" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:view')}" href="{record.foreignProps.publicUrl}">
+							<core:icon identifier="actions-eye" />
+						</a>
+					</f:then>
+					<f:else>
+						<span class="btn btn-default disabled" aria-hidden="true">
+							<core:icon identifier="empty-empty" />
+						</span>
+					</f:else>
+				</f:if>
+			</td>
+
+			<td class="col-state">
+				<i class="in2publish-state-icon in2publish-state--{record.stateRecursive} in2publish-icon-circle ms-2"></i>
+				<f:translate key="record.state.{record.stateRecursive}.short"/>
+			</td>
+		</tr>
+
+		<f:comment>Difference View</f:comment>
+		<f:render partial="File/DirtyPropertiesList" arguments="{_all}" />
+	</f:if>
+</html>

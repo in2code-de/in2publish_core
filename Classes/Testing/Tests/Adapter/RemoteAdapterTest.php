@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\AdapterInterface;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 

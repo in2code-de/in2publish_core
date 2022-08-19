@@ -29,33 +29,35 @@ namespace In2code\In2publishCore\Service\Environment;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\CommonInjection\RegistryInjection;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use TYPO3\CMS\Core\Package\PackageManager;
-use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function json_encode;
 use function serialize;
 use function sha1;
 
+use const JSON_THROW_ON_ERROR;
+
 class EnvironmentService implements SingletonInterface
 {
+    use ConfigContainerInjection;
+    use RegistryInjection;
+
     public const STATE_TESTS_FAILING = 'tests_failing';
     public const STATE_TESTS_NEVER_RAN = 'tests_never_ran';
     public const STATE_PACKAGES_CHANGED = 'environment_changed';
     public const STATE_CONFIGURATION_CHANGED = 'configuration_changed';
-
-    protected Registry $registry;
-
     protected PackageManager $packageManager;
 
-    protected ConfigContainer $configContainer;
-
-    public function __construct(Registry $registry, PackageManager $packageManager, ConfigContainer $configContainer)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectPackageManager(PackageManager $packageManager): void
     {
-        $this->registry = $registry;
         $this->packageManager = $packageManager;
-        $this->configContainer = $configContainer;
     }
 
     public function setTestResult(bool $success): void

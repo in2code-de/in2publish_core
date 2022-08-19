@@ -29,17 +29,12 @@ namespace In2code\In2publishCore\Service\Permission;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Event\VoteIfUserIsAllowedToPublish;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 class PermissionService
 {
-    protected EventDispatcher $eventDispatcher;
-
-    public function __construct(EventDispatcher $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
+    use EventDispatcherInjection;
 
     /** @return bool true if the current user is allowed to publish */
     public function isUserAllowedToPublish(): bool

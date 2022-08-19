@@ -29,10 +29,10 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
+use In2code\In2publishCore\CommonInjection\FlexFormServiceInjection;
+use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProviderInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Service\FlexFormService;
 
 use function array_keys;
 use function array_merge;
@@ -41,21 +41,12 @@ use function sprintf;
 
 class CaseSensitivityTest implements TestCaseInterface
 {
-    protected FlexFormService $flexFormService;
-
-    protected FalStorageTestSubjectsProvider $testSubjectProvider;
-
-    public function __construct(
-        FlexFormService $flexFormService,
-        FalStorageTestSubjectsProvider $falStorageTestSubjectsProvider
-    ) {
-        $this->flexFormService = $flexFormService;
-        $this->testSubjectProvider = $falStorageTestSubjectsProvider;
-    }
+    use FlexFormServiceInjection;
+    use FalStorageTestSubjectsProviderInjection;
 
     public function run(): TestResult
     {
-        $storages = $this->testSubjectProvider->getStoragesForCaseSensitivityTest();
+        $storages = $this->falStorageTestSubjectsProvider->getStoragesForCaseSensitivityTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
         $affected = [];
 

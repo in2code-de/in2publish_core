@@ -1,8 +1,4 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
-	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
-	  data-namespace-typo3-fluid="true"
->
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
 	<f:layout name="File" />
 
 	<f:section name="Main">
@@ -11,18 +7,17 @@
 			<f:translate key="module_m3_title">publish files</f:translate>
 		</h2>
 
-		<f:if condition="{record}">
-			<f:render partial="File/Index/FunctionBar" arguments="{_all}" />
+		<f:if condition="{recordTree}">
+			<f:render partial="File/FunctionBar" arguments="{_all}" />
 		</f:if>
 
-		<div class="table-fit">
+		<div class="table-fit" style="overflow: initial">
 			<table class="table in2publish-table">
 				<thead>
 					<tr>
 						<th class="col-icon"></th>
 						<th class="col-filename col-filename--local col-responsive nowrap"><f:translate key="record.filename"/> <i>(Local)</i></th>
 						<th class="col-control actions"></th>
-						<th class="col-control col-selection"></th>
 						<th class="col-control col-publish">
 							<i>[<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels._CONTROL_"/>]</i>
 						</th>
@@ -35,9 +30,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					<f:render partial="File/Index/FolderList" arguments="{_all}" />
-					<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
-						<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
+					<f:for each="{recordTree.children._folder}" as="record">
+						<f:render partial="File/FolderList" arguments="{record: record, config:config}" />
+						<f:for each="{record.children._file}" as="fileRecord">
+							<f:render partial="File/FileList" arguments="{record:fileRecord, config:config}" />
+						</f:for>
 					</f:for>
 				</tbody>
 			</table>

@@ -20,23 +20,27 @@
 				<source>administration tools</source>
 			</trans-unit>
 
+			<trans-unit id="m1.page_recursion">
+				<source>Depth</source>
+			</trans-unit>
+			<trans-unit id="m1.page_recursion.depth">
+				<source>%d level</source>
+			</trans-unit>
+			<trans-unit id="m1.page_recursion.depths">
+				<source>%d levels</source>
+			</trans-unit>
+
 			<trans-unit id="label_stage">
 				<source>Stage System</source>
 			</trans-unit>
 			<trans-unit id="label_production">
 				<source>Production System</source>
 			</trans-unit>
-			<trans-unit id="error_not_connected">
-				<source>Error: Could not connect to production database!</source>
-			</trans-unit>
-			<trans-unit id="error_connecting">
-				<source>Error: Could not establish a connection!</source>
-			</trans-unit>
 			<trans-unit id="record_published">
-				<source>The selected record has been published successfully.</source>
+				<source>The selected record has been published successfully. (Duration: %s)</source>
 			</trans-unit>
 			<trans-unit id="record_publishing_failure">
-				<source>One or more errors occurred during publishing. Please check the logs.</source>
+				<source>One or more errors occurred during publishing. Please check the logs. (Duration: %s)</source>
 			</trans-unit>
 			<trans-unit id="relation_resolving_errors">
 				<source>One or more errors occurred during relation resolving. Please check the logs.</source>
@@ -177,6 +181,12 @@
 			<trans-unit id="moduleselector.compare.description">
 				<source>The compare tool scans the whole database for differences. This tool is ought to help administrators clean up UID conflicts.</source>
 			</trans-unit>
+			<trans-unit id="moduleselector.record_inspector">
+				<source>Inspect a record tree</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.record_inspector.description">
+				<source>You can query for a record tree by classification and identifier and inspect it with all of its properties and children.</source>
+			</trans-unit>
 
 			<trans-unit id="system_info.show">
 				<source>Show the system info</source>
@@ -313,15 +323,12 @@
 			<trans-unit id="module.m4.flush_registry.description">
 				<source>The Content Publisher stores various information in the registry, like the outcome of the last test run. You can force the removal of these entries here.</source>
 			</trans-unit>
-			<trans-unit id="module.m4.flush_tca">
-				<source>Flush processed TCA cache</source>
-			</trans-unit>
 
 			<trans-unit id="test_state_error">
 				<source>In2publish might not work as expected.</source>
 			</trans-unit>
 			<trans-unit id="test_state_error.tests_never_ran">
-				<source>The In2publish tests were never executed.</source>
+				<source>Unknown test state. Please execute the tests in the Publish Tools Module.</source>
 			</trans-unit>
 			<trans-unit id="test_state_error.tests_failing">
 				<source>Some In2publish tests are failing.</source>
@@ -357,9 +364,6 @@
 			</trans-unit>
 			<trans-unit id="file_publishing.failure.file">
 				<source>The selected file %s could not be fully published.</source>
-			</trans-unit>
-			<trans-unit id="file_publishing.too_many_files">
-				<source>The folder %s contains too many files (%d) to process. The limit of files in a folder is %d files per folder.</source>
 			</trans-unit>
 
 			<trans-unit id="publishing.tasks_failure">
@@ -562,9 +566,6 @@
 			<trans-unit id="compare_database.transfer.success">
 				<source>Success</source>
 			</trans-unit>
-			<trans-unit id="compare_database.transfer.db_error">
-				<source>Could not connect to the databases</source>
-			</trans-unit>
 			<trans-unit id="compare_database.transfer.record_missing">
 				<source>The record which should be transferred does not exist anymore.</source>
 			</trans-unit>
@@ -589,6 +590,25 @@
 
 			<trans-unit id="module_m3_index_content">
 				<source>Admin tools</source>
+			</trans-unit>
+
+			<trans-unit id="record.reason.requires_translation_parent.existing">
+				<source>"%s" requires that the record "%s" (which is the default language version) is published first.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.requires_translation_parent.enablecolumns">
+				<source>"%s" requires that the record "%s" (which is the default language version) has all of its properties published (%s) which determine if the record is visible.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.requires_published_page.existing">
+				<source>"%s" requires that the page "%s" is published first.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.requires_published_page.enablecolumns">
+				<source>"%s" requires that the page "%s" has all of its properties published (%s) which determine if the record is visible.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.missing_dependency">
+				<source>The record with classification "%s" and properties "%s" does not exist.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.shortcut_record">
+				<source>The record "%s" is a target of the shortcut record "%s". The target must be published before the shortcut record can be published.</source>
 			</trans-unit>
 		</body>
 	</file>

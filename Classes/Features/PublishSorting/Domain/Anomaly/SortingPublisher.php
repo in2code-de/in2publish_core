@@ -29,48 +29,42 @@ namespace In2code\In2publishCore\Features\PublishSorting\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
-use In2code\In2publishCore\Service\Configuration\TcaService;
-use TYPO3\CMS\Core\Database\Connection;
+
+use function array_key_exists;
 
 class SortingPublisher
 {
-    protected Connection $localDatabase;
-
-    protected Connection $foreignDatabase;
-
-    protected TcaService $tcaService;
+    use LocalDatabaseInjection;
+    use ForeignDatabaseInjection;
 
     /** @var array<string, array<int, int>> */
     protected array $sortingsToBePublished = [];
 
-    public function __construct(Connection $localDatabase, Connection $foreignDatabase, TcaService $tcaService)
-    {
-        $this->localDatabase = $localDatabase;
-        $this->foreignDatabase = $foreignDatabase;
-        $this->tcaService = $tcaService;
-    }
-
     public function collectSortingsToBePublished(PublishingOfOneRecordBegan $event): void
     {
         $record = $event->getRecord();
-        if (!$record->hasLocalProperty('pid')) {
+        $localProps = $record->getLocalProps();
+        if (!array_key_exists('pid', $localProps)) {
             return;
         }
-        $pid = $record->getLocalProperty('pid');
-        $tableName = $record->getTableName();
+        $pid = $localProps['pid'];
+        $tableName = $record->getClassification();
         if (isset($this->sortingsToBePublished[$tableName][$pid])) {
             return;
         }
 
-        $sortingField = $this->tcaService->getNameOfSortingField($tableName);
+        $sortingField = $GLOBALS['TCA'][$tableName]['ctrl']['sortby'] ?? null;
 
         if (empty($sortingField)) {
             return;
         }
 
         // check if field sorting has changed
-        if ($record->getLocalProperty($sortingField) !== $record->getForeignProperty($sortingField)) {
+        $foreignProps = $record->getForeignProps();
+        if (($localProps[$sortingField] ?? null) !== ($foreignProps[$sortingField] ?? null)) {
             $this->sortingsToBePublished[$tableName][$pid] = $pid;
         }
     }
@@ -92,7 +86,7 @@ class SortingPublisher
             }
 
             foreach ($updates as $sorting => $uidList) {
-                $sortingField = $this->tcaService->getNameOfSortingField($tableName);
+                $sortingField = $GLOBALS['TCA'][$tableName]['ctrl']['sortby'];
 
                 $updateQuery = $this->foreignDatabase->createQueryBuilder();
                 $updateQuery->getRestrictions()->removeAll();

@@ -29,21 +29,18 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use TYPO3\CMS\Core\Database\ConnectionPool;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 
 use function json_decode;
 use function sprintf;
 use function strftime;
 use function substr;
 
+use const JSON_THROW_ON_ERROR;
+
 class LogsExporter implements SystemInformationExporter
 {
-    protected ConnectionPool $connectionPool;
-
-    public function __construct(ConnectionPool $connectionPool)
-    {
-        $this->connectionPool = $connectionPool;
-    }
+    use LocalDatabaseInjection;
 
     public function getUniqueKey(): string
     {
@@ -52,7 +49,7 @@ class LogsExporter implements SystemInformationExporter
 
     public function getInformation(): array
     {
-        $logQueryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_in2publishcore_log');
+        $logQueryBuilder = $this->localDatabase->createQueryBuilder();
         $logs = $logQueryBuilder->select('*')
                                 ->from('tx_in2publishcore_log')
                                 ->where($logQueryBuilder->expr()->lte('level', 4))

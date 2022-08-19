@@ -1,0 +1,12 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    bind:
+      $databaseOfForeign: '@=service("In2code\\In2publishCore\\Factory\\ConnectionFactory").createOtherConnection()'
+
+  In2code\In2publishCore\Component\RemoteProcedureCall\:
+    resource: '../../../Classes/Component/RemoteProcedureCall/*'
+    exclude:
+      - '../../../Classes/Component/RemoteProcedureCall/Command/Foreign/*'

@@ -12,10 +12,14 @@ use TYPO3\CMS\Core\Information\Typo3Version;
 
 use const PHP_EOL;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\Typo3VersionCommand
+ */
 class Typo3VersionCommandTest extends UnitTestCase
 {
     /**
      * @ticket https://projekte.in2code.de/issues/51213
+     * @covers ::execute
      */
     public function testCommandCanBeExecuted(): void
     {
@@ -25,7 +29,8 @@ class Typo3VersionCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new Typo3VersionCommand($typo3Version);
+        $command = new Typo3VersionCommand();
+        $command->injectTypo3Version($typo3Version);
 
         $code = $command->run($input, $output);
 

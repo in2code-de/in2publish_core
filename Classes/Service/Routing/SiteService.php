@@ -29,9 +29,10 @@ namespace In2code\In2publishCore\Service\Routing;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
-use In2code\In2publishCore\Service\Configuration\TcaService;
-use In2code\In2publishCore\Service\Database\RawRecordService;
+use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
+use In2code\In2publishCore\Service\Database\RawRecordServiceInjection;
+use In2code\In2publishCore\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use LogicException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -46,28 +47,11 @@ use function array_key_exists;
 class SiteService implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use SiteFinderInjection;
+    use ForeignSiteFinderInjection;
+    use RawRecordServiceInjection;
 
     protected array $cache = [];
-
-    protected RawRecordService $rawRecordService;
-
-    protected TcaService $tcaService;
-
-    protected SiteFinder $siteFinder;
-
-    protected ForeignSiteFinder $foreignSiteFinder;
-
-    public function __construct(
-        RawRecordService $rawRecordService,
-        TcaService $tcaService,
-        SiteFinder $siteFinder,
-        ForeignSiteFinder $foreignSiteFinder
-    ) {
-        $this->rawRecordService = $rawRecordService;
-        $this->tcaService = $tcaService;
-        $this->siteFinder = $siteFinder;
-        $this->foreignSiteFinder = $foreignSiteFinder;
-    }
 
     public function getSiteForPidAndStagingLevel(int $pid, string $side): ?Site
     {
@@ -85,18 +69,17 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
         if (null === $row) {
             return null;
         }
-
-        $deletedField = $this->tcaService->getDeletedField('pages');
-        if (!empty($deletedField) && $row[$deletedField]) {
+        $deletedField = $GLOBALS['TCA']['pages']['ctrl']['delete'] ?? null;
+        if (null !== $deletedField && $row[$deletedField]) {
             return null;
         }
 
-        $l10nPointer = $this->tcaService->getTransOrigPointerField('pages');
-        if (empty($l10nPointer)) {
+        $l10nPointer = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'] ?? null;
+        if (null === $l10nPointer) {
             return $pageIdentifier;
         }
-        $languageField = $this->tcaService->getLanguageField('pages');
-        if (empty($languageField)) {
+        $languageField = $GLOBALS['TCA']['pages']['ctrl']['languageField'] ?? null;
+        if (null === $languageField) {
             return $pageIdentifier;
         }
 

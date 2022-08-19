@@ -29,16 +29,11 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\DataProvider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 
 class ForeignSiteIdentifierItemProcFunc
 {
-    protected ForeignSiteFinder $foreignSiteFinder;
-
-    public function __construct(ForeignSiteFinder $foreignSiteFinder)
-    {
-        $this->foreignSiteFinder = $foreignSiteFinder;
-    }
+    use ForeignSiteFinderInjection;
 
     public function addData(array &$result): void
     {

@@ -29,19 +29,14 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
 use Throwable;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 use function array_keys;
 
 class ExtConfExporter implements SystemInformationExporter
 {
-    protected ExtensionConfiguration $extensionConfiguration;
-
-    public function __construct(ExtensionConfiguration $extensionConfiguration)
-    {
-        $this->extensionConfiguration = $extensionConfiguration;
-    }
+    use ExtensionConfigurationInjection;
 
     public function getUniqueKey(): string
     {

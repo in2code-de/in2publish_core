@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Command\Foreign\Status;
 
 use In2code\In2publishCore\Command\Foreign\Status\ConfigFormatTestCommand;
-use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Config\Node\NodeCollection;
-use In2code\In2publishCore\Config\ValidationContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
+use In2code\In2publishCore\Component\ConfigContainer\ValidationContainer;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 use const PHP_EOL;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\ConfigFormatTestCommand
+ */
 class ConfigFormatTestCommandTest extends UnitTestCase
 {
     /**
      * @ticket https://projekte.in2code.de/issues/51213
+     * @covers ::execute
      */
     public function testCommandCanBeExecuted(): void
     {
@@ -38,7 +42,9 @@ class ConfigFormatTestCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new ConfigFormatTestCommand($validationContainer, $configContainer);
+        $command = new ConfigFormatTestCommand();
+        $command->injectValidationContainer($validationContainer);
+        $command->injectConfigContainer($configContainer);
 
         $code = $command->run($input, $output);
 

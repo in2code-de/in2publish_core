@@ -29,13 +29,14 @@ namespace In2code\In2publishCore\Features\CompareDatabaseTool\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
+use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
 use In2code\In2publishCore\Utility\ArrayUtility;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -53,22 +54,10 @@ use function max;
 class CompareDatabaseToolController extends ActionController
 {
     use AdminToolsModuleTemplate;
-
-    protected ConfigContainer $configContainer;
-
-    protected Connection $localDatabase;
-
-    protected Connection $foreignDatabase;
-
-    public function __construct(
-        ConfigContainer $configContainer,
-        Connection $localDatabase,
-        Connection $foreignDatabase
-    ) {
-        $this->configContainer = $configContainer;
-        $this->localDatabase = $localDatabase;
-        $this->foreignDatabase = $foreignDatabase;
-    }
+    use ConfigContainerInjection;
+    use LocalDatabaseInjection;
+    use ForeignDatabaseInjection;
+    use IgnoredFieldsServiceInjection;
 
     public function indexAction(): ResponseInterface
     {
@@ -92,8 +81,6 @@ class CompareDatabaseToolController extends ActionController
         $requestedTables = $comparisonRequest->getTables();
 
         $tables = array_intersect($allowedTables, $requestedTables, array_keys($GLOBALS['TCA']));
-
-        $ignoreFieldsForDiff = $this->configContainer->get('ignoreFieldsForDifferenceView');
 
         $differences = [];
 
@@ -158,7 +145,7 @@ class CompareDatabaseToolController extends ActionController
                     $localRowExists = array_key_exists($uid, $localRows);
                     $foreignRowExists = array_key_exists($uid, $foreignRows);
                     if ($localRowExists && $foreignRowExists) {
-                        $ignoredFields = $ignoreFieldsForDiff[$table] ?? [];
+                        $ignoredFields = $this->ignoredFieldsService->getIgnoredFields($table);
 
                         $localRow = $localRows[$uid];
                         $foreignRow = $foreignRows[$uid];
@@ -197,19 +184,7 @@ class CompareDatabaseToolController extends ActionController
      */
     public function transferAction(string $table, int $uid, string $expected): void
     {
-        $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-
-        if (null === $localDatabase || null === $foreignDatabase) {
-            $this->addFlashMessage(
-                LocalizationUtility::translate('compare_database.transfer.db_error', 'in2publish_core'),
-                LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                AbstractMessage::ERROR
-            );
-            $this->redirect('index');
-        }
-
-        $localQuery = $localDatabase->createQueryBuilder();
+        $localQuery = $this->localDatabase->createQueryBuilder();
         $localQuery->getRestrictions()->removeAll();
         $localQuery->select('*')
                    ->from($table)
@@ -218,7 +193,7 @@ class CompareDatabaseToolController extends ActionController
         $localResult = $localQuery->execute();
         $localRow = $localResult->fetchAssociative();
 
-        $foreignQuery = $foreignDatabase->createQueryBuilder();
+        $foreignQuery = $this->foreignDatabase->createQueryBuilder();
         $foreignQuery->getRestrictions()->removeAll();
         $foreignQuery->select('*')
                      ->from($table)

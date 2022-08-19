@@ -39,7 +39,11 @@ class TestingService
 {
     protected TestCaseService $testCaseService;
 
-    public function __construct(TestCaseService $testCaseService)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectTestCaseService(TestCaseService $testCaseService): void
     {
         $this->testCaseService = $testCaseService;
     }

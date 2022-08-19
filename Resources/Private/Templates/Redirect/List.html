@@ -23,10 +23,10 @@
 					<tbody>
 						<f:for each="{paginator.paginatedItems}" as="redirect">
 							<tr>
-								<td>{redirect.uid}</td>
-								<td>{redirect.sourceHost}</td>
-								<td>{redirect.sourcePath}</td>
-								<td>{redirect.target}</td>
+								<td>{redirect.id}</td>
+								<td>{redirect.localProps.source_host}</td>
+								<td>{redirect.localProps.source_path}</td>
+								<td>{redirect.localProps.target}</td>
 								<td>
 									<f:switch expression="{redirect.publishingState}">
 										<f:case value="publishable">
@@ -53,7 +53,7 @@
 								</td>
 								<td>
 									<f:if condition="!{redirect.deleted}">
-										<be:link.editRecord class="btn btn-default" table="sys_redirect" uid="{redirect.uid}" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:edit')}">
+										<be:link.editRecord class="btn btn-default" table="sys_redirect" uid="{redirect.id}" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:edit')}">
 											<core:icon identifier="actions-open"/>
 										</be:link.editRecord>
 									</f:if>
@@ -61,17 +61,17 @@
 										<f:case value="publishable">
 											<div class="btn-group">
 												<label class="btn btn-default btn-checkbox">
-													<f:form.checkbox title="Select for bulk publishing" value="{redirect.uid}" style="margin: 0" name="redirects[]"/>
+													<f:form.checkbox title="Select for bulk publishing" value="{redirect.id}" style="margin: 0" name="redirects[]"/>
 													<f:variable name="viewPublishAll" value="1"/>
 													<span class="t3-icon fa"></span>
 												</label>
-												<f:link.action action="publish" class="btn btn-default" arguments="{redirects: {0: redirect}}" title="Publish">
+												<f:link.action action="publish" class="btn btn-default" arguments="{redirects: {0: redirect.id}}" title="Publish">
 													<core:icon identifier="actions-caret-right" size="small"/>
 												</f:link.action>
 											</div>
 										</f:case>
 										<f:case value="siteRequired">
-											<f:link.action action="selectSite" class="btn btn-default" arguments="{redirect: redirect}" title="Publish with site association">
+											<f:link.action action="selectSite" class="btn btn-default" arguments="{redirect: redirect.id}" title="Publish with site association">
 												<core:icon identifier="actions-caret-right" overlay="overlay-external-link" size="small"/>
 											</f:link.action>
 										</f:case>

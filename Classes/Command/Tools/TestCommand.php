@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Command\Tools;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Service\Context\ContextService;
-use In2code\In2publishCore\Service\Environment\EnvironmentService;
-use In2code\In2publishCore\Testing\Service\TestingService;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
+use In2code\In2publishCore\Service\Environment\EnvironmentServiceInjection;
+use In2code\In2publishCore\Testing\Service\TestingServiceInjection;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,26 +43,12 @@ use const PHP_EOL;
 
 class TestCommand extends Command
 {
+    use EnvironmentServiceInjection;
+    use ContextServiceInjection;
+    use TestingServiceInjection;
+
     public const EXIT_TESTS_FAILED = 240;
     public const IDENTIFIER = 'in2publish_core:tools:test';
-
-    private ContextService $contextService;
-
-    private TestingService $testingService;
-
-    private EnvironmentService $environmentService;
-
-    public function __construct(
-        ContextService $contextService,
-        TestingService $testingService,
-        EnvironmentService $environmentService,
-        string $name = null
-    ) {
-        parent::__construct($name);
-        $this->contextService = $contextService;
-        $this->testingService = $testingService;
-        $this->environmentService = $environmentService;
-    }
 
     public function isEnabled(): bool
     {

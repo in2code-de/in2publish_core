@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests;
 
-use RuntimeException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\DriverManager;
 use Exception;
-use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Config\Definer\In2publishCoreDefiner;
-use In2code\In2publishCore\Config\Provider\DefaultProvider;
-use In2code\In2publishCore\Config\Provider\ProviderInterface;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\Definer\In2publishCoreDefiner;
+use In2code\In2publishCore\Component\ConfigContainer\Provider\DefaultProvider;
+use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderInterface;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Container\ContainerInterface;
@@ -41,9 +40,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         'typo3/sysext/extensionmanager',
         'typo3conf/ext/in2publish_core',
     ];
-
     private ContainerInterface $container;
-
     /**
      * This internal variable tracks if the given test is the first test of
      * that test case. This variable is set to current calling test case class.

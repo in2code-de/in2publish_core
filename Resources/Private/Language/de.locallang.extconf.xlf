@@ -55,6 +55,10 @@
 				<source>Select the file transmission adapter. Defaults to ssh.</source>
 				<target state="translated">Adapter für Dateiübertragung auswählen. Standard ist ssh.</target>
 			</trans-unit>
+			<trans-unit id="debug_queries">
+				<source>Collect and show all queries in the debugger in the Backend.</source>
+				<target state="translated">Alle Queries sammeln und im Backend in der Debug-Ausgabe anzeigen.</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
