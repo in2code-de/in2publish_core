@@ -29,22 +29,16 @@ namespace In2code\In2publishCore\Command\Foreign\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\Typo3VersionInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Information\Typo3Version;
 
 class Typo3VersionCommand extends Command
 {
+    use Typo3VersionInjection;
+
     public const IDENTIFIER = 'in2publish_core:status:typo3version';
-
-    private Typo3Version $typo3Version;
-
-    public function __construct(Typo3Version $typo3Version, string $name = null)
-    {
-        parent::__construct($name);
-        $this->typo3Version = $typo3Version;
-    }
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

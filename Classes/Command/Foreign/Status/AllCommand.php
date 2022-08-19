@@ -37,12 +37,14 @@ use TYPO3\CMS\Core\Console\CommandRegistry;
 class AllCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:all';
-
     protected CommandRegistry $cmdRegistry;
 
-    public function __construct(CommandRegistry $commandRegistry, string $name = null)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectCommandRegistry(CommandRegistry $commandRegistry): void
     {
-        parent::__construct($name);
         $this->cmdRegistry = $commandRegistry;
     }
 

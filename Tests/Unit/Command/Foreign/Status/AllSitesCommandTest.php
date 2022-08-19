@@ -16,10 +16,14 @@ use function serialize;
 
 use const PHP_EOL;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\AllSitesCommand
+ */
 class AllSitesCommandTest extends UnitTestCase
 {
     /**
      * @ticket https://projekte.in2code.de/issues/51213
+     * @covers ::execute
      */
     public function testCommandCanBeExecuted(): void
     {
@@ -30,7 +34,8 @@ class AllSitesCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new AllSitesCommand($siteFinder);
+        $command = new AllSitesCommand();
+        $command->injectSiteFinder($siteFinder);
 
         $code = $command->run($input, $output);
 

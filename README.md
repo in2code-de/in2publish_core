@@ -15,7 +15,7 @@ Content Publishing in TYPO3 - the easy way:
 * Future proof
 * Supports all extensions (with correct TCA)
 
-<img src="https://www.in2code.de/fileadmin/content/images/produkte/contentpublisher/content_publisher_screenshot01_prev.png" width="450" />
+![index_publisher_screen.png](Documentation/_img/index_publisher_screen.png)
 
 ## Support
 

@@ -30,76 +30,66 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\FalHandling\FalFinder;
-use In2code\In2publishCore\Component\FalHandling\FalPublisher;
-use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyFilesException;
-use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
-use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use In2code\In2publishCore\Service\Environment\EnvironmentService;
-use In2code\In2publishCore\Service\Error\FailureCollector;
+use In2code\In2publishCore\CommonInjection\ModuleTemplateFactoryInjection;
+use In2code\In2publishCore\CommonInjection\PageRendererInjection;
+use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinderInjection;
+use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
+use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
+use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
+use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
+use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
+use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 use Throwable;
-use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
-use function count;
-use function dirname;
 use function explode;
+use function http_build_query;
 use function implode;
 use function is_string;
 use function json_encode;
-use function reset;
+use function parse_str;
 use function strlen;
 use function strpos;
 use function trim;
+
+use const JSON_THROW_ON_ERROR;
 
 /**
  * The FileController is responsible for the "Publish Files" Backend module "m2"
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FileController extends AbstractController
+class FileController extends ActionController
 {
-    protected bool $forcePidInteger = false;
-    protected RecordPublisher $recordPublisher;
-    private ModuleTemplateFactory $moduleTemplateFactory;
-    private PageRenderer $pageRenderer;
-    private FalFinder $falFinder;
-    protected FalPublisher $falPublisher;
-    protected FailureCollector $failureCollector;
+    use ControllerFilterStatus;
+    use DeactivateErrorFlashMessage;
+    use CommonViewVariables;
+    use PageRendererInjection {
+        injectPageRenderer as actualInjectPageRenderer;
+    }
+    use DefaultFalFinderInjection;
+    use ModuleTemplateFactoryInjection;
+    use FailureCollectorInjection;
+    use PublisherServiceInjection;
 
-    public function __construct(
-        ConfigContainer $configContainer,
-        ExecutionTimeService $executionTimeService,
-        EnvironmentService $environmentService,
-        RemoteCommandDispatcher $remoteCommandDispatcher,
-        RecordPublisher $recordPublisher,
-        PageRenderer $pageRenderer,
-        ModuleTemplateFactory $moduleTemplateFactory,
-        FailureCollector $failureCollector
-    ) {
-        parent::__construct(
-            $configContainer,
-            $executionTimeService,
-            $environmentService,
-            $remoteCommandDispatcher
-        );
-        $this->recordPublisher = $recordPublisher;
-        $this->moduleTemplateFactory = $moduleTemplateFactory;
-        $this->failureCollector = $failureCollector;
-        $this->pageRenderer = $pageRenderer;
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectPageRenderer(PageRenderer $pageRenderer): void
+    {
+        $this->actualInjectPageRenderer($pageRenderer);
         $this->pageRenderer->addInlineLanguageLabelFile(
-            'EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf'
+            'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf'
         );
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
         $this->pageRenderer->addCssFile(
@@ -111,22 +101,25 @@ class FileController extends AbstractController
         );
     }
 
-    public function injectFalFinder(FalFinder $falFinder): void
-    {
-        $this->falFinder = $falFinder;
-    }
-
-    public function injectFalPublisher(FalPublisher $falPublisher): void
-    {
-        $this->falPublisher = $falPublisher;
-    }
-
+    /**
+     * @throws StopActionException
+     */
     public function indexAction(): ResponseInterface
     {
-        $record = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
+        $pid = BackendUtility::getPageIdentifier();
+        try {
+            $recordTree = $this->tryToGetFolderInstance($pid === 0 ? null : $pid);
+        } catch (FolderDoesNotExistOnBothSidesException $e) {
+            $uri = $this->request->getUri();
+            $queryParts = [];
+            parse_str($uri->getQuery(), $queryParts);
+            $queryParts['id'] = $e->getRootLevelCombinedIdentifier();
+            $uri = $uri->withQuery(http_build_query($queryParts));
+            $this->redirectToUri($uri);
+        }
 
-        if (null !== $record) {
-            $this->view->assign('record', $record);
+        if (null !== $recordTree) {
+            $this->view->assign('recordTree', $recordTree);
         }
 
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Tooltip');
@@ -139,23 +132,30 @@ class FileController extends AbstractController
 
     /**
      * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
+     *
      * @throws StopActionException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
-    public function publishFolderAction(string $identifier, bool $skipNotification = false): void
+    public function publishFolderAction(string $combinedIdentifier, bool $skipNotification = false): void
     {
+        $recordTree = $this->tryToGetFolderInstance($combinedIdentifier, true);
+
         try {
-            $this->falPublisher->publishFolder($identifier);
+            $this->publisherService->publishRecordTree($recordTree);
             if (!$skipNotification) {
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$identifier]),
+                    LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$combinedIdentifier]),
                     LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
                 );
             }
         } catch (Throwable $exception) {
             if (!$skipNotification) {
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', [$identifier]),
+                    LocalizationUtility::translate(
+                        'file_publishing.failure.folder',
+                        'in2publish_core',
+                        [$combinedIdentifier]
+                    ),
                     LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
                     AbstractMessage::ERROR
                 );
@@ -170,42 +170,31 @@ class FileController extends AbstractController
      * @throws StopActionException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
-    public function publishFileAction(int $uid, string $identifier, int $storage, bool $skipNotification = false): void
+    public function publishFileAction(string $combinedIdentifier, bool $skipNotification = false): void
     {
-        // Special case: The file was moved hence the identifier is a merged one
-        if (strpos($identifier, ',')) {
-            // Just take the local part of the file identifier.
-            // We need the local folder identifier to instantiate the folder record.
-            [$identifier] = GeneralUtility::trimExplode(',', $identifier);
-        }
+        $recordTree = $this->defaultFalFinder->findFileRecord($combinedIdentifier);
 
-        $record = $this->tryToGetFolderInstance($storage . ':' . dirname($identifier));
-
-        if (null !== $record) {
-            $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
-
-            $relatedRecord = $this->getRecordToPublish($relatedRecords, $uid);
-
-            try {
-                $this->falPublisher->publishFile($relatedRecord);
-                if (!$skipNotification) {
-                    $this->addFlashMessage(
-                        LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
-                        LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
-                    );
-                }
-            } catch (Throwable $e) {
-                if (!$skipNotification) {
-                    $this->addFlashMessage(
-                        LocalizationUtility::translate(
-                            'file_publishing.failure.file',
-                            'in2publish_core',
-                            [$identifier]
-                        ),
-                        LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-                        AbstractMessage::ERROR
-                    );
-                }
+        try {
+            $this->publisherService->publishRecordTree($recordTree);
+            if (!$skipNotification) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$combinedIdentifier]
+                    ),
+                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+                );
+            }
+        } catch (Throwable $e) {
+            if (!$skipNotification) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate(
+                        'file_publishing.failure.file',
+                        'in2publish_core',
+                        [$combinedIdentifier]
+                    )
+                    . $e->getMessage(),
+                    LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
+                    AbstractMessage::ERROR
+                );
             }
         }
 
@@ -235,55 +224,19 @@ class FileController extends AbstractController
     }
 
     /**
-     * @param string|null $identifier CombinedIdentifier as FAL would use it
-     *
-     * @return RecordInterface|null The record or null if it can not be handled
+     * @throws FolderDoesNotExistOnBothSidesException
      */
-    protected function tryToGetFolderInstance(?string $identifier): ?RecordInterface
+    protected function tryToGetFolderInstance(?string $combinedIdentifier, bool $onlyRoot = false): ?RecordTree
     {
-        if (is_string($identifier) && strpos($identifier, ':') < strlen($identifier)) {
-            [$storage, $name] = explode(':', $identifier);
-            $identifier = $storage . ':' . trim($name, '/') . '/';
+        if (is_string($combinedIdentifier) && strpos($combinedIdentifier, ':') < strlen($combinedIdentifier)) {
+            [$storage, $name] = explode(':', $combinedIdentifier);
+            $name = trim($name, '/');
+            if (!empty($name)) {
+                $combinedIdentifier = $storage . ':/' . $name . '/';
+            } else {
+                $combinedIdentifier = $storage . ':/';
+            }
         }
-        try {
-            $record = $this->falFinder->findFalRecord($identifier);
-        } catch (TooManyFilesException $exception) {
-            $this->renderTooManyFilesFlashMessage($exception);
-            return null;
-        }
-        return $record;
-    }
-
-    protected function renderTooManyFilesFlashMessage(TooManyFilesException $exception): void
-    {
-        $arguments = [
-            'folder' => $exception->getFolder(),
-            'filesCount' => $exception->getCount(),
-            'threshold' => $exception->getThreshold(),
-        ];
-        $this->addFlashMessage(
-            LocalizationUtility::translate('file_publishing.too_many_files', 'in2publish_core', $arguments),
-            LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-            AbstractMessage::WARNING
-        );
-        $arguments['exception'] = $exception;
-        $this->logger->warning('The folder file limit has been exceeded', $arguments);
-    }
-
-    protected function getRecordToPublish(array $relatedRecords, int $uid): RecordInterface
-    {
-        $recordsCount = count($relatedRecords);
-
-        if (0 === $recordsCount) {
-            throw new RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
-        }
-        if (1 === $recordsCount) {
-            $relatedRecord = reset($relatedRecords);
-        } elseif (isset($relatedRecords[$uid])) {
-            $relatedRecord = $relatedRecords[$uid];
-        } else {
-            throw new RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
-        }
-        return $relatedRecord;
+        return $this->defaultFalFinder->findFolderRecord($combinedIdentifier, $onlyRoot);
     }
 }

@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Command\Foreign\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Config\ValidationContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
+use In2code\In2publishCore\Component\ConfigContainer\ValidationContainerInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -41,21 +41,10 @@ use function json_encode;
 
 class ConfigFormatTestCommand extends Command
 {
+    use ConfigContainerInjection;
+    use ValidationContainerInjection;
+
     public const IDENTIFIER = 'in2publish_core:status:configformattest';
-
-    protected ValidationContainer $validationContainer;
-
-    protected ConfigContainer $configContainer;
-
-    public function __construct(
-        ValidationContainer $validationContainer,
-        ConfigContainer $configContainer,
-        string $name = null
-    ) {
-        parent::__construct($name);
-        $this->validationContainer = $validationContainer;
-        $this->configContainer = $configContainer;
-    }
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

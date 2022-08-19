@@ -29,13 +29,13 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
+use In2code\In2publishCore\CommonInjection\CacheInjection;
+use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\Site\SiteFinder;
 
 use function array_diff;
 use function array_key_exists;
@@ -45,20 +45,13 @@ use function array_unique;
 use function json_encode;
 use function sprintf;
 
+use const JSON_THROW_ON_ERROR;
+
 class SiteConfigurationTest implements TestCaseInterface
 {
-    protected FrontendInterface $cache;
-
-    protected SiteFinder $siteFinder;
-
-    protected ForeignSiteFinder $foreignSiteFinder;
-
-    public function __construct(FrontendInterface $cache, SiteFinder $siteFinder, ForeignSiteFinder $foreignSiteFinder)
-    {
-        $this->cache = $cache;
-        $this->siteFinder = $siteFinder;
-        $this->foreignSiteFinder = $foreignSiteFinder;
-    }
+    use SiteFinderInjection;
+    use ForeignSiteFinderInjection;
+    use CacheInjection;
 
     public function run(): TestResult
     {
@@ -108,7 +101,10 @@ class SiteConfigurationTest implements TestCaseInterface
                             'direction' => $localLanguage->getDirection(),
                             'typo3Language' => $localLanguage->getTypo3Language(),
                             'fallbackType' => $localLanguage->getFallbackType(),
-                            'fallbackLanguageIds' => json_encode($localLanguage->getFallbackLanguageIds()),
+                            'fallbackLanguageIds' => json_encode(
+                                $localLanguage->getFallbackLanguageIds(),
+                                JSON_THROW_ON_ERROR
+                            ),
                             'enabled' => $localLanguage->isEnabled(),
                         ];
 
@@ -121,7 +117,10 @@ class SiteConfigurationTest implements TestCaseInterface
                             'direction' => $foreignLanguage->getDirection(),
                             'typo3Language' => $foreignLanguage->getTypo3Language(),
                             'fallbackType' => $foreignLanguage->getFallbackType(),
-                            'fallbackLanguageIds' => json_encode($foreignLanguage->getFallbackLanguageIds()),
+                            'fallbackLanguageIds' => json_encode(
+                                $foreignLanguage->getFallbackLanguageIds(),
+                                JSON_THROW_ON_ERROR
+                            ),
                             'enabled' => $foreignLanguage->isEnabled(),
                         ];
 

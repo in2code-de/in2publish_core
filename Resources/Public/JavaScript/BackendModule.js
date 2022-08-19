@@ -28,6 +28,7 @@ define([
 		} else {
 			In2publishCoreModule.setFilterForPageView();
 			In2publishCoreModule.filterButtonsListener();
+			In2publishCoreModule.setupPublishListeners();
 		}
 		In2publishCoreModule.overlayListener();
 		In2publishCoreModule.ajaxUriListener();
@@ -297,11 +298,35 @@ define([
 		event.preventDefault();
 		const target = event.currentTarget;
 		const type = target.dataset.type;
+		const severity = parseInt(target.dataset.severity || '0');
+		let actionButtonClass = 'btn-default';
+		switch(severity) {
+			/*
+			 * TYPO3.Severity.error = 2
+			 * TYPO3.Severity.warning = 1
+			 * TYPO3.Severity.ok = 0
+			 * TYPO3.Severity.info = -1
+			 * TYPO3.Severity.notice = -2
+			 */
+			case -2:
+			case -1:
+				actionButtonClass = 'btn-info';
+				break;
+			case 0:
+				actionButtonClass = 'btn-success';
+				break;
+			case 1:
+				actionButtonClass = 'btn-warning';
+				break;
+			case 2:
+				actionButtonClass = 'btn-danger';
+				break;
+		}
 		const configuration = {
 			title: TYPO3.lang['tx_in2publishcore.modal.publish.title'],
 			content: TYPO3.lang['tx_in2publishcore.modal.publish.' + type + '.text']
 				.replace('$name$', target.dataset.name),
-			severity: 0,
+			severity: severity,
 			buttons: [
 				{
 					text: TYPO3.lang['tx_in2publishcore.action.abort'],
@@ -314,7 +339,7 @@ define([
 				},
 				{
 					text: TYPO3.lang['tx_in2publishcore.actions.publish'],
-					btnClass: 'btn btn-success',
+					btnClass: 'btn ' + actionButtonClass,
 					name: 'publish',
 					trigger: () => {
 						Modal.currentModal.trigger('modal-dismiss');

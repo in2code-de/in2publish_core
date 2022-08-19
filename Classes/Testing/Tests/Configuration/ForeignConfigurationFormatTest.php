@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Testing\Tests\Configuration;
  */
 
 use In2code\In2publishCore\Command\Foreign\Status\ConfigFormatTestCommand;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
@@ -42,14 +42,11 @@ use function base64_decode;
 use function json_decode;
 use function strpos;
 
+use const JSON_THROW_ON_ERROR;
+
 class ForeignConfigurationFormatTest implements TestCaseInterface
 {
-    protected RemoteCommandDispatcher $remoteCommandDispatcher;
-
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
-    {
-        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
-    }
+    use RemoteCommandDispatcherInjection;
 
     public function run(): TestResult
     {

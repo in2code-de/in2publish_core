@@ -29,37 +29,39 @@ namespace In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task\FlushNewsCacheTask;
 
+use function array_keys;
+
 class NewsCacheInvalidator
 {
-    protected TaskRepository $taskRepository;
+    use TaskRepositoryInjection;
 
-    /** @var array<int, string> */
+    /** @var array<int, int> */
     protected array $newsCacheUidArray = [];
-
-    /** @var array<int, string> */
+    /** @var array<int, int> */
     protected array $newsCachePidArray = [];
-
-    public function __construct(TaskRepository $taskRepository)
-    {
-        $this->taskRepository = $taskRepository;
-    }
 
     public function registerClearCacheTasks(PublishingOfOneRecordBegan $event): void
     {
         $record = $event->getRecord();
-        if ('tx_news_domain_model_news' !== $record->getTableName() || !$record->localRecordExists()) {
+        if (
+            'tx_news_domain_model_news' !== $record->getClassification()
+            || Record::S_DELETED === $record->getState()
+        ) {
             return;
         }
 
-        $uid = $record->getLocalProperty('uid');
-        $this->newsCacheUidArray[$uid] = 'tx_news_uid_' . $uid;
+        $localProps = $record->getLocalProps();
 
-        $pid = $record->getLocalProperty('pid');
-        $this->newsCachePidArray[$pid] = 'tx_news_pid_' . $pid;
+        $uid = $localProps['uid'];
+        $this->newsCacheUidArray[$uid] = true;
+
+        $pid = $localProps['pid'];
+        $this->newsCachePidArray[$pid] = true;
     }
 
     public function writeClearCacheTask(): void
@@ -68,10 +70,15 @@ class NewsCacheInvalidator
             return;
         }
 
-        $this->taskRepository->add(new FlushNewsCacheTask(['tagsToFlush' => $this->newsCacheUidArray]));
+        $this->taskRepository->add(
+            new FlushNewsCacheTask(
+                [
+                    'uid' => array_keys($this->newsCacheUidArray),
+                    'pid' => array_keys($this->newsCachePidArray),
+                ]
+            )
+        );
         $this->newsCacheUidArray = [];
-
-        $this->taskRepository->add(new FlushNewsCacheTask(['tagsToFlush' => $this->newsCachePidArray]));
         $this->newsCachePidArray = [];
     }
 }

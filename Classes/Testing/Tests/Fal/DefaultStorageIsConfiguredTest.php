@@ -29,19 +29,14 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Resource\ResourceFactory;
 
 class DefaultStorageIsConfiguredTest implements TestCaseInterface
 {
-    protected ResourceFactory $resourceFactory;
-
-    public function __construct(ResourceFactory $resourceFactory)
-    {
-        $this->resourceFactory = $resourceFactory;
-    }
+    use ResourceFactoryInjection;
 
     public function run(): TestResult
     {

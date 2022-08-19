@@ -14,10 +14,14 @@ use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 
 use const PHP_EOL;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\DbConfigTestCommand
+ */
 class DbConfigTestCommandTest extends UnitTestCase
 {
     /**
      * @ticket https://projekte.in2code.de/issues/51213
+     * @covers ::execute
      */
     public function testCommandCanBeExecuted(): void
     {
@@ -40,7 +44,8 @@ class DbConfigTestCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new DbConfigTestCommand($connection);
+        $command = new DbConfigTestCommand();
+        $command->injectLocalDatabase($connection);
 
         $code = $command->run($input, $output);
 

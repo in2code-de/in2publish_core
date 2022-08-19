@@ -35,7 +35,6 @@ use LogicException;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function putenv;
 

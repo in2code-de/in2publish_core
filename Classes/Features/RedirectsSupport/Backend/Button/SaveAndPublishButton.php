@@ -35,6 +35,8 @@ use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
+use function htmlspecialchars;
+
 class SaveAndPublishButton extends AbstractControl implements ButtonInterface
 {
     protected IconFactory $iconFactory;
@@ -54,7 +56,7 @@ class SaveAndPublishButton extends AbstractControl implements ButtonInterface
         return static::class;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }

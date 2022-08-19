@@ -34,6 +34,9 @@
 			<trans-unit id="adapter.transmission">
 				<source>Select the file transmission adapter. Defaults to ssh.</source>
 			</trans-unit>
+			<trans-unit id="debug_queries">
+				<source>Collect and show all queries in the debugger in the Backend.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

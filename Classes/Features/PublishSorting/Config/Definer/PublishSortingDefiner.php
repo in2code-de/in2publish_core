@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Features\PublishSorting\Config\Definer;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\Builder;
-use In2code\In2publishCore\Config\Definer\DefinerInterface;
-use In2code\In2publishCore\Config\Node\NodeCollection;
+use In2code\In2publishCore\Component\ConfigContainer\Builder;
+use In2code\In2publishCore\Component\ConfigContainer\Definer\DefinerInterface;
+use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
 
 class PublishSortingDefiner implements DefinerInterface
 {

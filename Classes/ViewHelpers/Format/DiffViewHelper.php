@@ -16,7 +16,6 @@ class DiffViewHelper extends AbstractViewHelper
     use CompileWithRenderStatic;
 
     protected $escapeOutput = false;
-
     private const ARG_OLD = 'old';
     private const ARG_NEW = 'new';
 

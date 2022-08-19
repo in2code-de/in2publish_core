@@ -41,7 +41,11 @@ class VersionsExporter implements SystemInformationExporter
 {
     protected ConnectionPool $connectionPool;
 
-    public function __construct(ConnectionPool $connectionPool)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectConnectionPool(ConnectionPool $connectionPool): void
     {
         $this->connectionPool = $connectionPool;
     }

@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Fore
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
-use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,20 +38,14 @@ use Throwable;
 
 use function json_encode;
 
+use const JSON_THROW_ON_ERROR;
+
 class RunTasksInQueueCommand extends Command
 {
+    use ContextServiceInjection;
+    use TaskRepositoryInjection;
+
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
-
-    protected ContextService $contextService;
-
-    protected TaskRepository $taskRepository;
-
-    public function __construct(ContextService $contextService, TaskRepository $taskRepository, string $name = null)
-    {
-        parent::__construct($name);
-        $this->contextService = $contextService;
-        $this->taskRepository = $taskRepository;
-    }
 
     public function isEnabled(): bool
     {
@@ -63,6 +57,7 @@ class RunTasksInQueueCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $exitCode = Command::SUCCESS;
         $result = [];
         // Tasks which should get executed do not have an execution begin
         $tasksToExecute = $this->taskRepository->findByExecutionBegin();
@@ -73,6 +68,7 @@ class RunTasksInQueueCommand extends Command
                 $result[] = $task->getMessages();
             } catch (Throwable $e) {
                 $result[] = $e->getMessage();
+                $exitCode = Command::FAILURE;
             }
             $this->taskRepository->update($task);
         }
@@ -80,6 +76,6 @@ class RunTasksInQueueCommand extends Command
             $result[] = 'There was nothing to execute';
         }
         $output->write(json_encode($result, JSON_THROW_ON_ERROR));
-        return Command::SUCCESS;
+        return $exitCode;
     }
 }

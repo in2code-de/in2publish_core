@@ -36,6 +36,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function base64_encode;
 use function json_encode;
 
+use const JSON_THROW_ON_ERROR;
+
 class DbInitQueryEncodedCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:dbinitqueryencoded';

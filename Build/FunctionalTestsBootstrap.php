@@ -12,8 +12,6 @@
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\TestingFramework\Core\Testbase;
-
 call_user_func(function () {
     if (!getenv('IN2PUBLISH_CONTEXT')) {
         putenv('IN2PUBLISH_CONTEXT=Local');

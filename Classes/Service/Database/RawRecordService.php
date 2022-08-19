@@ -29,9 +29,11 @@ namespace In2code\In2publishCore\Service\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\In2publishCoreException;
 use PDO;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function is_array;
@@ -39,21 +41,27 @@ use function sprintf;
 
 class RawRecordService implements SingletonInterface
 {
-    /** @var array<string, Connection> */
-    protected array $databases;
+    use LocalDatabaseInjection;
+    use ForeignDatabaseInjection;
+    use RecordIndexInjection;
 
     protected array $cache = [];
 
-    public function __construct(Connection $localDatabase, Connection $foreignDatabase)
-    {
-        $this->databases = [
-            'local' => $localDatabase,
-            'foreign' => $foreignDatabase,
-        ];
-    }
-
     public function getRawRecord(string $table, int $uid, string $side): ?array
     {
+        if ('pages' === $table && 0 === $uid) {
+            return null;
+        }
+        $record = $this->recordIndex->getRecord($table, $uid);
+        if (null !== $record) {
+            if ('local' === $side) {
+                return $record->getLocalProps() ?: null;
+            }
+            if ('foreign' === $side) {
+                return $record->getForeignProps() ?: null;
+            }
+        }
+
         if (empty($this->cache[$side][$table][$uid])) {
             $this->cache[$side][$table][$uid] = $this->fetchRecord($table, $uid, $side);
         }
@@ -62,7 +70,13 @@ class RawRecordService implements SingletonInterface
 
     protected function fetchRecord(string $table, int $uid, string $side): ?array
     {
-        $database = $this->databases[$side] ?? null;
+        $database = null;
+        if ('local' === $side) {
+            $database = $this->localDatabase;
+        }
+        if ('foreign' === $side) {
+            $database = $this->foreignDatabase;
+        }
         if (null === $database) {
             throw new In2publishCoreException(
                 sprintf('Invalid side "%s" or database is not available', $side),

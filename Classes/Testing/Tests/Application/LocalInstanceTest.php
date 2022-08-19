@@ -29,34 +29,28 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 
 use function array_flip;
 use function array_merge;
 
 class LocalInstanceTest implements TestCaseInterface
 {
-    protected ConfigContainer $configContainer;
-
-    public function __construct(ConfigContainer $configContainer)
-    {
-        $this->configContainer = $configContainer;
-    }
+    use ConfigContainerInjection;
+    use LocalDatabaseInjection;
 
     public function run(): TestResult
     {
-        $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-
         if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])) {
             return new TestResult('application.local_utf8_fs', TestResult::ERROR, ['application.utf8_fs_errors']);
         }
 
         $excludedTables = $this->configContainer->get('excludeRelatedTables');
-        $localTables = array_flip($localDatabase->getSchemaManager()->listTableNames());
+        $localTables = array_flip($this->localDatabase->getSchemaManager()->listTableNames());
 
         $missingTables = [];
 

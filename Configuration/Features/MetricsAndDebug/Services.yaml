@@ -1,0 +1,8 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  In2code\In2publishCore\Features\MetricsAndDebug\:
+    resource: '../../../Classes/Features/MetricsAndDebug/*'

@@ -27,9 +27,9 @@ namespace In2code\In2publishCore\ViewHelpers\File;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use TYPO3\CMS\Core\Imaging\Icon;
-use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -37,19 +37,16 @@ use function explode;
 
 class IconViewHelper extends AbstractViewHelper
 {
+    use IconFactoryInjection;
+
     private const ARG_RECORD = 'record';
-
-    protected IconFactory $iconFactory;
-
     protected IconRegistry $iconRegistry;
-
     protected $escapeOutput = false;
 
-    public function injectIconFactory(IconFactory $iconFactory): void
-    {
-        $this->iconFactory = $iconFactory;
-    }
-
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectIconRegistry(IconRegistry $iconRegistry): void
     {
         $this->iconRegistry = $iconRegistry;
@@ -58,28 +55,42 @@ class IconViewHelper extends AbstractViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument(self::ARG_RECORD, RecordInterface::class, 'The record to show the icon for', true);
+        $this->registerArgument(self::ARG_RECORD, Record::class, 'The record to show the icon for', true);
     }
 
     public function render(): string
     {
-        /** @var RecordInterface $record */
+        /** @var Record $record */
         $record = $this->arguments[self::ARG_RECORD];
 
-        $mimeType = explode(',', $record->getMergedProperty('mime_type'))[0];
-        $iconIdentifier = $mimeTypeIcon = $this->iconRegistry->getIconIdentifierForMimeType($mimeType);
-
-        if ($mimeTypeIcon === null) {
-            $extension = explode(',', $record->getMergedProperty('extension'))[0];
-            $fileExtensionIcon = $this->iconRegistry->getIconIdentifierForFileExtension($extension);
-            if ($fileExtensionIcon === 'mimetypes-other-other') {
-                $mimeTypeIcon = $this->iconRegistry->getIconIdentifierForMimeType(explode('/', $mimeType)[0] . '/*');
-                $iconIdentifier = $mimeTypeIcon ?? $fileExtensionIcon;
-            } else {
-                $iconIdentifier = $fileExtensionIcon;
-            }
-        }
+        $iconIdentifier = $this->getIconIdentifier($record);
 
         return $this->iconFactory->getIcon($iconIdentifier, Icon::SIZE_SMALL)->render();
+    }
+
+    protected function getIconIdentifier(Record $record): ?string
+    {
+        $mimeType = $record->getProp('mime_type');
+        if ($mimeType === null) {
+            return $this->getIconIdentifierForFileExtension($record);
+        }
+
+        $iconIdentifier = $this->iconRegistry->getIconIdentifierForMimeType($mimeType);
+
+        if ($iconIdentifier === null) {
+            $fileExtensionIcon = $this->getIconIdentifierForFileExtension($record);
+            if ($fileExtensionIcon === 'mimetypes-other-other') {
+                $iconIdentifier = $this->iconRegistry->getIconIdentifierForMimeType(explode('/', $mimeType)[0] . '/*');
+                return $iconIdentifier ?? $fileExtensionIcon;
+            }
+            return $fileExtensionIcon;
+        }
+        return $iconIdentifier;
+    }
+
+    protected function getIconIdentifierForFileExtension(Record $record): string
+    {
+        $extension = $record->getProp('extension');
+        return $this->iconRegistry->getIconIdentifierForFileExtension($extension);
     }
 }

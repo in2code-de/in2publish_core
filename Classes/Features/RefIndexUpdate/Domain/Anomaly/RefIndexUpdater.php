@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Features\RefIndexUpdate\Domain\Model\Task\RefIndexUpdateTask;
 
@@ -38,24 +38,19 @@ use function is_int;
 
 class RefIndexUpdater
 {
-    protected TaskRepository $taskRepository;
+    use TaskRepositoryInjection;
 
     /** @var array<string, array<int, int>> */
     protected array $configuration = [];
 
-    public function __construct(TaskRepository $taskRepository)
-    {
-        $this->taskRepository = $taskRepository;
-    }
-
     public function registerRefIndexUpdate(PublishingOfOneRecordEnded $event): void
     {
         $record = $event->getRecord();
-        $uid = $record->getIdentifier();
+        $uid = $record->getId();
 
         // MM records and physical folders have string identifiers. They can not have a refIndex.
         if (is_int($uid)) {
-            $table = $record->getTableName();
+            $table = $record->getClassification();
             $this->configuration[$table][$uid] = $uid;
         }
     }

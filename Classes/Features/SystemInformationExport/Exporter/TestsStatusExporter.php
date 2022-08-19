@@ -29,19 +29,14 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Testing\Service\TestingService;
+use In2code\In2publishCore\Testing\Service\TestingServiceInjection;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
 use function array_merge;
 
 class TestsStatusExporter implements SystemInformationExporter
 {
-    protected TestingService $testingService;
-
-    public function __construct(TestingService $testingService)
-    {
-        $this->testingService = $testingService;
-    }
+    use TestingServiceInjection;
 
     public function getUniqueKey(): string
     {

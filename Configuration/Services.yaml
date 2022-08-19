@@ -1,22 +1,6 @@
 imports:
-  - { resource: Component/FalHandling/Services.yaml }
-  - { resource: Component/PostPublishTaskExecution/Services.yaml }
-  - { resource: Component/RecordHandling/Services.yaml }
-  - { resource: Features/AdminTools/Services.yaml }
-  - { resource: Features/CacheInvalidation/Services.yaml }
-  - { resource: Features/CompareDatabaseTool/Services.yaml }
-  - { resource: Features/ContextMenuPublishEntry/Services.yaml }
-  - { resource: Features/FileEdgeCacheInvalidator/Services.yaml }
-  - { resource: Features/NewsSupport/Services.yaml }
-  - { resource: Features/PhysicalFilePublisher/Services.yaml }
-  - { resource: Features/PublishSorting/Services.yaml }
-  - { resource: Features/RedirectsSupport/Services.yaml }
-  - { resource: Features/RefIndexUpdate/Services.yaml }
-  - { resource: Features/SimplifiedOverviewAndPublishing/Services.yaml }
-  - { resource: Features/SkipEmptyTable/Services.yaml }
-  - { resource: Features/SysLogPublisher/Services.yaml }
-  - { resource: Features/SystemInformationExport/Services.yaml }
-  - { resource: Features/WarningOnForeign/Services.yaml }
+  - { resource: Component/*/Services.yaml }
+  - { resource: Features/*/Services.yaml }
 
 services:
   _defaults:
@@ -27,7 +11,6 @@ services:
       $localDatabase: '@In2code.In2publishCore.Database.Local'
       $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
       $cache: '@cache.in2publish_core'
-      array $extConf: '@=service("TYPO3\\CMS\\Core\\Configuration\\ExtensionConfiguration").get("in2publish_core")'
 
   In2code\In2publishCore\:
     resource: '../Classes/*'
@@ -74,30 +57,5 @@ services:
           Enable verbose mode if you want to see a success message.
           For scripted testing check the exit code of this command.
 
-  # EventListener
-
-  In2code\In2publishCore\Config\Provider\PageTsProvider:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-PageTsProvider-bootCompleted'
-        method: 'processData'
-        event: In2code\In2publishCore\Event\ExtTablesPostProcessingEvent
-
-  In2code\In2publishCore\Domain\Service\Publishing\RunningRequestService:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-RunningRequestService-RecursiveRecordPublishingBegan'
-        method: 'onRecursiveRecordPublishingBegan'
-        event: In2code\In2publishCore\Event\RecursiveRecordPublishingBegan
-      - name: event.listener
-        identifier: 'in2publishcore-RunningRequestService-RecordsWereSelectedForPublishing'
-        method: 'onRecordsWereSelectedForPublishing'
-        event: In2code\In2publishCore\Event\RecordsWereSelectedForPublishing
-      - name: event.listener
-        identifier: 'in2publishcore-RunningRequestService-VoteIfRecordIsPublishable'
-        method: 'isPublishable'
-        event: In2code\In2publishCore\Event\VoteIfRecordIsPublishable
-      - name: event.listener
-        identifier: 'in2publishcore-RunningRequestService-DetermineIfRecordIsPublishing'
-        method: 'isPublishing'
-        event: In2code\In2publishCore\Event\DetermineIfRecordIsPublishing
+  In2code\In2publishCore\Domain\Service\ForeignSiteFinder:
+    arguments: [ '@cache.in2publish_core' ]

@@ -29,28 +29,19 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 final class PublishingOfOneRecordBegan
 {
-    private RecordInterface $record;
+    private Record $record;
 
-    private RecordPublisher $recordPublisher;
-
-    public function __construct(RecordInterface $record, RecordPublisher $recordPublisher)
+    public function __construct(Record $record)
     {
         $this->record = $record;
-        $this->recordPublisher = $recordPublisher;
     }
 
-    public function getRecord(): RecordInterface
+    public function getRecord(): Record
     {
         return $this->record;
-    }
-
-    public function getRecordPublisher(): RecordPublisher
-    {
-        return $this->recordPublisher;
     }
 }

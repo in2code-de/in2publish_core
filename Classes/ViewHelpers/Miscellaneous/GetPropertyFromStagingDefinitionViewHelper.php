@@ -28,13 +28,9 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
-use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-
-use function ucfirst;
 
 /**
  * @SuppressWarnings(PHPMD.LongClassName) Can't change that now. Probably going to deprecate/remove this VH anyway.
@@ -46,10 +42,10 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('record', RecordInterface::class, 'The record with the desired property value', true);
+        $this->registerArgument('record', Record::class, 'The record with the desired property value', true);
         $this->registerArgument('propertyName', 'string', 'The name of the desired property', true);
         $this->registerArgument('stagingLevel', 'string', 'Fetch the local or the foreign property', false, 'local');
-        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty', false);
+        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty');
     }
 
     public function render(): string
@@ -68,14 +64,11 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
         string $stagingLevel,
         ?string $fallbackProperty
     ): string {
-        $properties = ObjectAccess::getProperty($record, ucfirst($stagingLevel) . 'Properties');
-        if (isset($properties[$propertyName])) {
-            $value = $properties[$propertyName];
-            if (empty($value) && !empty($fallbackProperty)) {
-                $value = $this->getProperty($record, $fallbackProperty, $stagingLevel, null);
-            }
-        } else {
-            $value = $this->fallbackRootPageTitle($record, $propertyName, $stagingLevel);
+        $props = $record->getPropsBySide($stagingLevel);
+
+        $value = $props[$propertyName] ?? $this->fallbackRootPageTitle($record, $propertyName, $stagingLevel);
+        if (empty($value) && !empty($fallbackProperty)) {
+            $value = $props[$fallbackProperty] ?? null;
         }
         return (string)$value;
     }
@@ -96,20 +89,15 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
     ): string {
         if (
             'title' === $propertyName
-            && 'pages' === $record->getTableName()
-            && 0 === $record->getIdentifier()
+            && 'pages' === $record->getClassification()
+            && 0 === $record->getId()
         ) {
             if ($stagingLevel === 'local') {
-                return $this->getSiteName();
+                return $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
             }
 
             return LocalizationUtility::translate('label_production', 'in2publish_core') ?? 'label_production';
         }
         return static::EMPTY_FIELD_VALUE;
-    }
-
-    protected function getSiteName(): string
-    {
-        return $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
     }
 }

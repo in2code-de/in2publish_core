@@ -33,16 +33,12 @@ use Psr\EventDispatcher\StoppableEventInterface;
 
 final class DetermineIfRecordIsPublishing implements StoppableEventInterface
 {
-    /** @var bool */
-    protected $publishing = false;
-
-    private $tableName;
-
+    protected bool $publishing = false;
+    private string $tableName;
     private $identifier;
 
     /**
-     * @param string $tableName
-     * @param string|int $identifier
+     * @param array-key $identifier
      */
     public function __construct(string $tableName, $identifier)
     {
@@ -55,6 +51,9 @@ final class DetermineIfRecordIsPublishing implements StoppableEventInterface
         return $this->tableName;
     }
 
+    /**
+     * @return array-key
+     */
     public function getIdentifier()
     {
         return $this->identifier;

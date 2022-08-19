@@ -29,18 +29,13 @@ namespace In2code\In2publishCore\Testing\Tests\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
 class ConfigurationMigrationTest implements TestCaseInterface
 {
-    private ConfigContainer $configContainer;
-
-    public function __construct(ConfigContainer $configContainer)
-    {
-        $this->configContainer = $configContainer;
-    }
+    use ConfigContainerInjection;
 
     public function run(): TestResult
     {
@@ -53,8 +48,6 @@ class ConfigurationMigrationTest implements TestCaseInterface
 
     public function getDependencies(): array
     {
-        return [
-            ConfigurationValuesTest::class,
-        ];
+        return [];
     }
 }

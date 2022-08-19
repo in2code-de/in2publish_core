@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Testing\Tests;
 use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
 
 use function implode;
+use function is_string;
 
 use const PHP_EOL;
 
@@ -41,14 +42,10 @@ class TestResult
     public const WARNING = 'warning';
     public const ERROR = 'error';
     public const SKIPPED = 'notice';
-
     protected string $severity;
-
     protected string $label;
-
     /** @var array<string> */
     protected array $messages;
-
     protected ?array $labelArguments;
 
     /**

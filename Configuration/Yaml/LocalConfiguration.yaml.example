@@ -10,7 +10,10 @@
 foreign:
 
   # root path of the foreign TYPO3 CMS instance
-  rootPath: /Users/simpleAccount/Projects/Websites/foreign.publishing.dev
+  rootPath: /var/www/html/public
+
+  # path of the var folder of the foreign TYPO3 CMS instance
+  varPath: /var/www/html/var
 
   # path to php binary
   pathToPhp: /usr/bin/env php
@@ -24,7 +27,7 @@ foreign:
 
   # Additional environment variables to set before executing a remote cli command. The keys are the variable names
   envVars: [ ]
-    # MY_VAR: myValue
+  # MY_VAR: myValue
   # MY_ENV:
 
   # Set your production systems database credentials here. If you use port forwarding to
@@ -51,96 +54,46 @@ foreign:
 excludeRelatedTables:
   - be_groups
   - be_users
+  - cache_treelist
   - sys_history
   - sys_log
   - tx_extensionmanager_domain_model_extension
-  - cache_treelist
-  - tx_in2publishcore_log
   - tx_in2code_in2publish_task
-  - tx_in2code_in2publish_envelope
+  - tx_in2code_rpc_data
+  - tx_in2code_rpc_request
+  - tx_in2publishcore_filepublisher_task
+  - tx_in2publishcore_log
+  - tx_in2publishcore_remotefaldriver_file
+  - tx_in2publishcore_running_request
 
 
-# Ignore this fields for DIFF view
-ignoreFieldsForDifferenceView:
+# Ignore these fields for difference view (Publish Overview, Record Comparison).
+# Records which only have changes in ignored fields will not be shown as changed and not be published.
+ignoredFields:
+  '.*':
+    ctrl:
+      - tstamp
+      - versioningWS
+      - transOrigDiffSourceField
   pages:
-    - pid
-    - uid
-    - t3ver_oid
-    - t3ver_id
-    - t3ver_wsid
-    - t3ver_label
-    - t3ver_state
-    - t3ver_stage
-    - t3ver_count
-    - t3ver_tstamp
-    - t3ver_move_id
-    - t3_origuid
-    - tstamp
-    - sorting
-    - perms_userid
-    - perms_groupid
-    - perms_user
-    - perms_group
-    - perms_everybody
-    - crdate
-    - cruser_id
-    - SYS_LASTCHANGED
-  physical_folder:
-    - absolutePath
-    - ino
-    - mode
-    - nlink
-    - uid
-    - gid
-    - rdev
-    - size
-    - atime
-    - mtime
-    - ctime
-    - blksize
-    - blocks
-  sys_file:
-    - modification_date
-    - creation_date
-    - tstamp
-    - last_indexed
-  sys_file_metadata:
-    - tstamp
-    - crdate
+    fields:
+      - perms_userid
+      - perms_groupid
+      - perms_user
+      - perms_group
+      - perms_everybody
+      - SYS_LASTCHANGED
   sys_redirect:
-    - updatedon
-    - source_host
-    - hitcount
-    - lasthiton
-
+    fields:
+      - source_host
+      - hitcount
+      - lasthiton
+  sys_file:
+    fields:
+      - last_indexed
 
 # factory settings (configuration about building relations in in2publish)
 factory:
-
-  # The class which is used to fetch all records from persistence.
-  # @user
-  finder: 'In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder'
-  # Alternatives (only with in2publish Enterprise Edition):
-  #finder: 'In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\ShallowRecordFinder' # READ EXT:in2publish/Documentation/Book/7_7_SimpleFiles.md
-
-  # The class which is used to publish a record (recursively)
-  # @user
-  publisher: 'In2code\In2publishCore\Component\RecordHandling\DefaultRecordPublisher'
-
-  # [Performance]
-  # depth of pages to fetch in hierarchy
-  # @user
-  maximumPageRecursion: 2
-
-  # maximum number of relations in one chain
-  # @user
-  maximumContentRecursion: 6
-
-  # maximum number of instance creation recursion.
-  # Minimum: maximumPageRecursion + maximumContentRecursion. Will be ignored if lower.
-  # @user
-  maximumOverallRecursion: 8
-
   # Resolve properties of records (and pages) which target records from "pages" table
   # Use with care: Related pages will be published through the relation chain, too
   resolvePageRelations: FALSE
@@ -157,99 +110,6 @@ factory:
 
   # Enable to show records which are deleted on one side and non-existent on the other
   treatRemovedAndDeletedAsDifference: FALSE
-
-  # FAL related settings
-  fal:
-
-    # FAL Finder. The class to use to find a folder as an instance of the RecordInterface, containing all files of that
-    # folder as related records.
-    # This setting determines the strategy.
-    finder: 'In2code\In2publishCore\Component\FalHandling\Finder\DefaultFalFinder'
-    # Alternatives:
-    #finder: 'In2code\In2publish\Features\SimpleFiles\Component\FalHandling\Finder\SimpleFilesFinder' # READ EXT:in2publish_core/Documentation/Features/SimplifiedOverviewAndPublishing.md
-
-    # FAL Publisher. The class used to publish folders by identifier and files by their record instances.
-    # The default publisher should suffice for nearly all use cases. Please consider implementing your code with
-    # event listeners over changing this setting.
-    publisher: 'In2code\In2publishCore\Component\FalHandling\Publisher\DefaultFalPublisher'
-
-    # Set this to FALSE if you take care of the auto_increment yourself (e.g. when having FAL uploads in the
-    # foreign frontend. If set to TRUE it will enable the auto_increment synchronization whenever
-    # the publish files module was opened.
-    # This enabled by default because it will lead to problems if you did not set the auto_increment to a high value
-    # before disabling this option.
-    #
-    # It is recommended to not disable it if you are rather sure that there are no file uploads on live.
-    # If you have uploads on live (which you should not) you must enable this or you will get problems with file references.
-    reserveSysFileUids: TRUE
-
-    # Requires: reserveSysFileUids: TRUE
-    #
-    # This setting will enable a sys_file lookup based on the file identifier of files which were found in the storage
-    # but not in the database. (Database files are found by their folder hash)
-    reclaimSysFileEntries: FALSE
-
-    # Requires: reserveSysFileUids: TRUE
-    #
-    # Only in combination with factory.fal.reclaimSysFileEntries enabled.
-    # While reclaimSysFileEntries is consuming some additional performance this setting autoRepairFolderHash
-    # will automatically repair database entries and increase relation consistency
-    #
-    # WARNING: This feature changes sys_file entries on live without opt-in or asking for permission.
-    #   There is no preview of the changes which are going to be made.
-    #   Changes are persisted immediately before the publish file module is rendered.
-    autoRepairFolderHash: FALSE
-
-    # Requires: reserveSysFileUids: TRUE
-    #
-    # [BETA]
-    #
-    # It is possible for sys_file records to have different UIDs on local and foreign while referencing the same file
-    # due to the indexing behaviour of FAL. If this setting is set to FALSE you might see duplicate file entries in the
-    # publish files module. Enable this feature to merge the sys_files by identifier before showing them.
-    #
-    # WARNING: This feature will overwrite the UID of the foreign sys_file record if there are no references in the
-    #   table sys_file_reference. No other table or relation will be checked.
-    #   This feature changes sys_file_reference entries on live without opt-in or asking for permission.
-    #   There is no preview of the changes which are going to be made.
-    #   Changes are persisted immediately before the publish file module is rendered.
-    #
-    # IMPORTANT: If the UID of the foreign sys_file entry is already used in sys_file_reference this feature will not
-    #   overwrite the foreign UID to prevent severe damage or missing images on the foreign's frontend.
-    #   Hence it's mostly worth the risk and relatively stable.
-    mergeSysFileByIdentifier: FALSE
-
-    # Requires: reserveSysFileUids: TRUE
-    #
-    # [BETA]
-    #
-    # CAUTION: This feature disables the integrity check of the mergeSysFileByIdentifier feature. USE WITH CARE!
-    #
-    # DISCLAIMER:
-    #   This feature is distributed WITHOUT ANY WARRANTY;
-    #   without even the implied warranty of merchantability or fitness for a particular purpose.
-    #
-    # Disables the mergeSysFileByIdentifier integrity protection to allow you to update a sys_file's UID on foreign
-    # along with all associated sys_file_reference entries.
-    #
-    # WARNING: This feature changes sys_file_reference entries on live without opt-in or asking for permission.
-    #   There is no preview of the changes which are going to be made.
-    #   Changes are persisted immediately before the publish file module is rendered.
-    enableSysFileReferenceUpdate: FALSE
-
-    # Requires: reserveSysFileUids: FALSE
-    #
-    # Configuration for the limit on files inside a single folder.
-    #
-    # CAUTION: If set too high in2publish_core will can prevent database field overflows and crash the application!
-    #
-    # The field containing the data written on foreign is of type longtext. But it contains a lot of information like
-    # identifier (path in the storage), storage, size, name (filename) and uid. If you have more than 150 files in a
-    # folder and it is deeply nested the information will grow very quick and will eventually exceed the field length
-    # and lead to exceptions and may leave your instance in an unusable state.
-    # @user
-    folderFileLimit: 150
-
 
 # Set file preview domain. Must be at least a host name. If a scheme is not set it defaults to https.
 # You can include the scheme and also a path if your TYPO3 runs in a sub path (e.g. https://example.com/stuff/)
@@ -268,7 +128,7 @@ view:
     filterButtons: TRUE
 
     # show record connection to root record as breadcrumb in overview module. Applies only when debug.allInformation = FALSE.
-    breadcrumb: FALSE
+    breadcrumb: TRUE
 
   # Backend module Publish files
   files:
@@ -330,24 +190,15 @@ module:
 # @user
 debug:
 
-  # if set to TRUE, parentRecord will not be set for records
-  disableParentRecords: FALSE
-
   # Show foreign key fingerprint instead of throwing an exception.
   showForeignKeyFingerprint: FALSE
-
-  # Show depth of records in publishing view.
-  showRecordDepth: FALSE
-
-  # show execution time in backend modules in footer
-  showExecutionTime: TRUE
-
-  # show all information in publishing overview module (which records are related to the current page)
-  allInformation: FALSE
 
   # Do not delete Envelope entries after they fulfilled their purpose
   keepEnvelopes: FALSE
 
+  # This helps debugging demands which cause exceptions. Disabled to reduce overhead in production environments.
+  # Enable this to see which resolver and processor of which table and column is responsible for the demand.
+  traceDemand: FALSE
 
 # Configuration for tasks
 tasks:

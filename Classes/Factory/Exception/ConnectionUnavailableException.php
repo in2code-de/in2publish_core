@@ -36,9 +36,8 @@ use function sprintf;
 
 class ConnectionUnavailableException extends In2publishCoreException
 {
-    protected const MESSAGE = 'The connection for side "%s" is not available.';
+    protected const MESSAGE = 'The connection for side "%s" is not available. Please check your in2publish_core configuration.';
     public const CODE = 1631623822;
-
     private string $side;
 
     public function __construct(string $side, Throwable $previous = null)

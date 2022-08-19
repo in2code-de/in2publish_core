@@ -30,30 +30,22 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class TableGarbageCollectorTest implements TestCaseInterface
 {
+    use LocalDatabaseInjection;
+
     public function run(): TestResult
     {
         if (!ExtensionManagementUtility::isLoaded('scheduler')) {
             return new TestResult('database.scheduler_missing', TestResult::ERROR);
         }
-        $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
 
-        if (!($localDatabase instanceof Connection)) {
-            return new TestResult('database.local_inaccessible', TestResult::ERROR);
-        }
-
-        if (!$localDatabase->isConnected()) {
-            return new TestResult('database.local_offline', TestResult::ERROR);
-        }
-
-        $query = $localDatabase->createQueryBuilder();
+        $query = $this->localDatabase->createQueryBuilder();
         $query->count('*')
               ->from('tx_scheduler_task')
               ->where(
@@ -77,6 +69,8 @@ class TableGarbageCollectorTest implements TestCaseInterface
 
     public function getDependencies(): array
     {
-        return [];
+        return [
+            LocalDatabaseTest::class,
+        ];
     }
 }

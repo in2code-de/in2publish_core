@@ -30,44 +30,39 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  */
 
 use In2code\In2publishCore\Command\Foreign\Status\DbConfigTestCommand;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function base64_decode;
+use function bin2hex;
 use function in_array;
 use function is_array;
 use function json_decode;
+use function random_bytes;
 use function strpos;
+
+use const JSON_THROW_ON_ERROR;
 
 class ForeignDatabaseConfigTest implements TestCaseInterface
 {
+    use ForeignDatabaseInjection;
+    use RemoteCommandDispatcherInjection;
+
     public const DB_CONFIG_TEST_TYPE = 'DB Config Test';
-
-    protected RemoteCommandDispatcher $rceDispatcher;
-
-    protected Random $random;
-
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Random $random)
-    {
-        $this->rceDispatcher = $remoteCommandDispatcher;
-        $this->random = $random;
-    }
 
     public function run(): TestResult
     {
-        $connection = DatabaseUtility::buildForeignDatabaseConnection();
-        $connection->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);
-        $random = $this->random->generateRandomHexString(32);
+        $this->foreignDatabase->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);
+        $random = bin2hex(random_bytes(32));
         $row = ['task_type' => self::DB_CONFIG_TEST_TYPE, 'configuration' => $random];
-        $connection->insert('tx_in2code_in2publish_task', $row);
+        $this->foreignDatabase->insert('tx_in2code_in2publish_task', $row);
 
         $request = new RemoteCommandRequest(DbConfigTestCommand::IDENTIFIER);
-        $response = $this->rceDispatcher->dispatch($request);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
             $result = $this->tokenizeResponse($response->getOutput());
@@ -88,7 +83,7 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
                 [$response->getErrorsString(), $response->getOutputString()]
             );
         }
-        $connection->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);
+        $this->foreignDatabase->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);
         return $testResult;
     }
 

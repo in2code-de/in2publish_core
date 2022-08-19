@@ -29,10 +29,11 @@ namespace In2code\In2publishCore\Testing\Data;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Event\StoragesForTestingWereFetched;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function array_column;
@@ -40,23 +41,17 @@ use function array_combine;
 
 class FalStorageTestSubjectsProvider implements SingletonInterface
 {
+    use LocalDatabaseInjection;
+    use ForeignDatabaseInjection;
+    use EventDispatcherInjection;
+
     public const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';
     public const PURPOSE_DRIVER = 'driver';
     public const PURPOSE_MISSING = 'missing';
     public const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
-
-    protected EventDispatcher $eventDispatcher;
-
     protected array $localStorages = [];
-
     protected array $foreignStorages = [];
-
     protected bool $initialized = false;
-
-    public function __construct(EventDispatcher $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
 
     public function getStoragesForCaseSensitivityTest(): array
     {
@@ -78,12 +73,12 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
         return $this->getStorages(static::PURPOSE_UNIQUE_TARGET);
     }
 
-    protected function getStorages($purpose): array
+    protected function getStorages(string $purpose): array
     {
         if (false === $this->initialized) {
             $this->initialized = true;
-            $this->localStorages = $this->fetchStorages(DatabaseUtility::buildLocalDatabaseConnection());
-            $this->foreignStorages = $this->fetchStorages(DatabaseUtility::buildForeignDatabaseConnection());
+            $this->localStorages = $this->fetchStorages($this->localDatabase);
+            $this->foreignStorages = $this->fetchStorages($this->foreignDatabase);
         }
 
         $event = new StoragesForTestingWereFetched($this->localStorages, $this->foreignStorages, $purpose);

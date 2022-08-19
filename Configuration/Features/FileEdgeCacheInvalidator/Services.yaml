@@ -3,16 +3,21 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $localDatabase: '@In2code.In2publishCore.Database.Local'
 
   In2code\In2publishCore\Features\FileEdgeCacheInvalidator\:
     resource: '../../../Classes/Features/FileEdgeCacheInvalidator/*'
 
+  In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Service\FileEdgeCacheInvalidationService:
+    public: true
+
   In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector:
     tags:
       - name: event.listener
-        identifier: 'in2publishcore-PublishedFileIdentifierCollector-PhysicalFileWasPublished'
+        identifier: 'in2publishcore-PublishedFileIdentifierCollector-PublishingOfOneRecordBegan'
         method: 'registerPublishedFile'
-        event: In2code\In2publishCore\Event\PhysicalFileWasPublished
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
       - name: event.listener
         identifier: 'in2publishcore-PublishedFileIdentifierCollector-RecursiveRecordPublishingEnded'
         method: 'writeFlushFileEdgeCacheTask'

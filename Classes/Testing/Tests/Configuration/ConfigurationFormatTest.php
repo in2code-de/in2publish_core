@@ -29,22 +29,15 @@ namespace In2code\In2publishCore\Testing\Tests\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Config\ValidationContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
+use In2code\In2publishCore\Component\ConfigContainer\ValidationContainerInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
 class ConfigurationFormatTest implements TestCaseInterface
 {
-    private ValidationContainer $validationContainer;
-
-    private ConfigContainer $configContainer;
-
-    public function __construct(ValidationContainer $validationContainer, ConfigContainer $configContainer)
-    {
-        $this->validationContainer = $validationContainer;
-        $this->configContainer = $configContainer;
-    }
+    use ConfigContainerInjection;
+    use ValidationContainerInjection;
 
     public function run(): TestResult
     {

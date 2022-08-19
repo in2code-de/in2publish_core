@@ -244,6 +244,7 @@ class ConfigurationUtilityTest extends UnitTestCase
 
     /**
      * @test
+     * @covers ::mergeConfiguration()
      */
     public function sortsValuesByDefinedOrder()
     {
@@ -273,6 +274,7 @@ class ConfigurationUtilityTest extends UnitTestCase
 
     /**
      * @test
+     * @covers ::mergeConfiguration()
      */
     public function valuesAreRemovedIfTheValueIsUnset()
     {

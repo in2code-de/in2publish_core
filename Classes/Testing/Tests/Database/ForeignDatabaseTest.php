@@ -29,31 +29,33 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Testing\Data\RequiredTablesDataProvider;
+use In2code\In2publishCore\Factory\ConnectionFactory;
+use In2code\In2publishCore\Factory\Exception\ConnectionUnavailableException;
+use In2code\In2publishCore\Testing\Data\RequiredTablesDataProviderInjection;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\Connection;
 
 use function array_merge;
 use function in_array;
 
 class ForeignDatabaseTest implements TestCaseInterface
 {
-    protected RequiredTablesDataProvider $requiredTablesDataProvider;
+    use RequiredTablesDataProviderInjection;
 
-    public function __construct(RequiredTablesDataProvider $requiredTablesDataProvider)
+    protected ConnectionFactory $connectionFactory;
+
+    public function injectConnectionFactory(ConnectionFactory $connectionFactory): void
     {
-        $this->requiredTablesDataProvider = $requiredTablesDataProvider;
+        $this->connectionFactory = $connectionFactory;
     }
 
     public function run(): TestResult
     {
-        $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-
-        if (!($foreignDatabase instanceof Connection)) {
+        try {
+            $foreignDatabase = $this->connectionFactory->createForeignConnection();
+        } catch (ConnectionUnavailableException $e) {
             return new TestResult('database.foreign_inaccessible', TestResult::ERROR);
         }
 

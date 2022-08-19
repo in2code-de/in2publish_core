@@ -42,7 +42,6 @@ class ContextService implements SingletonInterface
     public const FOREIGN = 'Foreign';
     public const ENV_VAR_NAME = 'IN2PUBLISH_CONTEXT';
     public const REDIRECT_ENV_VAR_NAME = 'REDIRECT_IN2PUBLISH_CONTEXT';
-
     protected string $context;
 
     public function __construct()

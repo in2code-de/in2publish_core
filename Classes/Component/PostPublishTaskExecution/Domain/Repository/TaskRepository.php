@@ -32,79 +32,49 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repos
 
 use DateTime;
 use DateTimeImmutable;
+use In2code\In2publishCore\CommonInjection\DatabaseOfForeignInjection;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Factory\TaskFactory;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;
-use In2code\In2publishCore\Service\Context\ContextService;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\Connection;
 
 use function array_merge;
-use function get_class;
-use function json_encode;
 
 class TaskRepository
 {
+    use DatabaseOfForeignInjection;
+
     public const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
-
-    protected ContextService $contextService;
-
     protected TaskFactory $taskFactory;
-
-    protected ?Connection $connection;
-
     protected string $creationDate;
 
-    public function __construct(ContextService $contextService, TaskFactory $taskFactory)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectTaskFactory(TaskFactory $taskFactory): void
     {
-        $this->contextService = $contextService;
         $this->taskFactory = $taskFactory;
-        if ($this->contextService->isForeign()) {
-            $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
-        } elseif ($this->contextService->isLocal()) {
-            $this->connection = DatabaseUtility::buildForeignDatabaseConnection();
-        }
-        $now = new DateTime('now');
-        $this->creationDate = $now->format('Y-m-d H:i:s');
+    }
+
+    public function __construct()
+    {
+        $this->creationDate = (new DateTime('now'))->format('Y-m-d H:i:s');
     }
 
     public function add(AbstractTask $task): void
     {
-        $this->connection->insert(
+        $this->databaseOfForeign->insert(
             self::TASK_TABLE_NAME,
-            array_merge($this->taskToPropertiesArray($task), ['creation_date' => $this->creationDate])
+            array_merge($task->toArray(), ['creation_date' => $this->creationDate])
         );
     }
 
     public function update(AbstractTask $task): void
     {
-        $this->connection->update(
+        $this->databaseOfForeign->update(
             self::TASK_TABLE_NAME,
-            $this->taskToPropertiesArray($task),
+            $task->toArray(),
             ['uid' => $task->getUid()]
         );
-    }
-
-    /**
-     * TODO: use __toArray in AbstractTask instead
-     *
-     * @param AbstractTask $task
-     *
-     * @return array
-     */
-    protected function taskToPropertiesArray(AbstractTask $task): array
-    {
-        $properties = [
-            'task_type' => get_class($task),
-            'configuration' => json_encode($task->getConfiguration(), JSON_THROW_ON_ERROR),
-            'messages' => json_encode($task->getMessages(), JSON_THROW_ON_ERROR),
-        ];
-        if ($task->getExecutionBeginForPersistence() !== 'NULL') {
-            $properties['execution_begin'] = $task->getExecutionBeginForPersistence();
-        }
-        if ($task->getExecutionEndForPersistence() !== 'NULL') {
-            $properties['execution_end'] = $task->getExecutionEndForPersistence();
-        }
-        return $properties;
     }
 
     /**
@@ -117,7 +87,7 @@ class TaskRepository
      */
     public function findByExecutionBegin(DateTime $executionBegin = null): array
     {
-        $query = $this->connection->createQueryBuilder();
+        $query = $this->databaseOfForeign->createQueryBuilder();
         $query->getRestrictions()->removeAll();
 
         if ($executionBegin instanceof DateTime) {
@@ -149,7 +119,7 @@ class TaskRepository
      */
     public function deleteObsolete(): void
     {
-        $query = $this->connection->createQueryBuilder();
+        $query = $this->databaseOfForeign->createQueryBuilder();
         $executionEnd = (new DateTimeImmutable('1 week ago'))->format('Y-m-d H:i:s');
         $query->delete('tx_in2code_in2publish_task')
               ->where(

@@ -32,9 +32,7 @@ namespace In2code\In2publishCore\Event;
 class StoragesForTestingWereFetched
 {
     private array $localStorages;
-
     private array $foreignStorages;
-
     private string $purpose;
 
     public function __construct(array $localStorages, array $foreignStorages, string $purpose)
