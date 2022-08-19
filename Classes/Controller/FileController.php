@@ -61,6 +61,8 @@ use function strlen;
 use function strpos;
 use function trim;
 
+use const JSON_THROW_ON_ERROR;
+
 /**
  * The FileController is responsible for the "Publish Files" Backend module "m2"
  *

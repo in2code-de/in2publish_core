@@ -9,7 +9,9 @@ use In2code\In2publishCore\Component\Core\Publisher\Exception\PublisherOverflowE
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 use function bindec;
+use function count;
 use function decbin;
+use function krsort;
 use function str_pad;
 
 use const STR_PAD_LEFT;

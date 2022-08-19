@@ -10,6 +10,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
 
+use function date;
 use function explode;
 use function microtime;
 use function substr;

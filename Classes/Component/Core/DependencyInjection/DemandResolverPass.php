@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 use function array_keys;
+use function interface_exists;
 
 class DemandResolverPass implements CompilerPassInterface
 {

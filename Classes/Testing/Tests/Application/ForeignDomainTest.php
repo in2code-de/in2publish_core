@@ -44,6 +44,8 @@ use function array_combine;
 use function base64_decode;
 use function json_decode;
 
+use const JSON_THROW_ON_ERROR;
+
 class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
     use ForeignDatabaseInjection;

@@ -43,6 +43,8 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function json_encode;
 
+use const JSON_THROW_ON_ERROR;
+
 class PublishPageAjaxController
 {
     use RecordTreeBuilderInjection;

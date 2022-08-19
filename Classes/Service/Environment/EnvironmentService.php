@@ -38,6 +38,8 @@ use function json_encode;
 use function serialize;
 use function sha1;
 
+use const JSON_THROW_ON_ERROR;
+
 class EnvironmentService implements SingletonInterface
 {
     use ConfigContainerInjection;

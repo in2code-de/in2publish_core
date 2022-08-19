@@ -40,6 +40,8 @@ use function array_column;
 use function base64_encode;
 use function json_encode;
 
+use const JSON_THROW_ON_ERROR;
+
 class DbConfigTestCommand extends Command
 {
     use LocalDatabaseInjection;

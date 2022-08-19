@@ -16,6 +16,8 @@ use function hash;
 use function json_encode;
 use function substr;
 
+use const JSON_THROW_ON_ERROR;
+
 /**
  * Configured in the Services Configuration for local ond foreign.
  * Always inject `$localRepository` or `$foreignRepository` or by the service names

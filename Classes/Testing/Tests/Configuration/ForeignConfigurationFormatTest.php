@@ -42,6 +42,8 @@ use function base64_decode;
 use function json_decode;
 use function strpos;
 
+use const JSON_THROW_ON_ERROR;
+
 class ForeignConfigurationFormatTest implements TestCaseInterface
 {
     use RemoteCommandDispatcherInjection;

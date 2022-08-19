@@ -10,10 +10,9 @@ use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessor;
 use In2code\In2publishCore\Component\Core\Publisher\Publisher;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use TYPO3\CMS\Core\DependencyInjection\PublicServicePass;
 
-return static function (ContainerConfigurator $configurator, ContainerBuilder $builder): void {
+return static function (ContainerBuilder $builder): void {
     $builder->registerForAutoconfiguration(TcaPreProcessor::class)->addTag('in2publish_core.tca.preprocessor');
     $builder->registerForAutoconfiguration(Resolver::class)->addTag('in2publish_core.tca.resolver');
     $builder->registerForAutoconfiguration(Publisher::class)->addTag('in2publish_core.publisher');

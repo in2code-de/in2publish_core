@@ -36,6 +36,8 @@ use function sprintf;
 use function strftime;
 use function substr;
 
+use const JSON_THROW_ON_ERROR;
+
 class LogsExporter implements SystemInformationExporter
 {
     use LocalDatabaseInjection;

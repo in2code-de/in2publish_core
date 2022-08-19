@@ -8,6 +8,8 @@ use DateTime;
 use In2code\In2publishCore\In2publishCoreException;
 use Throwable;
 
+use function sprintf;
+
 class StopwatchAlreadyStartedException extends In2publishCoreException
 {
     private const MESSAGE = 'The stopwatch was already started at %s (%.4f)';

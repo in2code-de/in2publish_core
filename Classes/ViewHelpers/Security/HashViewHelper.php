@@ -9,6 +9,7 @@ use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function hash;
+use function trim;
 
 class HashViewHelper extends AbstractViewHelper
 {

@@ -43,7 +43,10 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function abs;
 use function in_array;
+use function preg_replace;
+use function trim;
 
 class DatabaseUtility
 {

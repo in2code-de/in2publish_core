@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
  */
 
 use function array_key_exists;
+use function sha1;
 
 abstract class AbstractMigration implements MigrationInterface
 {

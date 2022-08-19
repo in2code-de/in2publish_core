@@ -40,6 +40,7 @@ use function array_key_exists;
 use function array_merge;
 use function parse_url;
 use function sprintf;
+use function strpos;
 
 abstract class AbstractDomainTest
 {

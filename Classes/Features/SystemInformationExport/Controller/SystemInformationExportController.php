@@ -53,6 +53,8 @@ use function ob_get_level;
 use function strlen;
 use function time;
 
+use const JSON_THROW_ON_ERROR;
+
 class SystemInformationExportController extends ActionController
 {
     use AdminToolsModuleTemplate;

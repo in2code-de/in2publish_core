@@ -45,6 +45,8 @@ use function json_decode;
 use function random_bytes;
 use function strpos;
 
+use const JSON_THROW_ON_ERROR;
+
 class ForeignDatabaseConfigTest implements TestCaseInterface
 {
     use ForeignDatabaseInjection;

@@ -33,6 +33,8 @@ use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 
+use function array_key_exists;
+
 class SortingPublisher
 {
     use LocalDatabaseInjection;

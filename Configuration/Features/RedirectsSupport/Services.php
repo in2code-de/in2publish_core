@@ -11,11 +11,10 @@ use In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCach
 use In2code\In2publishCore\Features\RedirectsSupport\EventListener\EarlyRedirectsSupportEventListener;
 use In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer;
 use In2code\In2publishCore\Utility\ExtensionUtility;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use TYPO3\CMS\Core\Database\Event\AlterTableDefinitionStatementsEvent;
 
-return static function (ContainerConfigurator $configurator, ContainerBuilder $builder): void {
+return static function (ContainerConfigurator $configurator): void {
     $services = $configurator->services();
     $defaults = $services->defaults();
     $defaults->autowire();

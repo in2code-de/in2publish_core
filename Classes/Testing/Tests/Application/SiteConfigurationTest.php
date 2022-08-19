@@ -46,6 +46,8 @@ use function array_unique;
 use function json_encode;
 use function sprintf;
 
+use const JSON_THROW_ON_ERROR;
+
 class SiteConfigurationTest implements TestCaseInterface
 {
     use SiteFinderInjection;

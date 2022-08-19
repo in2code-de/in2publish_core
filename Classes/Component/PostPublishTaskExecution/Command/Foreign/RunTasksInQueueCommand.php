@@ -38,6 +38,8 @@ use Throwable;
 
 use function json_encode;
 
+use const JSON_THROW_ON_ERROR;
+
 class RunTasksInQueueCommand extends Command
 {
     use ContextServiceInjection;

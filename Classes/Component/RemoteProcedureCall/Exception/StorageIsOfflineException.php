@@ -7,6 +7,8 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall\Exception;
 use In2code\In2publishCore\In2publishCoreException;
 use Throwable;
 
+use function sprintf;
+
 class StorageIsOfflineException extends In2publishCoreException
 {
     private const MESSAGE = 'The storage %s is offline';

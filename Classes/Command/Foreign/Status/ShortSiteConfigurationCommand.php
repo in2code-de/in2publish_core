@@ -37,6 +37,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function base64_encode;
 use function json_encode;
 
+use const JSON_THROW_ON_ERROR;
+
 class ShortSiteConfigurationCommand extends Command
 {
     use SiteFinderInjection;
