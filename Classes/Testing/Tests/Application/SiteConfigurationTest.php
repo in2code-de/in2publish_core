@@ -36,7 +36,6 @@ use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 
 use function array_diff;
 use function array_key_exists;

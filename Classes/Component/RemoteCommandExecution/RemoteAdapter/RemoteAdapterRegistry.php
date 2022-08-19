@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter;
 
-use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
 use RuntimeException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

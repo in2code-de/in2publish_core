@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Testing\Data;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Event\StoragesForTestingWereFetched;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;

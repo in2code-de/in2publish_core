@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
 use In2code\In2publishCore\CommonInjection\RegistryInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;

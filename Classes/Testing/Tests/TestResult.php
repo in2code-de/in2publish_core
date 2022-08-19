@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Testing\Tests;
 use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
 
 use function implode;
-
 use function is_string;
 
 use const PHP_EOL;

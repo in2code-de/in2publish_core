@@ -29,10 +29,6 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
-use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
-use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
-use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingServiceInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;

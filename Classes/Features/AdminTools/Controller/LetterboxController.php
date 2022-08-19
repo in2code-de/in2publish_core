@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Component\RemoteProcedureCall\LetterboxInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;

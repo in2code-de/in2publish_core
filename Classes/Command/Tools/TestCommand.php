@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Command\Tools;
 
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use In2code\In2publishCore\Service\Environment\EnvironmentServiceInjection;
-use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Service\TestingServiceInjection;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Symfony\Component\Console\Command\Command;

@@ -37,7 +37,6 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatc
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function base64_decode;

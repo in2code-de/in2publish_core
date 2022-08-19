@@ -34,7 +34,6 @@ use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Database\Connection;
 
 use function array_column;
 use function base64_encode;

@@ -40,7 +40,6 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Exception\AllSitesCommandException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\Uri;

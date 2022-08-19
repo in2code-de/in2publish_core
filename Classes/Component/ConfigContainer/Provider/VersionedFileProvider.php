@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Service\Extension\ExtensionService;
 use In2code\In2publishCore\Service\Extension\ExtensionServiceInjection;
 use Spyc;
 

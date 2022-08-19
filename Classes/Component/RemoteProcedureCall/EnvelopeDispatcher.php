@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall;
  */
 
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Exception\StorageIsOfflineException;
 use InvalidArgumentException;

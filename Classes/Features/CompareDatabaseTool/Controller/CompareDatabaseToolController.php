@@ -36,7 +36,6 @@ use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModul
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
 use In2code\In2publishCore\Utility\ArrayUtility;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;

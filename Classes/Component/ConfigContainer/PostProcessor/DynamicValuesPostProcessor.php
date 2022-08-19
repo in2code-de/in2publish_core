@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Component\ConfigContainer\PostProcessor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistryInjection;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\Exception\InvalidDynamicValueProviderKeyException;
 use Psr\Log\LoggerAwareInterface;
