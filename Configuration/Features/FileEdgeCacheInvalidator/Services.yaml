@@ -9,6 +9,9 @@ services:
   In2code\In2publishCore\Features\FileEdgeCacheInvalidator\:
     resource: '../../../Classes/Features/FileEdgeCacheInvalidator/*'
 
+  In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Service\FileEdgeCacheInvalidationService:
+    public: true
+
   In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector:
     tags:
       - name: event.listener
