@@ -167,7 +167,7 @@ result.
 
 * `\In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped`
 * `\In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped`
-* `\In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped`
+* `\In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped` (Or [ExcludeRecordsByParentRecord](../Guides/ExcludeRecordsByParentRecord.md))
 * `\In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped`
 * `\In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped`
 * `\In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped`
