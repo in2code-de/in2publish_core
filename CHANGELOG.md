@@ -591,6 +591,15 @@
 - [CLEANUP] Remove outdated compatibility class SignalSlotReplacement
 - [!!!][UPDATE] Require TYPO3 v11
 
+10.2.5:
+
+- [META] Set the EM conf version number to 10.2.5
+- [GIT] Ignore the .github folder when creating a production dist
+- [COMMENT] Update the return annotation of findRedirectsByDynamicTarget
+- [BUGFIX] Ensure the rowCount is always an integer
+- [BUGFIX] Don't try to bulkInsert an empty data set
+- [RELEASE] Version 10.2.4 with bug fixes
+
 10.2.4:
 
 - [META] Set the EM conf version number to 10.2.4
