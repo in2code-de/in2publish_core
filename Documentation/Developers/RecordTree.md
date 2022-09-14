@@ -12,7 +12,7 @@ feature and did so, by removing the feature and migrating all overlays to `pages
 were stored in TYPO3. The PID of a translation ultimately became the UID of the actual parent, not the translation
 original. The former record tree did, mostly for backwards compatibility and API stability reasons, not reflect this
 change. Since we are required to break a lot of stuff to achieve QUAG, we are also required to change the record tree in
-a manner that reflects the new nature of translated pages or rather any translated record. **Translations to not live
+a manner that reflects the new nature of translated pages or rather any translated record. **Translations do not live
 under the translation original, but next to it**. This results in multiple roots, namely one page for each language.
 
 Having these language based root records allows us to easily extract a part of the record tree by language and still
