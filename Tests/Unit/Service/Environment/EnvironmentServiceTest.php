@@ -46,7 +46,6 @@ use function sha1;
 class EnvironmentServiceTest extends UnitTestCase
 {
     /**
-     * @covers ::__construct
      * @covers ::getPackagesHash
      * @covers ::setTestResult
      */
