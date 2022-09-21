@@ -22,7 +22,6 @@ use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
-use TYPO3\CMS\Lowlevel\ConfigurationModuleProvider\EventListenersProvider;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory

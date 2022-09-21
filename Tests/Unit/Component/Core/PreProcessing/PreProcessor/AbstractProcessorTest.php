@@ -6,7 +6,6 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\PreProcessing\PreProc
 
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\Exception\MissingPreProcessorTypeException;
-use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
