@@ -7,6 +7,9 @@ namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 use In2code\In2publishCore\Component\Core\PreProcessing\ProcessingResult;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ExtCoreSysCategoryItemsProcessor extends AbstractProcessor
 {
     protected string $type = 'group';
