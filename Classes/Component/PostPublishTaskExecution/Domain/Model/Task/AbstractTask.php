@@ -84,7 +84,10 @@ abstract class AbstractTask
         return $this->uid;
     }
 
-    /** @return mixed */
+    /**
+     * @return mixed
+     * @deprecated Tasks can access the configuration directly. Will be removed in v13.
+     */
     final public function getConfiguration(string $path = '')
     {
         if ($path) {
