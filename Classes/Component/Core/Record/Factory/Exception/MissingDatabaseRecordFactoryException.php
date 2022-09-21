@@ -9,6 +9,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class MissingDatabaseRecordFactoryException extends In2publishCoreException
 {
     private const MESSAGE = 'No factory found for table %s';

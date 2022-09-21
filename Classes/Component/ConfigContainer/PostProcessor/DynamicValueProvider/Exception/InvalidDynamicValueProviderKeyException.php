@@ -34,6 +34,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class InvalidDynamicValueProviderKeyException extends In2publishCoreException
 {
     protected const MESSAGE = 'A dynamic value provider for key "%s" was not registered';

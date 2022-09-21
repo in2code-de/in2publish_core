@@ -10,6 +10,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class FalPublisherExecutionFailedException extends In2publishCoreException
 {
     private const MESSAGE = "FalPublisherExecutionFailedException.\nOutput:\n%s\n\nErrors:\n%s";

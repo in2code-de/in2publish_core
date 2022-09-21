@@ -9,6 +9,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class StorageIsOfflineException extends In2publishCoreException
 {
     private const MESSAGE = 'The storage %s is offline';

@@ -12,6 +12,9 @@ use Symfony\Component\DependencyInjection\Reference;
 use function array_keys;
 use function interface_exists;
 
+/**
+ * @codeCoverageIgnore
+ */
 class DatabaseRecordFactoryFactoryCompilerPass implements CompilerPassInterface
 {
     private string $tagName;

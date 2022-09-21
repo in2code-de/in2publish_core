@@ -34,6 +34,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class FileMissingException extends In2publishCoreException
 {
     public const CODE = 1583161274;

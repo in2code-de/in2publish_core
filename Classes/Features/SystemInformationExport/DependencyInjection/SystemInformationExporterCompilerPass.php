@@ -36,6 +36,9 @@ use Symfony\Component\DependencyInjection\Reference;
 
 use function array_keys;
 
+/**
+ * @codeCoverageIgnore
+ */
 class SystemInformationExporterCompilerPass implements CompilerPassInterface
 {
     private string $tagName;

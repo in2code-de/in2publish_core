@@ -33,6 +33,9 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRespons
 use In2code\In2publishCore\In2publishCoreException;
 use Throwable;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ForeignSiteConfigUnavailableException extends In2publishCoreException
 {
     public const MESSAGE = 'An error occurred during fetching the remote site configuration';

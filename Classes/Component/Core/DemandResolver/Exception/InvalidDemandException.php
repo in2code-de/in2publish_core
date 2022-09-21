@@ -13,6 +13,9 @@ use function get_class;
 use function implode;
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class InvalidDemandException extends In2publishCoreException
 {
     private const MESSAGE = 'An invalid demand caused a query exception "%s" for database exception "%s".%s';

@@ -11,6 +11,9 @@ use Throwable;
 use function get_class;
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class PublisherOverflowException extends In2publishCoreException
 {
     private const MESSAGE = 'Tried to add the publisher "%s", but you can not add more than %d publishers. Please remove one or more publisher.';

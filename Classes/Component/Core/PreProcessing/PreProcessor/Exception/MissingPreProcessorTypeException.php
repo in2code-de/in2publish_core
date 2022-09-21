@@ -11,6 +11,9 @@ use Throwable;
 use function get_class;
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class MissingPreProcessorTypeException extends In2publishCoreException
 {
     public const CODE = 1649243375;

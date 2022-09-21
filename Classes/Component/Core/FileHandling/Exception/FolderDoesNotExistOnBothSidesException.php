@@ -9,6 +9,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class FolderDoesNotExistOnBothSidesException extends Exception
 {
     private const MESSAGE = 'Folder "%s" does not exist on both sides. Try %s instead.';

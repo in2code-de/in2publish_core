@@ -39,6 +39,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_diff_key;
 use function array_flip;
 
+/**
+ * @codeCoverageIgnore
+ */
 class AdminToolCompilerPass implements CompilerPassInterface
 {
     private const REQUIRED_ATTRIBUTES = [

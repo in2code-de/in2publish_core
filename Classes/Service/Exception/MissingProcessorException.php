@@ -31,6 +31,9 @@ namespace In2code\In2publishCore\Service\Exception;
 
 use Exception;
 
+/**
+ * @codeCoverageIgnore
+ */
 class MissingProcessorException extends Exception
 {
 }
