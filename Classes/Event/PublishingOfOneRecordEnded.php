@@ -31,6 +31,9 @@ namespace In2code\In2publishCore\Event;
 
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class PublishingOfOneRecordEnded
 {
     private Record $record;

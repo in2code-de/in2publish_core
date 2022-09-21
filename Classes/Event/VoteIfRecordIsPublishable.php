@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+/**
+ * @codeCoverageIgnore
+ */
 final class VoteIfRecordIsPublishable extends AbstractVotingEvent
 {
     private string $table;

@@ -34,6 +34,9 @@ use function array_unique;
 use function array_values;
 use function in_array;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class RequiredTablesWereIdentified
 {
     private array $tables;

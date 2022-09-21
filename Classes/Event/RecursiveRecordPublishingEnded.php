@@ -31,6 +31,9 @@ namespace In2code\In2publishCore\Event;
 
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class RecursiveRecordPublishingEnded
 {
     private RecordTree $recordTree;

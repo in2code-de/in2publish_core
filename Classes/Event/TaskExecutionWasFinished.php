@@ -31,6 +31,9 @@ namespace In2code\In2publishCore\Event;
 
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class TaskExecutionWasFinished
 {
     private RemoteCommandResponse $remoteCommandResponse;

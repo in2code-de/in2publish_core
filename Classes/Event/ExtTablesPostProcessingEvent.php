@@ -40,6 +40,8 @@ namespace In2code\In2publishCore\Event;
  *
  * Issue: https://forge.typo3.org/issues/95962
  * Patch: https://review.typo3.org/c/Packages/TYPO3.CMS/+/72160
+ *
+ * @codeCoverageIgnore
  */
 final class ExtTablesPostProcessingEvent
 {
