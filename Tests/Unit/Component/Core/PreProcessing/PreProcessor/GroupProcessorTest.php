@@ -20,6 +20,7 @@ class GroupProcessorTest extends UnitTestCase
 {
     /**
      * @covers ::process
+     * @covers ::buildResolver
      * @covers ::additionalPreProcess
      */
     public function testProcessRequiresAllowedFieldInTca(): void
@@ -47,6 +48,7 @@ class GroupProcessorTest extends UnitTestCase
 
     /**
      * @covers ::process
+     * @covers ::buildResolver
      * @covers ::additionalPreProcess
      */
     public function testProcessInternalTypeMustBeDb(): void
@@ -78,6 +80,7 @@ class GroupProcessorTest extends UnitTestCase
 
     /**
      * @covers ::process
+     * @covers ::buildResolver
      * @covers ::additionalPreProcess
      */
     public function testProcessAllowedTableMustBeInTca(): void
@@ -104,6 +107,7 @@ class GroupProcessorTest extends UnitTestCase
 
     /**
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testTcaMustNotContainMmOppositeField(): void
     {
