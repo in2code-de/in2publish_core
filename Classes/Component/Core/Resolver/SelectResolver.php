@@ -54,9 +54,9 @@ class SelectResolver extends AbstractResolver
             $additionalWhere = $matches['where'];
         }
 
-        $splittedValues = GeneralUtility::trimExplode(',', $value);
-        foreach ($splittedValues as $splittedValue) {
-            $demands->addSelect($this->foreignTable, $additionalWhere, 'uid', $splittedValue, $record);
+        $splitValues = GeneralUtility::trimExplode(',', $value);
+        foreach ($splitValues as $splitValue) {
+            $demands->addSelect($this->foreignTable, $additionalWhere, 'uid', $splitValue, $record);
         }
     }
 }
