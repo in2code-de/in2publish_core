@@ -85,6 +85,9 @@ class ArrayUtility
      * @param string|array $path
      *
      * @return mixed
+     *
+     * @deprecated Implement the array access iterative with your own error handling
+     * @see \In2code\In2publishCore\Component\ConfigContainer\ConfigContainer::get()
      */
     public static function getValueByPath(array &$array, $path)
     {
