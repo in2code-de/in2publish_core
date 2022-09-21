@@ -58,8 +58,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($tcaPreProcessingService, $siteFinder) extends
-            ReplaceMarkersService {
+        $replaceMarkerService = new class extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [
@@ -75,6 +74,9 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         };
         $replaceMarkerService->injectLocalDatabase($connection);
         $replaceMarkerService->injectFlexFormTools($flexFormTools);
+        $replaceMarkerService->injectTcaPreProcessingService($tcaPreProcessingService);
+        $replaceMarkerService->injectSiteFinder($siteFinder);
+
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,
             'foo ###PAGE_TSCONFIG_ID### bar',
@@ -97,8 +99,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($tcaPreProcessingService, $siteFinder) extends
-            ReplaceMarkersService {
+        $replaceMarkerService = new class extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [
@@ -114,6 +115,9 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         };
         $replaceMarkerService->injectLocalDatabase($connection);
         $replaceMarkerService->injectFlexFormTools($flexFormTools);
+        $replaceMarkerService->injectTcaPreProcessingService($tcaPreProcessingService);
+        $replaceMarkerService->injectSiteFinder($siteFinder);
+
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,
             'foo ###PAGE_TSCONFIG_IDLIST### bar',
@@ -153,12 +157,11 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $connection = $this->createMock(Connection::class);
         $connection->method('quote')->willReturnCallback(static fn(string $input): string => "'$input'");
 
-        $replaceMarkerService = new ReplaceMarkersService(
-            $tcaProcessingService
-        );
+        $replaceMarkerService = new ReplaceMarkersService();
         $replaceMarkerService->injectLocalDatabase($connection);
         $replaceMarkerService->injectFlexFormTools($flexFormTools);
         $replaceMarkerService->injectSiteFinder($siteFinder);
+        $replaceMarkerService->injectTcaPreProcessingService($tcaProcessingService);
 
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,
