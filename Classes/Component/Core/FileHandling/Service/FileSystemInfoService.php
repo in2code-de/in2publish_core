@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\FileHandling\Service;
 
 use InvalidArgumentException;
+use Throwable;
 
 class FileSystemInfoService
 {
@@ -58,7 +59,7 @@ class FileSystemInfoService
                     $fileInfo = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
                     $fileInfo['publicUrl'] = $driver->getPublicUrl($fileInfo['identifier']);
                     $info[$storage][$fileIdentifier] = $fileInfo;
-                } catch (InvalidArgumentException $exception) {
+                } catch (Throwable $exception) {
                     $info[$storage][$fileIdentifier] = null;
                 }
             }
