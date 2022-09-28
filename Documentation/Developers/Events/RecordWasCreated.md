@@ -16,6 +16,9 @@ Every time a new record was created.
 This event will be dispatched after `DecideIfRecordShouldBeIgnored` if the record is not ignored. You can use this event
 to react on any single record that was created.
 
+If you want to react on all newly created record objects in a batch operation, you can
+use [`DemandsWereResolved` (link)](DemandsWereResolved.md) instead.
+
 ### Example
 
 ```php
