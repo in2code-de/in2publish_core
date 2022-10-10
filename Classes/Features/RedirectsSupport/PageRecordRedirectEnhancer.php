@@ -306,7 +306,7 @@ class PageRecordRedirectEnhancer
                 $row['local'] = $redirectRecord->getLocalProperties();
             }
             if ($redirectRecord->foreignRecordExists()) {
-                $row['local'] = $redirectRecord->getForeignProperties();
+                $row['foreign'] = $redirectRecord->getForeignProperties();
             }
             $redirects[$redirectRecord->getIdentifier()] = $row;
         }
