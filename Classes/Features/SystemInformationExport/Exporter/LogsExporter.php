@@ -29,12 +29,15 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use JsonException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
 use function json_decode;
 use function sprintf;
 use function strftime;
 use function substr;
+
+use const JSON_THROW_ON_ERROR;
 
 class LogsExporter implements SystemInformationExporter
 {
@@ -72,7 +75,11 @@ class LogsExporter implements SystemInformationExporter
             );
             $logData = $log['data'];
             $logDataJson = substr($logData, 2);
-            $logsFormatted[$message] = json_decode($logDataJson, true, 512, JSON_THROW_ON_ERROR);
+            try {
+                $logsFormatted[$message] = json_decode($logDataJson, true, 512, JSON_THROW_ON_ERROR);
+            } catch (JsonException $e) {
+                $logsFormatted[$message] = $logData;
+            }
         }
         return $logsFormatted;
     }
