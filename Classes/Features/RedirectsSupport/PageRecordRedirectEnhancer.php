@@ -138,6 +138,10 @@ class PageRecordRedirectEnhancer
         return $collected;
     }
 
+    /**
+     * @param array<Uri> $uris
+     * @param array<int, array{local?: array, foreign?: array}> $collected
+     */
     protected function collectRedirectsByUri(array $uris, array $collected, string $side, Connection $connection): array
     {
         $newRows = $this->repo->findRawByUris($connection, $uris, array_keys($collected));
@@ -149,9 +153,7 @@ class PageRecordRedirectEnhancer
         $newUris = [];
         foreach ($newRows as $row) {
             $collected[$row['uid']][$side] = $row;
-            $newUris[$row['uid']] = (new Uri())
-                ->withHost($row['source_host'] ?? '')
-                ->withPath($row['source_path'] ?? '');
+            $newUris[$row['uid']] = $this->rowToUri($row);
         }
 
         return $this->collectRedirectsByUri($newUris, $collected, $side, $connection);
@@ -191,6 +193,7 @@ class PageRecordRedirectEnhancer
     }
 
     /**
+     * @param array<int, array{local?: array, foreign?: array}> $redirects
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function findMissingRowsByUid(array $redirects): array
@@ -232,14 +235,10 @@ class PageRecordRedirectEnhancer
         $redirects = $this->getExistingRedirects($record);
         foreach ($redirects as $redirect) {
             if (!empty($redirect['local'])) {
-                $row = $redirect['local'];
-                $basicUris[] = (new Uri())->withHost($row['source_host'] ?? '')
-                                          ->withPath($row['source_path'] ?? '');
+                $basicUris[] = $this->rowToUri($redirect['local']);
             }
             if (!empty($redirect['foreign'])) {
-                $row = $redirect['foreign'];
-                $basicUris[] = (new Uri())->withHost($row['source_host'] ?? '')
-                                          ->withPath($row['source_path'] ?? '');
+                $basicUris[] = $this->rowToUri($redirect['foreign']);
             }
         }
 
@@ -295,9 +294,7 @@ class PageRecordRedirectEnhancer
     }
 
     /**
-     * @return array[][]
-     *
-     * @psalm-return array<int|string, array{local?: array}>
+     * @return array<int, array{local?: array, foreign?: array}>
      */
     protected function getExistingRedirects(RecordInterface $record): array
     {
@@ -314,5 +311,19 @@ class PageRecordRedirectEnhancer
             $redirects[$redirectRecord->getIdentifier()] = $row;
         }
         return $redirects;
+    }
+
+    /**
+     * @param array{source_path?: string, source_host?: string} $row
+     * @noinspection PhpRedundantDocCommentInspection
+     * @noinspection RedundantSuppression
+     */
+    protected function rowToUri(array $row): Uri
+    {
+        $uri = new Uri($row['source_path'] ?? '');
+        if (!empty($row['source_host'])) {
+            $uri = $uri->withHost($row['source_host']);
+        }
+        return $uri;
     }
 }
