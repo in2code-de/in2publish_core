@@ -33,11 +33,15 @@ use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Dto\Redirect;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Http\Uri;
 
 class SysRedirectRepository
 {
     use LocalDatabaseInjection;
 
+    /**
+     * @param array<Uri> $uris
+     */
     public function findRawByUris(Connection $connection, array $uris, array $exceptUid): array
     {
         $query = $connection->createQueryBuilder();
@@ -46,14 +50,19 @@ class SysRedirectRepository
         $predicates = [];
 
         foreach ($uris as $uri) {
+            $target = $uri->getPath();
+            $queryPart = $uri->getQuery();
+            if (!empty($queryPart)) {
+                $target .= '?' . $queryPart;
+            }
             if ($uri->getHost() === '*') {
                 // If the "parent" redirect does not have a host it does not matter which host the redirect has, which
                 // redirects to the host-less redirect. It just belongs.
-                $predicates[] = $query->expr()->eq('target', $query->createNamedParameter($uri->getPath()));
+                $predicates[] = $query->expr()->eq('target', $query->createNamedParameter($target));
             } else {
                 /** @psalm-suppress ImplicitToStringCast */
                 $predicates[] = $query->expr()->andX(
-                    $query->expr()->eq('target', $query->createNamedParameter($uri->getPath())),
+                    $query->expr()->eq('target', $query->createNamedParameter($target)),
                     $query->expr()->orX(
                         $query->expr()->eq('source_host', $query->createNamedParameter($uri->getHost())),
                         $query->expr()->eq('source_host', $query->createNamedParameter('*'))
