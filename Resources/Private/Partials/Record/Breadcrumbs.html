@@ -1,0 +1,14 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:if condition="{config.view.records.breadcrumb}">
+		<f:if condition="{breadcrumbs}">
+			<h4 class="in2publish-related__title">
+				<f:translate key="related_records">related records</f:translate>
+			</h4>
+			<ul class="in2publish-related__list">
+				<f:for each="{breadcrumbs}" as="breadcrumb">
+					<li>{breadcrumb}
+				</f:for>
+			</ul>
+		</f:if>
+	</f:if>
+</html>

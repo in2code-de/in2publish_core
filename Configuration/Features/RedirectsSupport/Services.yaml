@@ -9,6 +9,8 @@ services:
 
   In2code\In2publishCore\Features\RedirectsSupport\:
     resource: '../../../Classes/Features/RedirectsSupport/*'
+    exclude:
+      - '../../../Classes/Features/RedirectsSupport/Domain/Model/*'
 
   In2code\In2publishCore\Features\RedirectsSupport\DataProvider\ForeignSiteIdentifierItemProcFunc:
     public: true

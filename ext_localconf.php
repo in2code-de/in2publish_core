@@ -19,6 +19,26 @@
         'className' => \In2code\In2publishCore\Middleware\BackendRouteInitialization::class
     ];
 
+    /************************************************ Record Extension ************************************************/
+    $file = \TYPO3\CMS\Core\Core\Environment::getVarPath() . '/cache/code/content_publisher/record_extension_trait.php';
+    if (file_exists($file)) {
+        // Initialize the variable to be able to use it in a reference
+        $autoloadFn = null;
+        /**
+         * This is a one-time autoloader that loads the compiled RecordExtensionTrait instead of the original.
+         * To keep the auto-loading overhead low, the function unregisters itself,
+         * so it will not interfere with further class loading.
+         */
+        $autoloadFn = static function (string $class) use (&$autoloadFn, $file): void {
+            if (\In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtensionTrait::class === $class) {
+                spl_autoload_unregister($autoloadFn);
+                unset($autoloadFn);
+                include $file;
+            }
+        };
+        spl_autoload_register($autoloadFn, true, true);
+    }
+
     /*********************************************** Settings/Instances ***********************************************/
     $extConf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class
