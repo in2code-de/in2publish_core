@@ -30,22 +30,9 @@ class RecordIndex
         $this->records = new RecordCollection();
     }
 
-    /**
-     * @param array<Record> $records
-     */
-    public function addRecords(array $records): void
-    {
-        foreach ($records as $record) {
-            $this->addRecord($record);
-        }
-    }
-
     public function addRecord(Record $record): void
     {
         $this->records->addRecord($record);
-        foreach ($record->getChildren() as $childRecord) {
-            $this->addRecord($childRecord);
-        }
     }
 
     /**
