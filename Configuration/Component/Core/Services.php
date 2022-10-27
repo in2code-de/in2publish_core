@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
+use In2code\In2publishCore\Component\Core\DependencyInjection\DatabaseRecordFactoryFactoryCompilerPass;
 use In2code\In2publishCore\Component\Core\DependencyInjection\DemandResolverPass;
 use In2code\In2publishCore\Component\Core\DependencyInjection\PublisherPass;
 use In2code\In2publishCore\Component\Core\DependencyInjection\TcaPreProcessorPass;
@@ -22,4 +23,5 @@ return static function (ContainerBuilder $builder): void {
     $builder->addCompilerPass(new PublicServicePass('in2publish_core.tca.resolver', true));
     $builder->addCompilerPass(new PublisherPass('in2publish_core.publisher'));
     $builder->addCompilerPass(new DemandResolverPass('in2publish_core.tca.demand_resolver'));
+    $builder->addCompilerPass(new DatabaseRecordFactoryFactoryCompilerPass('in2publish_core.factory.database_record'));
 };

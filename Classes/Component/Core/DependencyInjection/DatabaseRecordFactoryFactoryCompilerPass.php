@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\DependencyInjection;
+namespace In2code\In2publishCore\Component\Core\DependencyInjection;
 
 use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

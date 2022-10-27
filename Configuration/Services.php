@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactory;
-use In2code\In2publishCore\DependencyInjection\DatabaseRecordFactoryFactoryCompilerPass;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,5 +26,4 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
     );
 
     $builder->addCompilerPass(new PublicServicePass('in2publish_core.testing.test'));
-    $builder->addCompilerPass(new DatabaseRecordFactoryFactoryCompilerPass('in2publish_core.factory.database_record'));
 };
