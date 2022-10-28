@@ -1,5 +1,47 @@
 # In2publish Core Change Log
 
+12.1.0:
+
+- **Everything included in the 11.0.4 release**
+- [CLEANUP] Remove the redundant declaration of Record::getChildren()
+- [BUGFIX] Restore the breadcrumb feature
+- [DEV] Remove backslashes from the testing docker-compose.yml
+- [BUGFIX] Remove buggy record child recursion when adding new records to the index
+- [REFACTOR] Move the DbRecordFactoryFactoryCompilerPass into the core component folder
+- [BUGFIX] Remove non-existent table tx_in2publishcore_remotefaldriver_file from default ignored tables
+- [BUGFIX] Trigger event RecordRelationsWereResolved also for Publish Files Module operations
+- [FEATURE] Add new event DemandsWereResolved after resolving the demands
+- [CLEANUP] Remove unused injection trait
+- [BUGFIX] Set the correct default value for DatabaseSchemaService::$tables
+- [BUGFIX] Always append a slash at the targetDir for drivers which don't canonicalize the dir name
+- [DEV] Use docker compose instead of docker-compose
+- [BUGFIX] Catch all driver exception to prevent errors when files don't exist
+- [BUGFIX] Fix sys_redirect query when there are no deleted redirects on foreign
+- [TESTS] Ignore code coverage of the exceptions, middlewares and compiler passes
+- [CLEANUP] Remove unused ForeignFileInfoExecutionFailedException
+- [TYPO] Correct "slitted" to "split"
+- [BUGFIX] Correctly inject the deps of the ReplaceMarkersService mock
+- [TESTS] Ignore code coverage for all event classes
+- [CLEANUP] Remove unused imports from tests
+- [TESTS] Update code coverage annotations for all PreProcessors
+- [TESTS] Ignore code coverage for dumb PreProcessors
+- [DEPRECATION] Deprecate ArrayUtility::getValueByPath
+- [TESTS] Remove incorrect covers annotation from EnvironmentServiceTest
+- [TEST] Set correct coversDefaultClass for DbInitQueryEncodedCommand
+- [DEPRECATION] Deprecate AbstractTask::getConfiguration
+- [BUGFIX] Remove duplicate recursion prevention to actually register records in publishing
+- [TEST] Import class Testbase in FunctionalTestsBootstrap
+- [DEV] Update PHPUnit XSD version
+- [TESTS] Don't mock Connection::createSchemaManager when it does not exist
+- [DOC] Minor editorial changes in documentation
+- [DOC] Fix typo in documentation
+- [DOC] Edit documentation for 25505-BreakingChanges-QueryAggregation.md
+- [DOCS] Explain how to exclude a record by its parent state and property
+- [DOCS] Add missing docs for the events DemandsWereCollected and DemandsForTextWereCollected
+- [BUGFIX] Prevent infinite recursion when rendering the overview tree
+- [RELEASE] Version 12.0.0 with Query Aggregation
+
+
 12.0.0:
 
 - [META] Set the branch alias version number to 12.0.x-dev
