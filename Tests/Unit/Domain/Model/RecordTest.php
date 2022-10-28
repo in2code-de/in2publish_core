@@ -14,6 +14,7 @@ use function strcmp;
 
 /**
  * @SuppressWarnings(PHPMD)
+ * @coversDefaultClass \In2code\In2publishCore\Domain\Model\Record
  */
 class RecordTest extends UnitTestCase
 {
@@ -737,7 +738,7 @@ class RecordTest extends UnitTestCase
 
     /**
      * @covers ::getBreadcrumb
-     * @covers ::getRecordPath
+     * @covers ::getParentRecord
      * @depends testSetParentRecordSetsParentRecord
      */
     public function testGetBreadcrumbReturnsSlashImplodedStringToRootRecord()

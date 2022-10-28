@@ -145,6 +145,9 @@ class FilePublisherService implements LoggerAwareInterface
     protected function getLocalReadableFilePathForIdentifier(int $storage, string $fileIdentifier): string
     {
         $resourceStorage = $this->resourceFactory->getStorageObject($storage);
+        if (!$resourceStorage->hasFile($fileIdentifier)) {
+            throw new FileMissingException($fileIdentifier);
+        }
         return $resourceStorage->getFile($fileIdentifier)->getForLocalProcessing(false);
     }
 }
