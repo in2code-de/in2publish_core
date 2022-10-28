@@ -158,6 +158,8 @@ class FileIndexFactory
             $record->setLocalProperties($localFileInfo);
             $record->setForeignProperties($foreignFileInfo);
             $record->setDirtyProperties()->calculateState();
+        } else {
+            $record->addAdditionalProperty('fileState', 'missing');
         }
     }
 

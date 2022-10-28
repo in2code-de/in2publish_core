@@ -131,6 +131,9 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
         string $identifier,
         string $combinedIdentifier
     ): void {
+        if ($record->getAdditionalProperty('fileState') === 'missing') {
+            return;
+        }
         switch ($record->getState()) {
             case RecordInterface::RECORD_STATE_MOVED_AND_CHANGED:
                 $result = $this->replaceFileWithChangedCopy($record, $storage, $logData);

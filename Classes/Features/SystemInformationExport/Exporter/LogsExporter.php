@@ -32,9 +32,12 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
 use function json_decode;
+use function json_last_error;
 use function sprintf;
 use function strftime;
 use function substr;
+
+use const JSON_ERROR_NONE;
 
 class LogsExporter implements SystemInformationExporter
 {
@@ -74,6 +77,9 @@ class LogsExporter implements SystemInformationExporter
             $logData = $log['data'];
             $logDataJson = substr($logData, 2);
             $logsFormatted[$message] = json_decode($logDataJson, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $logsFormatted[$message] = $logData;
+            }
         }
         return $logsFormatted;
     }
