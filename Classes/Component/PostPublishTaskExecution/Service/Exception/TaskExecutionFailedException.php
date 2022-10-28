@@ -10,6 +10,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class TaskExecutionFailedException extends In2publishCoreException
 {
     private const MESSAGE = "Task execution failed. Errors: \n%s\n\nOutput: \n%s";

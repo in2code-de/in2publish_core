@@ -7,6 +7,9 @@ namespace In2code\In2publishCore\Component\Core\FileHandling\Service\Exception;
 use In2code\In2publishCore\In2publishCoreException;
 use Throwable;
 
+/**
+ * @codeCoverageIgnore
+ */
 class EnvelopeSendingFailedException extends In2publishCoreException
 {
     private const MESSAGE = 'Sending the envelope for the foreign file info service failed.';

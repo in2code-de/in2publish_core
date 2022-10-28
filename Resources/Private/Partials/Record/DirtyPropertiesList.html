@@ -4,16 +4,7 @@
 	  data-namespace-typo3-fluid="true"
 >
 	<div class="in2publish-stagelisting__dropdown in2publish-stagelisting__dropdown--close in2publish-clearfix">
-		<f:if condition="{config.view.records.breadcrumb}">
-			<f:if condition="{record.changedRelatedRecordsFlat}">
-				<h4 class="in2publish-related__title"><f:translate key="related_records">related records</f:translate></h4>
-				<ul class="in2publish-related__list">
-					<f:for each="{record.changedRelatedRecordsFlat}" as="relatedRecord">
-						<li>{relatedRecord.breadcrumb}
-					</f:for>
-				</ul>
-			</f:if>
-		</f:if>
+		<f:render partial="Record/Breadcrumbs" arguments="{config: config, breadcrumbs: record.breadcrumbs}" />
 
 		<f:if condition="{record.publishable}">
 			<f:else>

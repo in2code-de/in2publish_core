@@ -9,6 +9,8 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Database\Connection;
 
+use function method_exists;
+
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Service\Database\DatabaseSchemaService
  */
@@ -23,7 +25,9 @@ class DatabaseSchemaServiceTest extends UnitTestCase
     {
         $localDatbase = $this->createMock(Connection::class);
         $localDatbase->expects($this->never())->method('getSchemaManager');
-        $localDatbase->expects($this->never())->method('createSchemaManager');
+        if (method_exists(Connection::class, 'createSchemaManager')) {
+            $localDatbase->expects($this->never())->method('createSchemaManager');
+        }
 
         $cacheData = [
             'columns' => [

@@ -11,6 +11,9 @@ use Symfony\Component\DependencyInjection\Reference;
 
 use function interface_exists;
 
+/**
+ * @codeCoverageIgnore
+ */
 class TcaPreProcessorPass implements CompilerPassInterface
 {
     /** @var string */

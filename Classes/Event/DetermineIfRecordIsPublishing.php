@@ -31,6 +31,9 @@ namespace In2code\In2publishCore\Event;
 
 use Psr\EventDispatcher\StoppableEventInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class DetermineIfRecordIsPublishing implements StoppableEventInterface
 {
     protected bool $publishing = false;

@@ -12,6 +12,8 @@ services:
 
   In2code\In2publishCore\Component\Core\:
     resource: '../../../Classes/Component/Core/*'
+    exclude:
+      - '../../../Classes/Component/Core/Record/Model/*'
 
   In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService:
     public: true

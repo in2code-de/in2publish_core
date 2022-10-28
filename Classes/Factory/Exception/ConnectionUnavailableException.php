@@ -34,6 +34,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ConnectionUnavailableException extends In2publishCoreException
 {
     protected const MESSAGE = 'The connection for side "%s" is not available. Please check your in2publish_core configuration.';

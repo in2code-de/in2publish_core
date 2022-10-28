@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  */
 
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use JsonException;
 
 use function json_decode;
 use function sprintf;
@@ -69,7 +70,11 @@ class LogsExporter implements SystemInformationExporter
             );
             $logData = $log['data'];
             $logDataJson = substr($logData, 2);
-            $logsFormatted[$message] = json_decode($logDataJson, true, 512, JSON_THROW_ON_ERROR);
+            try {
+                $logsFormatted[$message] = json_decode($logDataJson, true, 512, JSON_THROW_ON_ERROR);
+            } catch (JsonException $e) {
+                $logsFormatted[$message] = $logData;
+            }
         }
         return $logsFormatted;
     }

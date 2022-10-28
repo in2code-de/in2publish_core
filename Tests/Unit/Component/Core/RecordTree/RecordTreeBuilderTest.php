@@ -17,7 +17,6 @@ use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesService;
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use In2code\In2publishCore\Component\Core\Demand\Demands;

@@ -6,7 +6,6 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\PreProcessing\PreProc
 
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\Exception\MissingPreProcessorTypeException;
-use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -28,7 +27,10 @@ class AbstractProcessorTest extends UnitTestCase
 
         $forbidden = new \ReflectionProperty(AbstractProcessor::class, 'forbidden');
         $forbidden->setAccessible(true);
-        $forbidden->setValue($abstractProcessor, ['forbidden_key_1' => 'first_reason', 'forbidden_key_2' => 'second_reason']);
+        $forbidden->setValue(
+            $abstractProcessor,
+            ['forbidden_key_1' => 'first_reason', 'forbidden_key_2' => 'second_reason']
+        );
 
         $tca = ['type' => 'inline', 'forbidden_key_1' => 'foo'];
 
@@ -73,7 +75,7 @@ class AbstractProcessorTest extends UnitTestCase
         $this->assertSame('Key 1 is required', $reason);
     }
 
-     /**
+    /**
      * @covers ::process
      */
     public function testExceptionIsThrownIfTypeIsMissing(): void
@@ -94,7 +96,6 @@ class AbstractProcessorTest extends UnitTestCase
      */
     public function testProcessingResultIsIncompatibleIfNoResolverIsFound(): void
     {
-        $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
         $container = $this->createMock(ContainerInterface::class);
         $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
         $abstractProcessor->injectContainer($container);
@@ -104,7 +105,10 @@ class AbstractProcessorTest extends UnitTestCase
         $result = $abstractProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
         $reason = $result->getValue()[0];
         $this->assertFalse($result->isCompatible());
-        $this->assertSame('The processor did not return a valid resolver. The target table might be excluded or empty.', $reason);
+        $this->assertSame(
+            'The processor did not return a valid resolver. The target table might be excluded or empty.',
+            $reason
+        );
     }
 
     /**
@@ -112,11 +116,9 @@ class AbstractProcessorTest extends UnitTestCase
      */
     public function testMethodGetImportantFields(): void
     {
-        $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
         $container = $this->createMock(ContainerInterface::class);
         $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
         $abstractProcessor->injectContainer($container);
-
 
         $requiredFields = new \ReflectionProperty(AbstractProcessor::class, 'required');
         $requiredFields->setAccessible(true);
@@ -135,7 +137,6 @@ class AbstractProcessorTest extends UnitTestCase
 
     protected function getMockAbstractProcessor(): MockObject
     {
-        $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
         $container = $this->createMock(ContainerInterface::class);
         $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
         $abstractProcessor->injectContainer($container);

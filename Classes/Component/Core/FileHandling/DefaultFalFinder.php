@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Component\Core\FileHandling;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
@@ -43,6 +44,7 @@ use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
+use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -62,6 +64,7 @@ class DefaultFalFinder
     use FalDriverServiceInjection;
     use FileSystemInfoServiceInjection;
     use RecordTreeBuilderInjection;
+    use EventDispatcherInjection;
 
     /**
      * Creates a Record instance representing the current chosen folder in the
@@ -291,7 +294,11 @@ class DefaultFalFinder
             }
         }
 
-        return new RecordTree([$folderRecord]);
+        $recordTree = new RecordTree([$folderRecord]);
+
+        $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
+
+        return $recordTree;
     }
 
     public function findFileRecord(?string $combinedIdentifier): RecordTree
@@ -369,6 +376,10 @@ class DefaultFalFinder
             }
         }
 
-        return new RecordTree([$fileRecord]);
+        $recordTree = new RecordTree([$fileRecord]);
+
+        $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
+
+        return $recordTree;
     }
 }

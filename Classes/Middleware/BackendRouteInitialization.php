@@ -56,6 +56,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Have a look at the event ExtTablesPostProcessingEvent for more information.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Can't reduce. It is already as small as possible. And an XCLASS...
+ * @codeCoverageIgnore
  */
 class BackendRouteInitialization implements MiddlewareInterface
 {

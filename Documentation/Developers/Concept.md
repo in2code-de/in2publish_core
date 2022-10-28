@@ -7,7 +7,7 @@ keys, leaving alone foreign key constraints. TYPO3 has its own DSL-like approach
 the [TCA](https://docs.typo3.org/m/typo3/reference-tca/main/en-us/).
 
 The TCA must contain everything for TYPO3 and Extbase to function properly and can be seen as the single source of truth
-when it comes to links between data. Therefor, the Content Publisher leverages the TCA to identify which row in the
+when it comes to links between data. Therefore, the Content Publisher leverages the TCA to identify which row in the
 database is connected to another and how they have to be published.
 
 Aside from the TCA, there are some relations that are not defined in that array but just exist, like the relation
@@ -22,7 +22,7 @@ same that we are using for the publishing process.
 
 ## RecordTree Building Process
 
-Since version 12 of the Content Publisher, the process of database queries and TCA lookups was separated. Since the TCA
+Since version 12 of the Content Publisher, the process of database queries and TCA lookups are separated. Since the TCA
 is already available before the first database row and serves as the basis for all further steps, it is processed first.
 
 The PreProcessors search the TCA for columns that refer to other tables or otherwise, e.g. through wizards, may contain
@@ -34,14 +34,14 @@ are collected in a demand object until all information has been collected. Then 
 as possible are built from the demand. These queries are executed in the local and foreign database and the rows found
 are converted into DatabaseRecord objects.
 
-If all pages are found, a query is created for each table which finds all data records on all found pages (via the PID).
+When all pages have been found, a query is created for each table which will find all data records on all found pages (via the PID).
 
 Once all non-TCA relations have been resolved, the actual process begins. All records are passed into the resolvers from
 the first step. The resolvers take the properties of the records and build the Demands object from them. Once all
 records have been processed, the demand is fully built and will be fulfilled. Here again, as few queries as possible are
-executed in order to find all rows that are to be found and to convert them into DatabaseRecord objects.
+executed in order to find all rows that should be found and to convert them into DatabaseRecord objects.
 
-The last step is repeated for all newly found records until none are found or the safety limit of 8 iterations has been
+The last step is repeated for all newly found records until no more are found or the safety limit of 8 iterations has been
 reached. It is extremely unlikely that there are linking chains longer than 8.
 
 After building the record tree, it will be modified.
@@ -62,9 +62,9 @@ the record.
 When an error occurs during publishing the process will be rolled back, so that nothing should be published at the
 end. "Should", because some publishers are not transactional and can't be rolled back and some non-transactional
 publishers can not undo what they have done (e.g. deleting a file). Also, errors can occur when committing transactional
-publishers. In that case, other transaction will be rolled back, but transactions that finished can not be rolled back.
-So there is always a chance that when unexpected errors occur and the process breaks, that records were published but
-not all of them. This is still a huge improvement over older versions of the Content Publisher, which did not have
+publishers. In that case, other transactions will be rolled back, but finished transactions can not be rolled back.
+So there is always a risk that some but not all records are published in case of unexpected errors.
+This is still a huge improvement compared to older versions of the Content Publisher, which did not have
 transactions at all, and errors usually occur before committing.
 
 You can also write a publisher for your own [`DatabaseRecord` subtype](DatabaseRecordSubType.md). Read more about

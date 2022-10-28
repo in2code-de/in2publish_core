@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Record\Model;
 
 use Generator;
+use In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtensionTrait;
 use LogicException;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -18,6 +19,8 @@ use function implode;
 
 abstract class AbstractRecord implements Record
 {
+    use RecordExtensionTrait;
+
     // Initialize this in your constructor
     protected array $localProps;
     // Initialize this in your constructor

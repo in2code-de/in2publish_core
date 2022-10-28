@@ -62,7 +62,7 @@ class FalPublisherCommand extends Command
             $storage = $row['storage_uid'];
             $driver = $drivers[$storage];
             if (FileRecordPublisher::A_INSERT === $row['file_action']) {
-                $targetDir = PathUtility::dirname($row['identifier']);
+                $targetDir = trim(PathUtility::dirname($row['identifier']), '/') . '/';
                 if (!$driver->folderExists($targetDir)) {
                     $folderName = PathUtility::basename($targetDir);
                     $parentFolder = PathUtility::dirname($targetDir);

@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
 #
-# TYPO3 core test runner based on docker and docker-compose.
+# TYPO3 core test runner based on docker and docker compose.
 #
 
 # Function to write a .env file in Build/testing-docker/local
-# This is read by docker-compose and vars defined here are
+# This is read by docker compose and vars defined here are
 # used in Build/testing-docker/local/docker-compose.yml
 setUpDockerComposeDotEnv() {
     # Delete possibly existing local .env file if exists
     [ -e .env ] && rm .env
-    # Set up a new .env file for docker-compose
+    # Set up a new .env file for docker compose
     echo "COMPOSE_PROJECT_NAME=local" >> .env
     # To prevent access rights of files created by the testing, the docker image later
-    # runs with the same user that is currently executing the script. docker-compose can't
+    # runs with the same user that is currently executing the script. docker compose can't
     # use $UID directly itself since it is a shell variable and not an env variable, so
     # we have to set it explicitly here.
     echo "HOST_UID=`id -u`" >> .env
@@ -100,12 +100,6 @@ Examples:
     # Run unit tests using PHP 8.0
     ./Build/Scripts/runTests.sh -p 8.0
 EOF
-
-# Test if docker-compose exists, else exit out with error
-if ! type "docker-compose" > /dev/null; then
-  echo "This script relies on docker and docker-compose. Please install" >&2
-  exit 1
-fi
 
 # Go to the directory this script is located, so everything else is relative
 # to this dir, no matter from where this script is called.
@@ -198,41 +192,41 @@ fi
 case ${TEST_SUITE} in
     composerInstall)
         setUpDockerComposeDotEnv
-        docker-compose run composer_install
+        docker compose run composer_install
         SUITE_EXIT_CODE=$?
-        docker-compose down
+        docker compose down
         ;;
     composerInstallMax)
         setUpDockerComposeDotEnv
-        docker-compose run composer_install_max
+        docker compose run composer_install_max
         SUITE_EXIT_CODE=$?
-        docker-compose down
+        docker compose down
         ;;
     composerInstallMin)
         setUpDockerComposeDotEnv
-        docker-compose run composer_install_min
+        docker compose run composer_install_min
         SUITE_EXIT_CODE=$?
-        docker-compose down
+        docker compose down
         ;;
     composerValidate)
         setUpDockerComposeDotEnv
-        docker-compose run composer_validate
+        docker compose run composer_validate
         SUITE_EXIT_CODE=$?
-        docker-compose down
+        docker compose down
         ;;
     functional)
         setUpDockerComposeDotEnv
         case ${DBMS} in
             mariadb)
-                docker-compose run functional_mariadb10
+                docker compose run functional_mariadb10
                 SUITE_EXIT_CODE=$?
                 ;;
             mssql)
-                docker-compose run functional_mssql2019latest
+                docker compose run functional_mssql2019latest
                 SUITE_EXIT_CODE=$?
                 ;;
             postgres)
-                docker-compose run functional_postgres10
+                docker compose run functional_postgres10
                 SUITE_EXIT_CODE=$?
                 ;;
             sqlite)
@@ -241,7 +235,7 @@ case ${TEST_SUITE} in
                 # root if docker creates it. Thank you, docker. We create the path beforehand
                 # to avoid permission issues.
                 mkdir -p ${ROOT_DIR}/.Build/Web/typo3temp/var/tests/functional-sqlite-dbs/
-                docker-compose run functional_sqlite
+                docker compose run functional_sqlite
                 SUITE_EXIT_CODE=$?
                 ;;
             *)
@@ -250,19 +244,19 @@ case ${TEST_SUITE} in
                 echo "${HELP}" >&2
                 exit 1
         esac
-        docker-compose down
+        docker compose down
         ;;
     lint)
         setUpDockerComposeDotEnv
-        docker-compose run lint
+        docker compose run lint
         SUITE_EXIT_CODE=$?
-        docker-compose down
+        docker compose down
         ;;
     unit)
         setUpDockerComposeDotEnv
-        docker-compose run unit
+        docker compose run unit
         SUITE_EXIT_CODE=$?
-        docker-compose down
+        docker compose down
         ;;
     update)
         # pull typo3/core-testing-*:latest versions of those ones that exist locally

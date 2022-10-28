@@ -31,6 +31,9 @@ namespace In2code\In2publishCore\Event;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class DemandsWereCollected
 {
     private Demands $demands;

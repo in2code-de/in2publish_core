@@ -8,6 +8,7 @@ use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Event\DemandsWereCollected;
+use In2code\In2publishCore\Event\DemandsWereResolved;
 
 class DemandResolverCollection implements DemandResolver
 {
@@ -29,5 +30,6 @@ class DemandResolverCollection implements DemandResolver
         foreach ($this->demandResolvers as $demandResolver) {
             $demandResolver->resolveDemand($demands, $recordCollection);
         }
+        $this->eventDispatcher->dispatch(new DemandsWereResolved($demands, $recordCollection));
     }
 }

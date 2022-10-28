@@ -34,6 +34,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ClassNotFoundException extends In2publishCoreException
 {
     private const MESSAGE = 'The class "%s" registered as Content Publisher Admin Tool does not exist';

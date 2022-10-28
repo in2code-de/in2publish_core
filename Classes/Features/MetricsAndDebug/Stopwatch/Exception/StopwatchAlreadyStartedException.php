@@ -10,6 +10,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class StopwatchAlreadyStartedException extends In2publishCoreException
 {
     private const MESSAGE = 'The stopwatch was already started at %s (%.4f)';

@@ -132,14 +132,14 @@ class SingleDatabaseRepository
         $rows = $result->fetchAllAssociative();
 
         // Split the joined rows into the MM-table part and the joined table part.
-        $splittedRows = [];
+        $splitRows = [];
         foreach ($rows as $row) {
-            $splittedRow = [];
+            $splitRow = [];
             foreach ($row as $column => $value) {
                 // Split the prefix into mmtbl/table (0-5) and the actual column name (6-X).
-                $splittedRow[substr($column, 0, 5)][substr($column, 6)] = $value;
+                $splitRow[substr($column, 0, 5)][substr($column, 6)] = $value;
             }
-            $splittedRows[hash('sha1', json_encode($splittedRow['mmtbl'], JSON_THROW_ON_ERROR))] = $splittedRow;
+            $splitRows[hash('sha1', json_encode($splitRow['mmtbl'], JSON_THROW_ON_ERROR))] = $splitRow;
         }
         /*
          * Example return value:
@@ -172,7 +172,7 @@ class SingleDatabaseRepository
          *      ]
          *  ]
          */
-        return $splittedRows;
+        return $splitRows;
     }
 
     public function findByWhere($table, string $andWhere): array

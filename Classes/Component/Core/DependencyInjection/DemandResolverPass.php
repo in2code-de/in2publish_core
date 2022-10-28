@@ -13,6 +13,9 @@ use Symfony\Component\DependencyInjection\Reference;
 use function array_keys;
 use function interface_exists;
 
+/**
+ * @codeCoverageIgnore
+ */
 class DemandResolverPass implements CompilerPassInterface
 {
     private string $tagName;

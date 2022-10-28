@@ -86,11 +86,6 @@ class RunningRequestService implements SingletonInterface
         }
         $this->registeredRecords[$tableName][$recordId] = true;
 
-        if (isset($this->registeredRecords[$tableName][$recordId])) {
-            return;
-        }
-        $this->registeredRecords[$tableName][$recordId] = true;
-
         $this->runningRequestRepository->add($recordId, $tableName, $this->requestToken);
 
         foreach ($record->getChildren() as $relatedRecords) {

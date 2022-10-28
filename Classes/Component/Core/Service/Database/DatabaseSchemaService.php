@@ -18,7 +18,7 @@ class DatabaseSchemaService implements SingletonInterface
 
     protected const CACHE_ID = 'component_database_info';
     protected array $columns = [];
-    protected array $tables = [];
+    protected ?array $tables = null;
     protected bool $infoChanged = false;
 
     /**

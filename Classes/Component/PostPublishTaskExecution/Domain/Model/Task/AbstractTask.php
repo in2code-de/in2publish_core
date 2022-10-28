@@ -31,9 +31,12 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model
  */
 
 use DateTime;
-use In2code\In2publishCore\Utility\ArrayUtility;
 
+use function array_key_exists;
+use function explode;
+use function is_array;
 use function json_encode;
+use function trim;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -84,13 +87,27 @@ abstract class AbstractTask
         return $this->uid;
     }
 
-    /** @return mixed */
+    /**
+     * @return mixed
+     * @deprecated Tasks can access the configuration directly. Will be removed in v13.
+     */
     final public function getConfiguration(string $path = '')
     {
-        if ($path) {
-            return ArrayUtility::getValueByPath($this->configuration, $path);
+        $config = $this->configuration;
+        /** @noinspection DuplicatedCode */
+        $path = trim($path, " \t\n\r\0\x0B.");
+        if (!empty($path)) {
+            foreach (explode('.', $path) as $key) {
+                if (!is_array($config)) {
+                    return null;
+                }
+                if (!array_key_exists($key, $config)) {
+                    return null;
+                }
+                $config = $config[$key];
+            }
         }
-        return $this->configuration;
+        return $config;
     }
 
     final public function setCreationDate(DateTime $creationDate): AbstractTask

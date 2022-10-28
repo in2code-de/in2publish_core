@@ -33,6 +33,9 @@ use In2code\In2publishCore\Component\Core\Reason\Reason;
 use In2code\In2publishCore\Component\Core\Reason\Reasons;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class CollectReasonsWhyTheRecordIsNotPublishable
 {
     private Record $record;

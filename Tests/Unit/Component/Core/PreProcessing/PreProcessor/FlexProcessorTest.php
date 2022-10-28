@@ -38,6 +38,7 @@ class FlexProcessorTest extends UnitTestCase
 
     /**
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testTcaWithTwoSheetsIsResolved(): void
     {
@@ -70,6 +71,7 @@ class FlexProcessorTest extends UnitTestCase
     /**
      * @noinspection JsonEncodingApiUsageInspection
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testFlexProcessorDelegatesFlexFormResolvingToTcaPreProcessingService(): void
     {
@@ -129,6 +131,7 @@ class FlexProcessorTest extends UnitTestCase
     /**
      * @noinspection JsonEncodingApiUsageInspection
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testFlexProcessorResolvesDemandForFlexFormFields(): void
     {

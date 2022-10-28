@@ -10,6 +10,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class PublisherNotFoundException extends In2publishCoreException
 {
     private const MESSAGE = 'Can not find a suitable publisher for record with classification "%s" and identifier "%s"';

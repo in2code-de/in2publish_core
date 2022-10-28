@@ -37,6 +37,9 @@ use function sprintf;
 
 use const PHP_EOL;
 
+/**
+ * @codeCoverageIgnore
+ */
 class AllSitesCommandException extends In2publishCoreException
 {
     protected const MESSAGE = 'Exception during the fetching of all foreign sites. Code [%d]: Errors: "%s"; Output: "%s".';

@@ -19,6 +19,7 @@ class InlineProcessorTest extends UnitTestCase
 {
     /**
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testTcaMustNotContainSymmetricField(): void
     {
@@ -41,6 +42,7 @@ class InlineProcessorTest extends UnitTestCase
 
     /**
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testTcaMustContainForeignTable(): void
     {
@@ -62,6 +64,7 @@ class InlineProcessorTest extends UnitTestCase
 
     /**
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testInlineSelectResolver(): void
     {
@@ -89,6 +92,7 @@ class InlineProcessorTest extends UnitTestCase
     }
     /**
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testInlineMultiValueResolver(): void
     {

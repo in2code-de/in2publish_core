@@ -127,11 +127,15 @@ class RedirectController extends ActionController
         $query = $this->foreignDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
-        $uidList = implode(',', array_column($query->execute()->fetchAll(), 'uid'));
+        $foreignDeletedRedirects = $query->execute()->fetchAll();
+        $additionalWhere = '';
+        if (!empty($foreignDeletedRedirects)) {
+            $uidList = implode(',', array_column($foreignDeletedRedirects, 'uid'));
 
-        $additionalWhere = "deleted = 0 OR uid NOT IN ($uidList)";
-        if (null !== $filter) {
-            $additionalWhere = $filter->toAdditionWhere();
+            $additionalWhere = "deleted = 0 OR uid NOT IN ($uidList)";
+            if (null !== $filter) {
+                $additionalWhere = $filter->toAdditionWhere();
+            }
         }
 
         $recordTree = new RecordTree();

@@ -36,6 +36,9 @@ use function count;
 use function implode;
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class MissingRequiredAttributesException extends In2publishCoreException
 {
     public const CODE = 1636557893;

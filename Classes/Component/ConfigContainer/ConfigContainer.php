@@ -37,17 +37,20 @@ use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\PostProcessor
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ContextualProvider;
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderInterface;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
-use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_combine;
 use function array_fill;
+use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function asort;
 use function count;
+use function explode;
+use function is_array;
+use function trim;
 
 class ConfigContainer implements SingletonInterface
 {
@@ -71,8 +74,18 @@ class ConfigContainer implements SingletonInterface
     public function get(string $path = '')
     {
         $config = $this->getConfig();
+        /** @noinspection DuplicatedCode */
+        $path = trim($path, " \t\n\r\0\x0B.");
         if (!empty($path)) {
-            return ArrayUtility::getValueByPath($config, $path);
+            foreach (explode('.', $path) as $key) {
+                if (!is_array($config)) {
+                    return null;
+                }
+                if (!array_key_exists($key, $config)) {
+                    return null;
+                }
+                $config = $config[$key];
+            }
         }
         return $config;
     }

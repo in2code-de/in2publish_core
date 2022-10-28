@@ -34,6 +34,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @codeCoverageIgnore
+ */
 class InvalidPageIdArgumentTypeException extends In2publishCoreException
 {
     private const MESSAGE = 'The argument pageId must be an integer, got string "%s"';
