@@ -409,51 +409,31 @@
 - [GIT] Ignore build and qa files when creating a production dist
 - [GIT] Ignore the .github folder when creating a production dist
 
-
+11.0.4:
+- **Everything included in the 10.2.5 release**
+- [META] Set the EM conf version number to 11.0.4
+- [DOCS] Update changelog
+- [TESTS] Configure Code Coverage and add missing coversDefaultClass
+- [META] Mark as compatible with PHP 8.1
+- [RELEASE] Version 11.0.3 with bug fixes
 
 11.0.3:
 
+- **Everything included in the 10.2.4 release**
 - [META] Set the EM conf version number to 11.0.3
 - [CLEANUP] Remove useless parentheses
 - [QA] Update QA tools
 - [BUGFIX] Set the correct return type for FileController::getRecordToPublish
 - [COMMENT] Update rFALd::getFoldersInFolder return annotation
 - [BUGFIX] Call the correct (renamed) method rebuildAll for TYPO3 v11
-- [COMMENT] Update the return annotation of findRedirectsByDynamicTarget
-- [BUGFIX] Ensure the rowCount is always an integer
-- [BUGFIX] Don't try to bulkInsert an empty data set
 - [REFACTOR] Reduce cyclomatic and npath complexity
 - [QA] Force installation of unsigned phars (like phpmd) and add all phars to PATH
 - [TESTS] Remove duplicate import of RuntimeException
 - [TESTS] Remove duplicate import of Testbase
-- [BUGFIX] Prevent infinite recursion when collecting records that are going to be published
-- [BUGFIX] Remove the HostNameValidator
-- [BUGFIX] Override database state if sys_file records have been changed
-- [BUGFIX] Early fail the UniqueStorageTargetTest when EXT:scheduler is not installed
-- [BUGFIX] Remove duplicate line which should have been removed
-- [BUGFIX] Prevent undefined array key access in DatabaseUtility
 - [BUGFIX] Set correct flash message severity when file publishing fails and show collected failures
 - [DOCS] Add UPGRADING for v10 to v11 and some publish files module screenshots
-- [TASK] Fix TestLabelLocalizer error
 - [BUGFIX] Add missing slash in combined folder identifier
-- [BUGFIX] Allow input fields with renderType inputLink
-- [BUGFIX] Do not exclude columns which have an itemsProcFunc
-- [BUGFIX] Do not ignore MM-records to excluded tables
-- [BUGFIX] Use the group MM tablenames field instead of true/false
-- [BUGFIX] Fix type error in FileEdgeCacheInvalidationService class
-- [BUGFIX] Fallback to the foreignUid if localUid is null
-- [BUGFIX] Add conditions to not break resetting backend user preferences
-- [BUGFIX] Update the list of required tables
 - [BUGFIX] Fetch all RPC rows instead of just the first
-- [BUGFIX] Allow envelopes to grow arbitrarily huge
-- [TESTS] Add missing ticket annotations for command tests
-- [TESTS] Add functional test to assert that MM records can be marked as publishing
-- [BUGFIX] Allow MM records to be marked as running
-- [BUGFIX] Make RunTasksInQueueCommand compatible with symfony/console 4.4 and add test
-- [TESTS] Fix tests for different dbal and TYPO3 versions
-- [TESTS] Mock Result class which exists in composerMinInstall
-- [TESTS] Fix DbConfigTestCommandTest, remove BackupCommandTest
-- [BUGFIX] Ensure all (testable) commands are executable
 
 11.0.2:
 
@@ -590,6 +570,15 @@
 - [UPGRADE] Replace TableConfigurationPostProcessingHookInterface with TYPO3\CMS\Core\Core\Event\BootCompletedEvent
 - [CLEANUP] Remove outdated compatibility class SignalSlotReplacement
 - [!!!][UPDATE] Require TYPO3 v11
+
+10.2.6:
+- [META] Set the EM conf version number to 10.2.6
+- [BUGFIX] Use correct key "foreign" to index a row from Foreign
+- [BUGFIX] Support resolving related redirects with query URL parts
+- [BUGFIX] Show undecoded message line if it could not be decoded
+- [BUGFIX] Throw an exception if the file to retrieve does not exist
+- [BUGFIX] Do not try to publish files that neither exist on local nor foreign
+- [RELEASE] Version 10.2.5 with non-empty bulk inserts
 
 10.2.5:
 
