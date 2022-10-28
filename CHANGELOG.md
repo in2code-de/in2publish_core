@@ -1,5 +1,14 @@
 # In2publish Core Change Log
 
+10.2.6:
+- [META] Set the EM conf version number to 10.2.6
+- [BUGFIX] Use correct key "foreign" to index a row from Foreign
+- [BUGFIX] Support resolving related redirects with query URL parts
+- [BUGFIX] Show undecoded message line if it could not be decoded
+- [BUGFIX] Throw an exception if the file to retrieve does not exist
+- [BUGFIX] Do not try to publish files that neither exist on local nor foreign
+- [RELEASE] Version 10.2.5 with non-empty bulk inserts
+
 10.2.5:
 
 - [META] Set the EM conf version number to 10.2.5
