@@ -113,7 +113,7 @@ abstract class AbstractRecord implements Record
     public function removeParent(Record $record): void
     {
         foreach (array_keys($this->parents, $record) as $idx) {
-            unset ($this->parents[$idx]);
+            unset($this->parents[$idx]);
         }
     }
 
