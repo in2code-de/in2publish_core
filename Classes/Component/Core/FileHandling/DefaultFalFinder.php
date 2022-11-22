@@ -286,6 +286,12 @@ class DefaultFalFinder
                             $files[$localIdentifier]['foreign'] ?? [],
                         );
                         if (null !== $recordToAdd) {
+                            if (null !== $localRecordToRemove) {
+                                $sysFileRecord->removeParent($localRecordToRemove);
+                            }
+                            if (null !== $foreignRecordToRemove) {
+                                $sysFileRecord->removeParent($foreignRecordToRemove);
+                            }
                             $recordToAdd->addChild($sysFileRecord);
                             $folderRecord->addChild($recordToAdd);
                         }
