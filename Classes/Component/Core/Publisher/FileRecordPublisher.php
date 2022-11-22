@@ -45,7 +45,8 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
 
     public function publish(Record $record): void
     {
-        if ($record->getState() === Record::S_DELETED) {
+        $recordState = $record->getState();
+        if ($recordState === Record::S_DELETED) {
             $this->hasTasks = true;
             $this->foreignDatabase->insert('tx_in2publishcore_filepublisher_task', [
                 'request_token' => $this->requestToken,
@@ -58,16 +59,16 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
             ]);
             return;
         }
-        if ($record->getState() === Record::S_ADDED) {
+        if ($recordState === Record::S_ADDED) {
             $this->hasTasks = true;
             $this->transmitFile($record, self::A_INSERT);
             return;
         }
-        if ($record->getState() === Record::S_CHANGED) {
+        if ($recordState === Record::S_CHANGED) {
             $this->hasTasks = true;
             $this->transmitFile($record, self::A_UPDATE);
         }
-        if ($record->getState() === Record::S_MOVED) {
+        if ($recordState === Record::S_MOVED) {
             $this->foreignDatabase->insert('tx_in2publishcore_filepublisher_task', [
                 'request_token' => $this->requestToken,
                 'crdate' => $GLOBALS['EXEC_TIME'],
