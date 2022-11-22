@@ -21,6 +21,9 @@ class FileDemandResolver
     public function resolveDemand(Demands $demands): void
     {
         $files = $demands->getFiles();
+        if (empty($files)) {
+            return;
+        }
 
         $filesArray = [];
         foreach ($files as $storage => $identifiers) {
