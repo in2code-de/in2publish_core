@@ -15,7 +15,7 @@ The tag has the following properties:
 * (optional) `condition`: A condition that has to evaluate to true. The condition parts are delimited by `:` (colons)
     * `CONF`: A dot-path to the configuration value e.g. `CONF:features.remoteCacheControl.enableTool`
     * `EXTCONF`: This condition has three parts. `EXTCONF`, an extension key and a path to the extension's config
-      e.g. `EXTCONF:in2publish:managedSettings`
+      e.g. `EXTCONF:in2publish_core:logLevel`
 * (optional) `before`: A comma separated list of services which must appear after this service.
 * (optional) `after`: A comma separated list of services which must appear before this service.
 
