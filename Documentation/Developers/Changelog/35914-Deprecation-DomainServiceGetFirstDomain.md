@@ -20,5 +20,4 @@ All.
 
 ## Migration
 
-If your record is from sys_file you have to directly access the configuration value `filePreviewDomainName`.
-Otherwise you can use `\In2code\In2publishCore\Domain\Service\DomainService::getDomainFromSiteConfigByPageId`.
+Use `\In2code\In2publishCore\Domain\Service\DomainService::getDomainFromSiteConfigByPageId`.

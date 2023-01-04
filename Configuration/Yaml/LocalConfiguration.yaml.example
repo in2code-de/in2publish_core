@@ -110,13 +110,6 @@ factory:
   # Enable to show records which are deleted on one side and non-existent on the other
   treatRemovedAndDeletedAsDifference: FALSE
 
-# Set file preview domain. Must be at least a host name. If a scheme is not set it defaults to https.
-# You can include the scheme and also a path if your TYPO3 runs in a sub path (e.g. https://example.com/stuff/)
-# @user
-filePreviewDomainName:
-  local: stage.publishing.localhost.de
-  foreign: prod.publishing.localhost.de
-
 
 # Manipulate view
 # @user
