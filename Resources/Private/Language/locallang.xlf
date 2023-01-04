@@ -374,10 +374,10 @@
 			</trans-unit>
 
 			<trans-unit id="help.slack_channel">
-				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
+				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
 			</trans-unit>
 			<trans-unit id="help.github_issues">
-				<source><![CDATA[Official documentation for in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
+				<source><![CDATA[Official documentation for in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
 			</trans-unit>
 
 			<trans-unit id="context_menu_publish_entry.forbidden">
