@@ -2,8 +2,6 @@
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<f:comment><![CDATA[This comment prevents that the <publish:/> ns is removed on reformat code.]]></f:comment>
-
 	<f:if condition="{record.children.pages}">
 		<publish:record.pageChildrenRecursion each="{record.children.pages}" as="page">
 			<f:render partial="Record/PageRow" arguments="{config: config, record: page, depth: depth}" />
