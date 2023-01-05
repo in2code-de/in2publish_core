@@ -33,6 +33,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 /**
  * @codeCoverageIgnore
+ * @deprecated Use `RecordWasPublished` instead. This event will be removed in version 13.
  */
 final class PublishingOfOneRecordBegan
 {

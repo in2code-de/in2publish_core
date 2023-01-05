@@ -11,6 +11,8 @@ use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecut
 use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Event\RecordWasPublished;
+use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use Throwable;
@@ -88,6 +90,8 @@ class PublisherService
         }
         $visitedRecords[$classification][$id] = true;
 
+        $this->eventDispatcher->dispatch(new RecordWasSelectedForPublishing($record));
+
         if ($record->getState() !== Record::S_UNCHANGED) {
             $event = new CollectReasonsWhyTheRecordIsNotPublishable($record);
             $this->eventDispatcher->dispatch($event);
@@ -95,6 +99,7 @@ class PublisherService
                 $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
                 $this->publisherCollection->publish($record);
                 $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));
+                $this->eventDispatcher->dispatch(new RecordWasPublished($record));
             }
         }
 

@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
-use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Event\RecordWasPublished;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement;
@@ -47,9 +46,9 @@ return static function (ContainerConfigurator $configurator): void {
                  ->tag(
                      'event.listener',
                      [
-                         'identifier' => 'in2publishcore-RedirectSourceHostReplacement-PublishingOfOneRecordBegan',
+                         'identifier' => 'in2publishcore-RedirectSourceHostReplacement-RecordWasPublished',
                          'method' => 'replaceLocalWithForeignSourceHost',
-                         'event' => PublishingOfOneRecordBegan::class,
+                         'event' => RecordWasPublished::class,
                      ]
                  );
         $services->set('tx_in2publish_redirectssupport_event_listener_updater')
@@ -57,15 +56,15 @@ return static function (ContainerConfigurator $configurator): void {
                  ->tag(
                      'event.listener',
                      [
-                         'identifier' => 'in2publishcore-RedirectCacheUpdater-PublishingOfOneRecordEnded',
+                         'identifier' => 'in2publishcore-RedirectCacheUpdater-RecordWasPublished',
                          'method' => 'publishRecordRecursiveAfterPublishing',
-                         'event' => PublishingOfOneRecordEnded::class,
+                         'event' => RecordWasPublished::class,
                      ]
                  )
                  ->tag(
                      'event.listener',
                      [
-                         'identifier' => 'in2publishcore-RedirectCacheUpdater-PublishingOfOneRecordEnded',
+                         'identifier' => 'in2publishcore-RedirectCacheUpdater-RecursiveRecordPublishingEnded',
                          'method' => 'publishRecordRecursiveEnd',
                          'event' => RecursiveRecordPublishingEnded::class,
                      ]

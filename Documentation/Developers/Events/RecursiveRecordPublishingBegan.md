@@ -19,7 +19,7 @@ Since this event designates the beginning of the publishing process, it is the l
 record tree, traverse it to scan for something specific or stop the process by throwing an exception. If you want to act
 on a specific record before it is going to be published you should use the
 [`PublishingOfOneRecordBegan` (link)](PublishingOfOneRecordBegan.md) event instead. If you want to act on a specific
-record _after_ it got published you should use the [`PublishingOfOneRecordEnded` (link)](PublishingOfOneRecordEnded.md)
+record _after_ it got published you should use the [`RecordWasPublished` (link)](RecordWasPublished.md)
 event.
 
 ### Example

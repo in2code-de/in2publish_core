@@ -15,9 +15,9 @@ services:
   In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector:
     tags:
       - name: event.listener
-        identifier: 'in2publishcore-PublishedFileIdentifierCollector-PublishingOfOneRecordBegan'
+        identifier: 'in2publishcore-PublishedFileIdentifierCollector-RecordWasPublished'
         method: 'registerPublishedFile'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
+        event: In2code\In2publishCore\Event\RecordWasPublished
       - name: event.listener
         identifier: 'in2publishcore-PublishedFileIdentifierCollector-RecursiveRecordPublishingEnded'
         method: 'writeFlushFileEdgeCacheTask'

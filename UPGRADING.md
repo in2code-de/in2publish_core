@@ -1,3 +1,10 @@
+# v12.1 to v12.2
+
+## For developers
+
+The core events `PublishingOfOneRecordBegan` and `PublishingOfOneRecordEnded` were replaced. Please
+read [54638-Deprecation-PublishingOfOneRecordBegan_Ended.md](Documentation/Developers/Changelog/54638-Deprecation-PublishingOfOneRecordBegan_Ended.md).
+
 # v11 to v12
 
 ## For users
@@ -41,7 +48,8 @@ change also means that all events, the primary means of interaction for develope
 been eliminated, others have been added and some have been slightly modified. You can find the changes to the events in
 detail in the changelog for the events.
 
-Detailed technical information can be found in the file [25505-BreakingChanges-QueryAggregation.md (link)](Documentation/Developers/Changelog/25505-BreakingChanges-QueryAggregation.md).
+Detailed technical information can be found in the
+file [25505-BreakingChanges-QueryAggregation.md (link)](Documentation/Developers/Changelog/25505-BreakingChanges-QueryAggregation.md).
 
 # v10 to v11
 

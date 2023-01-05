@@ -1,5 +1,7 @@
 # PublishingOfOneRecordBegan
 
+**Deprecated. Use the event [`RecordWasPublished` (link)](RecordWasPublished.md) instead. This event will be removed in version 13.0**
+
 Replaces the `\In2code\In2publishCore\Repository\CommonRepository / publishRecordRecursiveBeforePublishing` Signal.
 
 ## When
@@ -22,3 +24,5 @@ will later be used to create Tasks for those records.
 Real world examples are the best examples. Have a look at the
 `\In2code\In2publishCore\Features\NewsSupport\EventListener\NewsSupportEventListener`, which is a simple event listener
 that delegates the domain logic to the `NewsCacheInvalidator`, which collects all published records.
+
+_(This file will be remove in version 13)_

@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly;
  */
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
-use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
+use In2code\In2publishCore\Event\RecordWasPublished;
 use In2code\In2publishCore\Features\CacheInvalidation\Domain\Model\Task\FlushFrontendPageCacheTask;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -50,7 +50,7 @@ class CacheInvalidator implements SingletonInterface
     /** @var array<int, string|null> */
     protected array $clearCacheCommands = [];
 
-    public function registerClearCacheTasks(PublishingOfOneRecordBegan $event): void
+    public function registerClearCacheTasks(RecordWasPublished $event): void
     {
         $pids = [];
         $record = $event->getRecord();

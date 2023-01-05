@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Features\PublishSorting\Domain\Anomaly;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
+use In2code\In2publishCore\Event\RecordWasPublished;
 
 use function array_key_exists;
 
@@ -43,7 +43,7 @@ class SortingPublisher
     /** @var array<string, array<int, int>> */
     protected array $sortingsToBePublished = [];
 
-    public function collectSortingsToBePublished(PublishingOfOneRecordBegan $event): void
+    public function collectSortingsToBePublished(RecordWasPublished $event): void
     {
         $record = $event->getRecord();
         $localProps = $record->getLocalProps();

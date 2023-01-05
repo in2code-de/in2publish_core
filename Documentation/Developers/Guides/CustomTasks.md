@@ -48,14 +48,15 @@ the `register` method as an event listener.
       - name: event.listener
         identifier: 'mytask-myeventlistener'
         method: 'register'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
+        event: In2code\In2publishCore\Event\RecordWasPublished
 ```
 
 When a record was published, the `register` method will be called. We can not filter for specific record, e.g. for a
 table and property.
 
 ```PHP
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;
+use In2code\In2publishCore\Event\RecordWasPublished;
 
 class MyTask extends AbstractTask
 {
@@ -65,7 +66,7 @@ class MyTask extends AbstractTask
         return true;
     }
 
-    public function register(PublishingOfOneRecordEnded $event)
+    public function register(RecordWasPublished $event)
     {
         $record = $event->getRecord();
         if (
@@ -164,7 +165,7 @@ class MyAnomaly implements SingletonInterface
 
 #### Event Listener
 
-* The event `\In2code\In2publishCore\Event\PublishingOfOneRecordBegan` will be fired for each record being published.
+* The event `\In2code\In2publishCore\Event\RecordWasPublished` will be fired for each published record.
 * The event `\In2code\In2publishCore\Event\RecursiveRecordPublishingEnded` will be fired once after publishing. You can
   leverage it to finally create your task.
 
@@ -176,7 +177,7 @@ Remove the task self-registration from your Services.yaml and use the anomaly in
       - name: event.listener
         identifier: 'myanomaly-collect'
         method: 'collectInfo'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
+        event: In2code\In2publishCore\Event\RecordWasPublished
       - name: event.listener
         identifier: 'myanomaly-write'
         method: 'writeTask'

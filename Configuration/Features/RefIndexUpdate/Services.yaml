@@ -10,9 +10,9 @@ services:
   In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly\RefIndexUpdater:
     tags:
       - name: event.listener
-        identifier: 'in2publishcore-RefIndexUpdater-PublishingOfOneRecordEnded'
+        identifier: 'in2publishcore-RefIndexUpdater-RecordWasPublished'
         method: 'registerRefIndexUpdate'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
+        event: In2code\In2publishCore\Event\RecordWasPublished
       - name: event.listener
         identifier: 'in2publishcore-RefIndexUpdater-RecursiveRecordPublishingEnded'
         method: 'writeRefIndexUpdateTask'

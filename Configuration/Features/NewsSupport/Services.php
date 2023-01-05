@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
+use In2code\In2publishCore\Event\RecordWasPublished;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator;
 use In2code\In2publishCore\Utility\ExtensionUtility;
@@ -21,9 +21,9 @@ return static function (ContainerConfigurator $configurator): void {
                  ->tag(
                      'event.listener',
                      [
-                         'identifier' => 'in2publishcore-NewsCacheInvalidator-PublishingOfOneRecordBegan',
+                         'identifier' => 'in2publishcore-NewsCacheInvalidator-RecordWasPublished',
                          'method' => 'registerClearCacheTasks',
-                         'event' => PublishingOfOneRecordBegan::class,
+                         'event' => RecordWasPublished::class,
                      ]
                  )
                  ->tag(

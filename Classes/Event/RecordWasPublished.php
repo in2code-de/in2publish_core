@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly;
+namespace In2code\In2publishCore\Event;
 
 /*
  * Copyright notice
@@ -29,30 +29,22 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
-use In2code\In2publishCore\Event\RecordWasPublished;
-use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Task\RebuildRedirectCacheTask;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
-class RedirectCacheUpdater
+/**
+ * @codeCoverageIgnore
+ */
+final class RecordWasPublished
 {
-    use TaskRepositoryInjection;
+    private Record $record;
 
-    protected bool $redirectWasPublished = false;
-
-    public function publishRecordRecursiveAfterPublishing(RecordWasPublished $event): void
+    public function __construct(Record $record)
     {
-        $record = $event->getRecord();
-        if ('sys_redirect' !== $record->getClassification()) {
-            return;
-        }
-        $this->redirectWasPublished = true;
+        $this->record = $record;
     }
 
-    public function publishRecordRecursiveEnd(): void
+    public function getRecord(): Record
     {
-        if ($this->redirectWasPublished) {
-            $this->taskRepository->add(new RebuildRedirectCacheTask([]));
-        }
-        $this->redirectWasPublished = false;
+        return $this->record;
     }
 }
