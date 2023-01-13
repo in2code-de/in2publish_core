@@ -185,7 +185,7 @@ class Dependency
         return implode(PHP_EOL, $this->reasons->map(static fn(Reason $reason) => $reason->getReadableLabel()));
     }
 
-    public function isReachable(DataHandler $dataHandler)
+    public function isReachable(DataHandler $dataHandler): bool
     {
         $beUser = $dataHandler->BE_USER;
         if ($beUser->isAdmin()) {
