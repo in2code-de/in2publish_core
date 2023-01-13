@@ -44,7 +44,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
 
     /**
      * @covers ::calculateDependencies
-     * @covers ::resolveShortcutDependencies
+     * @covers ::calculateShortcutDependencies
      */
     public function testCalculateDependenciesCorrectlyResolvesDependencies(): void
     {
@@ -81,7 +81,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
 
     /**
      * @covers ::calculateDependencies
-     * @covers ::resolveShortcutDependencies
+     * @covers ::calculateShortcutDependencies
      */
     public function testCorrectNumberOfDependenciesIsCalculated(): void
     {
@@ -125,7 +125,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
 
     /**
      * @covers ::calculateDependencies
-     * @covers ::resolveShortcutDependencies
+     * @covers ::calculateShortcutDependencies
      */
     public function testNoDependencyIsFoundIfNoValidShortcutIsFound(): void
     {

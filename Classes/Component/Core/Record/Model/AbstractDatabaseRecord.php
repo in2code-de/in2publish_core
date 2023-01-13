@@ -66,6 +66,13 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
     public function calculateDependencies(): array
     {
         $dependencies = [];
+        $this->calculateLanguageDependencies($dependencies);
+        $this->calculateParentRecordDependencies($dependencies);
+        return $dependencies;
+    }
+
+    protected function calculateLanguageDependencies(array &$dependencies): void
+    {
         $language = $this->getCtrlProp(self::CTRL_PROP_LANGUAGE_FIELD);
         $transOrigPointer = $this->getCtrlProp(self::CTRL_PROP_TRANS_ORIG_POINTER_FIELD);
         if ($language > 0 && $transOrigPointer > 0) {
@@ -104,6 +111,10 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
             );
             $transOrigEnableColumns->addSupersedingDependency($transOrigExisting);
         }
+    }
+
+    protected function calculateParentRecordDependencies(array &$dependencies): void
+    {
         $pid = $this->getProp('pid');
         if ($pid > 0) {
             $dependencies[] = $pageExisting = new Dependency(
@@ -137,7 +148,6 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
             );
             $pageEnableColumns->addSupersedingDependency($pageExisting);
         }
-        return $dependencies;
     }
 
     public function __toString(): string
