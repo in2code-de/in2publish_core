@@ -25,6 +25,7 @@ class GroupProcessorTest extends UnitTestCase
      */
     public function testProcessRequiresAllowedFieldInTca(): void
     {
+        $this->markTestSkipped('Expecting E_ERROR and E_USER_ERROR is deprecated and will no longer be possible in PHPUnit 10');
         $tca =  ['type' => 'group', 'allowed' => ''];
 
         $groupProcessor = new GroupProcessor();
