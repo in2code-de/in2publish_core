@@ -74,20 +74,12 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
             'In2code\\In2publishCore\\Command\\Local\\',
             __DIR__ . '/../Classes/Command/Local'
         );
-        $services->set(BackupCommand::class)
-                 ->tag(
-                     'console.command',
-                     [
-                         'command' => 'in2publish_core:table:backup',
-                         'description' => 'Stores a backup of the complete local table into the configured directory',
-                     ]
-                 );
         $services->set(ImportCommand::class)
                  ->tag(
                      'console.command',
                      [
                          'command' => 'in2publish_core:table:import',
-                         'description' => 'Stores a backup of the complete local table into the configured directory',
+                         'description' => 'Copies a complete table from production to stage and overwrites all old entries!',
                      ]
                  );
         $services->set(PublishCommand::class)
