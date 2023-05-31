@@ -119,7 +119,7 @@ cd ../testing-docker || exit 1
 ROOT_DIR=$(dirname $(dirname ${PWD}))
 TEST_SUITE="unit"
 DBMS="mariadb"
-PHP_VERSION="7.4"
+PHP_VERSION="8.1"
 PHP_XDEBUG_ON=0
 PHP_XDEBUG_PORT=9003
 EXTRA_TEST_OPTIONS=""
