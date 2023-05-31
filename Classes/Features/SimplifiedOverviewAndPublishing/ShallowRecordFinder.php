@@ -387,7 +387,7 @@ class ShallowRecordFinder implements RecordFinder
     protected function buildDemand(RecordInterface $record, string $column, array $columnConfig): ?array
     {
         $recordIdentifier = $record->getIdentifier();
-        if ('select' === $columnConfig['type'] && !empty($columnConfig['MM'])) {
+        if ('select' === ($columnConfig['type'] ?? null) && !empty($columnConfig['MM'])) {
             $additionalWhereParts = [];
             if (!empty($columnConfig['MM_match_fields'])) {
                 foreach ($columnConfig['MM_match_fields'] as $field => $value) {
@@ -412,16 +412,16 @@ class ShallowRecordFinder implements RecordFinder
             ];
         }
         if (
-            'group' === $columnConfig['type']
-            && 'db' === $columnConfig['internal_type']
-            && !empty($columnConfig['MM'])
+            'group' === ($columnConfig['type'] ?? null)
+            && 'db' === ($columnConfig['internal_type'] ?? null)
+            && !empty($columnConfig['MM'] ?? null)
             // These fields are not supported
-            && empty($columnConfig['MM_table_where'])
-            && empty($columnConfig['MM_hasUidField'])
+            && empty($columnConfig['MM_table_where'] ?? null)
+            && empty($columnConfig['MM_hasUidField'] ?? null)
         ) {
-            $foreignField = !empty($columnConfig['MM_opposite_field']) ? 'uid_foreign' : 'uid_local';
+            $foreignField = !empty($columnConfig['MM_opposite_field'] ?? null) ? 'uid_foreign' : 'uid_local';
             $additionalWhereParts = [];
-            if (!empty($columnConfig['MM_match_fields'])) {
+            if (!empty($columnConfig['MM_match_fields'] ?? null)) {
                 foreach ($columnConfig['MM_match_fields'] as $field => $value) {
                     $additionalWhereParts[] = "`$field`=\"$value\"";
                 }
