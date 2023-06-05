@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+11.0.5:
+- [META] Set the EM conf version number to 11.0.5
+- [DOCS] Update changelog
+- [BUGFIX] Avoid undefined array key access in ShallowRecordFinder
+- [BUGFIX] Fix registration of BackupCommand and description of ImportCommand
+- [TASK] Allow PHP 8.1 as requirement
+
 11.0.4:
 - **Everything included in the 10.2.5 release**
 - [META] Set the EM conf version number to 11.0.4
