@@ -13,6 +13,11 @@
 			data-identifier="{publish:record.getMergedProperty(record:record, propertyName: 'identifier')}"
 			data-storage="{publish:record.getMergedProperty(record:record, propertyName: 'storage')}"
 			data-searchable="{record.localProps.name}|{record.foreignProps.name}">
+			<td class="col-state">
+				<span class="badge rounded-pill in2publish-badge--{record.stateRecursive}">
+					<f:translate key="record.state.{record.stateRecursive}.short"/>
+				</span>
+			</td>
 			<f:comment>Left</f:comment>
 			<td class="col-icon">
 				<publish:file.icon record="{record}" />
@@ -148,11 +153,6 @@
 						</span>
 					</f:else>
 				</f:if>
-			</td>
-
-			<td class="col-state">
-				<i class="in2publish-state-icon in2publish-state--{record.stateRecursive} in2publish-icon-circle ms-2"></i>
-				<f:translate key="record.state.{record.stateRecursive}.short"/>
 			</td>
 		</tr>
 
