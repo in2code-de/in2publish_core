@@ -705,6 +705,34 @@ div#typo3-docbody.stopScrolling {
   }
 }
 
+.in2publish-badge {
+  &--unchanged {
+    color: #000!important;
+    background-color: $nobel!important;
+  }
+
+  &--changed {
+    background-color: $goldentainoi;
+  }
+
+  &--moved-and-changed {
+    background-color: $goldentainoi;
+  }
+
+  &--added {
+    background-color: $apple;
+  }
+
+  &--deleted {
+    background-color: $appleblossom;
+  }
+
+  &--moved {
+    background-color: $pictonblue;
+  }
+}
+
+
 .in2publish-stagelisting__item {
   &--deleted {
     .in2publish-stagelisting__item-filename {

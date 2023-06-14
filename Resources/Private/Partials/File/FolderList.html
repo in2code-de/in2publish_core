@@ -9,6 +9,11 @@
 			data-id="{record.id}"
 			data-name="{publish:record.getMergedProperty(record:record, propertyName: 'name')}"
 			data-searchable="{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'local', fallbackProperty: 'identifier')}|{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'foreign', fallbackProperty: 'identifier')}">
+			<td class="col-state">
+				<span class="badge rounded-pill in2publish-badge--{record.stateRecursive}">
+					<f:translate key="record.state.{record.stateRecursive}.short"/>
+				</span>
+			</td>
 			<f:comment>Left</f:comment>
 			<td class="col-icon">
 				<core:icon identifier="files-folder" />
@@ -36,11 +41,6 @@
 			</td>
 			<td class="col-filename col-filename--foreign col-responsive nowrap" colspan="2">
 				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" fallbackProperty="combinedIdentifier" />
-			</td>
-
-			<td class="col-state">
-				<i class="in2publish-state-icon in2publish-state--{record.state} in2publish-icon-circle ms-2"></i>
-				<f:translate key="record.state.{record.state}.short"/>
 			</td>
 		</tr>
 
