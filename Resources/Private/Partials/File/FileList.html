@@ -8,9 +8,9 @@
 			data-type="file"
 			data-id="{record.id}"
 			data-name="{publish:record.getMergedProperty(record:record, propertyName: 'name')}"
-			data-identifier-local="{record.localProps.identifier}"
-			data-identifier-foreign="{record.foreignProps.identifier}"
-			data-identifier="{publish:record.getMergedProperty(record:record, propertyName: 'identifier')}"
+			data-identifier-local="{record.localProps.id}"
+			data-identifier-foreign="{record.foreignProps.id}"
+			data-identifier="{publish:record.getMergedProperty(record:record, propertyName: 'id')}"
 			data-storage="{publish:record.getMergedProperty(record:record, propertyName: 'storage')}"
 			data-searchable="{record.localProps.name}|{record.foreignProps.name}">
 			<td class="col-state">
@@ -28,7 +28,7 @@
 						<f:then>
 							<f:if condition="{record.movedToDifferentFolder}">
 								<f:then>
-									{record.localProps.identifier}
+									{record.localProps.id}
 								</f:then>
 								<f:else>
 									{record.localProps.name}
@@ -128,7 +128,7 @@
 					<f:then>
 						<f:if condition="{record.movedToDifferentFolder}">
 							<f:then>
-								{record.foreignProps.identifier}
+								{record.foreignProps.id}
 							</f:then>
 							<f:else>
 								{record.foreignProps.name}
