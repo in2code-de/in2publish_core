@@ -46,6 +46,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
 
     protected string $foreignVarPath;
     protected AdapterInterface $adapter;
+    protected int $fileTransmissionTimeout = 0;
 
     /**
      * @codeCoverageIgnore
@@ -54,6 +55,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
     public function injectConfigContainer(ConfigContainer $configContainer): void
     {
         $this->foreignVarPath = rtrim($configContainer->get('foreign.varPath'), '/');
+        $this->fileTransmissionTimeout = (int)$configContainer->get('adapter.local.fileTransmissionTimeout');
     }
 
     /**
@@ -86,9 +88,12 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
         $target = $this->foreignVarPath . '/transient/' . $identifierHash;
 
         $success = $this->adapter->copyFileToRemote($source, $target);
-        // Uncomment during execution of PublisherTests when this test fails with a TATAPI error
+
+        // On slow file systems PublisherTests may fail with a TATAPI error. A timeout may resolve this problem.
         // see: https://projekte.in2code.de/issues/48012
-        // sleep(1);
+        if ($this->fileTransmissionTimeout > 0) {
+            sleep($this->fileTransmissionTimeout);
+        }
 
         if (true === $success) {
             $this->logger->debug(
