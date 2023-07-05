@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Component\Core\Record\Model;
 
 use Generator;
 use In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtensionTrait;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use LogicException;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -53,6 +54,11 @@ abstract class AbstractRecord implements Record
     public function setLocalProps(array $localProps): void
     {
         $this->localProps = $localProps;
+    }
+
+    public function addLocalProp(string $prop, $value): void
+    {
+        $this->localProps[$prop] = $value;
     }
 
     public function getForeignProps(): array
@@ -120,6 +126,19 @@ abstract class AbstractRecord implements Record
     public function getParents(): array
     {
         return $this->parents;
+    }
+
+    public function getParentPageRecord(): ?Record
+    {
+        // get first parent record
+        $parentRecord = array_values($this->getParents())[0] ?? null;
+        if ($parentRecord instanceof Record) {
+            if ('pages' === $parentRecord->getClassification()) {
+                return $parentRecord;
+            }
+            return $parentRecord->getParentPageRecord();
+        }
+        return null;
     }
 
     public function setTranslationParent(Record $translationParent): void
