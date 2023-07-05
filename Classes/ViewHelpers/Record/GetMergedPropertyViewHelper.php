@@ -36,7 +36,7 @@ class GetMergedPropertyViewHelper extends AbstractViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('record', Record::class, 'record of which should get merged', true);
+        $this->registerArgument('record', Record::class, 'record which should get merged', true);
         $this->registerArgument('propertyName', 'string', 'Property which should get merged', true);
     }
 
