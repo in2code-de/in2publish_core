@@ -86,6 +86,9 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
         $target = $this->foreignVarPath . '/transient/' . $identifierHash;
 
         $success = $this->adapter->copyFileToRemote($source, $target);
+        // Uncomment during execution of PublisherTests when this test fails with a TATAPI error
+        // see: https://projekte.in2code.de/issues/48012
+        // sleep(1);
 
         if (true === $success) {
             $this->logger->debug(
