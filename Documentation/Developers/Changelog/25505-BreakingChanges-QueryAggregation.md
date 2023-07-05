@@ -12,8 +12,8 @@ Please read the section Removed Components / RecordHandling for detailed informa
 
 ## Impact
 
-QUAG results in a noticable performance improvement.
-Therefore features which had been offered in previous versions to overcome performance issues are now superfluous and
+QUAG results in a noticeable performance improvement.
+Therefore, features which had been offered in previous versions to overcome performance issues are now superfluous and
 have therefore been removed.
 
 ### Class structure
@@ -115,7 +115,7 @@ QUAG replaces the RecordHandling.
 
 ##### How did the Content Publisher work before QUAG?
 
-Before QUAG, the Content Publisher queried the Database for aevery single record. If it was a page, it would then query all
+Before QUAG, the Content Publisher queried the Database for every single record. If it was a page, it would then query all
 tables that could contain records which lived on the page. Upon the first record found, the Content Publisher would look at
 the record's TCA and identify all columns that pointed to another table. Then, the Content Publisher would query each table
 from the TCA until a new record was found. The Content Publisher examined the record's TCA for columns that pointed to
