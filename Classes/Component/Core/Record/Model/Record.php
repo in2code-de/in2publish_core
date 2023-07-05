@@ -21,6 +21,8 @@ interface Record extends Node
 
     public function setLocalProps(array $localProps): void;
 
+    public function addLocalProp(string $prop, $value): void;
+
     public function getForeignProps(): array;
 
     public function setForeignProps(array $foreignProps): void;
@@ -55,6 +57,8 @@ interface Record extends Node
      * @return array<Record>
      */
     public function getParents(): array;
+
+    public function getParentPageRecord(): ?Record;
 
     public function setTranslationParent(Record $translationParent): void;
 
