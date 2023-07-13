@@ -46,4 +46,9 @@ class RecordTree implements Node
     {
         return $this->children[$table][$id] ?? null;
     }
+
+    public function getCurrentPage(): ?Record
+    {
+        return reset($this->children['pages']) ?? null;
+    }
 }
