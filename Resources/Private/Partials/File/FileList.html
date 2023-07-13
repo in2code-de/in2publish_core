@@ -48,7 +48,12 @@
 					</a>
 					<f:if condition="{record.localProps.publicUrl}">
 						<f:then>
-							<a target="_blank" class="btn btn-default" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:view')}" href="{record.foreignProps.publicUrl}">
+							<a target="_blank"
+							   class="btn btn-default"
+							   data-bs-toggle="tooltip"
+							   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:view')}"
+							   href="{publish:File.BuildResourcePath(stagingLevel: 'local', publicUrl: record.localProps.publicUrl)}"
+							>
 								<core:icon identifier="actions-eye" />
 							</a>
 						</f:then>
@@ -143,7 +148,12 @@
 			<td class="col-control">
 				<f:if condition="{record.foreignProps.publicUrl}">
 					<f:then>
-						<a target="_blank" class="btn btn-default" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:view')}" href="{record.foreignProps.publicUrl}">
+						<a target="_blank"
+						   class="btn btn-default"
+						   data-bs-toggle="tooltip"
+						   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:view')}"
+						   href="{publish:File.BuildResourcePath(stagingLevel: 'foreign', publicUrl: record.foreignProps.publicUrl)}"
+						>
 							<core:icon identifier="actions-eye" />
 						</a>
 					</f:then>
