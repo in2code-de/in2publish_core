@@ -149,6 +149,12 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addBoolean('treatRemovedAndDeletedAsDifference', false)
                       )
                       ->addArray(
+                          'filePreviewDomainName',
+                          Builder::start()
+                              ->addString('local', 'stage.example.com')
+                              ->addString('foreign', 'www.example.com')
+                      )
+                      ->addArray(
                           'view',
                           Builder::start()
                                  ->addArray(
