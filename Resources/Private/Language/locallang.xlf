@@ -348,7 +348,7 @@
 			</trans-unit>
 
 			<trans-unit id="file_publishing.success">
-				<source>Successful published.</source>
+				<source>Successfully published.</source>
 			</trans-unit>
 			<trans-unit id="file_publishing.failure">
 				<source>Something went wrong.</source>
