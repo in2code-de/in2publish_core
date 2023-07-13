@@ -46,8 +46,10 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
 use In2code\In2publishCore\Service\Permission\PermissionServiceInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -149,6 +151,16 @@ class RecordController extends ActionController
         }
         $request = new RecordTreeBuildRequest('pages', $pid, $pageRecursionLimit);
         $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
+
+        $localDbAvailable = null !== DatabaseUtility::buildLocalDatabaseConnection();
+        try {
+            $foreignDbAvailable = null !== DatabaseUtility::buildForeignDatabaseConnection();
+        } catch (Throwable $exception) {
+            $foreignDbAvailable = false;
+        }
+        $this->view->assign('localDatabaseConnectionAvailable', $localDbAvailable);
+        $this->view->assign('foreignDatabaseConnectionAvailable', $foreignDbAvailable);
+        $this->view->assign('publishingAvailable', $localDbAvailable && $foreignDbAvailable);
 
         $this->view->assign('recordTree', $recordTree);
         return $this->htmlResponse();
