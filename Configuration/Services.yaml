@@ -87,6 +87,13 @@ services:
           Enable verbose mode if you want to see a success message.
           For scripted testing check the exit code of this command.
 
+  In2code\In2publishCore\Command\Local\Table\BackupCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:table:backup'
+        description: >
+          Stores a backup of the full table into the configured directory.
+
   # EventListener
 
   In2code\In2publishCore\Domain\PostProcessing\PostProcessingEventListener:
