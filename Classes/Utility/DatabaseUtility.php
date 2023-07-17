@@ -213,11 +213,20 @@ class DatabaseUtility
         $query->getRestrictions()->removeAll();
         $resultSet = $query->select('*')->from($tableName)->execute();
 
-        while (($row = $resultSet->fetch())) {
-            $data .=
-                'INSERT INTO ' . $tableName . ' VALUES (' .
-                implode(',', array_map([$connection, 'quote'], $row)) .
-                ');' . PHP_EOL;
+        while (($row = $resultSet->fetchAssociative())) {
+            foreach ($row as $index => $value) {
+                if (!empty($value) && is_string($value)) {
+                    $row[$index] = $connection->quote($value);
+                } elseif (is_string($value)) {
+                    $row[$index] = "''";
+                } elseif (is_int($value)) {
+                    $row[$index] = (int)$value;
+                } elseif (is_null($value)) {
+                    $row[$index] = 'NULL';
+                }
+            }
+            $values = implode(',', $row);
+            $data .= "INSERT INTO $tableName VALUES ($values)" . ';' . "\n";
         }
 
         $backupWritten = false;
