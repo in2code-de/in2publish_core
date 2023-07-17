@@ -9,7 +9,7 @@ added a preview for the image and highlighting for changed properties. The eye b
 ![Publish Files Module Translated And Changed](_img/publish_files_module_translated_and_changed.png)
 *You can directly edit the file's metadata via the edit button ![edit icon](_img/icon_actions_open.png) in the Publish
 Files Module. When there are translations of the file metadata, you can select the language you want to edit in the
-dropdown after clicking the edit button ![translation icon](_img/icon_actions_translate.png). Property changes are highlighten in
+dropdown after clicking the edit button ![translation icon](_img/icon_actions_translate.png). Property changes are highlighted in
 yellow.*
 
 ![Publish Files Module Confirmation](_img/publish_files_module_confirmation.png)

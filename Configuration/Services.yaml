@@ -79,7 +79,7 @@ services:
       - name: 'console.command'
         command: 'in2publish_core:table:backup'
         description: >
-          Stores a backup of the complete local table into the configured directory.
+          Stores a backup of the full table into the configured directory.
 
   # EventListener
   In2code\In2publishCore\Config\Provider\PageTsProvider:
