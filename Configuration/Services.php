@@ -15,7 +15,6 @@ use In2code\In2publishCore\Command\Foreign\Status\ShortSiteConfigurationCommand;
 use In2code\In2publishCore\Command\Foreign\Status\SiteConfigurationCommand;
 use In2code\In2publishCore\Command\Foreign\Status\Typo3VersionCommand;
 use In2code\In2publishCore\Command\Foreign\Status\VersionCommand;
-use In2code\In2publishCore\Command\Local\Table\BackupCommand;
 use In2code\In2publishCore\Command\Local\Table\ImportCommand;
 use In2code\In2publishCore\Command\Local\Table\PublishCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface as RemoteAdapter;
