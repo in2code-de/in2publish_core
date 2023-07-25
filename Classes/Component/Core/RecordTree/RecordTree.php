@@ -49,6 +49,10 @@ class RecordTree implements Node
 
     public function getCurrentPage(): ?Record
     {
-        return reset($this->children['pages']) ?? null;
+        if (isset($this->children['pages']) && is_array($this->children['pages']) && !empty($this->children['pages'])) {
+            return reset($this->children['pages']);
+        }
+
+        return null;
     }
 }
