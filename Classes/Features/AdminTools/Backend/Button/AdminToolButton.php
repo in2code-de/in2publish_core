@@ -49,7 +49,7 @@ class AdminToolButton extends LinkButton
     {
         $attributes = [
             'href' => $this->getHref(),
-            'class' => 'btn btn-default btn-sm ' . $this->getClasses(),
+            'class' => 'btn btn-default ' . $this->getClasses(),
             'title' => $this->getTitle(),
         ];
         $labelText = '';

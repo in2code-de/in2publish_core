@@ -28,12 +28,10 @@ namespace In2code\In2publishCore\ViewHelpers\File;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
-use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
-use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Utility\UriUtility;
+use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
+use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\Uri;
-use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -42,7 +40,8 @@ use function rtrim;
 
 class BuildResourcePathViewHelper extends AbstractViewHelper
 {
-    protected ConfigContainer $configContainer;
+    use SiteFinderInjection;
+    use ForeignSiteFinderInjection;
 
     protected ResourceFactory $resourceFactory;
 
@@ -50,19 +49,18 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
     protected array $domains;
 
     public function __construct(
-        ConfigContainer $configContainer,
         ResourceFactory $resourceFactory
     ) {
-        $this->configContainer = $configContainer;
         $this->resourceFactory = $resourceFactory;
     }
 
+    /**
+     * @throws SiteNotFoundException
+     */
     public function initialize(): void
     {
-        $config = $this->configContainer->get('filePreviewDomainName');
-        foreach (['local', 'foreign'] as $stagingLevel) {
-            $this->domains[$stagingLevel] = UriUtility::normalizeUri(new Uri($config[$stagingLevel]));
-        }
+        $this->domains['local'] = $this->siteFinder->getSiteByIdentifier('main')->getBase();
+        $this->domains['foreign'] = $this->foreignSiteFinder->getSiteByIdentifier('main')->getBase();
     }
 
     public function initializeArguments(): void

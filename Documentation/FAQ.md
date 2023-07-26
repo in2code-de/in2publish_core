@@ -105,3 +105,18 @@ number of entries, which can be created on the local system. In case you set the
 will run into conflicts very soon, if you set it too high (e.g. 2147483547) you will soon run out of possible UIDs on
 foreign (on 32-bit systems). There is still one thing you must know: Conflicting UIDs will still lead to the problem of
 sys_file records getting overwritten. You should ensure there are no conflicts before starting.
+
+## File publishing and publisher tests for file transmission fail
+
+The publisher tests sometimes fail with the following error:
+`TATAPI: The file has not been transferred`
+`cat: /app/var/transient/a969b9534c36f7db8c8bed8f1eabd1bb84f46033: No such file or directory`
+
+On slow file systems (e.g. Mac OS X) the file transfer sometimes takes too long, resulting in errors in the tests or
+ file publishing process. You can try to set the following configuration in your `LocalConfiguration.yaml`:
+
+`adapter.local.fileTransmissionTimeout: 1`
+
+This timeout (in seconds) may resolve the problems, but leads to very slow publishing. It should therefore only be used
+on development systems.
+
