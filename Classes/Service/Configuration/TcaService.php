@@ -156,4 +156,13 @@ class TcaService implements SingletonInterface
         }
         return $this->rtc['_types'][$type];
     }
+
+    public function getLanguageField(string $table): ?string
+    {
+        return $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
+    }
+    public function getTransOrigPointerField(string $table): ?string
+    {
+        return $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
+    }
 }

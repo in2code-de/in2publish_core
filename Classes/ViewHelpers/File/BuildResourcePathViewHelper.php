@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\ViewHelpers\File;
  */
 
 use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\Uri;
@@ -43,8 +42,6 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
 {
     use SiteFinderInjection;
     use ForeignSiteFinderInjection;
-
-    protected ConfigContainer $configContainer;
 
     protected ResourceFactory $resourceFactory;
 
