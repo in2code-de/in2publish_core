@@ -96,9 +96,11 @@ class PublisherService
             $event = new CollectReasonsWhyTheRecordIsNotPublishable($record);
             $this->eventDispatcher->dispatch($event);
             if ($event->isPublishable()) {
+                // deprecated, remove in v13
                 $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
                 $this->publisherCollection->publish($record);
-                $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
+                // deprecated, remove in v13
+                $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));
                 $this->eventDispatcher->dispatch(new RecordWasPublished($record));
             }
         }
