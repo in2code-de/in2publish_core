@@ -22,7 +22,7 @@ feature is active.
 ## Possibilities
 
 With this event you can implement your own rules if records are publishable or not. The Content Publisher Enterprise
-Edition makes exzessive use of this event to implement the rules of the workflow feature.
+Edition makes excessive use of this event to implement the rules of the workflow feature.
 
 ### Example
 
