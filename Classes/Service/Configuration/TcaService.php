@@ -157,12 +157,35 @@ class TcaService implements SingletonInterface
         return $this->rtc['_types'][$type];
     }
 
-    public function getLanguageField(string $table): ?string
+    public function getDeletedField(string $tableName): string
     {
-        return $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['delete'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['delete'];
+        }
+        return '';
     }
-    public function getTransOrigPointerField(string $table): ?string
+
+    public function getDisableField(string $tableName): string
     {
-        return $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'];
+        }
+        return '';
+    }
+
+    public function getLanguageField(string $tableName): string
+    {
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['languageField'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['languageField'];
+        }
+        return '';
+    }
+
+    public function getTransOrigPointerField(string $tableName): string
+    {
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'];
+        }
+        return '';
     }
 }
