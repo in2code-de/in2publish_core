@@ -64,7 +64,7 @@ class RunningRequestRepository
     public function flush(): void
     {
         if (!empty($this->inserts)) {
-            foreach (array_chunk($this->inserts,1000) as $chunk) {
+            foreach (array_chunk($this->inserts, 1000) as $chunk) {
                 $this->connection->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $chunk);
             }
             $this->inserts = [];
