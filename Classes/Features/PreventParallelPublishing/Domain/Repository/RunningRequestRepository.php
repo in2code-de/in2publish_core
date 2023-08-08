@@ -57,7 +57,9 @@ class RunningRequestRepository
         if (empty($this->inserts)) {
             return;
         }
-        $this->localDatabase->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
+        foreach (array_chunk($this->inserts, 1000) as $chunk) {
+            $this->localDatabase->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
+        }
         $this->inserts = [];
     }
 
