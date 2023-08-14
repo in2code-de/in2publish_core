@@ -66,12 +66,9 @@ class FlushFrontendPageCacheTask extends AbstractTask
     {
         /** @var DataHandler $dataHandler */
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
-        $beUser = $GLOBALS['BE_USER'];
-        if (!isset($beUser->user['username']) && $beUser instanceof CommandLineUserAuthentication) {
-            /** @psalm-suppress InternalProperty */
-            $beUser->user['username'] = '_cli_';
-        }
-        $dataHandler->BE_USER = $beUser;
+        $user = $GLOBALS['BE_USER'];
+        $user->authenticate();
+        $dataHandler->BE_USER = $user;
         /** @psalm-suppress InternalProperty */
         $dataHandler->admin = true;
         return $dataHandler;
