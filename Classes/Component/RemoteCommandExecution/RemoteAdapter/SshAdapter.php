@@ -85,7 +85,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
         fclose($outputStream);
         fclose($errorStream);
 
-        $output = GeneralUtility::trimExplode("\n", $output);
+        $output = GeneralUtility::trimExplode("\n", $output, true);
         $exitStatusLine = array_pop($output);
 
         if (1 === preg_match('~CODE_(?P<code>\d+)_CODE~', $exitStatusLine, $matches)) {
