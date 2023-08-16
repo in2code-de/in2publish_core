@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Features\CacheInvalidation\Domain\Model\Task;
  */
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;
+use TYPO3\CMS\Core\Authentication\CommandLineUserAuthentication;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -65,7 +66,9 @@ class FlushFrontendPageCacheTask extends AbstractTask
     {
         /** @var DataHandler $dataHandler */
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
-        $dataHandler->BE_USER = $GLOBALS['BE_USER'];
+        $user = $GLOBALS['BE_USER'];
+        $user->authenticate();
+        $dataHandler->BE_USER = $user;
         /** @psalm-suppress InternalProperty */
         $dataHandler->admin = true;
         return $dataHandler;
