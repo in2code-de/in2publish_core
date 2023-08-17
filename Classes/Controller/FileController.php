@@ -120,10 +120,14 @@ class FileController extends ActionController
 
         if (null !== $recordTree) {
             $this->view->assign('recordTree', $recordTree);
+            $this->view->assign('publishingAvailable', true);
         }
 
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Tooltip');
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Modal');
+        $this->pageRenderer->addInlineLanguageLabelFile(
+            'EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf'
+        );
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
         $moduleTemplate->setContent($this->view->render());
