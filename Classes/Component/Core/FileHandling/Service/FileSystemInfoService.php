@@ -11,6 +11,13 @@ class FileSystemInfoService
 {
     use FalDriverServiceInjection;
 
+    //skip OS specific files in PublishFiles Module
+    protected const SKIPPED_FILE_TYPES = [
+        '.DS_Store',
+        'Thumbs.db',
+        'desktop.ini'
+    ];
+
     protected const PROPERTIES = [
         'size',
         'mimetype',
@@ -33,11 +40,15 @@ class FileSystemInfoService
         }
         $files = [];
         foreach ($fileIdentifiers as $fileIdentifier) {
-            $foundFile = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
-            $publicUrl = $driver->getPublicUrl($foundFile['identifier']);
-            // TODO: If the publicUrl does not contain the host we need to add it here
-            $foundFile['publicUrl'] = $publicUrl;
-            $files[] = $foundFile;
+            $filename = basename($fileIdentifier);
+            // skip OS specific files
+            if (!in_array($filename, self::SKIPPED_FILE_TYPES)) {
+                $foundFile = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
+                $publicUrl = $driver->getPublicUrl($foundFile['identifier']);
+                // TODO: If the publicUrl does not contain the host we need to add it here
+                $foundFile['publicUrl'] = $publicUrl;
+                $files[] = $foundFile;
+            }
         }
         return [
             'folders' => $folders,
