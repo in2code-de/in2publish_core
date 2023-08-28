@@ -19,6 +19,9 @@
 			<trans-unit id="module_m4_title">
 				<source>administration tools</source>
 			</trans-unit>
+			<trans-unit id="module_m5_title">
+				<source>Publish redirects</source>
+			</trans-unit>
 
 			<trans-unit id="m1.page_recursion">
 				<source>Depth</source>
