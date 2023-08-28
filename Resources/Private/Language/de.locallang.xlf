@@ -24,6 +24,10 @@
 				<source>administration tools</source>
 				<target state="translated">Tools für Administratoren</target>
 			</trans-unit>
+			<trans-unit id="module_m5_title">
+				<source>Publish redirects</source>
+				<target state="translated">Redirects veröffentlichen</target
+			</trans-unit>
 
 			<trans-unit id="label_stage">
 				<source>Stage System</source>

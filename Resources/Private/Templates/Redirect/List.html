@@ -4,7 +4,14 @@
 >
 	<f:layout name="Default"/>
 
+
 	<f:section name="Main">
+
+		<h2>
+			<f:translate key="module_main_title">TYPO3 Content Publisher</f:translate> -
+			<f:translate key="module_m5_title">publish redirects</f:translate>
+		</h2>
+
 		<f:render partial="Redirect/Filter" arguments="{_all}" />
 
 		<f:render partial="Pagination" arguments="{paginator: paginator, pagination: pagination, insertAbove: 1, insertBelow: 1}" contentAs="content">
