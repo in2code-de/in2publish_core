@@ -1,5 +1,13 @@
 # In2publish Core Change Log
 
+11.0.6:
+- [META] Set the EM conf version number to 11.0.6
+- [DOCS] Update changelog
+- [TASK] Add label for Publish redirects module
+- [BUGFIX] Correct SSH Adapter
+- [BUGFIX] Avoid error log entries for unset backend users in clear cache command
+- [BUGFIX] Update definition of defaultIgnoredTables for publishing
+
 11.0.5:
 - [META] Set the EM conf version number to 11.0.5
 - [DOCS] Update changelog
