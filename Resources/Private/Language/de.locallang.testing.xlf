@@ -621,7 +621,7 @@
 
 			<trans-unit id="performance.db_init.init_time">
 				<source>The foreign database initialization took %d microseconds on average</source>
-				<target state="translated">Die Initialisierung der entfernten benötigt im Schnitt %d Mikrosekunden</target>
+				<target state="translated">Die Initialisierung der entfernten Datenbank benötigt im Schnitt %d Mikrosekunden</target>
 			</trans-unit>
 			<trans-unit id="performance.db_init.slow_help">
 				<source>
