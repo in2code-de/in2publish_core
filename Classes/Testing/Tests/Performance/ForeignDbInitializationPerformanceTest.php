@@ -68,8 +68,8 @@ class ForeignDbInitializationPerformanceTest implements TestCaseInterface
         $median = (array_sum($times) / count($times));
         $messages = [];
         sort($times);
-        $messages[] = 'Fastest: ' . $times[0] . ' msec';
-        $messages[] = 'Slowest: ' . $times[9] . ' msec';
+        $messages[] = 'Fastest: ' . $times[0] . ' μs';
+        $messages[] = 'Slowest: ' . $times[9] . ' μs';
 
         $severity = TestResult::WARNING;
         if ($median < self::THRESHOLD[TestResult::OK]) {
