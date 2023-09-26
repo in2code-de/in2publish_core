@@ -105,8 +105,8 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
         $writeTime = $readAndWriteTime - $readTime;
 
         $messages = [];
-        $messages[] = 'Read: ' . $readTime . ' msec';
-        $messages[] = 'Write: ' . $writeTime . ' msec';
+        $messages[] = 'Read: ' . round($readTime * 1e6) . ' μs';
+        $messages[] = 'Write: ' . round($writeTime * 1e6) . ' μs';
 
         $severity = TestResult::WARNING;
         if (
@@ -128,7 +128,7 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
             'performance.fs_io.rw_time',
             $severity,
             $messages,
-            [(string)$readAndWriteTime]
+            [(string) round($readAndWriteTime * 1e6)]
         );
     }
 

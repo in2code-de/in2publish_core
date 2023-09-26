@@ -643,8 +643,8 @@
 			<!-- \In2code\In2publishCore\Testing\Tests\Performance\DiskSpeedPerformanceTest -->
 
 			<trans-unit id="performance.fs_io.rw_time">
-				<source>Reading and writing 10 MB took %f microseconds.</source>
-				<target state="translated">Das Lesen und Schreiben von 10 MB hat %f mikrosekunden gedauert.</target>
+				<source>Reading and writing 10 MB took %d microseconds.</source>
+				<target state="translated">Das Lesen und Schreiben von 10 MB hat %d Mikrosekunden gedauert.</target>
 			</trans-unit>
 			<trans-unit id="performance.fs_io.slow_help">
 				<source>
