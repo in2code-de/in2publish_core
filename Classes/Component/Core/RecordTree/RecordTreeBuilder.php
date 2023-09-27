@@ -35,7 +35,7 @@ class RecordTreeBuilder
     use TcaServiceInjection;
     use RawRecordServiceInjection;
 
-    public function buildRecordTree(RecordTreeBuildRequest $request): RecordTree
+    public function buildRecordTree(RecordTreeBuildRequest $request, $includeTranslations = true): RecordTree
     {
         $recordTree = new RecordTree();
 
@@ -43,7 +43,9 @@ class RecordTreeBuilder
 
         $defaultIdRequest = $this->setIdToDefaultLanguageId($request);
 
-        $this->findRequestedRecordWithTranslations($defaultIdRequest, $recordTree, $recordCollection);
+        if ($includeTranslations) {
+            $this->findRequestedRecordWithTranslations($defaultIdRequest, $recordTree, $recordCollection);
+        }
 
         $this->findPagesRecursively($defaultIdRequest, $recordCollection);
 

@@ -10,7 +10,6 @@ use Throwable;
 class FileSystemInfoService
 {
     use FalDriverServiceInjection;
-
     protected const PROPERTIES = [
         'size',
         'mimetype',
@@ -33,11 +32,15 @@ class FileSystemInfoService
         }
         $files = [];
         foreach ($fileIdentifiers as $fileIdentifier) {
-            $foundFile = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
-            $publicUrl = $driver->getPublicUrl($foundFile['identifier']);
-            // TODO: If the publicUrl does not contain the host we need to add it here
-            $foundFile['publicUrl'] = $publicUrl;
-            $files[] = $foundFile;
+            $filename = basename($fileIdentifier);
+            // do not list files starting with a dot
+            if (!str_starts_with($filename, '.')) {
+                $foundFile = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
+                $publicUrl = $driver->getPublicUrl($foundFile['identifier']);
+                // TODO: If the publicUrl does not contain the host we need to add it here
+                $foundFile['publicUrl'] = $publicUrl;
+                $files[] = $foundFile;
+            }
         }
         return [
             'folders' => $folders,

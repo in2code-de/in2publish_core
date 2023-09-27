@@ -123,6 +123,8 @@ class FileEdgeCacheInvalidationService
             if (
                 !in_array($table, $tableNames, true)
                 || !array_key_exists('pid', $schemaManager->listTableColumns($table))
+                || $table === '_file'
+                || $table === '_folder'
             ) {
                 continue;
             }

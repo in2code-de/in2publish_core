@@ -9,7 +9,7 @@ record is unchanged or ignored by vote.
 
 This event is another replacement for the events `PublishingOfOneRecordBegan` and `PublishingOfOneRecordEnded` (renamed
 to `RecordWasPublished` in v12.2) of version 11 and lower, because those events are not dispatched anymore if the record
-is unchanged. There is, however, one remarkable difference. This event is dispatched also fore records which are
+is unchanged. There is, however, one remarkable difference. This event is dispatched also for records which are
 ignored, which is different to the other events in v11, which were not dispatched in case that the record was ignored.
 
 If you want to know if the record was unchanged but ignored, you have to dispatch the

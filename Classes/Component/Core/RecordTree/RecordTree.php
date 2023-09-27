@@ -24,6 +24,15 @@ class RecordTree implements Node
         $this->children[$record->getClassification()][$record->getId()] = $record;
     }
 
+    public function removeChild(Record $record): void
+    {
+        if (array_key_exists($record->getClassification(), $this->children)) {
+            if (array_key_exists($record->getId(), $this->children[$record->getClassification()])) {
+                unset($this->children[$record->getClassification()][$record->getId()]);
+            }
+        }
+    }
+
     /**
      * @return array<string, array<int|string, Record>>
      */
@@ -49,6 +58,10 @@ class RecordTree implements Node
 
     public function getCurrentPage(): ?Record
     {
-        return reset($this->children['pages']) ?? null;
+        if (isset($this->children['pages']) && is_array($this->children['pages']) && !empty($this->children['pages'])) {
+            return reset($this->children['pages']);
+        }
+
+        return null;
     }
 }

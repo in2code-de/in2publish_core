@@ -68,11 +68,16 @@ class FalPublisherCommand extends Command
                     $parentFolder = PathUtility::dirname($targetDir);
                     $driver->createFolder($folderName, $parentFolder, true);
                 }
-                $driver->addFile(
-                    Environment::getVarPath() . '/transient/' . $row['temp_identifier_hash'],
-                    $targetDir,
-                    PathUtility::basename($row['identifier'])
-                );
+                // only add file if it does not exist on foreign
+                // otherwise FalPublisherExecutionFailedException is thrown because there is no more file in transient folder
+                if (!$driver->fileExists($row['identifier'])) {
+                    $driver->addFile(
+                        Environment::getVarPath() . '/transient/' . $row['temp_identifier_hash'],
+                        $targetDir,
+                        PathUtility::basename($row['identifier'],
+                            false)
+                    );
+                }
             }
             if (FileRecordPublisher::A_UPDATE === $row['file_action']) {
                 $driver->replaceFile(
