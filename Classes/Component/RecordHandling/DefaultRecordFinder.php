@@ -504,7 +504,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                         'foreign_table_where' => 'AND {#sys_category}.{#sys_language_uid} IN (-1, 0)',
                         'MM' => 'sys_category_record_mm',
                         'MM_match_fields' => [
-                            'fieldname' => 'categories',
+                            'fieldname' => $propertyName,
                             'tablenames' => $recordTableName,
                         ],
                         'MM_opposite_field' => 'items',
