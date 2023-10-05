@@ -40,18 +40,17 @@
 				</f:if>
 			</div>
 
-			<f:if condition="{record.changedRecursive">
-
+			<f:if condition="{record.stateRecursive} != 'unchanged'">
 				<f:comment>
 					Show parent record (e.g. page) properties only if they have changed
 				</f:comment>
 				<f:if condition="{record.state} == 'changed' || {record.state} == 'deleted'">
-					<f:if condition="{record.dirtyProperties}">
+					<f:if condition="{record.changedProps}">
 						<h3>
-							<f:translate key="dirty_properties_pageproperties" arguments="{0:'{publish:Tca.GetTableLabelFromLocallang(tableName:record.tableName)}'}">Properties</f:translate>
+							<f:translate key="dirty_properties_pageproperties" arguments="{0:'{publish:Tca.GetTableLabelFromLocallang(tableName:record.classification)}'}">Properties</f:translate>
 						</h3>
 						<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
-							<f:for each="{record.dirtyProperties}" as="fieldName">
+							<f:for each="{record.changedProps}" as="fieldName">
 								<li>
 									<f:if condition="{record.classification} == 'pages'">
 										<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.id}" table="{record.classification}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
@@ -63,7 +62,7 @@
 										</f:if>
 									</f:if>
 									<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}" />
-									<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.classification}">
+									<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.classification}">
 										<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="local" />
 									</publish:Tca.FormatPropertyByTcaDefinition>
 								</li>
@@ -130,15 +129,15 @@
 				Show page properties only if they have changed
 			</f:comment>
 			<f:if condition="{record.state} == 'changed' || {record.state} == 'deleted'">
-				<f:if condition="{record.dirtyProperties}">
+				<f:if condition="{record.changedProps}">
 					<h3>
-						<f:translate key="dirty_properties_pageproperties" arguments="{0:'{publish:Tca.GetTableLabelFromLocallang(tableName:record.tableName)}'}">Properties</f:translate>
+						<f:translate key="dirty_properties_pageproperties" arguments="{0:'{publish:Tca.GetTableLabelFromLocallang(tableName:record.classification)}'}">Properties</f:translate>
 					</h3>
 					<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
-						<f:for each="{record.dirtyProperties}" as="fieldName">
+						<f:for each="{record.changedProps}" as="fieldName">
 							<li>
 								<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}" />
-								<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.classification}">
+								<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.classification}">
 									<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="foreign" />
 								</publish:Tca.FormatPropertyByTcaDefinition>
 							</li>
