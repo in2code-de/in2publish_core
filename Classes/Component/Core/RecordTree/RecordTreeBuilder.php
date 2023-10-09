@@ -37,7 +37,7 @@ class RecordTreeBuilder
 
     public function buildRecordTree(RecordTreeBuildRequest $request): RecordTree
     {
-        $recordTree = new RecordTree();
+        $recordTree = new RecordTree([], $request);
 
         $recordCollection = new RecordCollection();
 

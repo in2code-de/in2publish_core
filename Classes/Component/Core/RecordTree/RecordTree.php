@@ -11,12 +11,19 @@ class RecordTree implements Node
      * @var array<string, array<int|string, Record>>
      */
     private array $children = [];
+    private ?RecordTreeBuildRequest $request;
 
-    public function __construct(iterable $children = [])
+    public function __construct(iterable $children = [], ?RecordTreeBuildRequest $request = null)
     {
         foreach ($children as $child) {
             $this->addChild($child);
         }
+        $this->request = $request;
+    }
+
+    public function getRequest(): ?RecordTreeBuildRequest
+    {
+        return $this->request;
     }
 
     public function addChild(Record $record): void
