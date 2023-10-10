@@ -174,7 +174,7 @@ module:
   # Enable/Disable File Publishing module
   m3: TRUE
 
-  # Enable/Disable Function Publishing module
+  # Enable/Disable Publish Tools module
   m4: TRUE
 
 
