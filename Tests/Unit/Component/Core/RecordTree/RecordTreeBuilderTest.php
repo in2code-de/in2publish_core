@@ -93,7 +93,7 @@ class RecordTreeBuilderTest extends UnitTestCase
         $recordTreeBuilder->injectTcaService($tcaService);
 
         // act
-        $recordsInCollection = $recordTreeBuilder->findAllRecordsOnPages($recordCollection);
+        $recordsInCollection = $recordTreeBuilder->findAllRecordsOnPages();
 
         // assert
         $pageRecordsInCollection = $recordsInCollection->getRecords('pages');

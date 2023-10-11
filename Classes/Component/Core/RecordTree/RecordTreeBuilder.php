@@ -121,6 +121,9 @@ class RecordTreeBuilder
         while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
             $demands = $this->demandsFactory->createDemand();
             $recordsArray = $recordCollection->getRecords('pages');
+            if (empty($recordsArray)) {
+                break;
+            }
             foreach ($recordsArray as $record) {
                 $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
             }
@@ -131,10 +134,12 @@ class RecordTreeBuilder
 
     public function findAllRecordsOnPages(): RecordCollection
     {
-        $pages = $this->recordIndex->getRecords('pages');
-        $recordCollection = new RecordCollection($pages);
+        // Make a new record collection with all records (pages and subpages or other non-page records).
+        // Required for subsequent method calls.
+        $recordCollection = new RecordCollection($this->recordIndex->getRecords());
 
-        if ($recordCollection->isEmpty()) {
+        $pages = $recordCollection->getRecords('pages');
+        if (empty($pages)) {
             return $recordCollection;
         }
         $demands = $this->demandsFactory->createDemand();
