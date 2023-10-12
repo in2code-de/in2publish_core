@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Component\Core\Record\Factory;
  */
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
@@ -46,6 +47,7 @@ class RecordFactory
     use RecordIndexInjection;
     use EventDispatcherInjection;
     use IgnoredFieldsServiceInjection;
+    use ConfigContainerInjection;
 
     protected DatabaseRecordFactoryFactory $databaseRecordFactoryFactory;
 
@@ -120,6 +122,18 @@ class RecordFactory
 
     protected function shouldIgnoreRecord(Record $record): bool
     {
+        if ($this->configContainer->get('factory.treatRemovedAndDeletedAsDifference')) {
+            /** @noinspection NestedPositiveIfStatementsInspection */
+            $localProps = $record->getLocalProps();
+            $foreignProps = $record->getForeignProps();
+            if (
+                (empty($localProps) && 1 === ($foreignProps['deleted'] ?? 0)) ||
+                (empty($foreignProps) && 1 === ($localProps['deleted'] ?? 0))
+            ) {
+                return false;
+            }
+        }
+
         $event = new DecideIfRecordShouldBeIgnored($record);
         $this->eventDispatcher->dispatch($event);
         return $event->shouldBeIgnored();
