@@ -122,16 +122,14 @@ class RecordFactory
 
     protected function shouldIgnoreRecord(Record $record): bool
     {
-        if ($this->configContainer->get('factory.treatRemovedAndDeletedAsDifference')) {
-            /** @noinspection NestedPositiveIfStatementsInspection */
-            $localProps = $record->getLocalProps();
-            $foreignProps = $record->getForeignProps();
-            if (
-                (empty($localProps) && 1 === ($foreignProps['deleted'] ?? 0)) ||
-                (empty($foreignProps) && 1 === ($localProps['deleted'] ?? 0))
-            ) {
-                return false;
-            }
+        $treatRemovedAndDeletedRecordsAsDifference = $this->configContainer->get('factory.treatRemovedAndDeletedAsDifference');
+
+        if ($treatRemovedAndDeletedRecordsAsDifference && $record->isRemovedOnOneSideAndDeletedOnTheOtherSide()) {
+            // always show deleted/removed records with enabled feature
+            return false;
+        } elseif (!$treatRemovedAndDeletedRecordsAsDifference && $record->isRemovedOnOneSideAndDeletedOnTheOtherSide()) {
+            // never show deleted records with enabled feature
+            return true;
         }
 
         $event = new DecideIfRecordShouldBeIgnored($record);
