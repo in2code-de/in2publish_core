@@ -8,11 +8,11 @@
 			data-type="file"
 			data-id="{record.id}"
 			data-name="{publish:record.getMergedProperty(record:record, propertyName: 'name')}"
-			data-identifier-local="{record.localProps.id}"
-			data-identifier-foreign="{record.foreignProps.id}"
-			data-identifier="{publish:record.getMergedProperty(record:record, propertyName: 'id')}"
+			data-identifier-local="{record.localProps.identifier}"
+			data-identifier-foreign="{record.foreignProps.identifier}"
+			data-identifier="{publish:record.getMergedProperty(record:record, propertyName: 'identifier')}"
 			data-storage="{publish:record.getMergedProperty(record:record, propertyName: 'storage')}"
-			data-searchable="{record.localProps.name}|{record.foreignProps.name}">
+			data-searchable="{record.localProps.identifier}|{record.foreignProps.identifier}">
 			<td class="col-state">
 				<span class="badge rounded-pill in2publish-badge--{record.stateRecursive}">
 					<f:translate key="record.state.{record.stateRecursive}.short"/>
@@ -28,7 +28,7 @@
 						<f:then>
 							<f:if condition="{record.movedToDifferentFolder}">
 								<f:then>
-									{record.localProps.id}
+									{record.localProps.identifier}
 								</f:then>
 								<f:else>
 									{record.localProps.name}
@@ -133,7 +133,7 @@
 					<f:then>
 						<f:if condition="{record.movedToDifferentFolder}">
 							<f:then>
-								{record.foreignProps.id}
+								{record.foreignProps.identifier}
 							</f:then>
 							<f:else>
 								{record.foreignProps.name}
