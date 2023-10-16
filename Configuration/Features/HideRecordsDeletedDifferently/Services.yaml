@@ -1,0 +1,15 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  In2code\In2publishCore\Features\HideRecordsDeletedDifferently\:
+    resource: '../../../Classes/Features/HideRecordsDeletedDifferently/*'
+
+  In2code\In2publishCore\Features\HideRecordsDeletedDifferently\EventListener\HideRecordsDeletedDifferentlyEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publish-HideRecordsDeletedDifferently-DecideIfRecordShouldBeIgnored'
+        method: 'decideIfRecordShouldBeIgnored'
+        event: In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored

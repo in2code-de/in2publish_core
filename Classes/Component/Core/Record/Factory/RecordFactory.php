@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Component\Core\Record\Factory;
  */
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
@@ -47,7 +46,6 @@ class RecordFactory
     use RecordIndexInjection;
     use EventDispatcherInjection;
     use IgnoredFieldsServiceInjection;
-    use ConfigContainerInjection;
 
     protected DatabaseRecordFactoryFactory $databaseRecordFactoryFactory;
 
@@ -122,16 +120,6 @@ class RecordFactory
 
     protected function shouldIgnoreRecord(Record $record): bool
     {
-        $treatRemovedAndDeletedRecordsAsDifference = $this->configContainer->get('factory.treatRemovedAndDeletedAsDifference');
-
-        if ($treatRemovedAndDeletedRecordsAsDifference && $record->isRemovedOnOneSideAndDeletedOnTheOtherSide()) {
-            // always show deleted/removed records with enabled feature
-            return false;
-        } elseif (!$treatRemovedAndDeletedRecordsAsDifference && $record->isRemovedOnOneSideAndDeletedOnTheOtherSide()) {
-            // never show deleted records with enabled feature
-            return true;
-        }
-
         $event = new DecideIfRecordShouldBeIgnored($record);
         $this->eventDispatcher->dispatch($event);
         return $event->shouldBeIgnored();
