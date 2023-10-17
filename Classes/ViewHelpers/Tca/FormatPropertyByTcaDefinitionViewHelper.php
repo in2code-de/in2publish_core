@@ -31,8 +31,8 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+use function date;
 use function nl2br;
-use function strftime;
 use function trim;
 
 class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
@@ -93,7 +93,7 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
             || GeneralUtility::inList($eval, 'date')
         ) {
             if ($value !== '0') {
-                $value = strftime('%d.%m.%Y', (int)$value);
+                $value = date('Y-m-d H:i:s', (int)$value);
             }
         }
         return $value;
