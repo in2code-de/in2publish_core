@@ -599,7 +599,7 @@
 				<source>"%s" requires that the record "%s" (which is the default language version) is published first.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.enablecolumns">
-				<source>The record "%s" cannot be published until all visibility settings of the default language "%s" have been published.</source>
+				<source>The record "%s" cannot be published until all visibility settings (%s) of the default language "%s" have been published.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_published_page.existing">
 				<source>"%s" requires that the page "%s" is published first.</source>

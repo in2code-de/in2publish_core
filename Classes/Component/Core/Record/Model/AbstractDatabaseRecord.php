@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Record\Model;
 
+use JsonException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function implode;
+use function json_decode;
+
+use const JSON_THROW_ON_ERROR;
 
 abstract class AbstractDatabaseRecord extends AbstractRecord
 {
@@ -85,31 +89,25 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 fn(Record $record): array => [
                     $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
-                ]
+                ],
             );
 
-            $enableFieldLabels = [];
-            foreach ($GLOBALS['TCA'][$this->table]['ctrl'][self::CTRL_PROP_ENABLECOLUMNS] ?? [] as $enableField) {
-                $label = $enableField;
-                if (isset($GLOBALS['TCA'][$this->table]['columns'][$enableField]['label'])) {
-                    $label = $GLOBALS['LANG']->sL($GLOBALS['TCA'][$this->table]['columns'][$enableField]['label']);
-                }
-                $enableFieldLabels[] = $label;
+            $enableFieldLabels = $this->getInheritedEnableColumnsWithLabels();
+            if (!empty($enableFieldLabels)) {
+                $dependencies[] = $transOrigEnableColumns = new Dependency(
+                    $this,
+                    $this->getClassification(),
+                    ['uid' => $transOrigPointer],
+                    Dependency::REQ_ENABLECOLUMNS,
+                    'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.enablecolumns',
+                    fn(Record $record): array => [
+                        $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
+                        implode(', ', $enableFieldLabels),
+                        $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
+                    ],
+                );
+                $transOrigEnableColumns->addSupersedingDependency($transOrigExisting);
             }
-
-            $dependencies[] = $transOrigEnableColumns = new Dependency(
-                $this,
-                $this->getClassification(),
-                ['uid' => $transOrigPointer],
-                Dependency::REQ_ENABLECOLUMNS,
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.enablecolumns',
-                fn(Record $record): array => [
-                    $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
-                    $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
-                    implode(', ', $enableFieldLabels),
-                ]
-            );
-            $transOrigEnableColumns->addSupersedingDependency($transOrigExisting);
         }
     }
 
@@ -126,7 +124,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 fn(Record $record): array => [
                     $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
-                ]
+                ],
             );
 
             $enableFieldLabels = [];
@@ -144,7 +142,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                     $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
                     implode(', ', $enableFieldLabels),
-                ]
+                ],
             );
             $pageEnableColumns->addSupersedingDependency($pageExisting);
         }
@@ -174,5 +172,38 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
             }
         }
         return implode(', ', $labels);
+    }
+
+    /**
+     * @return array<string, string> Key=column Value=Label
+     */
+    public function getInheritedEnableColumnsWithLabels(): array
+    {
+        $l10nState = [];
+        $l10nStateEncoded = $this->getLocalProps()['l10n_state'] ?? null;
+        if (!empty($l10nStateEncoded)) {
+            try {
+                $l10nState = json_decode($l10nStateEncoded, true, 512, JSON_THROW_ON_ERROR);
+            } catch (JsonException $exception) {
+            }
+        }
+        $enableFieldLabels = [];
+        $tca = $GLOBALS['TCA'][$this->table];
+        $enableColumns = $tca['ctrl'][self::CTRL_PROP_ENABLECOLUMNS] ?? [];
+        foreach ($enableColumns as $enableField) {
+            // Ignore enablecolumns which are set on the child record.
+            if (
+                ($tca['columns'][$enableField]['config']['behaviour']['allowLanguageSynchronization'] ?? false)
+                && 'custom' === ($l10nState[$enableField] ?? 'parent')
+            ) {
+                continue;
+            }
+            $label = $enableField;
+            if (isset($tca['columns'][$enableField]['label'])) {
+                $label = $GLOBALS['LANG']->sL($tca['columns'][$enableField]['label']);
+            }
+            $enableFieldLabels[$enableField] = $label;
+        }
+        return $enableFieldLabels;
     }
 }

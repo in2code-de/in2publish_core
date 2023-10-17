@@ -789,8 +789,8 @@
 				<target state="translated">"%s" erfordert, dass der Datensatz "%s" (das ist die Standardsprachversion) zuerst veröffentlicht wird.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.enablecolumns">
-				<source>The record "%s" cannot be published until all visibility settings of the default language "%s" have been published.</source>
-				<target state="translated">Der Datensatz "%s" kann nicht veröffentlicht werden, bevor nicht alle sichtbarkeitseinstellung der Standardsprache "%s" veröffentlicht wurden.</target>
+				<source>The record "%s" cannot be published until all visibility settings (%s) of the default language "%s" have been published.</source>
+				<target state="translated">Der Datensatz "%s" kann nicht veröffentlicht werden, bevor nicht alle Sichtbarkeitseinstellung (%s) der Standardsprache "%s" veröffentlicht wurden.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_published_page.existing">
 				<source>"%s" requires that the page "%s" is published first.</source>

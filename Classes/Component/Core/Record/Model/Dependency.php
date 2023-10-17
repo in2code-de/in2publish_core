@@ -10,6 +10,7 @@ use In2code\In2publishCore\Component\Core\Reason\Reasons;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
+use function array_keys;
 use function count;
 use function implode;
 
@@ -103,8 +104,8 @@ class Dependency
             $this->reasons->addReason(
                 new Reason(
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.missing_dependency',
-                    [$this->classification, $propertiesString]
-                )
+                    [$this->classification, $propertiesString],
+                ),
             );
             return;
         }
@@ -132,9 +133,14 @@ class Dependency
             if ($state === Record::S_ADDED || $state === Record::S_DELETED) {
                 return false;
             }
+
+            if ($this->record instanceof AbstractDatabaseRecord) {
+                $enableFields = array_keys($this->record->getInheritedEnableColumnsWithLabels());
+            } else {
+                $enableFields = $GLOBALS['TCA'][$this->classification]['ctrl']['enablecolumns'] ?? [];
+            }
             $localProps = $record->getLocalProps();
             $foreignProps = $record->getForeignProps();
-            $enableFields = $GLOBALS['TCA'][$this->classification]['ctrl']['enablecolumns'];
             foreach ($enableFields as $enableField) {
                 if ($localProps[$enableField] !== $foreignProps[$enableField]) {
                     return false;
