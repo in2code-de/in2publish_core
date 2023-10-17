@@ -1,5 +1,17 @@
 # In2publish Core Change Log
 
+11.0.8
+- [META] Set the EM conf version number to 11.0.8
+- [BUGFIX] Sort query results by language
+- [BUGFIX] Use suitable default values in SQL dumps
+- [BUGFIX] Add missing word in german translation
+- [BUGFIX] Fix DiskSpeed performance test units
+- [BUGFIX] Fix DBInit performance test units
+
+11.0.7:
+- [TASK] Raise version number in ext_emconf.php
+- Update de.locallang.xlf
+
 11.0.6:
 - [META] Set the EM conf version number to 11.0.6
 - [DOCS] Update changelog
