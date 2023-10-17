@@ -40,6 +40,10 @@ class SingleDatabaseRepository
             $query->orderBy('uid');
         }
 
+        if (!empty($GLOBALS['TCA'][$table]['ctrl']['languageField'])) {
+            $query->addOrderBy($GLOBALS['TCA'][$table]['ctrl']['languageField']);
+        }
+        
         $result = $query->execute();
         return array_column($result->fetchAllAssociative(), null, 'uid');
     }

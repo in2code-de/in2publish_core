@@ -505,7 +505,7 @@
 			<!-- \In2code\In2publishCore\Testing\Tests\Performance\DiskSpeedPerformanceTest -->
 
 			<trans-unit id="performance.fs_io.rw_time">
-				<source>Reading and writing 10 MB took %f microseconds.</source>
+				<source>Reading and writing 10 MB took %d microseconds.</source>
 			</trans-unit>
 			<trans-unit id="performance.fs_io.slow_help">
 				<source>
