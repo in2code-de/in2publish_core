@@ -107,9 +107,6 @@ factory:
   # based on user functions like DCE or fluidcontent.
   includeSysFileReference: FALSE
 
-  # Enable to show records which are deleted on one side and non-existent on the other
-  treatRemovedAndDeletedAsDifference: FALSE
-
 
 # Manipulate view
 # @user
@@ -253,6 +250,11 @@ features:
   contextMenuPublishEntry:
     # Disabled by default. See Documentation/KnownIssues.md first before activation.
     enable: FALSE
+
+  # Hide records from the Publish Overview Module if they are deleted on one side and removed from the database on the other.
+  # Disable this feature if you are using EXT:recycler to publish the deletion of records in the recycler to Foreign.
+  hideRecordsDeletedDifferently:
+    enable: TRUE
 
   # Support for redirects. Enabling this adds new fields to redirects to associate redirects with pages and a module to publish redirects.
   redirectsSupport:

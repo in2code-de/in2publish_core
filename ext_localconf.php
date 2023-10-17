@@ -95,6 +95,7 @@
     ) {
         $configContainer->registerDefiner(\In2code\In2publishCore\Component\ConfigContainer\Definer\SshConnectionDefiner::class);
     }
+    $configContainer->registerDefiner(\In2code\In2publishCore\Features\HideRecordsDeletedDifferently\Config\Definer\HideRecordsDeletedDifferentlyDefiner::class);
 
     $configContainer->registerProvider(\In2code\In2publishCore\Component\ConfigContainer\Provider\DefaultProvider::class);
     $configContainer->registerProvider(\In2code\In2publishCore\Component\ConfigContainer\Provider\FileProvider::class);

@@ -376,6 +376,14 @@ abstract class AbstractRecord implements Record
         return true;
     }
 
+    public function isRemovedOnOneSideAndDeletedOnTheOtherSide(): bool
+    {
+        return (
+            (empty($this->localProps) && 1 === ($this->foreignProps['deleted'] ?? 0)) ||
+            (empty($this->foreignProps) && 1 === ($this->localProps['deleted'] ?? 0))
+        );
+    }
+
     public function isPublishableIgnoringUnreachableDependencies(): bool
     {
         $beUser = $this->getBackendUser();
