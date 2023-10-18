@@ -59,7 +59,7 @@ class RecordTreeBuilder
 
         if ($defaultIdRequest->getId() !== $request->getId()) {
             $record = $recordTree->getChild($request->getTable(), $request->getId());
-            $recordTree = new RecordTree();
+            $recordTree = new RecordTree([], $request);
             if (null !== $record) {
                 $recordTree->addChild($record);
             }
