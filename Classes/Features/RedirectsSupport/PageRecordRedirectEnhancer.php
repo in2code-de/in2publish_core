@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport;
  */
 
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
@@ -44,6 +45,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 use function array_keys;
+use function in_array;
 
 class PageRecordRedirectEnhancer
 {
@@ -57,6 +59,8 @@ class PageRecordRedirectEnhancer
 
     protected LinkService $linkService;
 
+    protected ConfigContainer $configContainer;
+
     /** @var array<string, array<int>> */
     protected array $looseRedirects = [];
 
@@ -65,17 +69,23 @@ class PageRecordRedirectEnhancer
         Connection $localDatabase,
         Connection $foreignDatabase,
         SysRedirectRepository $repo,
-        LinkService $linkService
+        LinkService $linkService,
+        ConfigContainer $configContainer
     ) {
         $this->recordFinder = $recordFinder;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
         $this->repo = $repo;
         $this->linkService = $linkService;
+        $this->configContainer = $configContainer;
     }
 
     public function addRedirectsToPageRecord(AllRelatedRecordsWereAddedToOneRecord $event): void
     {
+        $excludedTables = $this->configContainer->get('excludeRelatedTables');
+        if (in_array('sys_redirects', $excludedTables)) {
+            return;
+        }
         $record = $event->getRecord();
         $pid = $record->getIdentifier();
 
