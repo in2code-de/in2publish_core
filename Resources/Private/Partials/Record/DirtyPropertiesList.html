@@ -9,9 +9,14 @@
 		<f:if condition="{record.publishable}">
 			<f:else>
 				<ul class="in2publish-related__list">
-				<f:for each="{record.unfulfilledDependencies}" as="dependency">
+				<f:for each="{record.unfulfilledDependenciesHumanReadableRecursively}" as="unfulfilledDependency">
 					<li>
-						<f:format.nl2br>{dependency}</f:format.nl2br>
+						<f:format.nl2br>{unfulfilledDependency}</f:format.nl2br>
+					</li>
+				</f:for>
+				<f:for each="{record.reasonsWhyTheRecordIsNotPublishableHumanReadable}" as="reasonWhyTheRecordIsNotPublishable">
+					<li>
+						<f:format.nl2br>{reasonWhyTheRecordIsNotPublishable}</f:format.nl2br>
 					</li>
 				</f:for>
 				</ul>

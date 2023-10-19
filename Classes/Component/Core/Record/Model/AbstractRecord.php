@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Record\Model;
 
 use Generator;
+use In2code\In2publishCore\Component\Core\Reason\Reasons;
 use In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtensionTrait;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use LogicException;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -45,6 +47,8 @@ abstract class AbstractRecord implements Record
      */
     protected array $translations = [];
     protected ?Record $translationParent = null;
+    /** @var array{reasons: Reasons} */
+    protected array $rtc = [];
 
     public function getLocalProps(): array
     {
@@ -324,7 +328,7 @@ abstract class AbstractRecord implements Record
     /**
      * @noinspection PhpUnused (Used in View)
      */
-    public function getUnfulfilledDependencies(): array
+    public function getUnfulfilledDependenciesHumanReadableRecursively(): array
     {
         $dependencyTree = $this->getDependencyTree();
         /** @var array<array<Dependency>> $flattened */
@@ -366,14 +370,45 @@ abstract class AbstractRecord implements Record
 
     public function isPublishable(): bool
     {
+        return !$this->hasUnfulfilledDependenciesRecursively()
+            && !$this->hasReasonsWhyTheRecordIsNotPublishable();
+    }
+
+    public function getReasonsWhyTheRecordIsNotPublishableHumanReadable(): array
+    {
+        $string = [];
+        foreach ($this->getReasonsWhyTheRecordIsNotPublishable()->getAll() as $reason) {
+            $string[] = "{$this->getClassification()} [{$this->getId()}] -> $reason";
+        }
+        return $string;
+    }
+
+    public function hasReasonsWhyTheRecordIsNotPublishable(): bool
+    {
+        return !$this->getReasonsWhyTheRecordIsNotPublishable()->isEmpty();
+    }
+
+    public function getReasonsWhyTheRecordIsNotPublishable(): Reasons
+    {
+        if (isset($this->rtc['reasons'])) {
+            return $this->rtc['reasons'];
+        }
+        $event = new CollectReasonsWhyTheRecordIsNotPublishable($this);
+        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcherInterface::class);
+        $eventDispatcher->dispatch($event);
+        return $this->rtc['reasons'] = $event->getReasons();
+    }
+
+    public function hasUnfulfilledDependenciesRecursively(): bool
+    {
         /** @var array<Dependency> $allDependencies */
         $allDependencies = $this->getAllDependencies();
         foreach ($allDependencies as $dependency) {
             if (!$dependency->isFulfilled() && !$dependency->canBeFulfilledBy($this)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public function isPublishableIgnoringUnreachableDependencies(): bool
@@ -381,6 +416,10 @@ abstract class AbstractRecord implements Record
         $beUser = $this->getBackendUser();
         if ($beUser->isAdmin()) {
             return $this->isPublishable();
+        }
+        $reasons = $this->getReasonsWhyTheRecordIsNotPublishable();
+        if (!$reasons->isEmpty()) {
+            return false;
         }
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         $dataHandler->BE_USER = $beUser;

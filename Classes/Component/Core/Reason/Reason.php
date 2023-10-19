@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Reason;
 
+use Throwable;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class Reason
@@ -36,6 +37,15 @@ class Reason
 
     public function getReadableLabel(): string
     {
-        return LocalizationUtility::translate($this->label, null, $this->labelArguments);
+        try {
+            return LocalizationUtility::translate($this->label, null, $this->labelArguments);
+        } catch (Throwable $exception) {
+            return $this->label;
+        }
+    }
+
+    public function __toString()
+    {
+        return $this->getReadableLabel();
     }
 }
