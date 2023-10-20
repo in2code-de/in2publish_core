@@ -10,6 +10,8 @@ use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
+
 use function array_key_first;
 use function array_search;
 use function implode;
@@ -120,8 +122,9 @@ class RecordIndex
         }
     }
 
-    public function processDependencies(int $recursionLimit): void
+    public function processDependencies(RecordTreeBuildRequest $request): void
     {
+        $recursionLimit = $request->getDependencyRecursionLimit();
         $dependencyTargets = new RecordCollection($this->records->getIterator());
 
         while ($recursionLimit-- > 0 && !$dependencyTargets->isEmpty()) {

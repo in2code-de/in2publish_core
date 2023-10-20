@@ -49,11 +49,11 @@ class RecordTreeBuilder
 
         $recordCollection = $this->findAllRecordsOnPages();
 
-        $this->findRecordsByTca($recordCollection);
+        $this->findRecordsByTca($recordCollection, $request);
 
         $this->recordIndex->connectTranslations();
 
-        $this->recordIndex->processDependencies($request->getDependencyRecursionLimit());
+        $this->recordIndex->processDependencies($request);
 
         $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
 
@@ -171,10 +171,10 @@ class RecordTreeBuilder
     /**
      * @param RecordCollection<string, array<int|string, Record>> $recordCollection
      */
-    public function findRecordsByTca(RecordCollection $recordCollection): void
+    public function findRecordsByTca(RecordCollection $recordCollection, RecordTreeBuildRequest $request): void
     {
         $currentRecursion = 0;
-        $recursionLimit = 8;
+        $recursionLimit = $request->getContentRecursionLimit();
 
         while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
             $demand = $this->demandBuilder->buildDemandForRecords($recordCollection);
