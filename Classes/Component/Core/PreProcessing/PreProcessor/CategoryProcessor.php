@@ -9,15 +9,39 @@ use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarke
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 
+use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
+
+use function array_key_exists;
+use function in_array;
+
 class CategoryProcessor extends AbstractProcessor
 {
     use TcaEscapingMarkerServiceInjection;
     use LocalDatabaseInjection;
 
     protected string $type = 'category';
+    protected array $allowed = [
+        'relationship',
+    ];
 
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
+        $relationship = 'manyToMany';
+        if (array_key_exists('relationship', $processedTca)) {
+            $relationship = $processedTca['relationship'];
+        }
+
+        if (in_array($relationship, ['oneToOne', 'oneToMany'], true)) {
+            /** @var SelectResolver $resolver */
+            $resolver = $this->container->get(SelectResolver::class);
+            $resolver->configure(
+                $column,
+                $table,
+                '',
+            );
+            return $resolver;
+        }
+
         $quotedTable = $this->localDatabase->quote($table);
 
         $additionalWhere = '{#sys_category}.{#sys_language_uid} IN (-1, 0)
