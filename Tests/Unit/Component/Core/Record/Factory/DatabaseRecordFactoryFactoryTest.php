@@ -33,7 +33,6 @@ class DatabaseRecordFactoryFactoryTest extends UnitTestCase
         $factoryFactory->addFactory($factory2);
         $factoryFactory->addFactory($factory3);
 
-
         $reflectionProperty = new \ReflectionProperty(DatabaseRecordFactoryFactory::class, 'factories');
         $reflectionProperty->setAccessible(true);
         $factories = $reflectionProperty->getValue($factoryFactory);
@@ -61,7 +60,6 @@ class DatabaseRecordFactoryFactoryTest extends UnitTestCase
         $factoryFactory = new DatabaseRecordFactoryFactory();
         $factoryFactory->addFactory($factory1);
         $factoryFactory->addFactory($factory2);
-
 
         $createdFactory = $factoryFactory->createFactoryForTable($table);
         $this->assertSame($factory2, $createdFactory);

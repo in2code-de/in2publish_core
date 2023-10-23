@@ -54,6 +54,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
 
         $databaseRecordPublisher->publish($addedRecord);
     }
+
     /**
      * @covers ::publish
      */

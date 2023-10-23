@@ -125,5 +125,4 @@ class SelectMmResolverTest extends UnitTestCase
         );
         return $selectMmResolver;
     }
-
 }

@@ -60,6 +60,5 @@ class FileRecordTest extends UnitTestCase
             ['identifier' => 'file2', 'storage' => 42],
         );
         $this->assertSame(Record::S_MOVED, $changedFileRecord->getState());
-
     }
 }

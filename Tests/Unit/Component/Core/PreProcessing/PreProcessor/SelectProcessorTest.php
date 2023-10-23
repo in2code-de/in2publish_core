@@ -180,7 +180,6 @@ class SelectProcessorTest extends UnitTestCase
         $this->assertInstanceOf(SelectMmResolver::class, $resolver);
     }
 
-
     /**
      * @covers ::isSysCategoryField
      * @dataProvider isSysCategoryFieldDataProvider

@@ -119,4 +119,3 @@ On slow file systems (e.g. Mac OS X) the file transfer sometimes takes too long,
 
 This timeout (in seconds) may resolve the problems, but leads to very slow publishing. It should therefore only be used
 on development systems.
-

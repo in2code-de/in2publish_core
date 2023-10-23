@@ -96,7 +96,6 @@ class GroupProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $groupProcessor->injectContainer($container);
 
-
         $processingResult = $groupProcessor->process('table_foo', 'field_foo', $tca);
         $this->assertFalse($processingResult->isCompatible());
         $reason = $processingResult->getValue()[0];

@@ -12,6 +12,7 @@ After the `RecordTree` was built.
 ## Possibilities
 
 This is the central event to process the recordTree before it will be displayed in the UI or published. You can:
+
 * Traverse the record tree to:
   * change record values
   * add/remove records

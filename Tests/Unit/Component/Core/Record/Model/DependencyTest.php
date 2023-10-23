@@ -221,6 +221,7 @@ class DependencyTest extends UnitTestCase
 
         $this->assertSame($expectedReasonLabel, $actualLabel);
     }
+
     /**
      * @covers ::areSupersededDependenciesFulfilled
      * @covers ::isSupersededByUnfulfilledDependency
@@ -272,7 +273,6 @@ class DependencyTest extends UnitTestCase
 
         $testMethodFulfilled->setAccessible(true);
         $actualResultFulfilled = $testMethodFulfilled->invoke($dependencyWithFulfilledDependencies);
-
 
         // assert
         $this->assertFalse($actualResultUnfilled);

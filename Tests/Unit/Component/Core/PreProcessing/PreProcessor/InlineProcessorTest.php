@@ -90,6 +90,7 @@ class InlineProcessorTest extends UnitTestCase
         $this->assertTrue($processingResult->isCompatible());
         $this->assertInstanceOf(InlineSelectResolver::class, $inlineResolver);
     }
+
     /**
      * @covers ::process
      * @covers ::buildResolver

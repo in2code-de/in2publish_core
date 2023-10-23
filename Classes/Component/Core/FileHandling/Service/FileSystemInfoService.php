@@ -10,6 +10,7 @@ use Throwable;
 class FileSystemInfoService
 {
     use FalDriverServiceInjection;
+
     protected const PROPERTIES = [
         'size',
         'mimetype',
