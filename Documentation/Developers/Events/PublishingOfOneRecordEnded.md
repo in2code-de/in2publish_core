@@ -1,6 +1,7 @@
 # PublishingOfOneRecordEnded
 
-**Deprecated. Use the event [`RecordWasPublished` (link)](RecordWasPublished.md) instead. This event will be removed in version 13.0**
+**Deprecated. Use the event [`RecordWasPublished` (link)](RecordWasPublished.md) instead. This event will be removed in
+version 13.0**
 
 Replaces the `\In2code\In2publishCore\Repository\CommonRepository / publishRecordRecursiveEnd` Signal.
 

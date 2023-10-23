@@ -69,7 +69,7 @@ class SelectMmResolverTest extends UnitTestCase
         $selectMmResolver->injectReplaceMarkersService($replaceMarkersService);
 
         $demands = new DemandsCollection();
-        $record = new DatabaseRecord('table_foo', 42, ['local_prop1' => 'value_1'],[],[]);
+        $record = new DatabaseRecord('table_foo', 42, ['local_prop1' => 'value_1'], [], []);
 
         $selectMmResolver->resolve($demands, $record);
 
@@ -92,16 +92,15 @@ class SelectMmResolverTest extends UnitTestCase
             'selectField',
         );
 
-        $record = new DatabaseRecord('table_foo', 42, ['value_foo' => 'value_1'],[],[]);
+        $record = new DatabaseRecord('table_foo', 42, ['value_foo' => 'value_1'], [], []);
 
         $additionalWhere = 'AND {#foreignTable}.{#column} LIKE \'%value%\' ORDER BY uid';
 
         $replaceMarkersService = $this->createMock(ReplaceMarkersService::class);
-        $replaceMarkersService->expects(
-            $this->once())
-            ->method('replaceMarkers')
-            ->with($record,$additionalWhere,'column')
-            ->willReturn('AND foreignTable.column LIKE \'%value%\'');
+        $replaceMarkersService->expects($this->once())
+                              ->method('replaceMarkers')
+                              ->with($record, $additionalWhere, 'column')
+                              ->willReturn('AND foreignTable.column LIKE \'%value%\'');
 
         $selectMmResolver->injectReplaceMarkersService($replaceMarkersService);
 

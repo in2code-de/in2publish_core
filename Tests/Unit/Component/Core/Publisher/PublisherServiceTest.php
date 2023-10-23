@@ -96,7 +96,7 @@ class PublisherServiceTest extends UnitTestCase
         $publisherService->injectEventDispatcher($this->createMock(EventDispatcher::class));
         $publisherService->injectTaskExecutionService($this->createMock(TaskExecutionService::class));
         $recordTree = $this->createMock(RecordTree::class);
-        $file =  $this->createFileRecord('file1');
+        $file = $this->createFileRecord('file1');
         $recordTree->method('getChildren')->willReturn([$file]);
 
         $fileRecordPublisher = $this->createMock(FileRecordPublisher::class);
@@ -123,8 +123,11 @@ class PublisherServiceTest extends UnitTestCase
     /**
      * @return void
      */
-    protected function createDatabaseRecord(int $uid, string $table = 'tablename', string $state = 'added'): DatabaseRecord
-    {
+    protected function createDatabaseRecord(
+        int $uid,
+        string $table = 'tablename',
+        string $state = 'added'
+    ): DatabaseRecord {
         $record = $this->createMock(DatabaseRecord::class);
         $record->method('getLocalProps')->willReturn(['foo' => 'bar']);
         $record->method('getId')->willReturn($uid);

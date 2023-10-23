@@ -72,7 +72,7 @@ class StaticJoinResolverTest extends UnitTestCase
         );
 
         $demands = new DemandsCollection();
-        $record = new DatabaseRecord('table_foo', 42, ['local_prop1' => 'value_1'],[],[]);
+        $record = new DatabaseRecord('table_foo', 42, ['local_prop1' => 'value_1'], [], []);
 
         $staticJoinResolver->resolve($demands, $record);
 

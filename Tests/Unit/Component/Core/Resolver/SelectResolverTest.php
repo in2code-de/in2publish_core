@@ -74,12 +74,12 @@ class SelectResolverTest extends UnitTestCase
             'foreignTableWhere_foo',
         );
         $demands = new DemandsCollection();
-        $record = new DatabaseRecord('foreignTable_foo', 42, ['column_foo' => 'value_foo'],[],[]);
+        $record = new DatabaseRecord('foreignTable_foo', 42, ['column_foo' => 'value_foo'], [], []);
         $selectResolver->resolve($demands, $record);
 
         $selectDemandForTableFoo = $demands->getSelect()['foreignTable_foo'];
 
-        foreach($selectDemandForTableFoo as $selectDemand) {
+        foreach ($selectDemandForTableFoo as $selectDemand) {
             $resolvedRecordInSelectDemand = $selectDemand['uid']['value_foo']['foreignTable_foo\42'];
             $this->assertEquals($resolvedRecordInSelectDemand, $record);
         }

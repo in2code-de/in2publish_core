@@ -21,7 +21,7 @@ class TfContentDatabaseRecordFactoryTest extends UnitTestCase
     public function testConstructor(): void
     {
         $databaseRecordFactoryFactory = new TtContentDatabaseRecordFactory();
-        $this->assertInstanceOf(TtContentDatabaseRecordFactory::class,$databaseRecordFactoryFactory);
+        $this->assertInstanceOf(TtContentDatabaseRecordFactory::class, $databaseRecordFactoryFactory);
         $this->assertSame(100, $databaseRecordFactoryFactory->getPriority());
         $this->assertTrue($databaseRecordFactoryFactory->isResponsible('tt_content'));
         $this->assertFalse($databaseRecordFactoryFactory->isResponsible('table_foo'));

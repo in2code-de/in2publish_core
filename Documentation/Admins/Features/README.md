@@ -16,7 +16,8 @@
 * RecordInspector
 * [**Redirects Support**](RedirectsSupport.md) Publish redirects.
 * RefIndexUpdate
-* [**TreatRemovedAndDeletedAsDifference**](TreatRemovedAndDeletedAsDifference.md) Show records that have been removed on one side and deleted on the other side in the OverviewModule.
+* [**TreatRemovedAndDeletedAsDifference**](TreatRemovedAndDeletedAsDifference.md) Show records that have been removed on
+  one side and deleted on the other side in the OverviewModule.
 * SysLogPublisher
 * SystemInformationExport
 * WarningOnForeign

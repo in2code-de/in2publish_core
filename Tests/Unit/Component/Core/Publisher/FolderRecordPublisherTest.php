@@ -42,7 +42,7 @@ class FolderRecordPublisherTest extends UnitTestCase
     public function testPublishRemovesDeletedFolder()
     {
         $folderRecordPublisher = new FolderRecordPublisher();
-        $foreignDatabase =  $this->createMock(Connection::class);
+        $foreignDatabase = $this->createMock(Connection::class);
         $deletedFolder = $this->createMock(FileRecord::class);
         $deletedFolder->method('getClassification')->willReturn('_folder');
         $deletedFolder->method('getState')->willReturn(Record::S_DELETED);
@@ -76,7 +76,7 @@ class FolderRecordPublisherTest extends UnitTestCase
     public function testPublishAddsAddedFolder()
     {
         $folderRecordPublisher = new FolderRecordPublisher();
-        $foreignDatabase =  $this->createMock(Connection::class);
+        $foreignDatabase = $this->createMock(Connection::class);
         $addedFolder = $this->createMock(FileRecord::class);
         $addedFolder->method('getClassification')->willReturn('_folder');
         $addedFolder->method('getState')->willReturn(Record::S_ADDED);

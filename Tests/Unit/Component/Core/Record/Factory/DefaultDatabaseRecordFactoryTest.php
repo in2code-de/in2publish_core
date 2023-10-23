@@ -21,7 +21,7 @@ class DefaultDatabaseRecordFactoryTest extends UnitTestCase
     public function testConstructor(): void
     {
         $databaseRecordFactoryFactory = new DefaultDatabaseRecordFactory();
-        $this->assertInstanceOf(DefaultDatabaseRecordFactory::class,$databaseRecordFactoryFactory);
+        $this->assertInstanceOf(DefaultDatabaseRecordFactory::class, $databaseRecordFactoryFactory);
         $this->assertSame(0, $databaseRecordFactoryFactory->getPriority());
         $this->assertSame(true, $databaseRecordFactoryFactory->isResponsible('table_foo'));
         $this->assertSame(true, $databaseRecordFactoryFactory->isResponsible('table_bar'));

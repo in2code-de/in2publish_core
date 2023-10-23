@@ -27,10 +27,10 @@ class ExtNewsRelatedProcessorTest extends UnitTestCase
         $container = $this->createMock(ContainerInterface::class);
         $staticJoinResolver = $this->createMock(StaticJoinResolver::class);
         $staticJoinResolver->expects($this->once())->method('configure')->with(
-                'tx_news_domain_model_news_related_mm',
-                'tx_news_domain_model_news',
-                '',
-                'uid_foreign',
+            'tx_news_domain_model_news_related_mm',
+            'tx_news_domain_model_news',
+            '',
+            'uid_foreign',
         );
         $container->expects($this->once())->method('get')->willReturn($staticJoinResolver);
         $extRelatedProcessor->injectContainer($container);

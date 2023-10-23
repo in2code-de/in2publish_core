@@ -34,15 +34,16 @@ are collected in a demand object until all information has been collected. Then 
 as possible are built from the demand. These queries are executed in the local and foreign database and the rows found
 are converted into DatabaseRecord objects.
 
-When all pages have been found, a query is created for each table which will find all data records on all found pages (via the PID).
+When all pages have been found, a query is created for each table which will find all data records on all found pages (
+via the PID).
 
 Once all non-TCA relations have been resolved, the actual process begins. All records are passed into the resolvers from
 the first step. The resolvers take the properties of the records and build the Demands object from them. Once all
 records have been processed, the demand is fully built and will be fulfilled. Here again, as few queries as possible are
 executed in order to find all rows that should be found and to convert them into DatabaseRecord objects.
 
-The last step is repeated for all newly found records until no more are found or the safety limit of 8 iterations has been
-reached. It is extremely unlikely that there are linking chains longer than 8.
+The last step is repeated for all newly found records until no more are found or the safety limit of 8 iterations has
+been reached. It is extremely unlikely that there are linking chains longer than 8.
 
 After building the record tree, it will be modified.
 

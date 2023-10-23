@@ -61,11 +61,11 @@ class RecordTreeBuilderTest extends UnitTestCase
 
         $recordIndex = $this->createMock(RecordIndex::class);
         $recordIndex->expects($this->once())->method('getRecords')->with('pages')
-            ->willReturn(
-                [
-                    0 => $pageRecord,
-                ],
-            );
+                    ->willReturn(
+                        [
+                            0 => $pageRecord,
+                        ],
+                    );
 
         $demandResolver = $this->createMock(DemandResolver::class);
         $demandResolver->expects(self::once())->method('resolveDemand')->willReturnCallback(

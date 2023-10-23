@@ -26,8 +26,8 @@ class FileDemandResolverTest extends UnitTestCase
     public function testResolveDemand(): void
     {
         $fileDemandResolver = new FileDemandResolver();
-        $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42],[]);
-        $file2 = new FileRecord(['identifier' => 'file2', 'storage' => 42],[]);
+        $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);
+        $file2 = new FileRecord(['identifier' => 'file2', 'storage' => 42], []);
 
         $filesArray = [
             42 => [
@@ -39,14 +39,14 @@ class FileDemandResolverTest extends UnitTestCase
         $fileInfoArray[42]['foo/bar'] = [
             'size' => 123,
             'mimetype' => 'some_mimetype',
-            'name' =>'some_name',
+            'name' => 'some_name',
             'extension' => 'some_extension',
             'folder_hash' => 'some_folder_hash',
         ];
         $fileInfoArray[42]['/file.txt'] = [
             'size' => 123,
             'mimetype' => 'some_mimetype',
-            'name' =>'some_name',
+            'name' => 'some_name',
             'extension' => 'some_extension',
             'folder_hash' => 'some_folder_hash',
         ];

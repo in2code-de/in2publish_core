@@ -36,8 +36,10 @@ class InlineProcessorTest extends UnitTestCase
         $processingResult = $inlineProcessor->process('table_bar', 'field_bar', $tca);
         $this->assertFalse($processingResult->isCompatible());
         $reason = $processingResult->getValue()[0];
-        $this->assertSame('symmetric_field is set on the foreign side of relations, which must not be resolved',
-            $reason);
+        $this->assertSame(
+            'symmetric_field is set on the foreign side of relations, which must not be resolved',
+            $reason,
+        );
     }
 
     /**
@@ -83,8 +85,14 @@ class InlineProcessorTest extends UnitTestCase
         $container->method('get')->willReturn($inlineResolver);
         $inlineProcessor->injectContainer($container);
 
-        $inlineResolver->expects($this->once())->method('configure')->with('table_foo', 'foreign_field_foo',
-            'foreign_table_field_foo', '');
+        $inlineResolver->expects($this->once())
+                       ->method('configure')
+                       ->with(
+                           'table_foo',
+                           'foreign_field_foo',
+                           'foreign_table_field_foo',
+                           '',
+                       );
         $processingResult = $inlineProcessor->process('table_bar', 'field_bar', $tca);
 
         $this->assertTrue($processingResult->isCompatible());
@@ -121,16 +129,17 @@ class InlineProcessorTest extends UnitTestCase
         $inlineProcessor = new InlineProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $tcaMarkerService->expects($this->exactly(3))
-            ->method('escapeMarkedIdentifier')
-            ->withConsecutive(
-                [],
-                [],
-                ['foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"'],
-            )->willReturnOnConsecutiveCalls(
-                '',
-                '',
-                'foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"',
-            );
+                         ->method('escapeMarkedIdentifier')
+                         ->withConsecutive(
+                             [],
+                             [],
+                             ['foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"'],
+                         )
+                         ->willReturnOnConsecutiveCalls(
+                             '',
+                             '',
+                             'foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"',
+                         );
 
         $inlineProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
         $container = $this->createMock(Container::class);
@@ -139,17 +148,17 @@ class InlineProcessorTest extends UnitTestCase
         $inlineProcessor->injectContainer($container);
 
         $inlineResolver->expects($this->exactly(3))
-            ->method('configure')
-            ->withConsecutive(
-                ['table_foo', 'field_bar', null, ''],
-                ['table_foo', 'field_bar', 'foreign_table_field_foo', ''],
-                [
-                    'table_foo',
-                    'field_bar',
-                    'foreign_table_field_foo',
-                    'foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"',
-                ],
-            );
+                       ->method('configure')
+                       ->withConsecutive(
+                           ['table_foo', 'field_bar', null, ''],
+                           ['table_foo', 'field_bar', 'foreign_table_field_foo', ''],
+                           [
+                               'table_foo',
+                               'field_bar',
+                               'foreign_table_field_foo',
+                               'foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"',
+                           ],
+                       );
 
         $processingResult1 = $inlineProcessor->process('table_bar', 'field_bar', $tca1);
         $this->assertTrue($processingResult1->isCompatible());

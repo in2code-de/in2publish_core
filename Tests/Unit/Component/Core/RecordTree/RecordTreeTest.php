@@ -31,7 +31,7 @@ class RecordTreeTest extends UnitTestCase
         $record2->method('getClassification')->willReturn('table_bar');
         $record2->method('getId')->willReturn(2);
 
-        $recordTree = new RecordTree([$record1,$record2]);
+        $recordTree = new RecordTree([$record1, $record2]);
 
         $this->assertInstanceOf(RecordTree::class, $recordTree);
         $this->assertSame('_root', $recordTree->getClassification());

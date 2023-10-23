@@ -113,7 +113,7 @@ The publisher tests sometimes fail with the following error:
 `cat: /app/var/transient/a969b9534c36f7db8c8bed8f1eabd1bb84f46033: No such file or directory`
 
 On slow file systems (e.g. Mac OS X) the file transfer sometimes takes too long, resulting in errors in the tests or
- file publishing process. You can try to set the following configuration in your `LocalConfiguration.yaml`:
+file publishing process. You can try to set the following configuration in your `LocalConfiguration.yaml`:
 
 `adapter.local.fileTransmissionTimeout: 1`
 

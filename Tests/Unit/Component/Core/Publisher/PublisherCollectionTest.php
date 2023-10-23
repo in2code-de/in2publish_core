@@ -39,7 +39,7 @@ class PublisherCollectionTest extends UnitTestCase
             // only one assertion randomly chosen after adding 5 publishers
             if ($i === 5) {
                 $this->assertCount($i, $reflectionPropertyPublishers->getValue($publisherCollection));
-            } else if ($i === $maxPublisherCount + 1) {
+            } elseif ($i === $maxPublisherCount + 1) {
                 $this->expectExceptionObject(new PublisherOverflowException($publisher, $maxPublisherCount));
             }
         }
@@ -130,8 +130,8 @@ class PublisherCollectionTest extends UnitTestCase
 
         $GLOBALS['number_of_calls_cancel'] = 0;
         try {
-        $publisherCollection->cancel();
-        $this->assertEquals(2, $GLOBALS['number_of_calls_cancel']);
+            $publisherCollection->cancel();
+            $this->assertEquals(2, $GLOBALS['number_of_calls_cancel']);
         } finally {
             unset($GLOBALS['number_of_calls_cancel']);
         }
@@ -157,8 +157,8 @@ class PublisherCollectionTest extends UnitTestCase
 
         $GLOBALS['number_of_calls_reverse'] = 0;
         try {
-        $publisherCollection->reverse();
-        $this->assertEquals(2, $GLOBALS['number_of_calls_reverse']);
+            $publisherCollection->reverse();
+            $this->assertEquals(2, $GLOBALS['number_of_calls_reverse']);
         } finally {
             unset($GLOBALS['number_of_calls_reverse']);
         }
@@ -178,8 +178,8 @@ class PublisherCollectionTest extends UnitTestCase
 
         $GLOBALS['number_of_calls_finish'] = 0;
         try {
-        $publisherCollection->finish();
-        $this->assertEquals(2, $GLOBALS['number_of_calls_finish']);
+            $publisherCollection->finish();
+            $this->assertEquals(2, $GLOBALS['number_of_calls_finish']);
         } finally {
             unset($GLOBALS['number_of_calls_finish']);
         }

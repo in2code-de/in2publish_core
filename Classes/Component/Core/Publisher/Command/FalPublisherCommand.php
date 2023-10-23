@@ -74,8 +74,10 @@ class FalPublisherCommand extends Command
                     $driver->addFile(
                         Environment::getVarPath() . '/transient/' . $row['temp_identifier_hash'],
                         $targetDir,
-                        PathUtility::basename($row['identifier'],
-                            false)
+                        PathUtility::basename(
+                            $row['identifier'],
+                            false,
+                        ),
                     );
                 }
             }

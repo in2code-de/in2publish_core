@@ -34,7 +34,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         $this->assertInstanceOf(TtContentDatabaseRecord::class, $ttContentDatabaseRecord);
         $this->assertSame('table_foo', $ttContentDatabaseRecord->getClassification());
         $this->assertSame(42, $ttContentDatabaseRecord->getId());
-        $this->assertSame( ['prop1' => 'value1'], $ttContentDatabaseRecord->getLocalProps());
+        $this->assertSame(['prop1' => 'value1'], $ttContentDatabaseRecord->getLocalProps());
         $this->assertSame(['prop2' => 'value2'], $ttContentDatabaseRecord->getForeignProps());
         $this->assertSame([], $ttContentDatabaseRecord->getDependencies());
 
@@ -73,7 +73,10 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         $this->assertInstanceOf(TtContentDatabaseRecord::class, $recordWithinDependency);
         $this->assertSame('table_foo', $recordWithinDependency->getClassification());
         $this->assertSame(42, $recordWithinDependency->getId());
-        $this->assertSame(['CType' => 'shortcut', 'records' => 'table_bar_1, table_bar_2'], $recordWithinDependency->getLocalProps());
+        $this->assertSame(
+            ['CType' => 'shortcut', 'records' => 'table_bar_1, table_bar_2'],
+            $recordWithinDependency->getLocalProps()
+        );
 
         $recordWithinDependencyLevel2 = $recordWithinDependency->getDependencies()[0];
         $this->assertSame('table_bar', $recordWithinDependencyLevel2->getClassification());

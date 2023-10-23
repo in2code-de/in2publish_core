@@ -64,8 +64,10 @@ class RecordFactoryTest extends UnitTestCase
         $ignoreFieldsService->expects($this->once())->method('getIgnoredFields')->with($table)->willReturn([]);
 
         $databaseRecordFactoryFactory = $this->createMock(DatabaseRecordFactoryFactory::class);
-        $databaseRecordFactoryFactory->expects($this->once())->method('createFactoryForTable')->with($table)
-            ->willReturn($this->createMock(DatabaseRecordFactory::class));
+        $databaseRecordFactoryFactory->expects($this->once())
+                                     ->method('createFactoryForTable')
+                                     ->with($table)
+                                     ->willReturn($this->createMock(DatabaseRecordFactory::class));
 
         $recordIndex = $this->createMock(RecordIndex::class);
         $recordIndex->expects($this->once())->method('addRecord');
@@ -169,7 +171,7 @@ class RecordFactoryTest extends UnitTestCase
         $recordFactory->injectEventDispatcher($eventDispatcher);
         $recordFactory->injectRecordIndex($recordIndex);
 
-        $record = $recordFactory->createFileRecord(['field_foo' => 'value_foo'],[]);
+        $record = $recordFactory->createFileRecord(['field_foo' => 'value_foo'], []);
 
         $this->assertInstanceOf(FileRecord::class, $record);
     }

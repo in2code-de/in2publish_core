@@ -21,7 +21,7 @@ return static function (ContainerBuilder $builder): void {
     $builder->registerForAutoconfiguration(Publisher::class)->addTag('in2publish_core.publisher');
     $builder->registerForAutoconfiguration(DemandResolver::class)->addTag('in2publish_core.tca.demand_resolver');
     $builder->registerForAutoconfiguration(RecordExtensionsProvider::class)
-        ->addTag('in2publish_core.record.extensions_provider');
+            ->addTag('in2publish_core.record.extensions_provider');
 
     $builder->addCompilerPass(new TcaPreProcessorPass('in2publish_core.tca.preprocessor'));
     $builder->addCompilerPass(new PublicServicePass('in2publish_core.tca.resolver', true));

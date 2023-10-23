@@ -36,9 +36,9 @@ class CategoryProcessorTest extends UnitTestCase
 
         $tcaEscapingMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $tcaEscapingMarkerService->expects($this->once())
-            ->method('escapeMarkedIdentifier')
-            ->with($additionalWhereBefore)
-            ->willReturn($additionalWhereAfter);
+                                 ->method('escapeMarkedIdentifier')
+                                 ->with($additionalWhereBefore)
+                                 ->willReturn($additionalWhereAfter);
 
         $categoryProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
 

@@ -151,8 +151,8 @@ class In2publishCoreDefiner implements DefinerInterface
                       ->addArray(
                           'filePreviewDomainName',
                           Builder::start()
-                              ->addString('local', 'stage.example.com')
-                              ->addString('foreign', 'www.example.com'),
+                                 ->addString('local', 'stage.example.com')
+                                 ->addString('foreign', 'www.example.com'),
                       )
                       ->addArray(
                           'view',

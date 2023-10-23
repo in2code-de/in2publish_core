@@ -4,13 +4,12 @@ Issue https://projekte.in2code.de/issues/59713
 
 ## Description
 
-The Methods
+The following methods are deprecated.
 
 * `\In2code\In2publishCore\Service\Configuration\TcaService::getDeletedField`
 * `\In2code\In2publishCore\Service\Configuration\TcaService::getDisableField`
 * `\In2code\In2publishCore\Service\Configuration\TcaService::getLanguageField`
 * `\In2code\In2publishCore\Service\Configuration\TcaService::getTransOrigPointerField`
-are deprecated.
 
 ## Impact
 
