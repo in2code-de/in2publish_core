@@ -44,7 +44,7 @@ class SelectResolver extends AbstractResolver
         $additionalWhere = $this->replaceMarkersService->replaceMarkers(
             $record,
             $this->foreignTableWhere,
-            $this->column
+            $this->column,
         );
         $additionalWhere = trim($additionalWhere);
         if (str_starts_with($additionalWhere, 'AND ')) {

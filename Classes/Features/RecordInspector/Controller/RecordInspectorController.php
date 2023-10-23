@@ -33,8 +33,8 @@ class RecordInspectorController extends ActionController
                     FileRecord::CLASSIFICATION => FileRecord::CLASSIFICATION,
                     FolderRecord::CLASSIFICATION => FolderRecord::CLASSIFICATION,
                 ],
-                array_combine($tables, $tables)
-            )
+                array_combine($tables, $tables),
+            ),
         );
         return $this->htmlResponse();
     }

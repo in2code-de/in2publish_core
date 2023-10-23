@@ -43,11 +43,11 @@ class RecordTreeTest extends UnitTestCase
 
         $expectedChildrenInTree = [
             'table_foo' => [
-                1 => $record1
+                1 => $record1,
             ],
             'table_bar' => [
-                2 => $record2
-            ]
+                2 => $record2,
+            ],
         ];
         $this->assertSame($expectedChildrenInTree, $recordTree->getChildren());
     }

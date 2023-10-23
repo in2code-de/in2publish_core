@@ -68,7 +68,7 @@ class TransmissionAdapterRegistry
         if (!array_key_exists($this->selectedAdapter, $this->adapters)) {
             throw new RuntimeException(
                 "Could not create transmission adapter '$this->selectedAdapter': Adapter not found",
-                1657115687
+                1657115687,
             );
         }
         return GeneralUtility::makeInstance($this->adapters[$this->selectedAdapter]['class']);

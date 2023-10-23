@@ -72,7 +72,7 @@ class InlineProcessorTest extends UnitTestCase
             'type' => 'inline',
             'foreign_table' => 'table_foo',
             'foreign_field' => 'foreign_field_foo',
-            'foreign_table_field' => 'foreign_table_field_foo'
+            'foreign_table_field' => 'foreign_table_field_foo',
         ];
 
         $inlineProcessor = new InlineProcessor();
@@ -98,13 +98,13 @@ class InlineProcessorTest extends UnitTestCase
     {
         $tca1 = [
             'type' => 'inline',
-            'foreign_table' => 'table_foo'
+            'foreign_table' => 'table_foo',
         ];
 
         $tca2 = [
             'type' => 'inline',
             'foreign_table' => 'table_foo',
-            'foreign_table_field' => 'foreign_table_field_foo'
+            'foreign_table_field' => 'foreign_table_field_foo',
         ];
 
         $tca3 = [
@@ -113,8 +113,8 @@ class InlineProcessorTest extends UnitTestCase
             'foreign_table_field' => 'foreign_table_field_foo',
             'foreign_match_fields' => [
                 'foreign_match_field1' => 'foreign_match_value1',
-                'foreign_match_field2' => 'foreign_match_value2'
-            ]
+                'foreign_match_field2' => 'foreign_match_value2',
+            ],
         ];
 
         $inlineProcessor = new InlineProcessor();
@@ -124,11 +124,11 @@ class InlineProcessorTest extends UnitTestCase
             ->withConsecutive(
                 [],
                 [],
-                ['foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"']
+                ['foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"'],
             )->willReturnOnConsecutiveCalls(
                 '',
                 '',
-                'foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"'
+                'foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"',
             );
 
         $inlineProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
@@ -146,8 +146,8 @@ class InlineProcessorTest extends UnitTestCase
                     'table_foo',
                     'field_bar',
                     'foreign_table_field_foo',
-                    'foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"'
-                ]
+                    'foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"',
+                ],
             );
 
         $processingResult1 = $inlineProcessor->process('table_bar', 'field_bar', $tca1);

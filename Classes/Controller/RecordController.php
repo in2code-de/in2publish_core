@@ -93,7 +93,7 @@ class RecordController extends ActionController
     {
         $this->actualInjectPageRenderer($pageRenderer);
         $this->pageRenderer->addInlineLanguageLabelFile(
-            'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf'
+            'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf',
         );
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendEnhancements');
@@ -102,7 +102,7 @@ class RecordController extends ActionController
             'stylesheet',
             'all',
             '',
-            false
+            false,
         );
     }
 

@@ -37,7 +37,7 @@ class TfContentDatabaseRecordFactoryTest extends UnitTestCase
             42,
             ['foo' => 'bar'],
             ['bar' => 'foo'],
-            []
+            [],
         );
         $reflectionProperty = new \ReflectionProperty($databaseRecord, 'ignoredProps');
         $reflectionProperty->setAccessible(true);

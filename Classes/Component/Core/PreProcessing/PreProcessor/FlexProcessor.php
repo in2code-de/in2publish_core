@@ -57,7 +57,7 @@ class FlexProcessor extends AbstractProcessor
                     'fieldName' => $column,
                     'dataStructureKey' => $dsPointerValue,
                 ],
-                JSON_THROW_ON_ERROR
+                JSON_THROW_ON_ERROR,
             );
 
             try {
@@ -69,7 +69,7 @@ class FlexProcessor extends AbstractProcessor
 
             $this->tcaPreProcessingService->preProcessTcaColumns(
                 $table . '/' . $column . '/' . $dsPointerValue,
-                $flattenedFlexForm
+                $flattenedFlexForm,
             );
         }
 

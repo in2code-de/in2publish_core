@@ -151,11 +151,11 @@ class DefaultFalFinder
 
         $localFolderContents = $this->fileSystemInfoService->listFolderContents(
             $storageUid,
-            $folderIdentifier
+            $folderIdentifier,
         );
         $foreignFolderContents = $this->foreignFileSystemInfoService->listFolderContents(
             $storageUid,
-            $folderIdentifier
+            $folderIdentifier,
         );
 
         $folders = [];
@@ -179,7 +179,7 @@ class DefaultFalFinder
             $subFolderRecord = $this->recordFactory->createFolderRecord(
                 $subFolderIdentifier,
                 $sides['local'] ?? [],
-                $sides['foreign'] ?? []
+                $sides['foreign'] ?? [],
             );
             if (null === $subFolderRecord) {
                 continue;
@@ -198,7 +198,7 @@ class DefaultFalFinder
         foreach ($files as $sides) {
             $fileRecord = $this->recordFactory->createFileRecord(
                 $sides['local'] ?? [],
-                $sides['foreign'] ?? []
+                $sides['foreign'] ?? [],
             );
             if (null === $fileRecord) {
                 continue;
@@ -208,7 +208,7 @@ class DefaultFalFinder
                 'storage = ' . $fileRecord->getProp('storage'),
                 'identifier_hash',
                 sha1($fileRecord->getProp('identifier')),
-                $fileRecord
+                $fileRecord,
             );
             $folderRecord->addChild($fileRecord);
         }
@@ -269,14 +269,14 @@ class DefaultFalFinder
                         unset($files[$foreignIdentifier]);
                         $foreignRecordToRemove = $this->recordIndex->getRecord(
                             FileRecord::CLASSIFICATION,
-                            $foreignCombinedIdentifier
+                            $foreignCombinedIdentifier,
                         );
                         if (null !== $foreignRecordToRemove) {
                             $folderRecord->removeChild($foreignRecordToRemove);
                         }
                         $localRecordToRemove = $this->recordIndex->getRecord(
                             FileRecord::CLASSIFICATION,
-                            $localCombinedIdentifier
+                            $localCombinedIdentifier,
                         );
                         if (null !== $localRecordToRemove) {
                             $folderRecord->removeChild($localRecordToRemove);
@@ -343,7 +343,7 @@ class DefaultFalFinder
             'storage = ' . $fileRecord->getProp('storage'),
             'identifier_hash',
             sha1($fileRecord->getProp('identifier')),
-            $fileRecord
+            $fileRecord,
         );
         $recordCollection = new RecordCollection();
         $this->demandResolver->resolveDemand($demands, $recordCollection);

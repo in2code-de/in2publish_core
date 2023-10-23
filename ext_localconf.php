@@ -16,7 +16,7 @@
     // Issue: https://forge.typo3.org/issues/95962
     // Patch: https://review.typo3.org/c/Packages/TYPO3.CMS/+/72160
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\Middleware\BackendRouteInitialization::class] = [
-        'className' => \In2code\In2publishCore\Middleware\BackendRouteInitialization::class
+        'className' => \In2code\In2publishCore\Middleware\BackendRouteInitialization::class,
     ];
 
     /************************************************ Record Extension ************************************************/
@@ -41,19 +41,19 @@
 
     /*********************************************** Settings/Instances ***********************************************/
     $extConf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class
+        \TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class,
     )->get('in2publish_core');
     $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Service\Context\ContextService::class
+        \In2code\In2publishCore\Service\Context\ContextService::class,
     );
     $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Component\ConfigContainer\ConfigContainer::class
+        \In2code\In2publishCore\Component\ConfigContainer\ConfigContainer::class,
     );
     $remoteAdapterRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistry::class
+        \In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistry::class,
     );
     $transmissionAdapterRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistry::class
+        \In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistry::class,
     );
 
     /************************************************** Init Caching **************************************************/
@@ -83,10 +83,10 @@
     /**************************************** Register Config Definer/Provider ****************************************/
     $configContainer->registerDefiner(\In2code\In2publishCore\Component\ConfigContainer\Definer\In2publishCoreDefiner::class);
     $configContainer->registerDefiner(
-        \In2code\In2publishCore\Features\WarningOnForeign\Config\Definer\WarningOnForeignDefiner::class
+        \In2code\In2publishCore\Features\WarningOnForeign\Config\Definer\WarningOnForeignDefiner::class,
     );
     $configContainer->registerDefiner(
-        \In2code\In2publishCore\Features\PublishSorting\Config\Definer\PublishSortingDefiner::class
+        \In2code\In2publishCore\Features\PublishSorting\Config\Definer\PublishSortingDefiner::class,
     );
     if (
         $contextService->isForeign()
@@ -105,15 +105,15 @@
         $configContainer->registerProvider(\In2code\In2publishCore\Component\ConfigContainer\Provider\UserTsProvider::class);
     }
     $configContainer->registerPostProcessor(
-        \In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValuesPostProcessor::class
+        \In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValuesPostProcessor::class,
     );
 
     $dynamicValueProviderRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry::class
+        \In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry::class,
     );
     $dynamicValueProviderRegistry->registerDynamicValue(
         'env',
-        \In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\EnvVarProvider::class
+        \In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\EnvVarProvider::class,
     );
 
     $configContainer->registerMigration(
@@ -125,7 +125,7 @@
         'in2publish_core',
         'Pi1',
         [\In2code\In2publishCore\Controller\FrontendController::class => 'preview'],
-        [\In2code\In2publishCore\Controller\FrontendController::class => 'preview']
+        [\In2code\In2publishCore\Controller\FrontendController::class => 'preview'],
     );
 
     /******************************************** Configure Garbage Collector  ****************************************/
@@ -143,7 +143,7 @@
         [
             \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
             \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
-        ]
+        ],
     );
     $transmissionAdapterRegistry->registerAdapter(
         \In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::ADAPTER_KEY,
@@ -153,11 +153,11 @@
             \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
             \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
             \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest::class,
-        ]
+        ],
     );
 
     /************************************************ Redirect Support ************************************************/
     $configContainer->registerDefiner(
-        \In2code\In2publishCore\Features\RedirectsSupport\Config\Definer\RedirectsSupportDefiner::class
+        \In2code\In2publishCore\Features\RedirectsSupport\Config\Definer\RedirectsSupportDefiner::class,
     );
 })();

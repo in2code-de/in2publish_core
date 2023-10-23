@@ -92,7 +92,7 @@ class PageRecordRedirectEnhancer
                 'tx_in2publishcore_foreign_site_id IS NULL',
                 'target',
                 $targetLink,
-                $node
+                $node,
             );
         }
         foreach ($node->getChildren() as $children) {

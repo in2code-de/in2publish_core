@@ -98,7 +98,7 @@ class DemandServiceTest extends UnitTestCase
         $resolverService = $this->createMock(ResolverService::class);
         $resolverService->method('getResolversForTable')->willReturnOnConsecutiveCalls(
             $resolversForTableFoo,
-            $resolversForTableBar
+            $resolversForTableBar,
         );
         $demandBuilder->injectResolverService($resolverService);
 

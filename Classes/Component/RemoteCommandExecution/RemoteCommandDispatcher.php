@@ -60,11 +60,11 @@ class RemoteCommandDispatcher implements SingletonInterface, LoggerAwareInterfac
 
         $this->logger->info(
             'Dispatched command request',
-            ['exec_time' => microtime(true) - $start, 'exit_status' => $response->getExitStatus()]
+            ['exec_time' => microtime(true) - $start, 'exit_status' => $response->getExitStatus()],
         );
         $this->logger->debug(
             'Command dispatching results',
-            ['output' => $response->getOutputString(), 'errors' => $response->getErrorsString()]
+            ['output' => $response->getOutputString(), 'errors' => $response->getErrorsString()],
         );
         return $response;
     }

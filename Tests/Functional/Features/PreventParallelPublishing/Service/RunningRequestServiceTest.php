@@ -28,7 +28,7 @@ class RunningRequestServiceTest extends FunctionalTestCase
             'foo_bar_mm',
             $mmId,
             ['uid_local' => 1, 'uid_foreign' => 2, 'sorting' => 15],
-            ['uid_local' => 1, 'uid_foreign' => 2, 'sorting' => 15]
+            ['uid_local' => 1, 'uid_foreign' => 2, 'sorting' => 15],
         );
 
         $record = new DatabaseRecord('foo', 1, ['uid' => 1], ['uid' => 1], []);
@@ -55,13 +55,13 @@ class RunningRequestServiceTest extends FunctionalTestCase
                   $query->expr()->orX(
                       $query->expr()->andX(
                           $query->expr()->eq('record_id', 1),
-                          $query->expr()->eq('table_name', $query->createNamedParameter('foo'))
+                          $query->expr()->eq('table_name', $query->createNamedParameter('foo')),
                       ),
                       $query->expr()->andX(
                           $query->expr()->eq('record_id', $query->createNamedParameter($mmId)),
-                          $query->expr()->eq('table_name', $query->createNamedParameter('foo_bar_mm'))
-                      )
-                  )
+                          $query->expr()->eq('table_name', $query->createNamedParameter('foo_bar_mm')),
+                      ),
+                  ),
               );
         $result = $query->execute();
         $rows = $result->fetchAllAssociative();

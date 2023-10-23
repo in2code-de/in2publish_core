@@ -24,7 +24,7 @@ return static function (ContainerConfigurator $configurator): void {
                          'identifier' => 'in2publishcore-NewsCacheInvalidator-RecordWasPublished',
                          'method' => 'registerClearCacheTasks',
                          'event' => RecordWasPublished::class,
-                     ]
+                     ],
                  )
                  ->tag(
                      'event.listener',
@@ -32,7 +32,7 @@ return static function (ContainerConfigurator $configurator): void {
                          'identifier' => 'in2publishcore-NewsCacheInvalidator-RecursiveRecordPublishingEnded',
                          'method' => 'writeClearCacheTask',
                          'event' => RecursiveRecordPublishingEnded::class,
-                     ]
+                     ],
                  );
     }
 };

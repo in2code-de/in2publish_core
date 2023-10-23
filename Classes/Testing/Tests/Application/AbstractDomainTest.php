@@ -70,7 +70,7 @@ abstract class AbstractDomainTest
             return new TestResult(
                 sprintf('application.%s_site_config_exception', $this->prefix),
                 TestResult::ERROR,
-                [$exception->getMessage()]
+                [$exception->getMessage()],
             );
         }
 
@@ -82,7 +82,7 @@ abstract class AbstractDomainTest
             return new TestResult(
                 sprintf('application.%s_sites_config_missing', $this->prefix),
                 TestResult::ERROR,
-                $messages
+                $messages,
             );
         }
 
@@ -90,7 +90,7 @@ abstract class AbstractDomainTest
             return new TestResult(
                 sprintf('application.%s_site_config_slash', $this->prefix),
                 TestResult::ERROR,
-                $messages
+                $messages,
             );
         }
 
@@ -147,8 +147,8 @@ abstract class AbstractDomainTest
               ->where(
                   $query->expr()->andX(
                       $query->expr()->eq('is_siteroot', $query->createNamedParameter(1)),
-                      $query->expr()->eq('sys_language_uid', $query->createNamedParameter(0))
-                  )
+                      $query->expr()->eq('sys_language_uid', $query->createNamedParameter(0)),
+                  ),
               );
         return $query->execute();
     }

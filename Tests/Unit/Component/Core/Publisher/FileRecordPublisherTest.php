@@ -51,7 +51,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $deletedFile->method('getClassification')->willReturn('_file');
         $deletedFile->method('getState')->willReturn(Record::S_DELETED);
         $deletedFile->method('getForeignProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz']
+            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz'],
         );
 
         $reflectionProperty = new \ReflectionProperty($fileRecordPublisher, 'requestToken');
@@ -67,7 +67,7 @@ class FileRecordPublisherTest extends UnitTestCase
                 'identifier' => $deletedFile->getForeignProps()['identifier'],
                 'identifier_hash' => $deletedFile->getForeignProps()['identifier_hash'],
                 'file_action' => $fileRecordPublisher::A_DELETE,
-            ]
+            ],
         );
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -85,7 +85,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $mockDriver = $this->createMock(DriverInterface::class);
 
         $structure = [
-            'Api.php' => ''
+            'Api.php' => '',
         ];
         $root = vfsStream::setup('root', null, $structure);
         $file = $root->url() . '/Api.php';
@@ -97,7 +97,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $addedFile->method('getClassification')->willReturn('_file');
         $addedFile->method('getState')->willReturn(Record::S_ADDED);
         $addedFile->method('getLocalProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz']
+            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz'],
         );
 
         $reflectionProperty = new \ReflectionProperty($fileRecordPublisher, 'requestToken');
@@ -114,7 +114,7 @@ class FileRecordPublisherTest extends UnitTestCase
                 'identifier_hash' => $addedFile->getLocalProps()['identifier_hash'],
                 'file_action' => $fileRecordPublisher::A_INSERT,
                 'temp_identifier_hash' => '',
-            ]
+            ],
         );
 
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
@@ -135,7 +135,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $mockDriver = $this->createMock(DriverInterface::class);
 
         $structure = [
-            'Api.php' => ''
+            'Api.php' => '',
         ];
         $root = vfsStream::setup('root', null, $structure);
         $file = $root->url() . '/Api.php';
@@ -147,10 +147,10 @@ class FileRecordPublisherTest extends UnitTestCase
         $changedFile->method('getClassification')->willReturn('_file');
         $changedFile->method('getState')->willReturn(Record::S_CHANGED);
         $changedFile->method('getLocalProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz']
+            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz'],
         );
         $changedFile->method('getForeignProps')->willReturn(
-            ['storage' => 2, 'identifier' => 'bar2', 'identifier_hash' => 'baz2']
+            ['storage' => 2, 'identifier' => 'bar2', 'identifier_hash' => 'baz2'],
         );
 
         $reflectionProperty = new \ReflectionProperty($fileRecordPublisher, 'requestToken');
@@ -167,7 +167,7 @@ class FileRecordPublisherTest extends UnitTestCase
                 'identifier_hash' => $changedFile->getLocalProps()['identifier_hash'],
                 'file_action' => $fileRecordPublisher::A_UPDATE,
                 'temp_identifier_hash' => '',
-            ]
+            ],
         );
 
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
@@ -189,10 +189,10 @@ class FileRecordPublisherTest extends UnitTestCase
         $movedFile->method('getClassification')->willReturn('_file');
         $movedFile->method('getState')->willReturn(Record::S_MOVED);
         $movedFile->method('getLocalProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz']
+            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz'],
         );
         $movedFile->method('getForeignProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar_foreign', 'identifier_hash' => 'baz_foreign']
+            ['storage' => 1, 'identifier' => 'bar_foreign', 'identifier_hash' => 'baz_foreign'],
         );
 
         $reflectionProperty = new \ReflectionProperty($fileRecordPublisher, 'requestToken');
@@ -209,7 +209,7 @@ class FileRecordPublisherTest extends UnitTestCase
                 'identifier_hash' => $movedFile->getLocalProps()['identifier_hash'],
                 'previous_identifier' => $movedFile->getForeignProps()['identifier'],
                 'file_action' => $fileRecordPublisher::A_RENAME,
-            ]
+            ],
         );
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 

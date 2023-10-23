@@ -97,7 +97,7 @@ class RedirectController extends ActionController
             'stylesheet',
             'all',
             '',
-            false
+            false,
         );
     }
 
@@ -156,7 +156,7 @@ class RedirectController extends ActionController
                 'hosts' => $this->sysRedirectRepo->findHostsOfRedirects(),
                 'statusCodes' => $this->sysRedirectRepo->findStatusCodesOfRedirects(),
                 'filter' => $filter,
-            ]
+            ],
         );
         return $this->htmlResponse();
     }
@@ -168,7 +168,7 @@ class RedirectController extends ActionController
             $this->addFlashMessage(
                 'No redirect has been selected for publishing',
                 'Skipping publishing',
-                AbstractMessage::NOTICE
+                AbstractMessage::NOTICE,
             );
             $this->redirect('list');
         }
@@ -213,8 +213,8 @@ class RedirectController extends ActionController
                 sprintf(
                     'Associated redirect %s with site %s',
                     $redirectDto->__toString(),
-                    $redirectDto->tx_in2publishcore_foreign_site_id
-                )
+                    $redirectDto->tx_in2publishcore_foreign_site_id,
+                ),
             );
             if (isset($_POST['_saveandpublish'])) {
                 $this->redirect('publish', null, null, ['redirects' => [$redirectDto->uid]]);
@@ -224,7 +224,7 @@ class RedirectController extends ActionController
         $sites = $this->foreignSiteFinder->getAllSites();
         $siteOptions = [
             '*' => LocalizationUtility::translate(
-                'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host_global_text'
+                'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host_global_text',
             ),
         ];
         foreach ($sites as $site) {

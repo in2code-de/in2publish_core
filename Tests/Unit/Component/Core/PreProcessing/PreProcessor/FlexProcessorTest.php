@@ -96,14 +96,14 @@ class FlexProcessorTest extends UnitTestCase
         $flexFormTools = $this->createMock(FlexFormTools::class);
         $flexFormTools->expects($this->exactly(2))->method('parseDataStructureByIdentifier')->withConsecutive(
             [$json1],
-            [$json2]
+            [$json2],
         );
         $flexFormFlatteningService = $this->createMock(FlexFormFlatteningService::class);
         $flexFormFlatteningService->expects($this->exactly(2))
                                   ->method('flattenFlexFormDefinition')
                                   ->willReturnOnConsecutiveCalls(
                                       ['foo' => 'bar'],
-                                      ['bar' => 'baz']
+                                      ['bar' => 'baz'],
                                   );
         $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $tcaPreProcessingService->expects($this->exactly(2))->method('preProcessTcaColumns')->withConsecutive(
@@ -146,7 +146,7 @@ class FlexProcessorTest extends UnitTestCase
                 'tableName' => 'tableNameFoo',
                 'fieldName' => 'fieldNameBar',
                 'dataStructureKey' => 'foo_pi2,baz',
-            ])
+            ]),
         );
 
         $flexFormContent = [

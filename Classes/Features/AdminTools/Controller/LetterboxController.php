@@ -54,8 +54,8 @@ class LetterboxController extends ActionController
         $this->addFlashMessage(
             LocalizationUtility::translate(
                 'module.m4.superfluous_envelopes_flushed',
-                'in2publish_core'
-            )
+                'in2publish_core',
+            ),
         );
         $this->redirect('index');
     }

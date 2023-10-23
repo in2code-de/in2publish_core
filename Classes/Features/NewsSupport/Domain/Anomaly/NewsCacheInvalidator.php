@@ -75,8 +75,8 @@ class NewsCacheInvalidator
                 [
                     'uid' => array_keys($this->newsCacheUidArray),
                     'pid' => array_keys($this->newsCachePidArray),
-                ]
-            )
+                ],
+            ),
         );
         $this->newsCacheUidArray = [];
         $this->newsCachePidArray = [];

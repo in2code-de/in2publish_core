@@ -16,7 +16,7 @@ return static function (ContainerConfigurator $configurator) {
 
         $services->load(
             'In2code\\In2publishCore\\Features\\LogsIntegration\\',
-            __DIR__ . '/../../../Classes/Features/LogsIntegration/*'
+            __DIR__ . '/../../../Classes/Features/LogsIntegration/*',
         );
 
         $services->set(LogController::class)
@@ -26,7 +26,7 @@ return static function (ContainerConfigurator $configurator) {
                          'title' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs',
                          'description' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs.description',
                          'actions' => 'filter,delete,deleteAlike',
-                     ]
+                     ],
                  );
     }
 };

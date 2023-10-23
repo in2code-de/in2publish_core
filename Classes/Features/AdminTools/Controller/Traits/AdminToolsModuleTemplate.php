@@ -73,8 +73,8 @@ trait AdminToolsModuleTemplate
                 $this->uriBuilder->reset()->uriFor(
                     GeneralUtility::trimExplode(',', $entry['action'])[0],
                     null,
-                    $entry['alias']
-                )
+                    $entry['alias'],
+                ),
             );
             if (
                 $this->request->getControllerObjectName() === $entry['controller']

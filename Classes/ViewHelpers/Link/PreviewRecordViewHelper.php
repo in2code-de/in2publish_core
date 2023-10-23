@@ -46,12 +46,12 @@ class PreviewRecordViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute(
             'rel',
             'string',
-            'Specifies the relationship between the current document and the linked document'
+            'Specifies the relationship between the current document and the linked document',
         );
         $this->registerTagAttribute(
             'rev',
             'string',
-            'Specifies the relationship between the linked document and the current document'
+            'Specifies the relationship between the linked document and the current document',
         );
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
         $this->registerUniversalTagAttributes();
@@ -65,7 +65,7 @@ class PreviewRecordViewHelper extends AbstractTagBasedViewHelper
         $uri = BackendUtility::buildPreviewUri(
             $this->arguments[self::ARG_TABLE],
             $this->arguments[self::ARG_IDENTIFIER],
-            $this->arguments[self::ARG_STAGING_LEVEL]
+            $this->arguments[self::ARG_STAGING_LEVEL],
         );
         if (null === $uri) {
             return '&nbsp;';

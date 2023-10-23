@@ -166,17 +166,17 @@ class PublisherServiceTest extends UnitTestCase
         $record1->method('getChildren')->willReturn(
             [
                 'tablename' => [
-                    2 => $record2
+                    2 => $record2,
                 ],
                 'pages' => [
-                    3 => $record3
-                ]
-            ]
+                    3 => $record3,
+                ],
+            ],
         );
 
         $recordTree->method('getChildren')->willReturn([
             [
-                $record1
+                $record1,
             ],
         ]);
         return $recordTree;

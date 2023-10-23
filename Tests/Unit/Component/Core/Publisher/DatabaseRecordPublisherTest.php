@@ -43,7 +43,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $foreignDatabase =  $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('insert')->with(
             'tx_in2publishcore_domain_model_test',
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
         );
         $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -63,7 +63,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $foreignDatabase =  $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('delete')->with(
             'tx_in2publishcore_domain_model_test',
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
         );
         $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -84,7 +84,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $foreignDatabase =  $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('update')->with(
             'tx_in2publishcore_domain_model_test',
-            ['prop1' => 'localValue', 'prop2' => 'localValue']
+            ['prop1' => 'localValue', 'prop2' => 'localValue'],
         );
         $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 

@@ -51,13 +51,13 @@ class FileRecordTest extends UnitTestCase
 
         $unchangedFileRecord = new FileRecord(
             ['identifier' => 'file1', 'storage' => 42],
-            ['identifier' => 'file1', 'storage' => 42]
+            ['identifier' => 'file1', 'storage' => 42],
         );
         $this->assertSame(Record::S_UNCHANGED, $unchangedFileRecord->getState());
 
         $changedFileRecord = new FileRecord(
             ['identifier' => 'file1', 'storage' => 42],
-            ['identifier' => 'file2', 'storage' => 42]
+            ['identifier' => 'file2', 'storage' => 42],
         );
         $this->assertSame(Record::S_MOVED, $changedFileRecord->getState());
 

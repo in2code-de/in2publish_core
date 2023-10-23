@@ -22,7 +22,7 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
 
     $builder->registerForAutoconfiguration(TestCaseInterface::class)->addTag('in2publish_core.testing.test');
     $builder->registerForAutoconfiguration(DatabaseRecordFactory::class)->addTag(
-        'in2publish_core.factory.database_record'
+        'in2publish_core.factory.database_record',
     );
 
     $builder->addCompilerPass(new PublicServicePass('in2publish_core.testing.test'));

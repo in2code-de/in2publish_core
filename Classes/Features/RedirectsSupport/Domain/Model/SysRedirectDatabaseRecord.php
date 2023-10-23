@@ -80,7 +80,7 @@ class SysRedirectDatabaseRecord extends DatabaseRecord
             $this->getId(),
             $localProps['sourceHost'] ?? '',
             $localProps['sourcePath'] ?? '',
-            $localProps['target'] ?? ''
+            $localProps['target'] ?? '',
         );
     }
 }

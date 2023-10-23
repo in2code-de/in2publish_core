@@ -82,7 +82,7 @@ class FalPublisherCommand extends Command
             if (FileRecordPublisher::A_UPDATE === $row['file_action']) {
                 $driver->replaceFile(
                     $row['identifier'],
-                    Environment::getVarPath() . '/transient/' . $row['temp_identifier_hash']
+                    Environment::getVarPath() . '/transient/' . $row['temp_identifier_hash'],
                 );
             }
             if (FileRecordPublisher::A_DELETE === $row['file_action']) {

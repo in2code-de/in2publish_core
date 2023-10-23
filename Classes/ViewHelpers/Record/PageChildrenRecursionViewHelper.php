@@ -46,7 +46,7 @@ class PageChildrenRecursionViewHelper extends ForViewHelper
         if (is_object($arguments['each']) && !$arguments['each'] instanceof Traversable) {
             throw new Exception(
                 'PageChildrenRecursionViewHelper only supports arrays and objects implementing \Traversable interface',
-                1248728393
+                1248728393,
             );
         }
 

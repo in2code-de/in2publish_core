@@ -46,7 +46,7 @@ class JoinDemandResolver implements DemandResolver
                                 $table,
                                 $property,
                                 array_keys($valueMaps),
-                                $additionalWhere
+                                $additionalWhere,
                             );
                         } catch (Exception $exception) {
                             if ($demands instanceof CallerAwareDemandsCollection) {
@@ -124,7 +124,7 @@ class JoinDemandResolver implements DemandResolver
                             $joinTable,
                             $mmId,
                             $row['local']['mmtbl'] ?? [],
-                            $row['foreign']['mmtbl'] ?? []
+                            $row['foreign']['mmtbl'] ?? [],
                         );
                         if (null === $mmRecord) {
                             continue;
@@ -137,7 +137,7 @@ class JoinDemandResolver implements DemandResolver
                                     $table,
                                     $uid,
                                     $row['local']['table'] ?? [],
-                                    $row['foreign']['table'] ?? []
+                                    $row['foreign']['table'] ?? [],
                                 );
                                 if (null !== $tableRecord) {
                                     $recordCollection->addRecord($tableRecord);

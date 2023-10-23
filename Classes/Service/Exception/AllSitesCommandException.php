@@ -55,7 +55,7 @@ class AllSitesCommandException extends In2publishCoreException
         parent::__construct(
             sprintf(self::MESSAGE, $code, implode(PHP_EOL, $errors), implode(PHP_EOL, $output)),
             $code,
-            $previous
+            $previous,
         );
     }
 

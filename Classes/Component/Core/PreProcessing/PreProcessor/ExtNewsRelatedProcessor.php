@@ -28,7 +28,7 @@ class ExtNewsRelatedProcessor extends AbstractProcessor
             'tx_news_domain_model_news_related_mm',
             'tx_news_domain_model_news',
             '',
-            'uid_foreign'
+            'uid_foreign',
         );
         return $resolver;
     }

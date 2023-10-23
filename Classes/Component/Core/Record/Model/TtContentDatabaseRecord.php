@@ -46,7 +46,7 @@ class TtContentDatabaseRecord extends DatabaseRecord
                 fn(Record $record): array => [
                     $record->__toString() ?: "{$record->getClassification()} [{$record->getId()}]",
                     $this->__toString() ?: "{$this->getClassification()} [{$this->getId()}]",
-                ]
+                ],
             );
         }
     }

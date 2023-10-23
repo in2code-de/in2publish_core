@@ -174,7 +174,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
             $testbase->setUpLocalConfiguration(
                 $this->instancePath,
                 $localConfiguration,
-                $this->configurationToUseInTestInstance
+                $this->configurationToUseInTestInstance,
             );
 
             $defaultCoreExtensionsToLoad = [
@@ -191,7 +191,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
                 $defaultCoreExtensionsToLoad,
                 $this->coreExtensionsToLoad,
                 $this->testExtensionsToLoad,
-                $this->frameworkExtensionsToLoad
+                $this->frameworkExtensionsToLoad,
             );
             $this->container = $testbase->setUpBasicTypo3Bootstrap($this->instancePath);
             if ($this->initializeDatabase) {
@@ -290,7 +290,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
                 . ' For this instance this could be fixed executing:'
                 . ' GRANT ALL ON `' . $originalDatabaseName . '_%`.* TO `' . $user . '`@`' . $host . '`;'
                 . ' Original message thrown by database layer: ' . $e->getMessage(),
-                1376579070
+                1376579070,
             );
         }
     }

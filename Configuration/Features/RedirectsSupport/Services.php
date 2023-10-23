@@ -29,7 +29,7 @@ return static function (ContainerConfigurator $configurator): void {
                          'identifier' => 'in2publishcore-EarlyRedirectsSupportEventListener-AlterTableDefinitionStatementsEvent',
                          'method' => 'onAlterTableDefinitionStatementsEvent',
                          'event' => AlterTableDefinitionStatementsEvent::class,
-                     ]
+                     ],
                  );
         $services->set('tx_in2publish_redirectssupport_event_listener_enhancer')
                  ->class(PageRecordRedirectEnhancer::class)
@@ -39,7 +39,7 @@ return static function (ContainerConfigurator $configurator): void {
                          'identifier' => 'in2publishcore-PageRecordRedirectEnhancer-RecordRelationsWereResolved',
                          'method' => 'addRedirectsToPageRecord',
                          'event' => RecordRelationsWereResolved::class,
-                     ]
+                     ],
                  );
         $services->set('tx_in2publish_redirectssupport_event_listener_replacer')
                  ->class(RedirectSourceHostReplacement::class)
@@ -49,7 +49,7 @@ return static function (ContainerConfigurator $configurator): void {
                          'identifier' => 'in2publishcore-RedirectSourceHostReplacement-RecordWasPublished',
                          'method' => 'replaceLocalWithForeignSourceHost',
                          'event' => RecordWasPublished::class,
-                     ]
+                     ],
                  );
         $services->set('tx_in2publish_redirectssupport_event_listener_updater')
                  ->class(RedirectCacheUpdater::class)
@@ -59,7 +59,7 @@ return static function (ContainerConfigurator $configurator): void {
                          'identifier' => 'in2publishcore-RedirectCacheUpdater-RecordWasPublished',
                          'method' => 'publishRecordRecursiveAfterPublishing',
                          'event' => RecordWasPublished::class,
-                     ]
+                     ],
                  )
                  ->tag(
                      'event.listener',
@@ -67,7 +67,7 @@ return static function (ContainerConfigurator $configurator): void {
                          'identifier' => 'in2publishcore-RedirectCacheUpdater-RecursiveRecordPublishingEnded',
                          'method' => 'publishRecordRecursiveEnd',
                          'event' => RecursiveRecordPublishingEnded::class,
-                     ]
+                     ],
                  );
     }
 };

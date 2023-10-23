@@ -130,7 +130,7 @@ class GroupProcessorTest extends UnitTestCase
         $reason = $processingResult->getValue()[0];
         $this->assertSame(
             'MM_opposite_field is set for the foreign side of relations, which must not be resolved',
-            $reason
+            $reason,
         );
 
         unset($GLOBALS['TCA']['table_bar']);

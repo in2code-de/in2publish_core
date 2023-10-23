@@ -59,7 +59,7 @@ class SshConnectionTest implements TestCaseInterface
             return new TestResult(
                 'ssh_connection.connection_failed',
                 TestResult::ERROR,
-                ['ssh_connection.connection_failure_message', $exception->getMessage()]
+                ['ssh_connection.connection_failure_message', $exception->getMessage()],
             );
         }
 
@@ -69,7 +69,7 @@ class SshConnectionTest implements TestCaseInterface
                 'ssh_connection.foreign_document_root_missing',
                 TestResult::ERROR,
                 [$response->getErrorsString()],
-                [$request->getWorkingDirectory()]
+                [$request->getWorkingDirectory()],
             );
         }
 
@@ -83,7 +83,7 @@ class SshConnectionTest implements TestCaseInterface
             return new TestResult(
                 'ssh_connection.invalid_php',
                 TestResult::ERROR,
-                ['ssh_connection.php_test_error_message', $response->getErrorsString()]
+                ['ssh_connection.php_test_error_message', $response->getErrorsString()],
             );
         }
 
@@ -113,7 +113,7 @@ class SshConnectionTest implements TestCaseInterface
                     'ssh_connection.foreign_document_validation_error_reason',
                     $response->getOutputString(),
                     $response->getErrorsString(),
-                ]
+                ],
             );
         }
 
@@ -126,14 +126,14 @@ class SshConnectionTest implements TestCaseInterface
                     'ssh_connection.wrong_context',
                     TestResult::ERROR,
                     $response->getErrors(),
-                    [$match[1]]
+                    [$match[1]],
                 );
             }
 
             return new TestResult(
                 'ssh_connection.dispatcher_unknown_error',
                 TestResult::ERROR,
-                $response->getErrors()
+                $response->getErrors(),
             );
         }
 

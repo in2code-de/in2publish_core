@@ -98,12 +98,12 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
         if (true === $success) {
             $this->logger->debug(
                 'Successfully transferred file to foreign',
-                ['target' => $target, 'identifierHash' => $identifierHash]
+                ['target' => $target, 'identifierHash' => $identifierHash],
             );
         } else {
             $this->logger->error(
                 'Failed to transfer file to foreign',
-                ['target' => $target, 'identifierHash' => $identifierHash]
+                ['target' => $target, 'identifierHash' => $identifierHash],
             );
         }
 

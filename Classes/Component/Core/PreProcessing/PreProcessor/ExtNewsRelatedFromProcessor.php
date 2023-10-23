@@ -28,7 +28,7 @@ class ExtNewsRelatedFromProcessor extends AbstractProcessor
     {
         return new ProcessingResult(
             ProcessingResult::INCOMPATIBLE,
-            'The field related_from is configured as owning side, but is actually the foreign side.'
+            'The field related_from is configured as owning side, but is actually the foreign side.',
         );
     }
 

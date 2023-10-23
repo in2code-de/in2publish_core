@@ -86,7 +86,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         } catch (Throwable $exception) {
             $this->logger->error(
                 'Invalid SSH connection configuration detected',
-                ['message' => $exception->getMessage()]
+                ['message' => $exception->getMessage()],
             );
             throw $exception;
         }
@@ -110,7 +110,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         if (!is_resource($session)) {
             throw new In2publishCoreException(
                 'Could not establish a SSH connection to "' . $this->config['host'] . ':' . $this->config['port'] . '"',
-                1425401287
+                1425401287,
             );
         }
 
@@ -121,12 +121,12 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
                     throw new In2publishCoreException(
                         'Identification of foreign host failed, SSH Key Fingerprint mismatch. Actual Fingerprint: "'
                         . $keyFingerPrint . '"; Configured: "' . $this->config['foreignKeyFingerprint'] . '"',
-                        1426868565
+                        1426868565,
                     );
                 }
                 throw new In2publishCoreException(
                     'Identification of foreign host failed, SSH Key Fingerprint mismatch!!!',
-                    1425401452
+                    1425401452,
                 );
             }
         }
@@ -136,7 +136,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
             $this->config['username'],
             $this->config['publicKeyFileAndPathName'],
             $this->config['privateKeyFileAndPathName'],
-            $this->config['privateKeyPassphrase']
+            $this->config['privateKeyPassphrase'],
         );
         if (true !== $authorizationSuccess) {
             throw new In2publishCoreException(
@@ -144,9 +144,9 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
                     'Could not authenticate the SSH connection for "%s@%s:%d" with the given SSH key pair',
                     $this->config['username'],
                     $this->config['host'],
-                    $this->config['port']
+                    $this->config['port'],
                 ),
-                1425401293
+                1425401293,
             );
         }
 
@@ -219,19 +219,19 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
             if (empty($config[$requiredFileKey])) {
                 throw new In2publishCoreException(
                     'SSH Connection: Option ' . $requiredFileKey . ' is empty',
-                    1425400434
+                    1425400434,
                 );
             }
             if (!file_exists($config[$requiredFileKey])) {
                 throw new In2publishCoreException(
                     'SSH Connection: The File defined in ' . $requiredFileKey . ' does not exist',
-                    1425400440
+                    1425400440,
                 );
             }
             if (!is_readable($config[$requiredFileKey])) {
                 throw new In2publishCoreException(
                     'SSH Connection: The File defined in ' . $requiredFileKey . ' is not readable',
-                    1425400444
+                    1425400444,
                 );
             }
         }
@@ -253,7 +253,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
             if (!in_array($config['foreignKeyFingerprintHashingMethod'], $this->supportedHashMethods, true)) {
                 throw new In2publishCoreException(
                     'SSH Connection: The defined foreignKeyFingerprintHashingMethod is not supported',
-                    1493822754
+                    1493822754,
                 );
             }
             $config['foreignKeyFingerprintHashingMethod'] = constant($config['foreignKeyFingerprintHashingMethod'])

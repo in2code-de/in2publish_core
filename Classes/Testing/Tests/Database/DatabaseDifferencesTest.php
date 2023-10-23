@@ -79,8 +79,8 @@ class DatabaseDifferencesTest implements TestCaseInterface
                     ['database.tables_only_on_local'],
                     $tablesOnlyOnLocal,
                     ['database.tables_only_on_foreign'],
-                    $tablesOnlyOnForeign
-                )
+                    $tablesOnlyOnForeign,
+                ),
             );
         }
 
@@ -113,7 +113,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
 
                         unset(
                             $diffOnLocal[$tableName]['fields'][$fieldName],
-                            $diffOnForeign[$tableName]['fields'][$fieldName]
+                            $diffOnForeign[$tableName]['fields'][$fieldName],
                         );
                     }
                 }
@@ -145,7 +145,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
 
                         unset(
                             $diffOnLocal[$tableName]['table'][$propertyName],
-                            $diffOnForeign[$tableName]['table'][$propertyName]
+                            $diffOnForeign[$tableName]['table'][$propertyName],
                         );
                     }
                 }
@@ -172,8 +172,8 @@ class DatabaseDifferencesTest implements TestCaseInterface
                     ['database.different_fields'],
                     $fieldDifferences,
                     ['database.different_tables'],
-                    $tableDifferences
-                )
+                    $tableDifferences,
+                ),
             );
         }
 
@@ -210,7 +210,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
             [
                 'task_type' => 'Backend Test',
                 'configuration' => $random,
-            ]
+            ],
         );
         $uid = (int)$local->lastInsertId();
         $query = $foreign->createQueryBuilder();

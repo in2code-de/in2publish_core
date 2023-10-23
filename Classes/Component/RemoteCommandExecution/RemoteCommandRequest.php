@@ -70,7 +70,7 @@ class RemoteCommandRequest
             [
                 'TYPO3_CONTEXT' => $configContainer->get('foreign.context'),
                 'IN2PUBLISH_CONTEXT' => 'Foreign',
-            ]
+            ],
         );
         $isComposerMode = defined('TYPO3_COMPOSER_MODE') && true === TYPO3_COMPOSER_MODE;
         $dispatcher = $configContainer->get('foreign.dispatcher');

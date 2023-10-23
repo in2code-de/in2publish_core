@@ -27,11 +27,11 @@ class TcaEscapingMarkerServiceTest extends UnitTestCase
             ->withConsecutive(
                 ['table'],
                 ['field'],
-                ['value']
+                ['value'],
             )->willReturnOnConsecutiveCalls(
             '`table`',
             '`field`',
-            '`value`'
+            '`value`',
         );
         $tcaEscapingMarkerService = new TcaEscapingMarkerService();
         $tcaEscapingMarkerService->injectLocalDatabase($database);
@@ -52,10 +52,10 @@ class TcaEscapingMarkerServiceTest extends UnitTestCase
             ->method('quoteIdentifier')
             ->withConsecutive(
                 ['field'],
-                ['value']
+                ['value'],
             )->willReturnOnConsecutiveCalls(
                 '\'field\'',
-                '\'value\''
+                '\'value\'',
             );
         $tcaEscapingMarkerService = new TcaEscapingMarkerService();
         $tcaEscapingMarkerService->injectLocalDatabase($database);

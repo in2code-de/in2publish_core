@@ -28,7 +28,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
             42,
             ['prop1' => 'value1'],
             ['prop2' => 'value2'],
-            ['prop3' => 'value3']
+            ['prop3' => 'value3'],
         );
         $this->assertInstanceOf(TtContentDatabaseRecord::class, $ttContentDatabaseRecord);
         $this->assertSame('table_foo', $ttContentDatabaseRecord->getClassification());
@@ -53,7 +53,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
             42,
             ['CType' => 'shortcut', 'records' => 'table_bar_1, table_bar_2'],
             [],
-            []
+            [],
         );
 
         $dependency1 = $ttContentDatabaseRecord->calculateDependencies()[0];
@@ -90,7 +90,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
             42,
             [],
             [],
-            []
+            [],
         );
 
         $ttContentDatabaseRecord1 = new TtContentDatabaseRecord(
@@ -98,7 +98,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
             42,
             ['CType' => 'shortcut', 'records' => 'table_bar_1'],
             [],
-            []
+            [],
         );
 
         $ttContentDatabaseRecord3 = new TtContentDatabaseRecord(
@@ -106,7 +106,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
             42,
             ['CType' => 'shortcut', 'records' => 'table_bar_1'],
             ['CType' => 'shortcut', 'records' => 'table_bar_4,table_bar_5'],
-            []
+            [],
         );
 
         $ttContentDatabaseRecord6 = new TtContentDatabaseRecord(
@@ -114,7 +114,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
             42,
             ['CType' => 'shortcut', 'records' => 'table_bar_1,table_bar_2,table_bar_3'],
             ['CType' => 'shortcut', 'records' => 'table_bar_4,table_bar_5,table_bar_6'],
-            []
+            [],
         );
 
         $this->assertSame(0, count($ttContentDatabaseRecord0->calculateDependencies()));
@@ -134,7 +134,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
             42,
             ['CType' => 'shortcut', 'records' => ''],
             [],
-            []
+            [],
         );
 
         $ttContentDatabaseRecord2 = new TtContentDatabaseRecord(
@@ -142,7 +142,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
             42,
             ['CType' => 'shortcut', 'records' => 'tableWithoutUid'],
             [],
-            []
+            [],
         );
 
         $this->assertSame(0, count($ttContentDatabaseRecord1->calculateDependencies()));

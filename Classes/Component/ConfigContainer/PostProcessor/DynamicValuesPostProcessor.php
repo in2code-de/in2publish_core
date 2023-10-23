@@ -83,7 +83,7 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
             $this->rtc['missing'][$providerKey] = true;
             $this->logger->error(
                 'Identified dynamic configuration provider key but no provider was registered for it',
-                ['providerKey' => $providerKey]
+                ['providerKey' => $providerKey],
             );
         }
     }

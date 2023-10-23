@@ -30,7 +30,7 @@ class ExtNewsRelatedProcessorTest extends UnitTestCase
                 'tx_news_domain_model_news_related_mm',
                 'tx_news_domain_model_news',
                 '',
-                'uid_foreign'
+                'uid_foreign',
         );
         $container->expects($this->once())->method('get')->willReturn($staticJoinResolver);
         $extRelatedProcessor->injectContainer($container);

@@ -27,7 +27,7 @@ class SelectResolverTest extends UnitTestCase
         $selectResolver->configure(
             'column_foo',
             'foreignTable_foo',
-            'foreignTableWhere_foo'
+            'foreignTableWhere_foo',
         );
 
         $this->assertEquals(['foreignTable_foo'], $selectResolver->getTargetTables());
@@ -49,7 +49,7 @@ class SelectResolverTest extends UnitTestCase
         $selectResolver->configure(
             'column_foo',
             'foreignTable_foo',
-            'foreignTableWhere_foo'
+            'foreignTableWhere_foo',
         );
 
         $this->assertEquals('column_foo', $column->getValue($selectResolver));
@@ -70,7 +70,7 @@ class SelectResolverTest extends UnitTestCase
         $selectResolver->configure(
             'column_foo',
             'foreignTable_foo',
-            'foreignTableWhere_foo'
+            'foreignTableWhere_foo',
         );
         $demands = new DemandsCollection();
         $record = new DatabaseRecord('foreignTable_foo', 42, ['column_foo' => 'value_foo'],[],[]);

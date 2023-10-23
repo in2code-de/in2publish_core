@@ -117,7 +117,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
         if ($bytesToWrite !== $bytesWritten) {
             $this->logger->error(
                 'Writing remote file did not write all bytes',
-                ['bytesToWrite' => $bytesToWrite, 'bytesWritten' => $bytesWritten]
+                ['bytesToWrite' => $bytesToWrite, 'bytesWritten' => $bytesWritten],
             );
             throw new In2publishCoreException('Writing remote file"' . $target . '" was not completed', 1425467808);
         }
@@ -154,7 +154,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
             RemoteCommandRequest::class,
             'chmod',
             [],
-            [decoct($this->createMasks['decimalFileMask']), $target]
+            [decoct($this->createMasks['decimalFileMask']), $target],
         );
         $request->usePhp(false);
         $request->setDispatcher('');
@@ -174,7 +174,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
                 'exit_status' => $response->getExitStatus(),
                 'file_mask_octal' => decoct($this->createMasks['decimalFileMask']),
                 'target' => $target,
-            ]
+            ],
         );
 
         return false;

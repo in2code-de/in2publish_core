@@ -134,7 +134,7 @@ class ConfigurationUtility
                     return 1;
                 }
                 return $keyOrder[$left] < $keyOrder[$right] ? -1 : 1;
-            }
+            },
         );
         return $result;
     }

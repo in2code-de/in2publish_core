@@ -48,7 +48,7 @@ class CategoryProcessorTest extends UnitTestCase
             'categories',
             'sys_category_record_mm',
             'sys_category',
-            'uid_foreign'
+            'uid_foreign',
         );
 
         $container = $this->createMock(Container::class);

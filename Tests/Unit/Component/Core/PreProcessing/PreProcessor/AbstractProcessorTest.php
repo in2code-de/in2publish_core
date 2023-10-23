@@ -29,7 +29,7 @@ class AbstractProcessorTest extends UnitTestCase
         $forbidden->setAccessible(true);
         $forbidden->setValue(
             $abstractProcessor,
-            ['forbidden_key_1' => 'first_reason', 'forbidden_key_2' => 'second_reason']
+            ['forbidden_key_1' => 'first_reason', 'forbidden_key_2' => 'second_reason'],
         );
 
         $tca = ['type' => 'inline', 'forbidden_key_1' => 'foo'];
@@ -107,7 +107,7 @@ class AbstractProcessorTest extends UnitTestCase
         $this->assertFalse($result->isCompatible());
         $this->assertSame(
             'The processor did not return a valid resolver. The target table might be excluded or empty.',
-            $reason
+            $reason,
         );
     }
 

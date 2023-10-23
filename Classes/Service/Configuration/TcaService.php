@@ -167,7 +167,7 @@ class TcaService implements SingletonInterface
     {
         user_error(
             '\In2code\In2publishCore\Service\Configuration\TcaService::getDeletedField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
-            E_USER_DEPRECATED
+            E_USER_DEPRECATED,
         );
         if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['delete'])) {
             return $GLOBALS['TCA'][$tableName]['ctrl']['delete'];
@@ -182,7 +182,7 @@ class TcaService implements SingletonInterface
     {
         user_error(
             '\In2code\In2publishCore\Service\Configuration\TcaService::getDisableField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
-            E_USER_DEPRECATED
+            E_USER_DEPRECATED,
         );
         if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'])) {
             return $GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'];
@@ -197,7 +197,7 @@ class TcaService implements SingletonInterface
     {
         user_error(
             '\In2code\In2publishCore\Service\Configuration\TcaService::getLanguageField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
-            E_USER_DEPRECATED
+            E_USER_DEPRECATED,
         );
         if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['languageField'])) {
             return $GLOBALS['TCA'][$tableName]['ctrl']['languageField'];
@@ -212,7 +212,7 @@ class TcaService implements SingletonInterface
     {
         user_error(
             '\In2code\In2publishCore\Service\Configuration\TcaService::getTransOrigPointerField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
-            E_USER_DEPRECATED
+            E_USER_DEPRECATED,
         );
         if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'])) {
             return $GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'];

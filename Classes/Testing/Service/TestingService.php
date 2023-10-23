@@ -65,9 +65,9 @@ class TestingService
                     TestResult::SKIPPED,
                     array_merge(
                         ['dependency_failed'],
-                        array_intersect($testCase->getDependencies(), array_keys($failedTests))
+                        array_intersect($testCase->getDependencies(), array_keys($failedTests)),
                     ),
-                    [$testClass]
+                    [$testClass],
                 );
             } elseif ($this->hasDependencyFailed($testCase->getDependencies(), $skippedTests)) {
                 $skippedTests[$testClass] = new TestResult(
@@ -75,9 +75,9 @@ class TestingService
                     TestResult::SKIPPED,
                     array_merge(
                         ['dependency_skipped'],
-                        array_intersect($testCase->getDependencies(), array_keys($skippedTests))
+                        array_intersect($testCase->getDependencies(), array_keys($skippedTests)),
                     ),
-                    [$testClass]
+                    [$testClass],
                 );
             } else {
                 $result = $testCase->run();

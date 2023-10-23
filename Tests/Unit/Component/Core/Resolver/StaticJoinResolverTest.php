@@ -33,7 +33,7 @@ class StaticJoinResolverTest extends UnitTestCase
             'mmTable',
             'joinTable',
             'additionalWhere',
-            'property'
+            'property',
         );
         $this->assertSame('mmTable', $mmTable->getValue($staticJoinResolver));
         $this->assertSame('joinTable', $joinTable->getValue($staticJoinResolver));
@@ -51,7 +51,7 @@ class StaticJoinResolverTest extends UnitTestCase
             'mmTable',
             'joinTable',
             'additionalWhere',
-            'property'
+            'property',
         );
 
         $this->assertEquals(['joinTable'], $staticJoinResolver->getTargetTables());
@@ -67,7 +67,7 @@ class StaticJoinResolverTest extends UnitTestCase
             'mmTable',
             'joinTable',
             'additionalWhere',
-            'property'
+            'property',
         );
 
         $demands = new DemandsCollection();

@@ -30,8 +30,8 @@ class DependencyTest extends UnitTestCase
                 'label',
                 function () {
                     return ['arguments'];
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -48,7 +48,7 @@ class DependencyTest extends UnitTestCase
             'label',
             function () {
                 return ['arguments'];
-            }
+            },
         );
         $supersedingDependency = new Dependency(
             $this->createMock(Record::class),
@@ -58,14 +58,14 @@ class DependencyTest extends UnitTestCase
             'label',
             function () {
                 return ['arguments'];
-            }
+            },
         );
         $dependency->addSupersedingDependency($supersedingDependency);
         $reflectionProperty = new \ReflectionProperty(Dependency::class, 'supersededBy');
         $reflectionProperty->setAccessible(true);
         $this->assertSame(
             [$supersedingDependency],
-            $reflectionProperty->getValue($dependency)
+            $reflectionProperty->getValue($dependency),
         );
     }
 
@@ -82,11 +82,11 @@ class DependencyTest extends UnitTestCase
             'label',
             function () {
                 return ['arguments'];
-            }
+            },
         );
         $this->assertSame(
             'property_foo=value_foo',
-            $dependency->getPropertiesAsUidOrString()
+            $dependency->getPropertiesAsUidOrString(),
         );
 
         $dependency2 = new Dependency(
@@ -97,12 +97,12 @@ class DependencyTest extends UnitTestCase
             'label',
             function () {
                 return ['arguments'];
-            }
+            },
         );
 
         $this->assertSame(
             '4711',
-            $dependency2->getPropertiesAsUidOrString()
+            $dependency2->getPropertiesAsUidOrString(),
         );
     }
 
@@ -121,7 +121,7 @@ class DependencyTest extends UnitTestCase
             'label',
             function () {
                 return ['arguments'];
-            }
+            },
         );
         $recordCollection = $this->createMock(RecordCollection::class);
         $recordCollection->expects($this->once())->method('getRecordsByProperties')->willReturn([]);
@@ -159,7 +159,7 @@ class DependencyTest extends UnitTestCase
             'label',
             function () {
                 return ['arguments'];
-            }
+            },
         );
 
         $record = $this->createMock(DatabaseRecord::class);
@@ -195,7 +195,7 @@ class DependencyTest extends UnitTestCase
             'Label for my dependency',
             function () {
                 return ['arguments'];
-            }
+            },
         );
 
         $GLOBALS['TCA']['classification']['ctrl']['enablecolumns'] = ['disabled', 'other_disabled_field'];
@@ -236,7 +236,7 @@ class DependencyTest extends UnitTestCase
             'label',
             function () {
                 return ['arguments'];
-            }
+            },
         );
         $dependencyWithUnfulfilledDependencies = new Dependency(
             $this->createMock(Record::class),
@@ -246,7 +246,7 @@ class DependencyTest extends UnitTestCase
             'label',
             function () {
                 return ['arguments'];
-            }
+            },
         );
         $dependency1 = $this->createMock(Dependency::class);
         $dependency2 = $this->createMock(Dependency::class);

@@ -47,7 +47,7 @@ class SelectDemandResolver implements DemandResolver
                             $table,
                             $property,
                             array_keys($valueMaps),
-                            $additionalWhere
+                            $additionalWhere,
                         );
                     } catch (Exception $exception) {
                         if ($demands instanceof CallerAwareDemandsCollection) {
@@ -98,7 +98,7 @@ class SelectDemandResolver implements DemandResolver
                         $table,
                         $uid,
                         $row['local'],
-                        $row['foreign']
+                        $row['foreign'],
                     );
                     if (null === $record) {
                         continue;

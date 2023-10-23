@@ -69,7 +69,7 @@ class AdapterSelectionTest implements TestCaseInterface
                 [
                     'remote',
                     (string)$exception,
-                ]
+                ],
             );
         }
         try {
@@ -81,7 +81,7 @@ class AdapterSelectionTest implements TestCaseInterface
                 [
                     'transmission',
                     (string)$exception,
-                ]
+                ],
             );
         }
         return new TestResult('adapter.adapter_selection.valid');

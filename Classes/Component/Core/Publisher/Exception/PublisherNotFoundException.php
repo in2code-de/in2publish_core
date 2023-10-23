@@ -25,7 +25,7 @@ class PublisherNotFoundException extends In2publishCoreException
         parent::__construct(
             sprintf(self::MESSAGE, $record->getClassification(), $record->getId()),
             self::CODE,
-            $previous
+            $previous,
         );
     }
 

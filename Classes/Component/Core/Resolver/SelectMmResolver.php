@@ -45,7 +45,7 @@ class SelectMmResolver extends AbstractResolver
         $additionalWhere = $this->replaceMarkersService->replaceMarkers(
             $record,
             $this->foreignTableWhere,
-            $this->column
+            $this->column,
         );
         if (1 === preg_match(AbstractProcessor::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
             $additionalWhere = $matches['where'];

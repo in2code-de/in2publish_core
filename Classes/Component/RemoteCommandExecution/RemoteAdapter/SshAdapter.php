@@ -63,7 +63,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
                 return new RemoteCommandResponse(
                     'An error occurred',
                     $exception->getMessage(),
-                    $exception->getCode()
+                    $exception->getCode(),
                 );
             }
         }

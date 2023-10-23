@@ -62,7 +62,7 @@ class TaskExecutionService implements LoggerAwareInterface
                     'output' => $response->getOutput(),
                     'errors' => $response->getErrors(),
                     'exit_status' => $response->getExitStatus(),
-                ]
+                ],
             );
             throw new TaskExecutionFailedException($response);
         }

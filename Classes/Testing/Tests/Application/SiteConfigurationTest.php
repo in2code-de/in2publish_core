@@ -80,13 +80,13 @@ class SiteConfigurationTest implements TestCaseInterface
                         $siteErrors[] = sprintf(
                             'Site %s: The site language %d does not exist on local',
                             $siteIdentifier,
-                            $language
+                            $language,
                         );
                     } elseif (!array_key_exists($language, $foreignLanguages)) {
                         $siteErrors[] = sprintf(
                             'Site %s: The site language %d does not exist on foreign',
                             $siteIdentifier,
-                            $language
+                            $language,
                         );
                     } else {
                         $localLanguage = $localLanguages[$language];
@@ -103,7 +103,7 @@ class SiteConfigurationTest implements TestCaseInterface
                             'fallbackType' => $localLanguage->getFallbackType(),
                             'fallbackLanguageIds' => json_encode(
                                 $localLanguage->getFallbackLanguageIds(),
-                                JSON_THROW_ON_ERROR
+                                JSON_THROW_ON_ERROR,
                             ),
                             'enabled' => $localLanguage->isEnabled(),
                         ];
@@ -119,7 +119,7 @@ class SiteConfigurationTest implements TestCaseInterface
                             'fallbackType' => $foreignLanguage->getFallbackType(),
                             'fallbackLanguageIds' => json_encode(
                                 $foreignLanguage->getFallbackLanguageIds(),
-                                JSON_THROW_ON_ERROR
+                                JSON_THROW_ON_ERROR,
                             ),
                             'enabled' => $foreignLanguage->isEnabled(),
                         ];
@@ -131,7 +131,7 @@ class SiteConfigurationTest implements TestCaseInterface
                                 $siteIdentifier,
                                 $difference,
                                 $localLanguageArray[$difference],
-                                $foreignLanguageArray[$difference]
+                                $foreignLanguageArray[$difference],
                             );
                         }
                     }

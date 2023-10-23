@@ -156,7 +156,7 @@ class RecordTreeBuilder
         foreach ($pages as $page) {
             $tablesAllowedOnPage = $this->tcaService->getTablesAllowedOnPage(
                 $page->getId(),
-                $page->getProp('doktype')
+                $page->getProp('doktype'),
             );
             foreach ($tables as $table) {
                 if (in_array($table, $tablesAllowedOnPage)) {

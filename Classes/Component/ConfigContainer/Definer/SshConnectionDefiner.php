@@ -49,18 +49,18 @@ class SshConnectionDefiner implements DefinerInterface
                                  ->addString(
                                      'publicKeyFileAndPathName',
                                      '/home/ssh-account/.ssh/id_rsa.pub',
-                                     [FEV::class]
+                                     [FEV::class],
                                  )
                                  ->addOptionalString('privateKeyPassphrase', '')
                                  ->addBoolean('enableForeignKeyFingerprintCheck', true)
                                  ->addString('foreignKeyFingerprint', '00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00')
                                  ->addString('foreignKeyFingerprintHashingMethod', 'SSH2_FINGERPRINT_MD5')
-                                 ->addBoolean('ignoreChmodFail', false)
+                                 ->addBoolean('ignoreChmodFail', false),
                       )
                       ->addArray(
                           'debug',
                           Builder::start()
-                                 ->addBoolean('showForeignKeyFingerprint', false)
+                                 ->addBoolean('showForeignKeyFingerprint', false),
                       )
                       ->end();
     }

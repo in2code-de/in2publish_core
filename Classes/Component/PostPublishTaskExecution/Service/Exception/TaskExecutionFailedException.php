@@ -25,10 +25,10 @@ class TaskExecutionFailedException extends In2publishCoreException
             sprintf(
                 self::MESSAGE,
                 $remoteCommandResponse->getErrorsString(),
-                $remoteCommandResponse->getOutputString()
+                $remoteCommandResponse->getOutputString(),
             ),
             self::CODE,
-            $previous
+            $previous,
         );
         $this->remoteCommandResponse = $remoteCommandResponse;
     }

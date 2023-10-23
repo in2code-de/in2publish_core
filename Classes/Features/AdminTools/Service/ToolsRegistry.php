@@ -68,7 +68,7 @@ class ToolsRegistry implements SingletonInterface
         // Do not inject the ConfigurationManager, because it will not contain the configured tools.
         $configurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
         $configuration = $configurationManager->getConfiguration(
-            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
         );
         $processedTools = [];
 
@@ -127,7 +127,7 @@ class ToolsRegistry implements SingletonInterface
                 'access' => 'admin',
                 'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Tools.svg',
                 'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
-            ]
+            ],
         );
     }
 

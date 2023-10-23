@@ -285,7 +285,7 @@ class BackendUtility
                 $additionalGetParameters = [];
                 self::parseAdditionalGetParameters(
                     $additionalGetParameters,
-                    $previewConfiguration['additionalGetParameters.']
+                    $previewConfiguration['additionalGetParameters.'],
                 );
                 $additionalQueryParams = array_replace($additionalQueryParams, $additionalGetParameters);
             }
@@ -410,7 +410,7 @@ class BackendUtility
                     (string)$pageUid,
                     $additionalQueryParams,
                     '',
-                    RouterInterface::ABSOLUTE_URL
+                    RouterInterface::ABSOLUTE_URL,
                 );
             } catch (Throwable $throwable) {
                 return null;

@@ -54,9 +54,9 @@ class WarningOnForeignDefiner implements DefinerInterface
                                                 'colorizeHeader',
                                                 Builder::start()
                                                        ->addBoolean('enable', false)
-                                                       ->addString('color', '#a06e23', [CssColorValueValidator::class])
-                                            )
-                                 )
+                                                       ->addString('color', '#a06e23', [CssColorValueValidator::class]),
+                                            ),
+                                 ),
                       )
                       ->end();
     }

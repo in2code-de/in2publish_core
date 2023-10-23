@@ -63,7 +63,7 @@ class IgnoredFieldsService
                     foreach ($ignoreConfig['ctrl'] ?? [] as $ignoredCtrl) {
                         $ignoredCtrlFieldNames = $this->getValueByPath(
                             $GLOBALS['TCA'][$table]['ctrl'] ?? [],
-                            $ignoredCtrl
+                            $ignoredCtrl,
                         );
                         if (null === $ignoredCtrlFieldNames) {
                             continue;

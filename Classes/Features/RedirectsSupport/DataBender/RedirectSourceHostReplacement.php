@@ -78,7 +78,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
             if (null === $site) {
                 $this->logger->alert(
                     'A redirect has an associated site, but that site does not exist',
-                    ['uid' => $record->getId()]
+                    ['uid' => $record->getId()],
                 );
                 return;
             }
@@ -104,7 +104,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
 
         $this->logger->alert(
             'A redirect without an associated page or site is going to be published',
-            ['uid' => $record->getId()]
+            ['uid' => $record->getId()],
         );
     }
 }

@@ -40,7 +40,7 @@ class QueryServiceTest extends TestCase
                                            'foreign' => [],
                                            'additional' => [],
                                        ],
-                                   ]
+                                   ],
                                );
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $foreignSingleDatabaseRepository->expects($this->once())
@@ -87,7 +87,7 @@ class QueryServiceTest extends TestCase
                                            'foreign' => [],
                                            'additional' => [],
                                        ],
-                                   ]
+                                   ],
                                );
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $foreignSingleDatabaseRepository->expects($this->never())->method('findByProperty');
@@ -134,7 +134,7 @@ class QueryServiceTest extends TestCase
                                            ],
                                            'additional' => [],
                                        ],
-                                   ]
+                                   ],
                                );
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
@@ -181,7 +181,7 @@ class QueryServiceTest extends TestCase
                                            ],
                                            'additional' => [],
                                        ],
-                                   ]
+                                   ],
                                );
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
@@ -230,7 +230,7 @@ class QueryServiceTest extends TestCase
                                            ],
                                            'additional' => [],
                                        ],
-                                   ]
+                                   ],
                                );
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
@@ -242,7 +242,7 @@ class QueryServiceTest extends TestCase
                                                   'uid' => 14,
                                                   'title' => 'local',
                                               ],
-                                          ]
+                                          ],
                                       );
         $recordFactory = $this->createMock(RecordFactory::class);
         $recordIndex = $this->createMock(RecordIndex::class);

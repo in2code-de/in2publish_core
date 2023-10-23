@@ -46,7 +46,7 @@ class SelectMmResolverTest extends UnitTestCase
             'column',
             'mmTable',
             'foreignTable',
-            'selectField'
+            'selectField',
         );
 
         $this->assertEquals('foreignTableWhere', $foreignTableWhere->getValue($selectMmResolver));
@@ -88,7 +88,7 @@ class SelectMmResolverTest extends UnitTestCase
             'column',
             'mmTable',
             'foreignTable',
-            'selectField'
+            'selectField',
         );
 
         $record = new DatabaseRecord('table_foo', 42, ['value_foo' => 'value_1'],[],[]);
@@ -121,7 +121,7 @@ class SelectMmResolverTest extends UnitTestCase
             'column',
             'mmTable',
             'foreignTable',
-            'selectField'
+            'selectField',
         );
         return $selectMmResolver;
     }

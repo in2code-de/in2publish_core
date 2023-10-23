@@ -63,15 +63,15 @@ class RecordTreeBuilderTest extends UnitTestCase
         $recordIndex->expects($this->once())->method('getRecords')->with('pages')
             ->willReturn(
                 [
-                    0 => $pageRecord
-                ]
+                    0 => $pageRecord,
+                ],
             );
 
         $demandResolver = $this->createMock(DemandResolver::class);
         $demandResolver->expects(self::once())->method('resolveDemand')->willReturnCallback(
             function (Demands $demands, RecordCollection $recordCollection) use ($fooRecord) {
                 $recordCollection->addRecord($fooRecord);
-            }
+            },
         );
 
         $demandsFactory = $this->createMock(DemandsFactory::class);
@@ -80,7 +80,7 @@ class RecordTreeBuilderTest extends UnitTestCase
         $relevantTablesService = $this->createMock(RelevantTablesService::class);
         $relevantTablesService->method('getAllNonEmptyNonExcludedTcaTables')->willReturn([
             0 => 'pages',
-            1 => 'table_foo'
+            1 => 'table_foo',
         ]);
 
         $tcaService = $this->createMock(TcaService::class);

@@ -37,7 +37,7 @@ class DefaultDatabaseRecordFactoryTest extends UnitTestCase
             1,
             ['foo' => 'bar'],
             ['bar' => 'foo'],
-            []
+            [],
         );
         $reflectionProperty = new \ReflectionProperty($databaseRecord, 'ignoredProps');
         $reflectionProperty->setAccessible(true);

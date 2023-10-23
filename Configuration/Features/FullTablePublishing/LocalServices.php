@@ -18,7 +18,7 @@ return static function (ContainerConfigurator $configurator): void {
 
     $services->load(
         'In2code\\In2publishCore\\Features\\FullTablePublishing\\Command\\Local\\',
-        __DIR__ . '/../../../Classes/Features/FullTablePublishing/Command/Local/'
+        __DIR__ . '/../../../Classes/Features/FullTablePublishing/Command/Local/',
     );
     $services->set(ImportCommand::class)
              ->tag(
@@ -26,7 +26,7 @@ return static function (ContainerConfigurator $configurator): void {
                  [
                      'command' => ImportCommand::IDENTIFIER,
                      'description' => 'Truncates the local table and writes the data from the foreign table into it.',
-                 ]
+                 ],
              );
     $services->set(PublishCommand::class)
              ->tag(
@@ -34,6 +34,6 @@ return static function (ContainerConfigurator $configurator): void {
                  [
                      'command' => PublishCommand::IDENTIFIER,
                      'description' => 'Truncates the foreign table and writes the data from the local table into it.',
-                 ]
+                 ],
              );
 };

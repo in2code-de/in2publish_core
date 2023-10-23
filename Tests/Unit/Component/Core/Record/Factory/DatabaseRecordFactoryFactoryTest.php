@@ -40,7 +40,7 @@ class DatabaseRecordFactoryFactoryTest extends UnitTestCase
         $expectedFactoryOrder = [
             10 => [$factory3],
             2 => [$factory2],
-            1 => [$factory1]
+            1 => [$factory1],
         ];
         $this->assertSame($expectedFactoryOrder, $factories);
     }

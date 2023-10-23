@@ -32,7 +32,7 @@ class CategoryProcessor extends AbstractProcessor
             $column,
             'sys_category_record_mm',
             'sys_category',
-            'uid_foreign'
+            'uid_foreign',
         );
         return $resolver;
     }

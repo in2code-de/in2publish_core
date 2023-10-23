@@ -73,7 +73,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
             } catch (Throwable $exception) {
                 $this->logger->error(
                     'Failed to send envelope [' . $uid . ']',
-                    ['envelope' => $envelope->toArray(), 'exception' => $exception]
+                    ['envelope' => $envelope->toArray(), 'exception' => $exception],
                 );
                 throw $exception;
             }
@@ -85,7 +85,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
         } catch (Throwable $exception) {
             $this->logger->error(
                 'Failed to update envelope [' . $uid . ']',
-                ['envelope' => $envelope->toArray(), 'exception' => $exception]
+                ['envelope' => $envelope->toArray(), 'exception' => $exception],
             );
         }
         return false;
@@ -115,7 +115,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
         } catch (Throwable $exception) {
             $this->logger->error(
                 'Failed to receive envelope [' . $uid . '] "' . $exception . '"',
-                ['exception' => $exception]
+                ['exception' => $exception],
             );
             return false;
         }

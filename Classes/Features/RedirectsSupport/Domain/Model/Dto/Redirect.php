@@ -39,7 +39,7 @@ class Redirect
             $this->uid,
             $this->source_host,
             $this->source_path,
-            $this->target
+            $this->target,
         );
     }
 }

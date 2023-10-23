@@ -49,7 +49,7 @@ class DualDatabaseRepository
             $table,
             $property,
             $values,
-            $andWhere
+            $andWhere,
         );
 
         return $this->mergeRowsByIdentifier($localRows, $foreignRows);

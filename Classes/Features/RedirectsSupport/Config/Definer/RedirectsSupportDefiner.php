@@ -44,8 +44,8 @@ class RedirectsSupportDefiner implements DefinerInterface
                                  ->addArray(
                                      'redirectsSupport',
                                      Builder::start()
-                                            ->addBoolean('enable', true)
-                                 )
+                                            ->addBoolean('enable', true),
+                                 ),
                       )
                       ->end();
     }

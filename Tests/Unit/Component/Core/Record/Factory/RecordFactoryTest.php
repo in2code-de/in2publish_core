@@ -80,7 +80,7 @@ class RecordFactoryTest extends UnitTestCase
 
         $record = $recordFactory->createDatabaseRecord($table, 1, [
             'field_foo' => 'foo',
-            'ignored_field' => 'bar'
+            'ignored_field' => 'bar',
         ], []);
 
         $this->assertInstanceOf(DatabaseRecord::class, $record);
@@ -102,7 +102,7 @@ class RecordFactoryTest extends UnitTestCase
 
         $databaseRecordFactoryFactory = $this->createMock(DatabaseRecordFactoryFactory::class);
         $databaseRecordFactoryFactory->method('createFactoryForTable')->willReturn(
-            $this->createMock(DatabaseRecordFactory::class)
+            $this->createMock(DatabaseRecordFactory::class),
         );
 
         $listenerProvider = $this->createMock(ListenerProvider::class);
@@ -111,7 +111,7 @@ class RecordFactoryTest extends UnitTestCase
                 return [
                     function (DecideIfRecordShouldBeIgnored $event) {
                         $event->shouldIgnore();
-                    }
+                    },
                 ];
             }
             return [];
@@ -195,7 +195,7 @@ class RecordFactoryTest extends UnitTestCase
         $record = $recordFactory->createFolderRecord(
             'combined_identifier',
             ['field_foo' => 'value_foo'],
-            []
+            [],
         );
 
         $this->assertInstanceOf(FolderRecord::class, $record);

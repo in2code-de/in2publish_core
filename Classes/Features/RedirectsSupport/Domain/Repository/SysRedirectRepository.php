@@ -90,7 +90,7 @@ class SysRedirectRepository
         $this->localDatabase->update(
             'sys_redirect',
             (array)$redirect,
-            ['uid' => $redirect->uid]
+            ['uid' => $redirect->uid],
         );
     }
 }

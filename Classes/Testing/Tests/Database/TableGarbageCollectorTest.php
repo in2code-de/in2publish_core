@@ -51,8 +51,8 @@ class TableGarbageCollectorTest implements TestCaseInterface
               ->where(
                   $query->expr()->like(
                       'serialized_task_object',
-                      $query->createNamedParameter('%tx_in2publishcore_running_request%')
-                  )
+                      $query->createNamedParameter('%tx_in2publishcore_running_request%'),
+                  ),
               );
         $statement = $query->execute();
 
@@ -60,7 +60,7 @@ class TableGarbageCollectorTest implements TestCaseInterface
             return new TestResult(
                 'database.garbage_collector_task_missing',
                 TestResult::ERROR,
-                ['database.garbage_collector_task_missing.explanation']
+                ['database.garbage_collector_task_missing.explanation'],
             );
         }
 

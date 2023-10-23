@@ -53,8 +53,8 @@ class SingleDatabaseRepository
               ->where(
                   $query->expr()->in(
                       $property,
-                      $query->createNamedParameter($values, DbalConnection::PARAM_STR_ARRAY)
-                  )
+                      $query->createNamedParameter($values, DbalConnection::PARAM_STR_ARRAY),
+                  ),
               );
         if (!empty($andWhere)) {
             $query->andWhere($andWhere);
@@ -107,7 +107,7 @@ class SingleDatabaseRepository
                   $mmTable,
                   $table,
                   $table,
-                  $mmTable . '.' . ($property === 'uid_foreign' ? 'uid_local' : 'uid_foreign') . ' = ' . $table . '.uid'
+                  $mmTable . '.' . ($property === 'uid_foreign' ? 'uid_local' : 'uid_foreign') . ' = ' . $table . '.uid',
               )
               ->where($query->expr()->in($property, $values));
         if (!empty($andWhere)) {

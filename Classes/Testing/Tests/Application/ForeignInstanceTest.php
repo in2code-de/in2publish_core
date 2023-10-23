@@ -62,7 +62,7 @@ class ForeignInstanceTest implements TestCaseInterface
                 return new TestResult(
                     'application.foreign_cli_lowlevel_user_missing',
                     TestResult::ERROR,
-                    ['application.foreign_cli_lowlevel_user_missing_message', $response->getOutputString()]
+                    ['application.foreign_cli_lowlevel_user_missing_message', $response->getOutputString()],
                 );
             }
 
@@ -74,7 +74,7 @@ class ForeignInstanceTest implements TestCaseInterface
                         'application.foreign_cli_dispatcher_error_message',
                         $response->getOutputString(),
                         $response->getErrorsString(),
-                    ]
+                    ],
                 );
             }
 
@@ -85,7 +85,7 @@ class ForeignInstanceTest implements TestCaseInterface
                     'application.foreign_cli_dispatcher_error_message',
                     $response->getOutputString(),
                     $response->getErrorsString(),
-                ]
+                ],
             );
         }
 
@@ -100,7 +100,7 @@ class ForeignInstanceTest implements TestCaseInterface
                     'application.foreign_cli_dispatcher_error_message',
                     $response->getOutputString(),
                     $response->getErrorsString(),
-                ]
+                ],
             );
         }
 
@@ -108,7 +108,7 @@ class ForeignInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.foreign_version_differs',
                 TestResult::ERROR,
-                ['application.local_version', $localVersion, 'application.foreign_version', $foreign['Version']]
+                ['application.local_version', $localVersion, 'application.foreign_version', $foreign['Version']],
             );
         }
 
@@ -117,7 +117,7 @@ class ForeignInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.different_t3_versions',
                 TestResult::ERROR,
-                ['application.local_t3_versions', $localT3Version, 'application.foreign_t3_versions', $foreign['TYPO3']]
+                ['application.local_t3_versions', $localT3Version, 'application.foreign_t3_versions', $foreign['TYPO3']],
             );
         }
 
@@ -125,7 +125,7 @@ class ForeignInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.foreign_utf8_fs',
                 TestResult::ERROR,
-                ['application.utf8_fs_errors']
+                ['application.utf8_fs_errors'],
             );
         }
 
@@ -133,7 +133,7 @@ class ForeignInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.foreign_admin_mode',
                 TestResult::WARNING,
-                ['application.editor_login_possible']
+                ['application.editor_login_possible'],
             );
         }
 

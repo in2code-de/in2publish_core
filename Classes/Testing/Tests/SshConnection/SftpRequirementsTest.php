@@ -41,13 +41,13 @@ class SftpRequirementsTest implements TestCaseInterface
         if (false === (bool)ini_get('allow_url_fopen')) {
             return new TestResult(
                 'sftp_requirements.allow_url_fopen_disabled',
-                TestResult::ERROR
+                TestResult::ERROR,
             );
         }
 
         return new TestResult(
             'sftp_requirements.all_known_dependencies_okay',
-            TestResult::OK
+            TestResult::OK,
         );
     }
 

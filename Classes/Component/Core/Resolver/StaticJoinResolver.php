@@ -35,7 +35,7 @@ class StaticJoinResolver extends AbstractResolver
             $this->additionalWhere,
             $this->property,
             $record->getId(),
-            $record
+            $record,
         );
     }
 }

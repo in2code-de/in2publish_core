@@ -37,7 +37,7 @@ class DiffViewHelper extends AbstractViewHelper
         $diffUtility->stripTags = false;
         return $diffUtility->makeDiffDisplay(
             (string)$arguments[self::ARG_OLD],
-            (string)$arguments[self::ARG_NEW]
+            (string)$arguments[self::ARG_NEW],
         );
     }
 }

@@ -64,7 +64,7 @@ class TaskRepository
     {
         $this->databaseOfForeign->insert(
             self::TASK_TABLE_NAME,
-            array_merge($task->toArray(), ['creation_date' => $this->creationDate])
+            array_merge($task->toArray(), ['creation_date' => $this->creationDate]),
         );
     }
 
@@ -73,7 +73,7 @@ class TaskRepository
         $this->databaseOfForeign->update(
             self::TASK_TABLE_NAME,
             $task->toArray(),
-            ['uid' => $task->getUid()]
+            ['uid' => $task->getUid()],
         );
     }
 
@@ -96,7 +96,7 @@ class TaskRepository
         } else {
             $predicates = $query->expr()->orX(
                 $query->expr()->isNull('execution_begin'),
-                $query->expr()->like('execution_begin', $query->createNamedParameter('0000-00-00 00:00:00'))
+                $query->expr()->like('execution_begin', $query->createNamedParameter('0000-00-00 00:00:00')),
             );
         }
 
@@ -123,7 +123,7 @@ class TaskRepository
         $executionEnd = (new DateTimeImmutable('1 week ago'))->format('Y-m-d H:i:s');
         $query->delete('tx_in2code_in2publish_task')
               ->where(
-                  $query->expr()->lte('execution_end', $query->createNamedParameter($executionEnd))
+                  $query->expr()->lte('execution_end', $query->createNamedParameter($executionEnd)),
               );
         $query->execute();
     }

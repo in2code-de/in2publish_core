@@ -25,7 +25,7 @@ class FalPublisherExecutionFailedException extends In2publishCoreException
         parent::__construct(
             sprintf(self::MESSAGE, $response->getOutputString(), $response->getErrorsString()),
             self::CODE,
-            $previous
+            $previous,
         );
     }
 

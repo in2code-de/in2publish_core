@@ -86,7 +86,8 @@ class FlexResolverTest extends UnitTestCase
             [
                 'type' => 'record',
                 'dataStructureKey' => 'column_foo',
-            ]);
+            ],
+        );
 
         $flexFormTools->method('getDataStructureIdentifier')->willReturn($dataStructure);
         $flexFormService = $this->createMock(FlexFormService::class);

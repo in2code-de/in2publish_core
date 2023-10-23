@@ -72,7 +72,7 @@ class DatabaseUtility
                 } catch (Throwable $exception) {
                     static::$logger->error(
                         'Exception in ForeignEnvironmentService. ' . $exception->getMessage(),
-                        ['exception' => $exception]
+                        ['exception' => $exception],
                     );
                     throw $exception;
                 }
@@ -195,7 +195,7 @@ class DatabaseUtility
                 ->from('pages')
                 ->where(
                     $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($id, PDO::PARAM_INT)),
-                    $queryBuilder->expr()->eq('sys_language_uid', 0)
+                    $queryBuilder->expr()->eq('sys_language_uid', 0),
                 )
                 ->orderBy('uid');
             if ($permClause !== '') {

@@ -70,7 +70,7 @@ class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
         }
         return array_combine(
             array_column($shortSiteConfig, 'rootPageId'),
-            array_column($shortSiteConfig, 'base')
+            array_column($shortSiteConfig, 'base'),
         );
     }
 

@@ -61,7 +61,7 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
             return new TestResult(
                 'ssh_connection.chmod_missing',
                 TestResult::WARNING,
-                ['ssh_connection.chmod_description']
+                ['ssh_connection.chmod_description'],
             );
         }
 

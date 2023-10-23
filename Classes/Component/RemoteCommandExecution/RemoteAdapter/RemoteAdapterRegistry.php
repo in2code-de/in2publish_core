@@ -68,7 +68,7 @@ class RemoteAdapterRegistry
         if (!array_key_exists($this->selectedAdapter, $this->adapters)) {
             throw new RuntimeException(
                 "Could not create remote adapter '$this->selectedAdapter': Adapter not found",
-                1657115622
+                1657115622,
             );
         }
         return GeneralUtility::makeInstance($this->adapters[$this->selectedAdapter]['class']);

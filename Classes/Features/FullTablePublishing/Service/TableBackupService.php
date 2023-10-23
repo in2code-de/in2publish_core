@@ -39,7 +39,7 @@ class TableBackupService
         if ($zipBackup && !class_exists(ZipArchive::class)) {
             throw new RuntimeException(
                 'ZipArchive is not available. Please install zip extension or disable the option backup.publishTableCommand.zipBackup.',
-                1657106012
+                1657106012,
             );
         }
 
@@ -92,7 +92,7 @@ class TableBackupService
  * Writtern by: in2publish_core MySQL/MariaDB exporter (TableBackupService)
  *---------------------------------------------------------------*/
 
-SQL
+SQL,
         );
     }
 

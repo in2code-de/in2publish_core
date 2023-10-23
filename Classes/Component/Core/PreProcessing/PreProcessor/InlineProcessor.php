@@ -87,7 +87,7 @@ class InlineProcessor extends AbstractProcessor
                 $foreignTable,
                 $column,
                 $foreignTableField,
-                $additionalWhere
+                $additionalWhere,
             );
             return $resolver;
         }
@@ -97,7 +97,7 @@ class InlineProcessor extends AbstractProcessor
             $foreignTable,
             $foreignField,
             $foreignTableField,
-            $additionalWhere
+            $additionalWhere,
         );
         return $resolver;
     }

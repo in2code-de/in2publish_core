@@ -39,7 +39,7 @@ class DatabaseRecordFactoryFactoryCompilerPass implements CompilerPassInterface
             $definition->setPublic(true);
             $recordDatabaseFactoryFactoryDefinition->addMethodCall(
                 'addFactory',
-                [new Reference($serviceName)]
+                [new Reference($serviceName)],
             );
         }
     }

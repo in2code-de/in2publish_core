@@ -18,13 +18,13 @@
 
     /**************************************************** Instances ***************************************************/
     $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Component\ConfigContainer\ConfigContainer::class
+        \In2code\In2publishCore\Component\ConfigContainer\ConfigContainer::class,
     );
     $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Service\Context\ContextService::class
+        \In2code\In2publishCore\Service\Context\ContextService::class,
     );
     $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Core\Imaging\IconRegistry::class
+        \TYPO3\CMS\Core\Imaging\IconRegistry::class,
     );
     $isForeign = $contextService->isForeign();
 
@@ -52,7 +52,7 @@
                 'access' => 'user,group',
                 'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Overview.svg',
                 'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod1.xlf',
-            ]
+            ],
         );
     }
     if ($configContainer->get('module.m3')) {
@@ -68,7 +68,7 @@
                 'access' => 'user,group',
                 'icon' => 'EXT:in2publish_core/Resources/Public/Icons/File.svg',
                 'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod3.xlf',
-            ]
+            ],
         );
     }
 
@@ -78,7 +78,7 @@
         $iconRegistry->registerIcon(
             'tx_in2publishcore_contextmenupublishentry_publish',
             \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-            ['source' => 'EXT:in2publish_core/Resources/Public/Icons/Publish.svg']
+            ['source' => 'EXT:in2publish_core/Resources/Public/Icons/Publish.svg'],
         );
     }
 
@@ -122,7 +122,7 @@
                 'access' => 'user,group',
                 'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Redirect.svg',
                 'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod5.xlf',
-            ]
+            ],
         );
     }
 })();

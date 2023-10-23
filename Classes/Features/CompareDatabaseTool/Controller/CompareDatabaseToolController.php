@@ -122,8 +122,8 @@ class CompareDatabaseToolController extends ActionController
                                           ->where(
                                               $localQuery->expr()->andX(
                                                   $localQuery->expr()->gte('uid', $offset),
-                                                  $localQuery->expr()->lt('uid', $limit)
-                                              )
+                                                  $localQuery->expr()->lt('uid', $limit),
+                                              ),
                                           )
                                           ->execute();
                 $localRows = array_column($localResult->fetchAllAssociative(), null, 'uid');
@@ -133,8 +133,8 @@ class CompareDatabaseToolController extends ActionController
                                               ->where(
                                                   $foreignQuery->expr()->andX(
                                                       $foreignQuery->expr()->gte('uid', $offset),
-                                                      $foreignQuery->expr()->lt('uid', $limit)
-                                                  )
+                                                      $foreignQuery->expr()->lt('uid', $limit),
+                                                  ),
                                               )
                                               ->execute();
                 $foreignRows = array_column($foreignResult->fetchAllAssociative(), null, 'uid');
@@ -206,7 +206,7 @@ class CompareDatabaseToolController extends ActionController
             $this->addFlashMessage(
                 LocalizationUtility::translate('compare_database.transfer.record_missing', 'in2publish_core'),
                 LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                AbstractMessage::ERROR
+                AbstractMessage::ERROR,
             );
             $this->redirect('index');
         }
@@ -216,7 +216,7 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate('compare_database.transfer.exists_on_foreign', 'in2publish_core'),
                     LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                    AbstractMessage::ERROR
+                    AbstractMessage::ERROR,
                 );
                 $this->redirect('index');
             }
@@ -229,9 +229,9 @@ class CompareDatabaseToolController extends ActionController
                     LocalizationUtility::translate(
                         'compare_database.transfer.deleted_from_foreign',
                         'in2publish_core',
-                        [$table, $uid]
+                        [$table, $uid],
                     ),
-                    LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core')
+                    LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core'),
                 );
             }
         }
@@ -241,7 +241,7 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate('compare_database.transfer.exists_on_local', 'in2publish_core'),
                     LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                    AbstractMessage::ERROR
+                    AbstractMessage::ERROR,
                 );
                 $this->redirect('index');
             }
@@ -254,9 +254,9 @@ class CompareDatabaseToolController extends ActionController
                     LocalizationUtility::translate(
                         'compare_database.transfer.transferred_to_foreign',
                         'in2publish_core',
-                        [$table, $uid]
+                        [$table, $uid],
                     ),
-                    LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core')
+                    LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core'),
                 );
             }
         }
@@ -266,10 +266,10 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
                         'compare_database.transfer.does_not_exists_on_both',
-                        'in2publish_core'
+                        'in2publish_core',
                     ),
                     LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                    AbstractMessage::ERROR
+                    AbstractMessage::ERROR,
                 );
                 $this->redirect('index');
             }
@@ -287,9 +287,9 @@ class CompareDatabaseToolController extends ActionController
                     LocalizationUtility::translate(
                         'compare_database.transfer.updated_on_foreign',
                         'in2publish_core',
-                        [$table, $uid]
+                        [$table, $uid],
                     ),
-                    LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core')
+                    LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core'),
                 );
             }
         }

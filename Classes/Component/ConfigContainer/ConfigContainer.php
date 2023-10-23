@@ -293,7 +293,7 @@ class ConfigContainer implements SingletonInterface
         $cloned->definers = array_combine(array_keys($this->definers), array_fill(0, count($this->definers), null));
         $cloned->postProcessors = array_combine(
             array_keys($this->postProcessors),
-            array_fill(0, count($this->postProcessors), null)
+            array_fill(0, count($this->postProcessors), null),
         );
         $fullConfig = $cloned->get();
 

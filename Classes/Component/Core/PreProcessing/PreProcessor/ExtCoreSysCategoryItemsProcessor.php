@@ -28,7 +28,7 @@ class ExtCoreSysCategoryItemsProcessor extends AbstractProcessor
     {
         return new ProcessingResult(
             ProcessingResult::INCOMPATIBLE,
-            'The field items is configured as owning side but actually is the foreign side. Relations will be resolved from the records which are categorized.'
+            'The field items is configured as owning side but actually is the foreign side. Relations will be resolved from the records which are categorized.',
         );
     }
 

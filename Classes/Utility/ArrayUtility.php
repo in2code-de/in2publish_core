@@ -96,7 +96,7 @@ class ArrayUtility
         } elseif (!is_array($path)) {
             throw new InvalidArgumentException(
                 'getValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.',
-                1495098452
+                1495098452,
             );
         }
         $key = array_shift($path);

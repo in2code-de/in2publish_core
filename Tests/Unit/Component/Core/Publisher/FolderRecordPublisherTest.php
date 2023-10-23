@@ -46,7 +46,7 @@ class FolderRecordPublisherTest extends UnitTestCase
         $deletedFolder->method('getClassification')->willReturn('_folder');
         $deletedFolder->method('getState')->willReturn(Record::S_DELETED);
         $deletedFolder->method('getForeignProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar']
+            ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar'],
         );
 
         $reflectionProperty = new \ReflectionProperty($folderRecordPublisher, 'requestToken');
@@ -62,7 +62,7 @@ class FolderRecordPublisherTest extends UnitTestCase
                 'identifier' => $deletedFolder->getForeignProps()['combinedIdentifier'],
                 'identifier_hash' => '',
                 'folder_action' => $folderRecordPublisher::A_DELETE,
-            ]
+            ],
         );
         $folderRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -80,7 +80,7 @@ class FolderRecordPublisherTest extends UnitTestCase
         $addedFolder->method('getClassification')->willReturn('_folder');
         $addedFolder->method('getState')->willReturn(Record::S_ADDED);
         $addedFolder->method('getLocalProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar']
+            ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar'],
         );
         $addedFolder->method('getForeignProps')->willReturn([]);
 
@@ -97,7 +97,7 @@ class FolderRecordPublisherTest extends UnitTestCase
                 'identifier' => $addedFolder->getLocalProps()['combinedIdentifier'],
                 'identifier_hash' => '',
                 'folder_action' => $folderRecordPublisher::A_INSERT,
-            ]
+            ],
         );
         $folderRecordPublisher->injectForeignDatabase($foreignDatabase);
 

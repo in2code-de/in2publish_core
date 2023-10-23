@@ -41,7 +41,7 @@ class TextResolverTest extends UnitTestCase
             1,
             ['header_link' => 't3://page?uid=1 t3://page?uid=2 t3://file?uid=3'],
             [],
-            []
+            [],
         );
         $textResolver->resolve($demands, $databaseRecord);
 

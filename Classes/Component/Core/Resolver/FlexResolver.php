@@ -59,13 +59,13 @@ class FlexResolver extends AbstractResolver
             ['config' => $this->processedTca],
             $this->table,
             $this->column,
-            $record->getLocalProps() ?: $record->getForeignProps()
+            $record->getLocalProps() ?: $record->getForeignProps(),
         );
         $dataStructureIdentifier = json_decode(
             $dataStructureIdentifierJson,
             true,
             512,
-            JSON_THROW_ON_ERROR
+            JSON_THROW_ON_ERROR,
         );
         if (empty($dataStructureIdentifier['dataStructureKey'])) {
             return;

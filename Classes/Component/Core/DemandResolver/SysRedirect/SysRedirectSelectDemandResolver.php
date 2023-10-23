@@ -86,7 +86,7 @@ class SysRedirectSelectDemandResolver implements DemandResolver
                         $table,
                         $uid,
                         $row['local'],
-                        $row['foreign']
+                        $row['foreign'],
                     );
                     if (null === $record) {
                         continue;

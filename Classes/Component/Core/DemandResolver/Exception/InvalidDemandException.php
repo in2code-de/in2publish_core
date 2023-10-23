@@ -58,7 +58,7 @@ class InvalidDemandException extends In2publishCoreException
         parent::__construct(
             sprintf(self::MESSAGE, get_class($previous), $previous->getPrevious()->getMessage(), $callerString),
             self::CODE,
-            $previous
+            $previous,
         );
     }
 

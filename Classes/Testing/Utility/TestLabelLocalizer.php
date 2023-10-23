@@ -43,7 +43,7 @@ class TestLabelLocalizer
             $label = (string)LocalizationUtility::translate(
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:' . $key,
                 'in2publish_core',
-                $arguments
+                $arguments,
             );
         }
         return !empty($label) ? $label : $key;

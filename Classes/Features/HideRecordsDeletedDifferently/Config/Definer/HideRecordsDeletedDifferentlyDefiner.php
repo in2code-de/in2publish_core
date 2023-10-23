@@ -44,8 +44,8 @@ class HideRecordsDeletedDifferentlyDefiner implements DefinerInterface
                                  ->addArray(
                                      'hideRecordsDeletedDifferently',
                                      Builder::start()
-                                            ->addBoolean('enable', true)
-                                 )
+                                            ->addBoolean('enable', true),
+                                 ),
                       )
                       ->end();
     }
