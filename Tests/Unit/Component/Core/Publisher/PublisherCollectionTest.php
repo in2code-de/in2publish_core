@@ -15,6 +15,7 @@ use In2code\In2publishCore\Component\Core\Publisher\TransactionalPublisher;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\PublisherCollection
@@ -27,7 +28,7 @@ class PublisherCollectionTest extends UnitTestCase
     public function testAddPublisherAddsPublisher()
     {
         $publisherCollection = new PublisherCollection();
-        $reflectionPropertyPublishers = new \ReflectionProperty($publisherCollection, 'publishers');
+        $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
         $reflectionPropertyPublishers->setAccessible(true);
 
         $maxPublisherCount = 64;
@@ -50,7 +51,7 @@ class PublisherCollectionTest extends UnitTestCase
     public function testAddPublisherSortsPublishersCorrectly()
     {
         $publisherCollection = new PublisherCollection();
-        $reflectionPropertyPublishers = new \ReflectionProperty($publisherCollection, 'publishers');
+        $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
         $reflectionPropertyPublishers->setAccessible(true);
 
         $standardPublisher = $this->createMock(Publisher::class);
@@ -83,7 +84,7 @@ class PublisherCollectionTest extends UnitTestCase
     public function testPublishIsCalledByTheFirstPublisherThatCanPublishARecord()
     {
         $publisherCollection = new PublisherCollection();
-        $reflectionPropertyPublishers = new \ReflectionProperty($publisherCollection, 'publishers');
+        $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
         $reflectionPropertyPublishers->setAccessible(true);
 
         $dbRecord = $this->createMock(DatabaseRecord::class);

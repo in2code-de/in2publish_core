@@ -9,6 +9,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Resolver\SelectResolver
@@ -21,7 +22,7 @@ class SelectResolverTest extends UnitTestCase
     public function testGetTargetTables(): void
     {
         $selectResolver = new SelectResolver();
-        $foreignTable = new \ReflectionProperty(SelectResolver::class, 'foreignTable');
+        $foreignTable = new ReflectionProperty(SelectResolver::class, 'foreignTable');
         $foreignTable->setAccessible(true);
 
         $selectResolver->configure(
@@ -39,11 +40,11 @@ class SelectResolverTest extends UnitTestCase
     public function testConfigure(): void
     {
         $selectResolver = new SelectResolver();
-        $column = new \ReflectionProperty(SelectResolver::class, 'column');
+        $column = new ReflectionProperty(SelectResolver::class, 'column');
         $column->setAccessible(true);
-        $foreignTable = new \ReflectionProperty(SelectResolver::class, 'foreignTable');
+        $foreignTable = new ReflectionProperty(SelectResolver::class, 'foreignTable');
         $foreignTable->setAccessible(true);
-        $foreignTableWhere = new \ReflectionProperty(SelectResolver::class, 'foreignTableWhere');
+        $foreignTableWhere = new ReflectionProperty(SelectResolver::class, 'foreignTableWhere');
         $foreignTableWhere->setAccessible(true);
 
         $selectResolver->configure(

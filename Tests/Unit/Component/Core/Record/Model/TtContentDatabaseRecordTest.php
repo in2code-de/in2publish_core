@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Model;
 use In2code\In2publishCore\Component\Core\Record\Model\Dependency;
 use In2code\In2publishCore\Component\Core\Record\Model\TtContentDatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\TtContentDatabaseRecord
@@ -37,7 +38,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         $this->assertSame(['prop2' => 'value2'], $ttContentDatabaseRecord->getForeignProps());
         $this->assertSame([], $ttContentDatabaseRecord->getDependencies());
 
-        $reflectionProperty = new \ReflectionProperty(TtContentDatabaseRecord::class, 'ignoredProps');
+        $reflectionProperty = new ReflectionProperty(TtContentDatabaseRecord::class, 'ignoredProps');
         $reflectionProperty->setAccessible(true);
         $this->assertSame(['prop3' => 'value3'], $reflectionProperty->getValue($ttContentDatabaseRecord));
     }

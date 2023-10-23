@@ -9,6 +9,8 @@ use In2code\In2publishCore\Component\Core\Record\Model\Dependency;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionMethod;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\Dependency
@@ -61,7 +63,7 @@ class DependencyTest extends UnitTestCase
             },
         );
         $dependency->addSupersedingDependency($supersedingDependency);
-        $reflectionProperty = new \ReflectionProperty(Dependency::class, 'supersededBy');
+        $reflectionProperty = new ReflectionProperty(Dependency::class, 'supersededBy');
         $reflectionProperty->setAccessible(true);
         $this->assertSame(
             [$supersedingDependency],
@@ -132,7 +134,7 @@ class DependencyTest extends UnitTestCase
         // assert
         $this->assertFalse($dependency->isFulfilled());
 
-        $reflectionProperty = new \ReflectionProperty(Dependency::class, 'reasons');
+        $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
         $reflectionProperty->setAccessible(true);
         $reasons = $reflectionProperty->getValue($dependency);
 
@@ -173,7 +175,7 @@ class DependencyTest extends UnitTestCase
         // assert
         $this->assertTrue($dependency->isFulfilled());
 
-        $reflectionProperty = new \ReflectionProperty(Dependency::class, 'reasons');
+        $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
         $reflectionProperty->setAccessible(true);
         $reasons = $reflectionProperty->getValue($dependency);
 
@@ -213,7 +215,7 @@ class DependencyTest extends UnitTestCase
         // assert
         $this->assertFalse($dependency->isFulfilled());
 
-        $reflectionProperty = new \ReflectionProperty(Dependency::class, 'reasons');
+        $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
         $reflectionProperty->setAccessible(true);
         $reasons = $reflectionProperty->getValue($dependency);
         $expectedReasonLabel = 'Label for my dependency';
@@ -256,16 +258,16 @@ class DependencyTest extends UnitTestCase
         $dependency2->method('isFulfilled')->willReturn(true);
         $dependency3->method('isFulfilled')->willReturn(false);
 
-        $fulfilledSupersedingDependencies = new \ReflectionProperty($dependencyWithFulfilledDependencies, 'supersededBy');
+        $fulfilledSupersedingDependencies = new ReflectionProperty($dependencyWithFulfilledDependencies, 'supersededBy');
         $fulfilledSupersedingDependencies->setAccessible(true);
         $fulfilledSupersedingDependencies->setValue($dependencyWithFulfilledDependencies, [$dependency1, $dependency2]);
 
-        $unfulfilledSupersedingDependencies = new \ReflectionProperty($dependencyWithUnfulfilledDependencies, 'supersededBy');
+        $unfulfilledSupersedingDependencies = new ReflectionProperty($dependencyWithUnfulfilledDependencies, 'supersededBy');
         $unfulfilledSupersedingDependencies->setAccessible(true);
         $unfulfilledSupersedingDependencies->setValue($dependencyWithUnfulfilledDependencies, [$dependency2, $dependency3]);
 
-        $testMethodUnfulfilled = new \ReflectionMethod($dependencyWithUnfulfilledDependencies, 'areSupersededDependenciesFulfilled');
-        $testMethodFulfilled = new \ReflectionMethod($dependencyWithFulfilledDependencies, 'areSupersededDependenciesFulfilled');
+        $testMethodUnfulfilled = new ReflectionMethod($dependencyWithUnfulfilledDependencies, 'areSupersededDependenciesFulfilled');
+        $testMethodFulfilled = new ReflectionMethod($dependencyWithFulfilledDependencies, 'areSupersededDependenciesFulfilled');
 
         // act
         $testMethodUnfulfilled->setAccessible(true);

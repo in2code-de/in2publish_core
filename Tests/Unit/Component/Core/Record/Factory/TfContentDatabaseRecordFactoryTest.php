@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Factory;
 use In2code\In2publishCore\Component\Core\Record\Factory\TtContentDatabaseRecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Model\TtContentDatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Factory\TtContentDatabaseRecordFactory
@@ -39,7 +40,7 @@ class TfContentDatabaseRecordFactoryTest extends UnitTestCase
             ['bar' => 'foo'],
             [],
         );
-        $reflectionProperty = new \ReflectionProperty($databaseRecord, 'ignoredProps');
+        $reflectionProperty = new ReflectionProperty($databaseRecord, 'ignoredProps');
         $reflectionProperty->setAccessible(true);
         $ignoredProps = $reflectionProperty->getValue($databaseRecord);
 

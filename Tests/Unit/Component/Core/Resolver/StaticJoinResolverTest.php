@@ -8,6 +8,7 @@ use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver
@@ -20,10 +21,10 @@ class StaticJoinResolverTest extends UnitTestCase
     public function testConfigure(): void
     {
         $staticJoinResolver = new StaticJoinResolver();
-        $mmTable = new \ReflectionProperty(StaticJoinResolver::class, 'mmTable');
-        $joinTable = new \ReflectionProperty(StaticJoinResolver::class, 'joinTable');
-        $additionalWhere = new \ReflectionProperty(StaticJoinResolver::class, 'additionalWhere');
-        $property = new \ReflectionProperty(StaticJoinResolver::class, 'property');
+        $mmTable = new ReflectionProperty(StaticJoinResolver::class, 'mmTable');
+        $joinTable = new ReflectionProperty(StaticJoinResolver::class, 'joinTable');
+        $additionalWhere = new ReflectionProperty(StaticJoinResolver::class, 'additionalWhere');
+        $property = new ReflectionProperty(StaticJoinResolver::class, 'property');
         $mmTable->setAccessible(true);
         $joinTable->setAccessible(true);
         $additionalWhere->setAccessible(true);

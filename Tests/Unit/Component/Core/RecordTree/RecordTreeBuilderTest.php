@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\RecordTree;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
+use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
@@ -19,7 +20,6 @@ use In2code\In2publishCore\Component\Core\Service\RelevantTablesService;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
-use In2code\In2publishCore\Component\Core\Demand\Demands;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder

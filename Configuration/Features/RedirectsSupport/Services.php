@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use In2code\In2publishCore\Event\RecordWasPublished;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
+use In2code\In2publishCore\Event\RecordWasPublished;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater;

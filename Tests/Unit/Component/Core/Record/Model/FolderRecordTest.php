@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Model;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use LogicException;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\FolderRecord
@@ -30,7 +31,7 @@ class FolderRecordTest extends UnitTestCase
         $this->assertSame([], $folderRecord->getForeignProps());
         $this->assertSame(FolderRecord::CLASSIFICATION, $folderRecord->getClassification());
 
-        $this->expectExceptionObject(new \LogicException('NOT IMPLEMENTED'));
+        $this->expectExceptionObject(new LogicException('NOT IMPLEMENTED'));
         $folderRecord->getForeignIdentificationProps();
     }
 

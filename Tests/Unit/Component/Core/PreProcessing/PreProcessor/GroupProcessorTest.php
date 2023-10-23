@@ -11,6 +11,7 @@ use In2code\In2publishCore\Component\Core\Resolver\GroupMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionMethod;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
@@ -361,7 +362,7 @@ class GroupProcessorTest extends UnitTestCase
         $groupProcessor = new GroupProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
-        $reflectionMethod = new \ReflectionMethod(GroupProcessor::class, 'isSingleTable');
+        $reflectionMethod = new ReflectionMethod(GroupProcessor::class, 'isSingleTable');
         $reflectionMethod->setAccessible(true);
 
         $allowedTables = 'table1';

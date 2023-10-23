@@ -13,6 +13,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 
@@ -54,7 +55,7 @@ class FileRecordPublisherTest extends UnitTestCase
             ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz'],
         );
 
-        $reflectionProperty = new \ReflectionProperty($fileRecordPublisher, 'requestToken');
+        $reflectionProperty = new ReflectionProperty($fileRecordPublisher, 'requestToken');
         $reflectionProperty->setAccessible(true);
 
         $foreignDatabase->expects($this->once())->method('insert')->with(
@@ -100,7 +101,7 @@ class FileRecordPublisherTest extends UnitTestCase
             ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz'],
         );
 
-        $reflectionProperty = new \ReflectionProperty($fileRecordPublisher, 'requestToken');
+        $reflectionProperty = new ReflectionProperty($fileRecordPublisher, 'requestToken');
         $reflectionProperty->setAccessible(true);
 
         $foreignDatabase->expects($this->once())->method('insert')->with(
@@ -153,7 +154,7 @@ class FileRecordPublisherTest extends UnitTestCase
             ['storage' => 2, 'identifier' => 'bar2', 'identifier_hash' => 'baz2'],
         );
 
-        $reflectionProperty = new \ReflectionProperty($fileRecordPublisher, 'requestToken');
+        $reflectionProperty = new ReflectionProperty($fileRecordPublisher, 'requestToken');
         $reflectionProperty->setAccessible(true);
 
         $foreignDatabase->expects($this->once())->method('insert')->with(
@@ -195,7 +196,7 @@ class FileRecordPublisherTest extends UnitTestCase
             ['storage' => 1, 'identifier' => 'bar_foreign', 'identifier_hash' => 'baz_foreign'],
         );
 
-        $reflectionProperty = new \ReflectionProperty($fileRecordPublisher, 'requestToken');
+        $reflectionProperty = new ReflectionProperty($fileRecordPublisher, 'requestToken');
         $reflectionProperty->setAccessible(true);
 
         $foreignDatabase->expects($this->once())->method('insert')->with(

@@ -8,6 +8,7 @@ use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\Exception\MissingDatabaseRecordFactoryException;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory
@@ -33,7 +34,7 @@ class DatabaseRecordFactoryFactoryTest extends UnitTestCase
         $factoryFactory->addFactory($factory2);
         $factoryFactory->addFactory($factory3);
 
-        $reflectionProperty = new \ReflectionProperty(DatabaseRecordFactoryFactory::class, 'factories');
+        $reflectionProperty = new ReflectionProperty(DatabaseRecordFactoryFactory::class, 'factories');
         $reflectionProperty->setAccessible(true);
         $factories = $reflectionProperty->getValue($factoryFactory);
         $expectedFactoryOrder = [

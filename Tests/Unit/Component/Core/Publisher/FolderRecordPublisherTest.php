@@ -10,6 +10,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Database\Connection;
 
 /**
@@ -49,7 +50,7 @@ class FolderRecordPublisherTest extends UnitTestCase
             ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar'],
         );
 
-        $reflectionProperty = new \ReflectionProperty($folderRecordPublisher, 'requestToken');
+        $reflectionProperty = new ReflectionProperty($folderRecordPublisher, 'requestToken');
         $reflectionProperty->setAccessible(true);
 
         $foreignDatabase->expects($this->once())->method('insert')->with(
@@ -84,7 +85,7 @@ class FolderRecordPublisherTest extends UnitTestCase
         );
         $addedFolder->method('getForeignProps')->willReturn([]);
 
-        $reflectionProperty = new \ReflectionProperty($folderRecordPublisher, 'requestToken');
+        $reflectionProperty = new ReflectionProperty($folderRecordPublisher, 'requestToken');
         $reflectionProperty->setAccessible(true);
 
         $foreignDatabase->expects($this->once())->method('insert')->with(
