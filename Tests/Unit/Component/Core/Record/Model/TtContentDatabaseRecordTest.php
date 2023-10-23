@@ -75,7 +75,7 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         $this->assertSame(42, $recordWithinDependency->getId());
         $this->assertSame(
             ['CType' => 'shortcut', 'records' => 'table_bar_1, table_bar_2'],
-            $recordWithinDependency->getLocalProps()
+            $recordWithinDependency->getLocalProps(),
         );
 
         $recordWithinDependencyLevel2 = $recordWithinDependency->getDependencies()[0];

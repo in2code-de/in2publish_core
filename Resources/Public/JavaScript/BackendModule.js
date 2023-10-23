@@ -300,7 +300,7 @@ define([
 		const type = target.dataset.type;
 		const severity = parseInt(target.dataset.severity || '0');
 		let actionButtonClass = 'btn-default';
-		switch(severity) {
+		switch (severity) {
 			/*
 			 * TYPO3.Severity.error = 2
 			 * TYPO3.Severity.warning = 1

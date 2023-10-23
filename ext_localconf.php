@@ -81,7 +81,9 @@
     ];
 
     /**************************************** Register Config Definer/Provider ****************************************/
-    $configContainer->registerDefiner(\In2code\In2publishCore\Component\ConfigContainer\Definer\In2publishCoreDefiner::class);
+    $configContainer->registerDefiner(
+        \In2code\In2publishCore\Component\ConfigContainer\Definer\In2publishCoreDefiner::class,
+    );
     $configContainer->registerDefiner(
         \In2code\In2publishCore\Features\WarningOnForeign\Config\Definer\WarningOnForeignDefiner::class,
     );
@@ -93,16 +95,28 @@
         || 'ssh' === $remoteAdapterRegistry->getSelectedAdapter()
         || 'ssh' === $transmissionAdapterRegistry->getSelectedAdapter()
     ) {
-        $configContainer->registerDefiner(\In2code\In2publishCore\Component\ConfigContainer\Definer\SshConnectionDefiner::class);
+        $configContainer->registerDefiner(
+            \In2code\In2publishCore\Component\ConfigContainer\Definer\SshConnectionDefiner::class,
+        );
     }
-    $configContainer->registerDefiner(\In2code\In2publishCore\Features\HideRecordsDeletedDifferently\Config\Definer\HideRecordsDeletedDifferentlyDefiner::class);
+    $configContainer->registerDefiner(
+        \In2code\In2publishCore\Features\HideRecordsDeletedDifferently\Config\Definer\HideRecordsDeletedDifferentlyDefiner::class,
+    );
 
-    $configContainer->registerProvider(\In2code\In2publishCore\Component\ConfigContainer\Provider\DefaultProvider::class);
+    $configContainer->registerProvider(
+        \In2code\In2publishCore\Component\ConfigContainer\Provider\DefaultProvider::class,
+    );
     $configContainer->registerProvider(\In2code\In2publishCore\Component\ConfigContainer\Provider\FileProvider::class);
-    $configContainer->registerProvider(\In2code\In2publishCore\Component\ConfigContainer\Provider\PageTsProvider::class);
-    $configContainer->registerProvider(\In2code\In2publishCore\Component\ConfigContainer\Provider\VersionedFileProvider::class);
+    $configContainer->registerProvider(
+        \In2code\In2publishCore\Component\ConfigContainer\Provider\PageTsProvider::class,
+    );
+    $configContainer->registerProvider(
+        \In2code\In2publishCore\Component\ConfigContainer\Provider\VersionedFileProvider::class,
+    );
     if (!$extConf['disableUserConfig']) {
-        $configContainer->registerProvider(\In2code\In2publishCore\Component\ConfigContainer\Provider\UserTsProvider::class);
+        $configContainer->registerProvider(
+            \In2code\In2publishCore\Component\ConfigContainer\Provider\UserTsProvider::class,
+        );
     }
     $configContainer->registerPostProcessor(
         \In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValuesPostProcessor::class,
@@ -117,8 +131,8 @@
     );
 
     $configContainer->registerMigration(
-        \In2code\In2publishCore\Component\ConfigContainer\Migration\IngoredFieldsMigration::class);
-
+        \In2code\In2publishCore\Component\ConfigContainer\Migration\IngoredFieldsMigration::class,
+    );
 
     /******************************************** Configure Compare Plugin ********************************************/
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(

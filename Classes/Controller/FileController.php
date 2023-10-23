@@ -182,7 +182,10 @@ class FileController extends ActionController
             $this->publisherService->publishRecordTree($recordTree);
             if (!$skipNotification) {
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$combinedIdentifier],
+                    LocalizationUtility::translate(
+                        'file_publishing.file',
+                        'in2publish_core',
+                        [$combinedIdentifier],
                     ),
                     LocalizationUtility::translate('file_publishing.success', 'in2publish_core'),
                 );

@@ -19,7 +19,6 @@ use function hash;
  */
 class FileDemandResolverTest extends UnitTestCase
 {
-
     /**
      * @covers ::resolveDemand
      */

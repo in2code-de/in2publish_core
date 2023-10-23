@@ -7,7 +7,7 @@
 >
     <description>PHPMD rules</description>
 
-    <rule ref="rulesets/codesize.xml" />
+    <rule ref="rulesets/codesize.xml"/>
     <rule ref="rulesets/cleancode.xml">
         <exclude name="ElseExpression"/>
         <exclude name="StaticAccess"/>
@@ -15,12 +15,12 @@
     <rule ref="rulesets/controversial.xml">
         <exclude name="Superglobals"/>
     </rule>
-    <rule ref="rulesets/design.xml" />
+    <rule ref="rulesets/design.xml"/>
     <rule ref="rulesets/naming.xml">
         <exclude name="LongVariable"/>
         <exclude name="ShortVariable"/>
     </rule>
-    <rule ref="rulesets/unusedcode.xml" />
+    <rule ref="rulesets/unusedcode.xml"/>
 
     <rule ref="rulesets/cleancode.xml/StaticAccess">
         <properties>

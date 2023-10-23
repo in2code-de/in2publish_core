@@ -44,7 +44,6 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
     use ForeignSiteFinderInjection;
 
     protected ResourceFactory $resourceFactory;
-
     /** @var Uri[] */
     protected array $domains;
 

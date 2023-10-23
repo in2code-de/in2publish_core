@@ -51,5 +51,4 @@ class DefaultDatabaseRecordFactoryTest extends UnitTestCase
         $this->assertSame(['bar' => 'foo'], $databaseRecord->getForeignProps());
         $this->assertSame([], $ignoredProps);
     }
-
 }

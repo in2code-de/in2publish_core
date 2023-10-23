@@ -117,7 +117,12 @@ class ForeignInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.different_t3_versions',
                 TestResult::ERROR,
-                ['application.local_t3_versions', $localT3Version, 'application.foreign_t3_versions', $foreign['TYPO3']],
+                [
+                    'application.local_t3_versions',
+                    $localT3Version,
+                    'application.foreign_t3_versions',
+                    $foreign['TYPO3'],
+                ],
             );
         }
 
