@@ -53,7 +53,11 @@ use function asort;
 use function count;
 use function explode;
 use function is_array;
+use function json_encode;
+use function sha1;
 use function trim;
+
+use const JSON_THROW_ON_ERROR;
 
 class ConfigContainer implements SingletonInterface
 {
@@ -70,6 +74,7 @@ class ConfigContainer implements SingletonInterface
     /** @var array<class-string<MigrationInterface>, MigrationInterface|null> */
     protected array $migrations = [];
     protected ?array $config = null;
+    protected array $incompleteConfig = [];
     /** @var NodeCollection[]|null[] */
     protected array $definition = [
         'local' => null,
@@ -116,7 +121,7 @@ class ConfigContainer implements SingletonInterface
             }
         }
 
-        $config = $this->processConfig($priority);
+        $config = $this->processConfig($priority, $complete);
 
         if (true === $complete) {
             $this->config = $config;
@@ -144,7 +149,7 @@ class ConfigContainer implements SingletonInterface
             $priority[$class] = $provider->getPriority();
         }
 
-        return $this->processConfig($priority);
+        return $this->processConfig($priority, false);
     }
 
     /**
@@ -152,26 +157,26 @@ class ConfigContainer implements SingletonInterface
      *
      * @return array|array[]|bool[]|int[]|string[] Sorted, merged and type cast configuration.
      */
-    protected function processConfig(array $priority): array
+    protected function processConfig(array $priority, bool $complete): array
     {
         asort($priority);
 
-        $config = [];
-        foreach (array_keys($priority) as $class) {
-            $providerConfig = $this->providerConfig[$class] ?? null;
-            if (null !== $providerConfig) {
-                $config = ConfigurationUtility::mergeConfiguration($config, $providerConfig);
+        if (!$complete) {
+            $processedConfigKey = sha1(json_encode($priority, JSON_THROW_ON_ERROR));
+            if (array_key_exists($processedConfigKey, $this->incompleteConfig)) {
+                return $this->incompleteConfig[$processedConfigKey];
             }
         }
 
-        foreach ($this->postProcessors as $class => $object) {
-            if (null === $object) {
-                $object = GeneralUtility::makeInstance($class);
-                $this->postProcessors[$class] = $object;
-            }
-            if ($object instanceof PostProcessorInterface) {
-                $config = $object->process($config);
-            }
+        $config = [];
+        foreach (array_keys($priority) as $class) {
+            $config = ConfigurationUtility::mergeConfiguration($config, $this->providerConfig[$class] ?? []);
+        }
+
+        $this->initializePostProcessorObjects();
+
+        foreach (array_filter($this->postProcessors) as $object) {
+            $config = $object->process($config);
         }
 
         $config = $this->migrateConfig($config);
@@ -182,16 +187,20 @@ class ConfigContainer implements SingletonInterface
             $config = $this->getForeignDefinition()->cast($config);
         }
 
+        // Remove previous caches or all if complete
+        $this->incompleteConfig = [];
+        if (!$complete) {
+            $this->incompleteConfig[$processedConfigKey] = $config;
+        }
+
         return $config;
     }
 
     protected function migrateConfig(array $config): array
     {
-        foreach ($this->migrations as $class => $migration) {
-            if (null === $migration) {
-                $this->migrations[$class] = $migration = GeneralUtility::makeInstance($class);
-            }
+        $this->initializeMigrationObjects();
 
+        foreach (array_filter($this->migrations) as $migration) {
             $config = $migration->migrate($config);
         }
         return $config;
@@ -264,11 +273,10 @@ class ConfigContainer implements SingletonInterface
 
     public function getMigrationMessages(): array
     {
+        $this->initializeMigrationObjects();
+
         $messages = [];
-        foreach ($this->migrations as $class => $migration) {
-            if (null === $migration) {
-                $this->migrations[$class] = $migration = GeneralUtility::makeInstance($class);
-            }
+        foreach (array_filter($this->migrations) as $migration) {
             $messages[] = $migration->getMessages();
         }
         return array_merge([], ...$messages);
@@ -338,13 +346,36 @@ class ConfigContainer implements SingletonInterface
                 $definer = GeneralUtility::makeInstance($class);
                 $this->definers[$class] = false;
                 if ($definer instanceof DefinerInterface) {
-                    if (
-                        $definer instanceof ConditionalDefinerInterface
-                        && !$definer->isEnabled()
-                    ) {
+                    if ($definer instanceof ConditionalDefinerInterface && !$definer->isEnabled()) {
                         continue;
                     }
                     $this->definers[$class] = $definer;
+                }
+            }
+        }
+    }
+
+    protected function initializePostProcessorObjects(): void
+    {
+        foreach ($this->postProcessors as $class => $postProcessor) {
+            if (null === $postProcessor) {
+                $postProcessor = GeneralUtility::makeInstance($class);
+                $this->postProcessors[$class] = false;
+                if ($postProcessor instanceof PostProcessorInterface) {
+                    $this->postProcessors[$class] = $postProcessor;
+                }
+            }
+        }
+    }
+
+    protected function initializeMigrationObjects(): void
+    {
+        foreach ($this->migrations as $class => $migration) {
+            if (null === $migration) {
+                $migration = GeneralUtility::makeInstance($class);
+                $this->migrations[$class] = false;
+                if ($migration instanceof MigrationInterface) {
+                    $this->migrations[$class] = $migration;
                 }
             }
         }
