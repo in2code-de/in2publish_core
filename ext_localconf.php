@@ -1,18 +1,11 @@
 <?php
 
 use In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtensionTrait;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistry;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\SshAdapter as RemoteCommandExecutionSshAdapter;
-use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter as TransmissionSshAdapter;
-use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistry;
 use In2code\In2publishCore\Controller\FrontendController;
 use In2code\In2publishCore\Log\Processor\BackendUserProcessor;
 use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
 use In2code\In2publishCore\Middleware\BackendRouteInitialization;
 use In2code\In2publishCore\Service\Context\ContextService;
-use In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest;
-use In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest;
-use In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Log\LogLevel;
@@ -60,8 +53,6 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
 
     /*********************************************** Settings/Instances ***********************************************/
     $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('in2publish_core');
-    $remoteAdapterRegistry = GeneralUtility::makeInstance(RemoteAdapterRegistry::class);
-    $transmissionAdapterRegistry = GeneralUtility::makeInstance(TransmissionAdapterRegistry::class);
 
     /************************************************** Init Caching **************************************************/
     if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'])) {
@@ -101,25 +92,4 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
         'dateField' => 'timestamp_begin',
         'expirePeriod' => 1,
     ];
-
-    /***************************************** Register Communication Adapter *****************************************/
-    $remoteAdapterRegistry->registerAdapter(
-        RemoteCommandExecutionSshAdapter::ADAPTER_KEY,
-        RemoteCommandExecutionSshAdapter::class,
-        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.remote.ssh',
-        [
-            SshFunctionAvailabilityTest::class,
-            SshConnectionTest::class,
-        ],
-    );
-    $transmissionAdapterRegistry->registerAdapter(
-        TransmissionSshAdapter::ADAPTER_KEY,
-        TransmissionSshAdapter::class,
-        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.transmission.ssh',
-        [
-            SshFunctionAvailabilityTest::class,
-            SshConnectionTest::class,
-            SftpRequirementsTest::class,
-        ],
-    );
 })();

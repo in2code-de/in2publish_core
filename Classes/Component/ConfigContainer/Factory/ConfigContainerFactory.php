@@ -55,10 +55,10 @@ class ConfigContainerFactory
         array $migrationServices,
         array $postProcessorServices
     ) {
-        $this->providerServices = $this->filterDisabledServices($providerServices, 'provider');
-        $this->definerServices = $this->filterDisabledServices($definerServices, 'definer');
-        $this->migrationServices = $this->filterDisabledServices($migrationServices, 'migration');
-        $this->postProcessorServices = $this->filterDisabledServices($postProcessorServices, 'postProcessor');
+        $this->providerServices = $providerServices;
+        $this->definerServices = $definerServices;
+        $this->migrationServices = $migrationServices;
+        $this->postProcessorServices = $postProcessorServices;
     }
 
     /**
@@ -84,10 +84,10 @@ class ConfigContainerFactory
     public function create(): ConfigContainer
     {
         return new ConfigContainer(
-            $this->providerServices,
-            $this->definerServices,
-            $this->migrationServices,
-            $this->postProcessorServices,
+            $this->filterDisabledServices($this->providerServices, 'provider'),
+            $this->filterDisabledServices($this->definerServices, 'definer'),
+            $this->filterDisabledServices($this->migrationServices, 'migration'),
+            $this->filterDisabledServices($this->postProcessorServices, 'postProcessor'),
         );
     }
 }
