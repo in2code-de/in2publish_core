@@ -349,6 +349,7 @@ define([
 					active: true,
 					trigger: function () {
 						Modal.currentModal.trigger('modal-dismiss');
+						In2publishCoreModule.hidePreLoader();
 					}
 				},
 				{
