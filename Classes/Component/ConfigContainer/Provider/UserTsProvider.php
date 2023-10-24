@@ -29,12 +29,20 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class UserTsProvider implements ProviderInterface, ContextualProvider
+class UserTsProvider implements ProviderInterface, ContextualProvider, ConditionalProviderInterface
 {
+    use ExtensionConfigurationInjection;
+
+    public function isEnabled(): bool
+    {
+        return !$this->extensionConfiguration->get('in2publish_core', 'disableUserConfig');
+    }
+
     public function isAvailable(): bool
     {
         return $this->getBackendUser() instanceof BackendUserAuthentication;

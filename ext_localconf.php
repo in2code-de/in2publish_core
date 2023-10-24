@@ -79,6 +79,7 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
     $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
     $remoteAdapterRegistry = GeneralUtility::makeInstance(RemoteAdapterRegistry::class);
     $transmissionAdapterRegistry = GeneralUtility::makeInstance(TransmissionAdapterRegistry::class);
+    $dynamicValueProviderRegistry = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class);
 
     /************************************************** Init Caching **************************************************/
     if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'])) {
@@ -115,15 +116,13 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
     $configContainer->registerProvider(FileProvider::class);
     $configContainer->registerProvider(PageTsProvider::class);
     $configContainer->registerProvider(VersionedFileProvider::class);
-    if (!$extConf['disableUserConfig']) {
-        $configContainer->registerProvider(UserTsProvider::class);
-    }
+    $configContainer->registerProvider(UserTsProvider::class);
+
     $configContainer->registerPostProcessor(DynamicValuesPostProcessor::class);
 
-    $dynamicValueProviderRegistry = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class);
-    $dynamicValueProviderRegistry->registerDynamicValue('env', EnvVarProvider::class);
-
     $configContainer->registerMigration(IngoredFieldsMigration::class);
+
+    $dynamicValueProviderRegistry->registerDynamicValue('env', EnvVarProvider::class);
 
     /******************************************** Configure Compare Plugin ********************************************/
     ExtensionUtility::configurePlugin(

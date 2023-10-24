@@ -35,6 +35,7 @@ use In2code\In2publishCore\Component\ConfigContainer\Migration\MigrationInterfac
 use In2code\In2publishCore\Component\ConfigContainer\Node\Node;
 use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\PostProcessorInterface;
+use In2code\In2publishCore\Component\ConfigContainer\Provider\ConditionalProviderInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ContextualProvider;
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderInterface;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
@@ -44,6 +45,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_combine;
 use function array_fill;
+use function array_filter;
 use function array_key_exists;
 use function array_keys;
 use function array_merge;
@@ -57,8 +59,11 @@ class ConfigContainer implements SingletonInterface
 {
     use ContextServiceInjection;
 
+    /** @var array<class-string<ProviderInterface>, ProviderInterface|null|false> */
     protected array $providers = [];
-    /** @var array<class-string<DefinerInterface>, DefinerInterface|null> */
+    /** @var array<class-string<ProviderInterface>, array> */
+    protected array $providerConfig = [];
+    /** @var array<class-string<DefinerInterface>, DefinerInterface|null|false> */
     protected array $definers = [];
     /** @var array<class-string<PostProcessorInterface>, PostProcessorInterface|null> */
     protected array $postProcessors = [];
@@ -96,25 +101,20 @@ class ConfigContainer implements SingletonInterface
         if (null !== $this->config) {
             return $this->config;
         }
+        $this->initializeProviderObjects();
+
         $complete = true;
         $priority = [];
-        foreach ($this->providers as $class => $config) {
-            $provider = GeneralUtility::makeInstance($class);
-            if ($provider instanceof ProviderInterface) {
-                if (null === $config) {
-                    if ($provider->isAvailable()) {
-                        $this->providers[$class] = $provider->getConfig();
-                        $priority[$class] = $provider->getPriority();
-                    } else {
-                        $complete = false;
-                    }
+        foreach (array_filter($this->providers) as $class => $provider) {
+            $priority[$class] = $provider->getPriority();
+            if (!array_key_exists($class, $this->providerConfig)) {
+                if ($provider->isAvailable()) {
+                    $this->providerConfig[$class] = $provider->getConfig();
                 } else {
-                    $priority[$class] = $provider->getPriority();
+                    $complete = false;
                 }
             }
         }
-
-        asort($priority);
 
         $config = $this->processConfig($priority);
 
@@ -131,19 +131,17 @@ class ConfigContainer implements SingletonInterface
      */
     public function getContextFreeConfig(): array
     {
+        $this->initializeProviderObjects();
+
         $priority = [];
-        foreach ($this->providers as $class => $config) {
-            $provider = GeneralUtility::makeInstance($class);
-            if ($provider instanceof ProviderInterface && !($provider instanceof ContextualProvider)) {
-                if (null === $config) {
-                    if ($provider->isAvailable()) {
-                        $this->providers[$class] = $provider->getConfig();
-                        $priority[$class] = $provider->getPriority();
-                    }
-                } else {
-                    $priority[$class] = $provider->getPriority();
-                }
+        foreach (array_filter($this->providers) as $class => $provider) {
+            if ($provider instanceof ContextualProvider) {
+                continue;
             }
+            if (!array_key_exists($class, $this->providerConfig) && $provider->isAvailable()) {
+                $this->providerConfig[$class] = $provider->getConfig();
+            }
+            $priority[$class] = $provider->getPriority();
         }
 
         return $this->processConfig($priority);
@@ -151,8 +149,6 @@ class ConfigContainer implements SingletonInterface
 
     /**
      * Applies the configuration of each provider in order of priority.
-     *
-     * @param array $priority
      *
      * @return array|array[]|bool[]|int[]|string[] Sorted, merged and type cast configuration.
      */
@@ -162,8 +158,10 @@ class ConfigContainer implements SingletonInterface
 
         $config = [];
         foreach (array_keys($priority) as $class) {
-            $providerConfig = $this->providers[$class];
-            $config = ConfigurationUtility::mergeConfiguration($config, $providerConfig);
+            $providerConfig = $this->providerConfig[$class] ?? null;
+            if (null !== $providerConfig) {
+                $config = ConfigurationUtility::mergeConfiguration($config, $providerConfig);
+            }
         }
 
         foreach ($this->postProcessors as $class => $object) {
@@ -201,18 +199,12 @@ class ConfigContainer implements SingletonInterface
 
     public function getLocalDefinition(string $path = ''): Node
     {
+        $this->initializeDefinerObjects();
+
         if (null === $this->definition['local']) {
             $definition = GeneralUtility::makeInstance(NodeCollection::class);
-            foreach ($this->definers as $class => $definer) {
-                if ($definer === null) {
-                    $this->definers[$class] = $definer = GeneralUtility::makeInstance($class);
-                }
-                if ($definer instanceof DefinerInterface) {
-                    if ($definer instanceof ConditionalDefinerInterface && !$definer->isEnabled()) {
-                        continue;
-                    }
-                    $definition->addNodes($definer->getLocalDefinition());
-                }
+            foreach (array_filter($this->definers) as $definer) {
+                $definition->addNodes($definer->getLocalDefinition());
             }
             $this->definition['local'] = $definition;
         }
@@ -221,15 +213,12 @@ class ConfigContainer implements SingletonInterface
 
     public function getForeignDefinition(string $path = ''): Node
     {
+        $this->initializeDefinerObjects();
+
         if (null === $this->definition['foreign']) {
             $definition = GeneralUtility::makeInstance(NodeCollection::class);
-            foreach ($this->definers as $class => $definer) {
-                if ($definer === null) {
-                    $this->definers[$class] = $definer = GeneralUtility::makeInstance($class);
-                }
-                if ($definer instanceof DefinerInterface) {
-                    $definition->addNodes($definer->getForeignDefinition());
-                }
+            foreach (array_filter($this->definers) as $definer) {
+                $definition->addNodes($definer->getForeignDefinition());
             }
             $this->definition['foreign'] = $definition;
         }
@@ -293,7 +282,6 @@ class ConfigContainer implements SingletonInterface
         // Clone this instance and reset it
         $cloned = clone $this;
         $cloned->config = null;
-        $cloned->providers = array_combine(array_keys($this->providers), array_fill(0, count($this->providers), null));
         $cloned->definers = array_combine(array_keys($this->definers), array_fill(0, count($this->definers), null));
         $cloned->postProcessors = array_combine(
             array_keys($this->postProcessors),
@@ -313,7 +301,7 @@ class ConfigContainer implements SingletonInterface
 
         $orderedProviderConfig = [];
         foreach (array_keys($priority) as $class) {
-            $orderedProviderConfig[$class] = $cloned->providers[$class];
+            $orderedProviderConfig[$class] = $cloned->providerConfig[$class];
         }
 
         return [
@@ -323,5 +311,42 @@ class ConfigContainer implements SingletonInterface
             'postProcessors' => array_keys($cloned->postProcessors),
             'migrations' => $cloned->migrations,
         ];
+    }
+
+    protected function initializeProviderObjects(): void
+    {
+        foreach ($this->providers as $class => $object) {
+            if (null === $object) {
+                $provider = GeneralUtility::makeInstance($class);
+                // If the Provider does not implement the ProviderInterface, it will be skipped (set the default)
+                $this->providers[$class] = false;
+                if ($provider instanceof ProviderInterface) {
+                    $this->providers[$class] = $provider;
+                    if ($provider instanceof ConditionalProviderInterface && !$provider->isEnabled()) {
+                        // Preset the provider's config to never ask it again
+                        $this->providerConfig[$class] = null;
+                    }
+                }
+            }
+        }
+    }
+
+    protected function initializeDefinerObjects(): void
+    {
+        foreach ($this->definers as $class => $definer) {
+            if (null === $definer) {
+                $definer = GeneralUtility::makeInstance($class);
+                $this->definers[$class] = false;
+                if ($definer instanceof DefinerInterface) {
+                    if (
+                        $definer instanceof ConditionalDefinerInterface
+                        && !$definer->isEnabled()
+                    ) {
+                        continue;
+                    }
+                    $this->definers[$class] = $definer;
+                }
+            }
+        }
     }
 }
