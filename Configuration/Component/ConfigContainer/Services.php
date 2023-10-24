@@ -5,7 +5,9 @@ declare(strict_types=1);
 use In2code\In2publishCore\Component\ConfigContainer\Definer\DefinerInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Definer\DefinerServiceInterface;
 use In2code\In2publishCore\Component\ConfigContainer\DependencyInjection\ConfigContainerServicesCompilerPass;
+use In2code\In2publishCore\Component\ConfigContainer\DependencyInjection\DynamicValueProviderCompilerPass;
 use In2code\In2publishCore\Component\ConfigContainer\Migration\MigrationServiceInterface;
+use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderInterface;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\PostProcessorInterface as PostProcessor;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\PostProcessorServiceInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderServiceInterface;
@@ -36,4 +38,9 @@ return static function (ContainerBuilder $builder): void {
             'in2publish_core.config.provider_service',
         ),
     );
+
+    $builder->registerForAutoconfiguration(DynamicValueProviderInterface::class)
+            ->addTag('in2publish_core.config.dynamic_value_provider');
+
+    $builder->addCompilerPass(new DynamicValueProviderCompilerPass('in2publish_core.config.dynamic_value_provider'));
 };

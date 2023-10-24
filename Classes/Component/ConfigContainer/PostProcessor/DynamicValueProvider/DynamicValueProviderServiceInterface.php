@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Component\ConfigContainer\PostProcessor\Dynamic
 /*
  * Copyright notice
  *
- * (c) 2020 in2code.de and the following authors:
+ * (c) 2023 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -30,13 +30,12 @@ namespace In2code\In2publishCore\Component\ConfigContainer\PostProcessor\Dynamic
  */
 
 /**
- * @deprecated Use DynamicValueProviderServiceInterface instead. This interface will be removed in in2publish_core v13
+ * Copy the methods of the inherited interface into this one when removing it.
  */
-interface DynamicValueProviderInterface
+interface DynamicValueProviderServiceInterface extends DynamicValueProviderInterface
 {
     /**
-     * @param string $string The configuration string from between the round brackets
-     * @return mixed The scalar value which replaces the dynamic configuration reference.
+     * @return string The key this provider can replace
      */
-    public function getValueFor(string $string);
+    public function getKey(): string;
 }
