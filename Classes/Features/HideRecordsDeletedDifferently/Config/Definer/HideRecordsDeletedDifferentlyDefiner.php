@@ -30,10 +30,10 @@ namespace In2code\In2publishCore\Features\HideRecordsDeletedDifferently\Config\D
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\Builder;
-use In2code\In2publishCore\Component\ConfigContainer\Definer\DefinerInterface;
+use In2code\In2publishCore\Component\ConfigContainer\Definer\DefinerServiceInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
 
-class HideRecordsDeletedDifferentlyDefiner implements DefinerInterface
+class HideRecordsDeletedDifferentlyDefiner implements DefinerServiceInterface
 {
     public function getLocalDefinition(): NodeCollection
     {

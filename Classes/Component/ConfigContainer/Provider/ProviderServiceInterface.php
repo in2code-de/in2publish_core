@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
 /*
  * Copyright notice
  *
- * (c) 2018 in2code.de and the following authors:
+ * (c) 2023 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,29 +29,20 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
-use In2code\In2publishCore\Service\Context\ContextServiceInjection;
-
-class DefaultProvider implements ProviderServiceInterface
+interface ProviderServiceInterface
 {
-    use ConfigContainerInjection;
-    use ContextServiceInjection;
+    /**
+     * @return bool Returns false if this provider is not ready (e.g.because the page hasn't been determined)
+     */
+    public function isAvailable(): bool;
 
-    public function isAvailable(): bool
-    {
-        return true;
-    }
+    /**
+     * @return array The returned config must be context-sensitive (local <-> foreign)
+     */
+    public function getConfig(): array;
 
-    public function getConfig(): array
-    {
-        if ($this->contextService->isLocal()) {
-            return $this->configContainer->getLocalDefinition()->getDefaults();
-        }
-        return $this->configContainer->getForeignDefinition()->getDefaults();
-    }
-
-    public function getPriority(): int
-    {
-        return 10;
-    }
+    /**
+     * @return int The priority determines the loading order. Higher prioritized configs will overwrite the former.
+     */
+    public function getPriority(): int;
 }

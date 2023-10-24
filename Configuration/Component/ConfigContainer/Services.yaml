@@ -13,3 +13,8 @@ services:
         identifier: 'in2publishcore-PageTsProvider-bootCompleted'
         method: 'processData'
         event: In2code\In2publishCore\Event\ExtTablesPostProcessingEvent
+
+  In2code\In2publishCore\Component\ConfigContainer\ConfigContainer:
+    shared: true
+    public: true
+    factory: [ '@In2code\In2publishCore\Component\ConfigContainer\Factory\ConfigContainerFactory', 'create' ]

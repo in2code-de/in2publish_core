@@ -31,6 +31,10 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Definer;
 
 use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
 
+/**
+ * @deprecated Use DefinerServiceInterface to automatically register your definer instead. This interface will
+ *     be removed in in2publish_core v13.
+ */
 interface DefinerInterface
 {
     public function getLocalDefinition(): NodeCollection;

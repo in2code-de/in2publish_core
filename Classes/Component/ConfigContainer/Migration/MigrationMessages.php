@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\ConfigContainer\Definer;
+namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
 
 /*
  * Copyright notice
@@ -29,7 +29,24 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Definer;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-interface ConditionalDefinerInterface
+use function array_key_exists;
+use function sha1;
+
+trait MigrationMessages
 {
-    public function isEnabled(): bool;
+    /** @var string[] */
+    protected array $messages = [];
+
+    protected function addMessage(string $message): void
+    {
+        $key = sha1($message);
+        if (!array_key_exists($key, $this->messages)) {
+            $this->messages[$key] = $message;
+        }
+    }
+
+    public function getMessages(): array
+    {
+        return $this->messages;
+    }
 }

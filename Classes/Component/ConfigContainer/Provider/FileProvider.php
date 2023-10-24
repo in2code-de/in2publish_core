@@ -45,7 +45,7 @@ use function trigger_error;
 
 use const E_USER_DEPRECATED;
 
-class FileProvider implements ProviderInterface
+class FileProvider implements ProviderServiceInterface
 {
     use ContextServiceInjection;
 

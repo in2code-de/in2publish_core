@@ -40,7 +40,7 @@ use In2code\In2publishCore\Component\ConfigContainer\Validator\ZipExtensionInsta
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class In2publishCoreDefiner implements DefinerInterface
+class In2publishCoreDefiner implements DefinerServiceInterface
 {
     protected array $defaultIgnoredTables = [
         'be_groups',

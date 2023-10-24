@@ -36,7 +36,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class PageTsProvider implements ProviderInterface, ContextualProvider
+class PageTsProvider implements ProviderServiceInterface, ContextualProvider
 {
     protected bool $locked = true;
 

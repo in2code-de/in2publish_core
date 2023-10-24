@@ -32,7 +32,8 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
- * Interface ProviderInterface
+ * @deprecated Use ProviderServiceInterface to automatically register provider instead. This interface will be removed
+ *     in in2publish_core v13.
  */
 interface ProviderInterface extends SingletonInterface
 {

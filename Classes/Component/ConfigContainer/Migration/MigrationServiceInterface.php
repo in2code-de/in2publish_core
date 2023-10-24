@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
+namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
 
 /*
  * Copyright notice
  *
- * (c) 2018 in2code.de and the following authors:
+ * (c) 2023 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,7 +29,21 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-interface ConditionalProviderInterface
+interface MigrationServiceInterface
 {
-    public function isEnabled(): bool;
+    /**
+     * Run over the whole configuration and set new configuration values for deprecated options.
+     * Log deprecations once per request at max!
+     *
+     * @param array $config
+     * @return array
+     */
+    public function migrate(array $config): array;
+
+    /**
+     * Returns all collected messages/deprecations created during the migration. Used to debug the config container.
+     *
+     * @return array
+     */
+    public function getMessages(): array;
 }
