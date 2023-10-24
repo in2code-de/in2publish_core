@@ -171,10 +171,10 @@ class RecordTreeBuilder
     /**
      * @param RecordCollection<string, array<int|string, Record>> $recordCollection
      */
-    public function findRecordsByTca(RecordCollection $recordCollection, RecordTreeBuildRequest $request): void
+    public function findRecordsByTca(RecordCollection $recordCollection, RecordTreeBuildRequest $request = null): void
     {
         $currentRecursion = 0;
-        $recursionLimit = $request->getContentRecursionLimit();
+        $recursionLimit = $request !== null ? $request->getContentRecursionLimit() : 8;
 
         while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
             $demand = $this->demandBuilder->buildDemandForRecords($recordCollection);
