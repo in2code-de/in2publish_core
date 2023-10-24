@@ -33,9 +33,23 @@ use In2code\In2publishCore\Component\ConfigContainer\Builder;
 use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
 use In2code\In2publishCore\Component\ConfigContainer\Validator\FileExistsValidator as FEV;
 use In2code\In2publishCore\Component\ConfigContainer\Validator\IPv4PortValidator;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistryInjection;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistryInjection;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 
-class SshConnectionDefiner implements DefinerInterface
+class SshConnectionDefiner implements DefinerInterface, ConditionalDefinerInterface
 {
+    use ContextServiceInjection;
+    use RemoteAdapterRegistryInjection;
+    use TransmissionAdapterRegistryInjection;
+
+    public function isEnabled(): bool
+    {
+        return $this->contextService->isForeign()
+            || 'ssh' === $this->remoteAdapterRegistry->getSelectedAdapter()
+            || 'ssh' === $this->transmissionAdapterRegistry->getSelectedAdapter();
+    }
+
     public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()

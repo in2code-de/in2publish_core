@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Component\ConfigContainer;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\ConfigContainer\Definer\ConditionalDefinerInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Definer\DefinerInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Migration\MigrationInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Node\Node;
@@ -207,6 +208,9 @@ class ConfigContainer implements SingletonInterface
                     $this->definers[$class] = $definer = GeneralUtility::makeInstance($class);
                 }
                 if ($definer instanceof DefinerInterface) {
+                    if ($definer instanceof ConditionalDefinerInterface && !$definer->isEnabled()) {
+                        continue;
+                    }
                     $definition->addNodes($definer->getLocalDefinition());
                 }
             }

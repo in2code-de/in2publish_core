@@ -76,7 +76,6 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
 
     /*********************************************** Settings/Instances ***********************************************/
     $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('in2publish_core');
-    $contextService = GeneralUtility::makeInstance(ContextService::class);
     $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
     $remoteAdapterRegistry = GeneralUtility::makeInstance(RemoteAdapterRegistry::class);
     $transmissionAdapterRegistry = GeneralUtility::makeInstance(TransmissionAdapterRegistry::class);
@@ -109,13 +108,7 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
     $configContainer->registerDefiner(In2publishCoreDefiner::class);
     $configContainer->registerDefiner(WarningOnForeignDefiner::class);
     $configContainer->registerDefiner(PublishSortingDefiner::class);
-    if (
-        $contextService->isForeign()
-        || 'ssh' === $remoteAdapterRegistry->getSelectedAdapter()
-        || 'ssh' === $transmissionAdapterRegistry->getSelectedAdapter()
-    ) {
-        $configContainer->registerDefiner(SshConnectionDefiner::class);
-    }
+    $configContainer->registerDefiner(SshConnectionDefiner::class);
     $configContainer->registerDefiner(HideRecordsDeletedDifferentlyDefiner::class);
 
     $configContainer->registerProvider(DefaultProvider::class);

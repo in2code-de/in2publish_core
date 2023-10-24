@@ -29,34 +29,16 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistry;
-use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistry;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistryInjection;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistryInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Throwable;
 
 class AdapterSelectionTest implements TestCaseInterface
 {
-    protected RemoteAdapterRegistry $remoteAdapterRegistry;
-    protected TransmissionAdapterRegistry $transmissionAdapterRegistry;
-
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
-    public function injectRemoteAdapterRegistry(RemoteAdapterRegistry $remoteAdapterRegistry): void
-    {
-        $this->remoteAdapterRegistry = $remoteAdapterRegistry;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
-    public function injectTransmissionAdapterRegistry(TransmissionAdapterRegistry $transmissionAdapterRegistry): void
-    {
-        $this->transmissionAdapterRegistry = $transmissionAdapterRegistry;
-    }
+    use RemoteAdapterRegistryInjection;
+    use TransmissionAdapterRegistryInjection;
 
     public function run(): TestResult
     {
