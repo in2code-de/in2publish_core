@@ -39,7 +39,7 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
 
 (static function (): void {
     /***************************************************** Guards *****************************************************/
-    if (!defined('TYPO3_REQUESTTYPE')) {
+    if (!defined('TYPO3')) {
         die('Access denied.');
     }
     if (!class_exists(ContextService::class)) {
