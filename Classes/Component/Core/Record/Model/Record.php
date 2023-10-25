@@ -109,6 +109,11 @@ interface Record extends Node
      */
     public function getAllDependencies(array &$visited = []): Generator;
 
+    /**
+     * @return array<string>
+     */
+    public function getUnfulfilledDependenciesHumanReadableRecursively(): array;
+
     public function isPublishable(): bool;
 
     /**
