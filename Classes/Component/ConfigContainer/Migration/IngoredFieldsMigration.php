@@ -7,9 +7,8 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
 /*
  * Copyright notice
  *
- * (c) 2023 in2code.de and the following authors:
+ * (c) 2022 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
- * Christine Zoglmeier <christine.zoglmeier@in2code.de>
  *
  * All rights reserved
  *
@@ -30,19 +29,20 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-class ContentLanguageControlMigration extends AbstractMigration
+class IngoredFieldsMigration extends AbstractMigration
 {
-    protected const MIGRATION_MESSAGE = 'The configuration path "features.clc" has been renamed to "features.contentLanguageControl". Please update your settings. Your settings have been migrated on the fly.';
+    protected const MIGRATION_MESSAGE = 'You are using the old "ignoreFieldsForDifferenceView" format to ignore fields for tables. Please use the new "ignoreFields" setting. Your settings have been migrated on the fly.';
 
     public function migrate(array $config): array
     {
-        if (isset($config['features']['clc'])) {
-            // Migrate the configuration
-            $config['features']['contentLanguageControl'] = $config['features']['clc'];
-            unset($config['features']['clc']);
-
-            // Inform the user about the migration
+        if (!empty($config['ignoreFieldsForDifferenceView'])) {
             $this->addMessage(self::MIGRATION_MESSAGE);
+            foreach ($config['ignoreFieldsForDifferenceView'] as $table => $fields) {
+                foreach ($fields as $field) {
+                    $config['ignoredFields'][$table]['fields'][] = $field;
+                }
+            }
+            unset($config['ignoreFieldsForDifferenceView']);
         }
         return $config;
     }
