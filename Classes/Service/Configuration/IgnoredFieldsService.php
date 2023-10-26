@@ -32,6 +32,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_unique;
 use function explode;
+use function implode;
 use function is_array;
 use function is_string;
 use function preg_match;
@@ -96,6 +97,9 @@ class IgnoredFieldsService
             } else {
                 return null;
             }
+        }
+        if (is_array($value)) {
+            return implode(',', $value);
         }
         if (!is_string($value)) {
             return null;
