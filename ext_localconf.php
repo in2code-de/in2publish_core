@@ -6,7 +6,6 @@ use In2code\In2publishCore\Component\ConfigContainer\Definer\SshConnectionDefine
 use In2code\In2publishCore\Component\ConfigContainer\Migration\ContentLanguageControlMigration;
 use In2code\In2publishCore\Component\ConfigContainer\Migration\CrossStoragePublishingMigration;
 use In2code\In2publishCore\Component\ConfigContainer\Migration\IgnoredFieldsMigration;
-use In2code\In2publishCore\Component\ConfigContainer\Migration\SolrFalIntegrationMigration;
 use In2code\In2publishCore\Component\ConfigContainer\Migration\SolrIntegrationMigration;
 use In2code\In2publishCore\Component\ConfigContainer\Migration\WorkflowInlineHistoryMigration;
 use In2code\In2publishCore\Component\ConfigContainer\Migration\WorkflowNotificationMailMigration;
@@ -130,7 +129,6 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
     $configContainer->registerMigration(ContentLanguageControlMigration::class);
     $configContainer->registerMigration(CrossStoragePublishingMigration::class);
     $configContainer->registerMigration(IgnoredFieldsMigration::class);
-    $configContainer->registerMigration(SolrFalIntegrationMigration::class);
     $configContainer->registerMigration(SolrIntegrationMigration::class);
     $configContainer->registerMigration(WorkflowInlineHistoryMigration::class);
     $configContainer->registerMigration(WorkflowNotificationMailMigration::class);
