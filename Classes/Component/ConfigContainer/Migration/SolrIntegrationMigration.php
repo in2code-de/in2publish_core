@@ -32,23 +32,24 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
 
 class SolrIntegrationMigration extends AbstractMigration
 {
-    protected const MIGRATION_MESSAGE = 'The configuration path "task.solr" has been changed to "features.solrIntegration". The "enable" key is now TRUE by default. Please update your settings. Your settings have been migrated on the fly.';
+    protected const MIGRATION_MESSAGE_1 = 'The configuration path "tasks.solr" has been changed to "features.solrIntegration". The "enable" key is now TRUE by default. Please update your settings. Your settings have been migrated on the fly.';
 
+    protected const MIGRATION_MESSAGE_2 = 'A new configuration "features.solrIntegration" has been added. Please update your settings. Your settings have been migrated on the fly.';
     public function migrate(array $config): array
     {
         $enabledByDefault = true;
 
-        if (isset($config['task']['solr'])) {
+        if (isset($config['tasks']['solr'])) {
             // Migrate the configuration
-            $config['features']['solrIntegration'] = $config['task']['solr'];
-            unset($config['task']['solr']);
-        } else {
+            $config['features']['solrIntegration'] = $config['tasks']['solr'];
+            unset($config['tasks']['solr']);
+            // Inform the user about the migration
+            $this->addMessage(self::MIGRATION_MESSAGE_1);
+        } else if (!isset($config['features']['solrIntegration'])) {
             // If the path does not exist, we set the default value
             $config['features']['solrIntegration']['enable'] = $enabledByDefault;
+            $this->addMessage(self::MIGRATION_MESSAGE_2);
         }
-
-        // Inform the user about the migration
-        $this->addMessage(self::MIGRATION_MESSAGE);
 
         return $config;
     }
