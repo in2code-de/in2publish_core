@@ -5,11 +5,8 @@
 				<f:render partial="Record/Publishing/PublishButton" arguments="{record: record}"/>
 			</f:then>
 			<f:else>
-				<f:if condition="{record.reasonsWhyTheRecordIsNotPublishable}">
+				<f:if condition="{record.reasonsWhyTheRecordIsNotPublishable.empty}">
 					<f:then>
-						<f:render partial="Record/Publishing/PublishingNotPossible" arguments="{record: record}"/>
-					</f:then>
-					<f:else>
 						<f:if condition="{record.publishableIgnoringUnreachableDependencies}">
 							<f:then>
 								<f:render partial="Record/Publishing/PublishButtonWithWarning" arguments="{record: record}"/>
@@ -18,6 +15,9 @@
 								<f:render partial="Record/Publishing/PublishingNotPossible" arguments="{record: record}"/>
 							</f:else>
 						</f:if>
+					</f:then>
+					<f:else>
+						<f:render partial="Record/Publishing/PublishingNotPossible" arguments="{record: record}"/>
 					</f:else>
 				</f:if>
 			</f:else>
