@@ -1,0 +1,20 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
+<f:if condition="{record.publishable}">
+	<f:else>
+		<ul class="in2publish-related__list">
+			<f:for each="{record.unfulfilledDependenciesHumanReadableRecursively}" as="unfulfilledDependency">
+				<li>
+					<f:format.nl2br>{unfulfilledDependency}</f:format.nl2br>
+				</li>
+			</f:for>
+			<f:for each="{record.reasonsWhyTheRecordIsNotPublishableHumanReadable}" as="reasonWhyTheRecordIsNotPublishable">
+				<li>
+					<f:format.nl2br>{reasonWhyTheRecordIsNotPublishable}</f:format.nl2br>
+				</li>
+			</f:for>
+		</ul>
+	</f:else>
+</f:if>
+</html>
