@@ -59,8 +59,6 @@ interface Record extends Node
      */
     public function getParents(): array;
 
-    public function getParentPageRecord(): ?Record;
-
     public function setTranslationParent(Record $translationParent): void;
 
     public function getTranslationParent(): ?Record;
