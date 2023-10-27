@@ -3,7 +3,7 @@
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Component\ConfigContainer\Definer\In2publishCoreDefiner;
 use In2code\In2publishCore\Component\ConfigContainer\Definer\SshConnectionDefiner;
-use In2code\In2publishCore\Component\ConfigContainer\Migration\IngoredFieldsMigration;
+use In2code\In2publishCore\Component\ConfigContainer\Migration\IgnoredFieldsMigration;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\EnvVarProvider;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValuesPostProcessor;
@@ -120,7 +120,7 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
 
     $configContainer->registerPostProcessor(DynamicValuesPostProcessor::class);
 
-    $configContainer->registerMigration(IngoredFieldsMigration::class);
+    $configContainer->registerMigration(IgnoredFieldsMigration::class);
 
     $dynamicValueProviderRegistry->registerDynamicValue('env', EnvVarProvider::class);
 

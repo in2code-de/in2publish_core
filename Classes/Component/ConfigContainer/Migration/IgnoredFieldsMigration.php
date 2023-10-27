@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-class IngoredFieldsMigration extends AbstractMigration
+class IgnoredFieldsMigration extends AbstractMigration
 {
     protected const MIGRATION_MESSAGE = 'You are using the old "ignoreFieldsForDifferenceView" format to ignore fields for tables. Please use the new "ignoreFields" setting. Your settings have been migrated on the fly.';
 
