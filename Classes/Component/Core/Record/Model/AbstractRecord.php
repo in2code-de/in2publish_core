@@ -132,19 +132,6 @@ abstract class AbstractRecord implements Record
         return $this->parents;
     }
 
-    public function getParentPageRecord(): ?Record
-    {
-        // get first parent record
-        $parentRecord = array_values($this->getParents())[0] ?? null;
-        if ($parentRecord instanceof Record) {
-            if ('pages' === $parentRecord->getClassification()) {
-                return $parentRecord;
-            }
-            return $parentRecord->getParentPageRecord();
-        }
-        return null;
-    }
-
     public function setTranslationParent(Record $translationParent): void
     {
         if (null !== $this->translationParent) {

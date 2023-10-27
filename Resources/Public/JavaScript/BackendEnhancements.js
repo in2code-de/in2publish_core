@@ -22,7 +22,6 @@ define(['nprogress'], function (nprogress) {
 	class BackendEnhancements {
 
 		constructor() {
-			console.log(nprogress)
 			this.registerNprogressHandler()
 		}
 
