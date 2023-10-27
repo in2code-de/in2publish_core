@@ -3,33 +3,35 @@
 	  xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-<f:comment>
-	Show parent record (e.g. page) properties only if they have changed
-</f:comment>
-<f:if condition="{record.state} == 'changed' || {record.state} == 'deleted'">
-	<f:if condition="{record.changedProps}">
-		<h3>
-			<f:translate key="dirty_properties_pageproperties" arguments="{0:'{publish:Tca.GetTableLabelFromLocallang(tableName:record.classification)}'}">Properties</f:translate>
-		</h3>
-		<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
-			<f:for each="{record.changedProps}" as="fieldName">
-				<li>
-					<f:if condition="{record.classification} == 'pages'">
-						<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.id}" table="{record.classification}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
-						<f:if condition="{record.id} > 1 && {record.state} != 'deleted'">
-							<be:link.editRecord class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}">
-								<i class="in2publish-icon-edit"></i>
-								<f:translate key="dirty_properties_edit" default="edit" />
-							</be:link.editRecord>
+	<f:comment>
+		Show parent record (e.g. page) properties only if they have changed
+	</f:comment>
+	<f:if condition="{record.state} == 'changed' || {record.state} == 'deleted'">
+		<f:if condition="{record.changedProps}">
+			<h3>
+				<f:translate key="dirty_properties_pageproperties" arguments="{0:'{publish:Tca.GetTableLabelFromLocallang(tableName:record.classification)}'}">Properties</f:translate>
+			</h3>
+			<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
+				<f:for each="{record.changedProps}" as="fieldName">
+					<li>
+						<f:if condition="{record.classification} == 'pages'">
+							<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.id}" table="{record.classification}">
+								<i class="in2publish-icon-history"></i>
+							</publish:Link.RecordHistory>
+							<f:if condition="{record.id} > 1 && {record.state} != 'deleted'">
+								<be:link.editRecord class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}">
+									<i class="in2publish-icon-edit"></i>
+									<f:translate key="dirty_properties_edit" default="edit"/>
+								</be:link.editRecord>
+							</f:if>
 						</f:if>
-					</f:if>
-					<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}" />
-					<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.classification}">
-						<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="{stagingLevel}" />
-					</publish:Tca.FormatPropertyByTcaDefinition>
-				</li>
-			</f:for>
-		</ul>
+						<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}"/>
+						<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.classification}">
+							<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="{stagingLevel}"/>
+						</publish:Tca.FormatPropertyByTcaDefinition>
+					</li>
+				</f:for>
+			</ul>
+		</f:if>
 	</f:if>
-</f:if>
 </html>
