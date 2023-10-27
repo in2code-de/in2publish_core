@@ -3,13 +3,7 @@
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Component\ConfigContainer\Definer\In2publishCoreDefiner;
 use In2code\In2publishCore\Component\ConfigContainer\Definer\SshConnectionDefiner;
-use In2code\In2publishCore\Component\ConfigContainer\Migration\ContentLanguageControlMigration;
-use In2code\In2publishCore\Component\ConfigContainer\Migration\CrossStoragePublishingMigration;
 use In2code\In2publishCore\Component\ConfigContainer\Migration\IgnoredFieldsMigration;
-use In2code\In2publishCore\Component\ConfigContainer\Migration\SolrIntegrationMigration;
-use In2code\In2publishCore\Component\ConfigContainer\Migration\WorkflowInlineHistoryMigration;
-use In2code\In2publishCore\Component\ConfigContainer\Migration\WorkflowNotificationMailMigration;
-use In2code\In2publishCore\Component\ConfigContainer\Migration\WorkflowStateAssignmentMigration;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\EnvVarProvider;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValuesPostProcessor;
@@ -126,13 +120,7 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
 
     $configContainer->registerPostProcessor(DynamicValuesPostProcessor::class);
 
-    $configContainer->registerMigration(ContentLanguageControlMigration::class);
-    $configContainer->registerMigration(CrossStoragePublishingMigration::class);
     $configContainer->registerMigration(IgnoredFieldsMigration::class);
-    $configContainer->registerMigration(SolrIntegrationMigration::class);
-    $configContainer->registerMigration(WorkflowInlineHistoryMigration::class);
-    $configContainer->registerMigration(WorkflowNotificationMailMigration::class);
-    $configContainer->registerMigration(WorkflowStateAssignmentMigration::class);
 
     $dynamicValueProviderRegistry->registerDynamicValue('env', EnvVarProvider::class);
 

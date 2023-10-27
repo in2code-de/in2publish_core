@@ -64,12 +64,11 @@ $registry->registerDynamicValue('myKey', MyProvider::class);
 Use your provider in the configuration:
 
 ```yaml
-workflow:
-  states:
-    mailNotify:
-      sender:
-        name: '%myKey(WORKFLOW_SENDER)%'
-        email: '%myKey(WORKFLOW_EMAIL)%'
+features:
+  workflowNotificationMail:
+    sender:
+      name: '%myKey(WORKFLOW_SENDER)%'
+      email: '%myKey(WORKFLOW_EMAIL)%'
 ```
 
 **Attention:** The dynamic value provider will be called multiple times per request with the same provider string.
