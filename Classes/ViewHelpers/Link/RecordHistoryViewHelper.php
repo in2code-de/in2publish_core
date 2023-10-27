@@ -29,24 +29,16 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\UriBuilderInjection;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
-use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
 {
-    protected UriBuilder $uriBuilder;
-    protected $tagName = 'a';
+    use UriBuilderInjection;
 
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
-    public function injectUriBuilder(UriBuilder $uriBuilder): void
-    {
-        $this->uriBuilder = $uriBuilder;
-    }
+    protected $tagName = 'a';
 
     public function initializeArguments(): void
     {
