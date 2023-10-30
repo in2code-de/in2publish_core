@@ -34,6 +34,7 @@ use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
 use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
@@ -183,7 +184,12 @@ class RecordController extends ActionController
         $request = new RecordTreeBuildRequest('pages', $id, 0);
         $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
 
-        $publishingContext = new PublishingContext($recordTree);
+        $actualRecord = $recordTree->getChild('pages', $id);
+        if (null === $actualRecord) {
+            $this->addFlashMessagesAndRedirectToIndex();
+        }
+        $subRecordTree = new RecordTree([$actualRecord], $request);
+        $publishingContext = new PublishingContext($subRecordTree);
         $this->publisherService->publish($publishingContext);
 
         $this->addFlashMessagesAndRedirectToIndex();
