@@ -29,7 +29,10 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\ConfigContainer\Cache\EarlyCacheInjection;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Spyc;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
@@ -38,29 +41,23 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function class_exists;
 use function file_exists;
+use function hash_file;
 use function rtrim;
 use function strpos;
 use function substr;
 use function trigger_error;
+use function var_export;
 
 use const E_USER_DEPRECATED;
 
-class FileProvider implements ProviderServiceInterface
+class FileProvider implements ProviderServiceInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
     use ContextServiceInjection;
+    use EarlyCacheInjection;
 
     protected const DEPRECATION_CONFIG_PATH_TYPO3CONF = 'Storing the content publisher config file in typo3conf is deprecated and considered insecure. Please consider storing your config in the TYPO3\'s config folder.';
     protected array $extConf;
-
-    public function __construct()
-    {
-        if (!class_exists(Spyc::class)) {
-            $spyc = ExtensionManagementUtility::extPath('in2publish_core', 'Resources/Private/Libraries/Spyc/Spyc.php');
-            if (file_exists($spyc)) {
-                require_once($spyc);
-            }
-        }
-    }
 
     /**
      * @codeCoverageIgnore
@@ -78,17 +75,22 @@ class FileProvider implements ProviderServiceInterface
 
     public function getConfig(): array
     {
-        if (!class_exists(Spyc::class)) {
+        $file = $this->getResolvedFilePath() . $this->contextService->getContext() . 'Configuration.yaml';
+        if (!file_exists($file)) {
+            $this->logger->notice('Config file for FileProvider does not exist', ['file' => $file]);
             return [];
         }
 
-        $file = $this->getResolvedFilePath() . $this->contextService->getContext() . 'Configuration.yaml';
-
-        if (file_exists($file)) {
-            return Spyc::YAMLLoad($file);
+        $cacheKey = 'config_file_provider_' . hash_file('sha1', $file);
+        if (!$this->earlyCache->has($cacheKey)) {
+            $this->loadSpycIfRequired();
+            $config = Spyc::YAMLLoad($file);
+            $code = 'return ' . var_export($config, true) . ';';
+            $this->earlyCache->flushByTag('config_file_provider');
+            $this->earlyCache->set($cacheKey, $code, ['config_file_provider']);
         }
 
-        return [];
+        return $this->earlyCache->require($cacheKey);
     }
 
     public function getPriority(): int
@@ -112,5 +114,16 @@ class FileProvider implements ProviderServiceInterface
             $path = Environment::getPublicPath() . '/' . $path;
         }
         return rtrim($path, '/') . '/';
+    }
+
+    protected function loadSpycIfRequired(): void
+    {
+        if (class_exists(Spyc::class)) {
+            return;
+        }
+        $file = ExtensionManagementUtility::extPath('in2publish_core', 'Resources/Private/Libraries/Spyc/Spyc.php');
+        if (file_exists($file)) {
+            require_once($file);
+        }
     }
 }
