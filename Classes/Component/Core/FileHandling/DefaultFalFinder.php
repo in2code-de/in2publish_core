@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Component\Core\FileHandling;
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceInjection;
@@ -203,12 +204,14 @@ class DefaultFalFinder
             if (null === $fileRecord) {
                 continue;
             }
-            $demands->addSelect(
-                'sys_file',
-                'storage = ' . $fileRecord->getProp('storage'),
-                'identifier_hash',
-                sha1($fileRecord->getProp('identifier')),
-                $fileRecord,
+            $demands->addDemand(
+                new SelectDemand(
+                    'sys_file',
+                    'storage = ' . $fileRecord->getProp('storage'),
+                    'identifier_hash',
+                    sha1($fileRecord->getProp('identifier')),
+                    $fileRecord,
+                ),
             );
             $folderRecord->addChild($fileRecord);
         }
@@ -338,12 +341,14 @@ class DefaultFalFinder
         }
 
         $demands = $this->demandsFactory->createDemand();
-        $demands->addSelect(
-            'sys_file',
-            'storage = ' . $fileRecord->getProp('storage'),
-            'identifier_hash',
-            sha1($fileRecord->getProp('identifier')),
-            $fileRecord,
+        $demands->addDemand(
+            new SelectDemand(
+                'sys_file',
+                'storage = ' . $fileRecord->getProp('storage'),
+                'identifier_hash',
+                sha1($fileRecord->getProp('identifier')),
+                $fileRecord,
+            ),
         );
         $recordCollection = new RecordCollection();
         $this->demandResolver->resolveDemand($demands, $recordCollection);

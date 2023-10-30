@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\TextResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
@@ -45,7 +46,7 @@ class TextResolverTest extends UnitTestCase
         );
         $textResolver->resolve($demands, $databaseRecord);
 
-        $selectDemand = $demands->getSelect();
+        $selectDemand = $demands->getDemandsByType(SelectDemand::class);
 
         $this->assertArrayHasKey('pages', $selectDemand);
 

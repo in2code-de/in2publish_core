@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\FlexProcessor;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
@@ -180,7 +181,9 @@ class FlexProcessorTest extends UnitTestCase
                 public function resolve(Demands $demands, Record $record): void
                 {
                     $this->called['select.fooBar']++;
-                    $demands->addSelect('tableNameBar', '', 'columnNameFoo', 3, $this->databaseRecord);
+                    $demands->addDemand(
+                        new SelectDemand('tableNameBar', '', 'columnNameFoo', 3, $this->databaseRecord),
+                    );
                 }
             };
         $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] =
@@ -202,7 +205,9 @@ class FlexProcessorTest extends UnitTestCase
                 public function resolve(Demands $demands, Record $record): void
                 {
                     $this->called['inline.barFoo']++;
-                    $demands->addSelect('tableNameFoo', '', 'columnNameBar', 5, $this->databaseRecord);
+                    $demands->addDemand(
+                        new SelectDemand('tableNameFoo', '', 'columnNameBar', 5, $this->databaseRecord),
+                    );
                 }
             };
 

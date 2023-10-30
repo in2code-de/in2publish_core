@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -59,7 +60,7 @@ class InlineMultiValueResolver extends AbstractResolver
         $foreignValues = GeneralUtility::trimExplode(',', $foreignValue, true);
         $values = array_unique(array_merge($localValues, $foreignValues));
         foreach ($values as $value) {
-            $demands->addSelect($this->foreignTable, $additionalWhere, 'uid', $value, $record);
+            $demands->addDemand(new SelectDemand($this->foreignTable, $additionalWhere, 'uid', $value, $record));
         }
     }
 }

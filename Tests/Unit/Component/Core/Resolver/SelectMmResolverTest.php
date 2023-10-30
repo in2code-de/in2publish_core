@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
@@ -73,7 +74,7 @@ class SelectMmResolverTest extends UnitTestCase
 
         $selectMmResolver->resolve($demands, $record);
 
-        $joinDemand = $demands->getJoin();
+        $joinDemand = $demands->getDemandsByType(JoinDemand::class);
         $resolvedRecord = $joinDemand['mmTable']['foreignTable']['foreignTableWhereClause']['selectField'][42]['table_foo\42'];
         $this->assertEquals($resolvedRecord, $record);
     }
@@ -108,7 +109,7 @@ class SelectMmResolverTest extends UnitTestCase
 
         $selectMmResolver->resolve($demands, $record);
 
-        $joinDemand = $demands->getJoin();
+        $joinDemand = $demands->getDemandsByType(JoinDemand::class);
         $resolvedRecord = $joinDemand['mmTable']['foreignTable']['AND foreignTable.column LIKE \'%value%\'']['selectField'][42]['table_foo\42'];
         $this->assertEquals($resolvedRecord, $record);
     }

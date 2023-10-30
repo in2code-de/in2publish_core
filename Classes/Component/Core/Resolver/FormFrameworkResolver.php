@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 use function explode;
@@ -24,6 +25,6 @@ class FormFrameworkResolver extends AbstractResolver
             return;
         }
         [$storage, $identifier] = explode(':', $file);
-        $demands->addFile((int)$storage, $identifier, $record);
+        $demands->addDemand(new FileDemand((int)$storage, $identifier, $record));
     }
 }

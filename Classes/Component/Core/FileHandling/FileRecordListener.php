@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
+use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
@@ -63,7 +64,7 @@ class FileRecordListener
                 && null !== $localIdentifier
                 && !isset($localParentFileIds[$localIdentifier])
             ) {
-                $demands->addFile($localStorage, $localIdentifier, $record);
+                $demands->addDemand(new FileDemand($localStorage, $localIdentifier, $record));
             }
             $foreignIdentifier = $record->getForeignProps()['identifier'] ?? null;
             $foreignStorage = $record->getForeignProps()['storage'] ?? null;
@@ -72,7 +73,7 @@ class FileRecordListener
                 && null !== $foreignIdentifier
                 && !isset($foreignParentFileIds[$localIdentifier])
             ) {
-                $demands->addFile($foreignStorage, $foreignIdentifier, $record);
+                $demands->addDemand(new FileDemand($foreignStorage, $foreignIdentifier, $record));
             }
         }
 

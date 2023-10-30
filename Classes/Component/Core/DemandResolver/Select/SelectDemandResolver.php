@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Component\Core\DemandResolver\Select;
 use Doctrine\DBAL\Exception;
 use In2code\In2publishCore\Component\Core\Demand\CallerAwareDemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\DemandResolver\Exception\InvalidDemandException;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
@@ -39,7 +40,7 @@ class SelectDemandResolver implements DemandResolver
     protected function resolveSelectDemand(Demands $demands): SelectRowCollection
     {
         $rowCollection = new SelectRowCollection();
-        foreach ($demands->getSelect() as $table => $tableSelect) {
+        foreach ($demands->getDemandsByType(SelectDemand::class) as $table => $tableSelect) {
             foreach ($tableSelect as $additionalWhere => $properties) {
                 foreach ($properties as $property => $valueMaps) {
                     try {
@@ -51,11 +52,7 @@ class SelectDemandResolver implements DemandResolver
                         );
                     } catch (Exception $exception) {
                         if ($demands instanceof CallerAwareDemandsCollection) {
-                            $callers = [];
-                            $meta = $demands->getMeta();
-                            if (isset($meta['select'][$table][$additionalWhere][$property])) {
-                                $callers = $meta['select'][$table][$additionalWhere][$property];
-                            }
+                            $callers = $demands->getMeta(SelectDemand::class, $table, $additionalWhere, $property);
                             $exception = new InvalidDemandException($callers, $exception);
                         }
                         throw $exception;

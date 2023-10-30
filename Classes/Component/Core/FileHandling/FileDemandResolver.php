@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoServiceInjection;
@@ -23,7 +24,7 @@ class FileDemandResolver implements DemandResolver
 
     public function resolveDemand(Demands $demands, RecordCollection $recordCollection): void
     {
-        $files = $demands->getFiles();
+        $files = $demands->getDemandsByType(FileDemand::class);
         if (empty($files)) {
             return;
         }

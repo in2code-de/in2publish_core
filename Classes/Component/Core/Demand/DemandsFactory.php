@@ -12,10 +12,9 @@ class DemandsFactory
 
     public function createDemand(): Demands
     {
-        $demand = new DemandsCollection();
         if ($this->configContainer->get('debug.traceDemand')) {
-            $demand = new CallerAwareDemandsCollection($demand);
+            return new CallerAwareDemandsCollection();
         }
-        return $demand;
+        return new DemandsCollection();
     }
 }

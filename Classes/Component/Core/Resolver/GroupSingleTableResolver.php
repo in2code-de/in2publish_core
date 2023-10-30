@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -47,7 +48,7 @@ class GroupSingleTableResolver extends AbstractResolver
                 }
                 $value = substr($value, $position + 1);
             }
-            $demands->addSelect($this->foreignTable, '', 'uid', $value, $record);
+            $demands->addDemand(new SelectDemand($this->foreignTable, '', 'uid', $value, $record));
         }
     }
 }

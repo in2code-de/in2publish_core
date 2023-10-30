@@ -15,6 +15,7 @@ You can add and remove records that should be selected by using the demand's met
 ### Example
 
 ```php
+use In2code\In2publishCore\Component\Core\Demand\Remover\SelectDemandRemover;
 use In2code\In2publishCore\Event\DemandsWereCollected;
 
 class RecordIgnoreListener
@@ -30,7 +31,7 @@ class RecordIgnoreListener
     {
         $demands = $event->getDemands();
         foreach (self::UID_TO_IGNORE as $uid) {
-            $demands->unsetSelect('my_ext_domain_model_something', 'uid', $uid);
+            $demands->unsetDemand(new SelectDemandRemover('my_ext_domain_model_something', 'uid', $uid));
         }
     }
 }

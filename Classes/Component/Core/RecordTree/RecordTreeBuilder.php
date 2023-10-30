@@ -8,6 +8,7 @@ use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
@@ -103,11 +104,11 @@ class RecordTreeBuilder
             return;
         }
         $demands = $this->demandsFactory->createDemand();
-        $demands->addSelect($table, '', 'uid', $id, $recordTree);
+        $demands->addDemand(new SelectDemand($table, '', 'uid', $id, $recordTree));
 
         $transOrigPointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
         if (null !== $transOrigPointerField) {
-            $demands->addSelect($table, '', $transOrigPointerField, $id, $recordTree);
+            $demands->addDemand(new SelectDemand($table, '', $transOrigPointerField, $id, $recordTree));
         }
 
         $this->demandResolver->resolveDemand($demands, $recordCollection);
@@ -125,7 +126,7 @@ class RecordTreeBuilder
                 break;
             }
             foreach ($recordsArray as $record) {
-                $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
+                $demands->addDemand(new SelectDemand('pages', '', 'pid', $record->getId(), $record));
             }
             $recordCollection = new RecordCollection();
             $this->demandResolver->resolveDemand($demands, $recordCollection);
@@ -160,7 +161,7 @@ class RecordTreeBuilder
             );
             foreach ($tables as $table) {
                 if (in_array($table, $tablesAllowedOnPage)) {
-                    $demands->addSelect($table, '', 'pid', $page->getId(), $page);
+                    $demands->addDemand(new SelectDemand($table, '', 'pid', $page->getId(), $page));
                 }
             }
         }
