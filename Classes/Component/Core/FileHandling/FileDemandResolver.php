@@ -5,20 +5,23 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 
+use In2code\In2publishCore\Component\Core\RecordCollection;
+
 use function array_keys;
 use function hash;
 
-class FileDemandResolver
+class FileDemandResolver implements DemandResolver
 {
     use RecordFactoryInjection;
     use ForeignFileSystemInfoServiceInjection;
     use FileSystemInfoServiceInjection;
 
-    public function resolveDemand(Demands $demands): void
+    public function resolveDemand(Demands $demands, RecordCollection $recordCollection): void
     {
         $files = $demands->getFiles();
         if (empty($files)) {
