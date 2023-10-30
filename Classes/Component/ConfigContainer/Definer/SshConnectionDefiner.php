@@ -46,6 +46,10 @@ class SshConnectionDefiner implements DefinerServiceInterface, ConditionalConfig
 
     public function isEnabled(): bool
     {
+        // Require extending classes to override this method
+        if (static::class !== self::class) {
+            return false;
+        }
         return $this->contextService->isForeign()
             || 'ssh' === $this->remoteAdapterRegistry->getSelectedAdapter()
             || 'ssh' === $this->transmissionAdapterRegistry->getSelectedAdapter();
