@@ -40,8 +40,8 @@ class TransmissionAdapterRegistry
 {
     protected const DEPRECATION_MANUAL_REGISTRATION = 'The manual registration of transmission adapter is deprecated and will be removed in in2publish_core. Tag your adapter with in2publish_core.adapter.transmission_adapter and the key %s instead.';
     private array $adapters;
-    private array $legacyAdapters;
     private string $selectedAdapter;
+    private array $legacyAdapters = [];
 
     /**
      * @param array<string, class-string<AdapterInterface>> $adapters
