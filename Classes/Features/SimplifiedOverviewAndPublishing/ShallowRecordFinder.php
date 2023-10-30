@@ -141,6 +141,23 @@ class ShallowRecordFinder implements RecordFinder
             $rootRecord->getIdentifier() => $rootRecord,
         ];
 
+        // Add rootRecord translated versions
+        $transOrigPointerField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'] ?? null;
+        if(null !== $transOrigPointerField) {
+            $rows = $this->dualDatabaseRepository->findByProperty('pages', $transOrigPointerField, [$identifier]);
+            $rows = $this->dualDatabaseRepository->findMissingRows('pages', $rows);
+
+            $setParentRecord = static function (RecordInterface $record) use (&$pageRecords, $transOrigPointerField): void {
+                $pid = $record->getLocalProperty($transOrigPointerField) ?? $record->getForeignProperty($transOrigPointerField);
+                $pageRecords[$record->getIdentifier()] = $record;
+                $pageRecords[$pid]->addRelatedRecord($record);
+            };
+
+            foreach ($rows as $rowSet) {
+                $this->createRecord('pages', $rowSet, $setParentRecord);
+            }
+        }
+
         if (!$excludePages) {
             $pageRecords = $this->addChildPagesRecursively($pageRecords);
         }
