@@ -29,6 +29,10 @@ namespace In2code\In2publishCore\Component\ConfigContainer\PostProcessor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+/**
+ * @deprecated Use PostProcessorServiceInterface to automatically register your post processor instead. This interface
+ *     will be removed in in2publish_core v13.
+ */
 interface PostProcessorInterface
 {
     public function process(array $config): array;

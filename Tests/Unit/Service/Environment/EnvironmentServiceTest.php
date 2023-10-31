@@ -66,7 +66,7 @@ class EnvironmentServiceTest extends UnitTestCase
                 'success' => true,
                 'packages_hash' => $packagesHash,
                 'configuration_hash' => $configurationHash,
-            ]
+            ],
         );
 
         $packageManager = $this->createMock(PackageManager::class);

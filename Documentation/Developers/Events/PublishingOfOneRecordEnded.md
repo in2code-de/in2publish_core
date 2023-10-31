@@ -1,5 +1,8 @@
 # PublishingOfOneRecordEnded
 
+**Deprecated. Use the event [`RecordWasPublished` (link)](RecordWasPublished.md) instead. This event will be removed in
+version 13.0**
+
 Replaces the `\In2code\In2publishCore\Repository\CommonRepository / publishRecordRecursiveEnd` Signal.
 
 ## When
@@ -24,3 +27,5 @@ real-world example.
 
 To have an event which is triggered after the complete publication of the dataset, `TaskExecutionWasFinished` should be
 used.
+
+_(This file will be remove in version 13)_

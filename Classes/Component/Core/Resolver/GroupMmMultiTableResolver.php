@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -61,7 +62,15 @@ class GroupMmMultiTableResolver extends AbstractResolver
             if (in_array($table, $this->tables)) {
                 $id = substr($value, $position + 1);
 
-                $demands->addJoin($this->mmTable, $table, $this->additionalWhere, $this->selectField, $id, $record);
+                $demand = new JoinDemand(
+                    $this->mmTable,
+                    $table,
+                    $this->additionalWhere,
+                    $this->selectField,
+                    $id,
+                    $record,
+                );
+                $demands->addDemand($demand);
             }
         }
     }

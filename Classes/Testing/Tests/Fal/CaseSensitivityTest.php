@@ -62,7 +62,7 @@ class CaseSensitivityTest implements TestCaseInterface
                     $key,
                     $storages['local'][$key]['name'],
                     $local['caseSensitive'] ? 'true' : 'false',
-                    $foreign['caseSensitive'] ? 'true' : 'false'
+                    $foreign['caseSensitive'] ? 'true' : 'false',
                 );
             }
         }
@@ -71,7 +71,7 @@ class CaseSensitivityTest implements TestCaseInterface
             return new TestResult(
                 'fal.case_sensitivity_mismatch',
                 TestResult::ERROR,
-                array_merge(['fal.affected_storages'], $affected)
+                array_merge(['fal.affected_storages'], $affected),
             );
         }
 

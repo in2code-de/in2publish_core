@@ -35,7 +35,7 @@ class FileRecordListenerTest extends UnitTestCase
         $fileRecords->setValue($fileRecordListener, [$file1, $file2]);
 
         $demandCollection = $this->createMock(DemandsCollection::class);
-        $demandCollection->expects($this->exactly(2))->method('addFile');
+        $demandCollection->expects($this->exactly(2))->method('addDemand');
 
         $demandFactory = $this->createMock(DemandsFactory::class);
         $demandFactory->expects($this->once())->method('createDemand')->willReturn($demandCollection);
@@ -43,7 +43,7 @@ class FileRecordListenerTest extends UnitTestCase
         $fileDemandResolver = $this->createMock(FileDemandResolver::class);
         $fileDemandResolver->expects($this->once())->method('resolveDemand');
 
-        $fileRecordListener->injectFileDemandResolver($fileDemandResolver);
+        $fileRecordListener->injectDemandResolver($fileDemandResolver);
         $fileRecordListener->injectDemandsFactory($demandFactory);
 
         $fileRecordListener->onRecordRelationsWereResolved();

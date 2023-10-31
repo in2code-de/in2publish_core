@@ -94,7 +94,7 @@ class SystemInformationExportController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate('system_info.decode.json_error.details', 'in2publish_core', $args),
                     LocalizationUtility::translate('system_info.decode.json_error', 'in2publish_core'),
-                    AbstractMessage::ERROR
+                    AbstractMessage::ERROR,
                 );
             }
         }

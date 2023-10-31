@@ -21,18 +21,18 @@ class TcaEscapingMarkerServiceTest extends UnitTestCase
         $sql = 'SELECT * FROM {#table} WHERE {#field} = {#value}';
         $expected = 'SELECT * FROM `table` WHERE `field` = `value`';
         $database = $this->createMock(Connection::class);
-        $database->expects($this
-            ->exactly(3))
-            ->method('quoteIdentifier')
-            ->withConsecutive(
-                ['table'],
-                ['field'],
-                ['value']
-            )->willReturnOnConsecutiveCalls(
-            '`table`',
-            '`field`',
-            '`value`'
-        );
+        $database->expects($this->exactly(3))
+                 ->method('quoteIdentifier')
+                 ->withConsecutive(
+                     ['table'],
+                     ['field'],
+                     ['value'],
+                 )
+                 ->willReturnOnConsecutiveCalls(
+                     '`table`',
+                     '`field`',
+                     '`value`',
+                 );
         $tcaEscapingMarkerService = new TcaEscapingMarkerService();
         $tcaEscapingMarkerService->injectLocalDatabase($database);
         $result = $tcaEscapingMarkerService->escapeMarkedIdentifier($sql);
@@ -47,16 +47,16 @@ class TcaEscapingMarkerServiceTest extends UnitTestCase
         $sql = "SELECT * FROM '#table' WHERE {#field} = {#value}";
         $expected = "SELECT * FROM '#table' WHERE 'field' = 'value'";
         $database = $this->createMock(Connection::class);
-        $database->expects($this
-            ->exactly(2))
-            ->method('quoteIdentifier')
-            ->withConsecutive(
-                ['field'],
-                ['value']
-            )->willReturnOnConsecutiveCalls(
-                '\'field\'',
-                '\'value\''
-            );
+        $database->expects($this->exactly(2))
+                 ->method('quoteIdentifier')
+                 ->withConsecutive(
+                     ['field'],
+                     ['value'],
+                 )
+                 ->willReturnOnConsecutiveCalls(
+                     '\'field\'',
+                     '\'value\'',
+                 );
         $tcaEscapingMarkerService = new TcaEscapingMarkerService();
         $tcaEscapingMarkerService->injectLocalDatabase($database);
         $result = $tcaEscapingMarkerService->escapeMarkedIdentifier($sql);

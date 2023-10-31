@@ -11,6 +11,7 @@ use In2code\In2publishCore\Component\Core\Resolver\GroupMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionMethod;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
@@ -25,7 +26,10 @@ class GroupProcessorTest extends UnitTestCase
      */
     public function testProcessRequiresAllowedFieldInTca(): void
     {
-        $tca =  ['type' => 'group', 'allowed' => ''];
+        $this->markTestSkipped(
+            'Expecting E_ERROR and E_USER_ERROR is deprecated and will no longer be possible in PHPUnit 10',
+        );
+        $tca = ['type' => 'group', 'allowed' => ''];
 
         $groupProcessor = new GroupProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
@@ -38,7 +42,7 @@ class GroupProcessorTest extends UnitTestCase
         $processingResult = $groupProcessor->process('table_foo', 'field_bar', $tca);
         $this->assertFalse($processingResult->isCompatible());
 
-        $tca =  ['type' => 'group'];
+        $tca = ['type' => 'group'];
 
         $this->expectError();
         // Error message differs depending on PHP version
@@ -54,7 +58,7 @@ class GroupProcessorTest extends UnitTestCase
     public function testProcessInternalTypeMustBeDb(): void
     {
         $GLOBALS['TCA']['table_foo'] = [];
-        $tca =  ['type' => 'group', 'allowed' => 'table_foo', 'internal_type' => 'file'];
+        $tca = ['type' => 'group', 'allowed' => 'table_foo', 'internal_type' => 'file'];
 
         $groupProcessor = new GroupProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
@@ -63,7 +67,10 @@ class GroupProcessorTest extends UnitTestCase
         $groupResolver->expects($this->once())->method('configure')->with('field_foo', 'table_foo');
 
         $container = $this->createMock(Container::class);
-        $container->expects($this->once())->method('get')->with(GroupSingleTableResolver::class)->willReturn($groupResolver);
+        $container->expects($this->once())
+                  ->method('get')
+                  ->with(GroupSingleTableResolver::class)
+                  ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
 
         $processingResult = $groupProcessor->process('table_foo', 'field_foo', $tca);
@@ -71,7 +78,7 @@ class GroupProcessorTest extends UnitTestCase
         $reason = $processingResult->getValue()[0];
         $this->assertSame('The internal type "file" is not supported', $reason);
 
-        $tca =  ['type' => 'group', 'allowed' => 'table_foo', 'internal_type' => 'db'];
+        $tca = ['type' => 'group', 'allowed' => 'table_foo', 'internal_type' => 'db'];
         $processingResult = $groupProcessor->process('table_foo', 'field_foo', $tca);
         $this->assertTrue($processingResult->isCompatible());
 
@@ -86,7 +93,7 @@ class GroupProcessorTest extends UnitTestCase
     public function testProcessAllowedTableMustBeInTca(): void
     {
         $GLOBALS['TCA']['table_foo'] = [];
-        $tca =  ['type' => 'group', 'allowed' => 'table_bar'];
+        $tca = ['type' => 'group', 'allowed' => 'table_bar'];
 
         $groupProcessor = new GroupProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
@@ -94,7 +101,6 @@ class GroupProcessorTest extends UnitTestCase
 
         $container = $this->createMock(Container::class);
         $groupProcessor->injectContainer($container);
-
 
         $processingResult = $groupProcessor->process('table_foo', 'field_foo', $tca);
         $this->assertFalse($processingResult->isCompatible());
@@ -129,7 +135,7 @@ class GroupProcessorTest extends UnitTestCase
         $reason = $processingResult->getValue()[0];
         $this->assertSame(
             'MM_opposite_field is set for the foreign side of relations, which must not be resolved',
-            $reason
+            $reason,
         );
 
         unset($GLOBALS['TCA']['table_bar']);
@@ -151,7 +157,10 @@ class GroupProcessorTest extends UnitTestCase
         $groupResolver->expects($this->once())->method('configure')->with('field_bar', 'table_foo');
 
         $container = $this->createMock(Container::class);
-        $container->expects($this->once())->method('get')->with(GroupSingleTableResolver::class)->willReturn($groupResolver);
+        $container->expects($this->once())
+                  ->method('get')
+                  ->with(GroupSingleTableResolver::class)
+                  ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
 
         $singleTableTca = ['type' => 'group', 'allowed' => 'table_foo'];
@@ -179,10 +188,13 @@ class GroupProcessorTest extends UnitTestCase
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
         $groupResolver = $this->createMock(GroupMultiTableResolver::class);
-        $groupResolver->expects($this->once())->method('configure')->with(['table_foo','table_bar'], 'field_bar');
+        $groupResolver->expects($this->once())->method('configure')->with(['table_foo', 'table_bar'], 'field_bar');
 
         $container = $this->createMock(Container::class);
-        $container->expects($this->once())->method('get')->with(GroupMultiTableResolver::class)->willReturn($groupResolver);
+        $container->expects($this->once())
+                  ->method('get')
+                  ->with(GroupMultiTableResolver::class)
+                  ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
 
         $processingResult = $groupProcessor->process('table_bar', 'field_bar', $multiTableTca);
@@ -212,7 +224,10 @@ class GroupProcessorTest extends UnitTestCase
         $groupResolver->expects($this->once())->method('configure')->with(['*'], 'field_bar');
 
         $container = $this->createMock(Container::class);
-        $container->expects($this->once())->method('get')->with(GroupMultiTableResolver::class)->willReturn($groupResolver);
+        $container->expects($this->once())
+                  ->method('get')
+                  ->with(GroupMultiTableResolver::class)
+                  ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
 
         $processingResult = $groupProcessor->process('table_bar', 'field_bar', $allTableTca);
@@ -251,14 +266,26 @@ class GroupProcessorTest extends UnitTestCase
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
 
         $groupResolver = $this->createMock(GroupMmMultiTableResolver::class);
-        $groupResolver->expects($this->once())->method('configure')->with(['table_bar', 'table_foo'], 'mmTable', 'field_bar', 'uid_local', '');
+        $groupResolver->expects($this->once())
+                      ->method('configure')
+                      ->with(['table_bar', 'table_foo'],
+                          'mmTable',
+                          'field_bar',
+                          'uid_local',
+                          '',
+                      );
 
         $staticJoinResolver = $this->createMock(StaticJoinResolver::class);
-        $staticJoinResolver->expects($this->once())->method('configure')->with('mmTable', 'table_bar','', 'uid_local');
+        $staticJoinResolver->expects($this->once())->method('configure')->with('mmTable', 'table_bar', '', 'uid_local');
 
         $container = $this->createMock(Container::class);
 
-        $container->expects($this->exactly(2))->method('get')->willReturnOnConsecutiveCalls($groupResolver, $staticJoinResolver);
+        $container->expects($this->exactly(2))
+                  ->method('get')
+                  ->willReturnOnConsecutiveCalls(
+                      $groupResolver,
+                      $staticJoinResolver,
+                  );
         $groupProcessor->injectContainer($container);
 
         $processingResult1 = $groupProcessor->process('table_bar', 'field_bar', $mmTableTcaMultipleTable);
@@ -296,13 +323,27 @@ class GroupProcessorTest extends UnitTestCase
 
         $groupProcessor = new GroupProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
-        $tcaMarkerService->expects($this->once())->method('escapeMarkedIdentifier')->with('match_field_foo = "match_value_foo" AND match_field_baz = "match_value_baz"')->willReturn('match_field_foo = "match_value_foo" AND match_field_baz = "match_value_baz"');
+        $tcaMarkerService->expects($this->once())
+                         ->method('escapeMarkedIdentifier')
+                         ->with('match_field_foo = "match_value_foo" AND match_field_baz = "match_value_baz"')
+                         ->willReturn('match_field_foo = "match_value_foo" AND match_field_baz = "match_value_baz"');
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
         $groupResolver = $this->createMock(GroupMmMultiTableResolver::class);
-        $groupResolver->expects($this->once())->method('configure')->with(['table_bar', 'table_foo'], 'mmTable', 'field_bar', 'uid_local', 'match_field_foo = "match_value_foo" AND match_field_baz = "match_value_baz"');
+        $groupResolver->expects($this->once())
+                      ->method('configure')
+                      ->with(
+                          ['table_bar', 'table_foo'],
+                          'mmTable',
+                          'field_bar',
+                          'uid_local',
+                          'match_field_foo = "match_value_foo" AND match_field_baz = "match_value_baz"',
+                      );
 
         $container = $this->createMock(Container::class);
-        $container->expects($this->once())->method('get')->with(GroupMmMultiTableResolver::class)->willReturn($groupResolver);
+        $container->expects($this->once())
+                  ->method('get')
+                  ->with(GroupMmMultiTableResolver::class)
+                  ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
 
         $processingResult = $groupProcessor->process('table_bar', 'field_bar', $mmTableTcaWithStringValues);
@@ -336,13 +377,27 @@ class GroupProcessorTest extends UnitTestCase
 
         $groupProcessor = new GroupProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
-        $tcaMarkerService->expects($this->once())->method('escapeMarkedIdentifier')->with('match_field_foo = 2 AND match_field_baz = 3')->willReturn('match_field_foo = 2 AND match_field_baz = 3');
+        $tcaMarkerService->expects($this->once())
+                         ->method('escapeMarkedIdentifier')
+                         ->with('match_field_foo = 2 AND match_field_baz = 3')
+                         ->willReturn('match_field_foo = 2 AND match_field_baz = 3');
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
         $groupResolver = $this->createMock(GroupMmMultiTableResolver::class);
-        $groupResolver->expects($this->once())->method('configure')->with(['table_bar', 'table_foo'], 'mmTable', 'field_bar', 'uid_local', 'match_field_foo = 2 AND match_field_baz = 3');
+        $groupResolver->expects($this->once())
+                      ->method('configure')
+                      ->with(
+                          ['table_bar', 'table_foo'],
+                          'mmTable',
+                          'field_bar',
+                          'uid_local',
+                          'match_field_foo = 2 AND match_field_baz = 3',
+                      );
 
         $container = $this->createMock(Container::class);
-        $container->expects($this->once())->method('get')->with(GroupMmMultiTableResolver::class)->willReturn($groupResolver);
+        $container->expects($this->once())
+                  ->method('get')
+                  ->with(GroupMmMultiTableResolver::class)
+                  ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
 
         $processingResult = $groupProcessor->process('table_bar', 'field_bar', $mmTableTcaWithIntegerValues);
@@ -361,7 +416,7 @@ class GroupProcessorTest extends UnitTestCase
         $groupProcessor = new GroupProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
-        $reflectionMethod = new \ReflectionMethod(GroupProcessor::class, 'isSingleTable');
+        $reflectionMethod = new ReflectionMethod(GroupProcessor::class, 'isSingleTable');
         $reflectionMethod->setAccessible(true);
 
         $allowedTables = 'table1';

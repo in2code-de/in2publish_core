@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
 use In2code\In2publishCore\Component\Core\FileHandling\FileDemandResolver;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
+use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
 use function hash;
@@ -19,15 +21,14 @@ use function hash;
  */
 class FileDemandResolverTest extends UnitTestCase
 {
-
     /**
      * @covers ::resolveDemand
      */
     public function testResolveDemand(): void
     {
         $fileDemandResolver = new FileDemandResolver();
-        $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42],[]);
-        $file2 = new FileRecord(['identifier' => 'file2', 'storage' => 42],[]);
+        $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);
+        $file2 = new FileRecord(['identifier' => 'file2', 'storage' => 42], []);
 
         $filesArray = [
             42 => [
@@ -39,14 +40,14 @@ class FileDemandResolverTest extends UnitTestCase
         $fileInfoArray[42]['foo/bar'] = [
             'size' => 123,
             'mimetype' => 'some_mimetype',
-            'name' =>'some_name',
+            'name' => 'some_name',
             'extension' => 'some_extension',
             'folder_hash' => 'some_folder_hash',
         ];
         $fileInfoArray[42]['/file.txt'] = [
             'size' => 123,
             'mimetype' => 'some_mimetype',
-            'name' =>'some_name',
+            'name' => 'some_name',
             'extension' => 'some_extension',
             'folder_hash' => 'some_folder_hash',
         ];
@@ -79,8 +80,9 @@ class FileDemandResolverTest extends UnitTestCase
 
         $demands = $this->createMock(DemandsCollection::class);
 
-        $demands->method('getFiles')->willReturn($filesArray);
-        $fileDemandResolver->resolveDemand($demands);
+        $demands->method('getDemandsByType')->with(FileDemand::class)->willReturn($filesArray);
+        $recordCollection = new RecordCollection();
+        $fileDemandResolver->resolveDemand($demands, $recordCollection);
 
         $file1Children = $file1->getChildren();
         $this->assertSame($fileRecordChild1, $file1Children['_file']['42:foo/bar']);

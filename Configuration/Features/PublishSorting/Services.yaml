@@ -13,9 +13,9 @@ services:
   In2code\In2publishCore\Features\PublishSorting\Domain\Anomaly\SortingPublisher:
     tags:
       - name: event.listener
-        identifier: 'in2publishcore-SortingPublisher-PublishingOfOneRecordBegan'
+        identifier: 'in2publishcore-SortingPublisher-RecordWasPublished'
         method: 'collectSortingsToBePublished'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
+        event: In2code\In2publishCore\Event\RecordWasPublished
       - name: event.listener
         identifier: 'in2publishcore-SortingPublisher-RecursiveRecordPublishingEnded'
         method: 'publishSortingRecursively'

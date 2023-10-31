@@ -39,7 +39,7 @@ class VersionCommandTest extends UnitTestCase
         $this->assertSame(0, $code);
         $this->assertSame(
             'Version: ' . $extensionService->getExtensionVersion('in2publish_core') . PHP_EOL,
-            $output->fetch()
+            $output->fetch(),
         );
     }
 }

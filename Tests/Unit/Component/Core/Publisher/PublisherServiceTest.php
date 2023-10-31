@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Publisher;
 
+use Exception;
 use In2code\In2publishCore\Component\Core\Publisher\DatabaseRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\Publisher;
@@ -75,13 +76,13 @@ class PublisherServiceTest extends UnitTestCase
         $publisherService->injectTaskExecutionService($this->createMock(TaskExecutionService::class));
         $databaseRecordPublisher = $this->createMock(DatabaseRecordPublisher::class);
         $databaseRecordPublisher->method('canPublish')->willReturn(true);
-        $databaseRecordPublisher->method('publish')->willThrowException(new \Exception());
+        $databaseRecordPublisher->method('publish')->willThrowException(new Exception());
         $databaseRecordPublisher->expects($this->once())->method('cancel');
         $publisherService->addPublisher($databaseRecordPublisher);
 
         $recordTree = $this->getRecordTree1();
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $publisherService->publishRecordTree($recordTree);
     }
 
@@ -95,12 +96,12 @@ class PublisherServiceTest extends UnitTestCase
         $publisherService->injectEventDispatcher($this->createMock(EventDispatcher::class));
         $publisherService->injectTaskExecutionService($this->createMock(TaskExecutionService::class));
         $recordTree = $this->createMock(RecordTree::class);
-        $file =  $this->createFileRecord('file1');
+        $file = $this->createFileRecord('file1');
         $recordTree->method('getChildren')->willReturn([$file]);
 
         $fileRecordPublisher = $this->createMock(FileRecordPublisher::class);
         $fileRecordPublisher->method('canPublish')->with($file)->willReturn(true);
-        $fileRecordPublisher->method('finish')->willThrowException(new \Exception('TestException'));
+        $fileRecordPublisher->method('finish')->willThrowException(new Exception('TestException'));
         $publisherService->addPublisher($fileRecordPublisher);
 
         $reversibleTransactionalPublisher = $this->getReversibleTransactionalPublisher();
@@ -109,7 +110,7 @@ class PublisherServiceTest extends UnitTestCase
         $GLOBALS['number_of_calls_reverse'] = 0;
         $GLOBALS['number_of_calls_cancel'] = 0;
         try {
-            $this->expectException(\Exception::class);
+            $this->expectException(Exception::class);
             $publisherService->publishRecordTree($recordTree);
         } finally {
             $this->assertEquals(1, $GLOBALS['number_of_calls_reverse']);
@@ -122,8 +123,11 @@ class PublisherServiceTest extends UnitTestCase
     /**
      * @return void
      */
-    protected function createDatabaseRecord(int $uid, string $table = 'tablename', string $state = 'added'): DatabaseRecord
-    {
+    protected function createDatabaseRecord(
+        int $uid,
+        string $table = 'tablename',
+        string $state = 'added'
+    ): DatabaseRecord {
         $record = $this->createMock(DatabaseRecord::class);
         $record->method('getLocalProps')->willReturn(['foo' => 'bar']);
         $record->method('getId')->willReturn($uid);
@@ -166,17 +170,17 @@ class PublisherServiceTest extends UnitTestCase
         $record1->method('getChildren')->willReturn(
             [
                 'tablename' => [
-                    2 => $record2
+                    2 => $record2,
                 ],
                 'pages' => [
-                    3 => $record3
-                ]
-            ]
+                    3 => $record3,
+                ],
+            ],
         );
 
         $recordTree->method('getChildren')->willReturn([
             [
-                $record1
+                $record1,
             ],
         ]);
         return $recordTree;

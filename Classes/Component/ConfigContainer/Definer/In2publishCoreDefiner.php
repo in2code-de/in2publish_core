@@ -40,7 +40,7 @@ use In2code\In2publishCore\Component\ConfigContainer\Validator\ZipExtensionInsta
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class In2publishCoreDefiner implements DefinerInterface
+class In2publishCoreDefiner implements DefinerServiceInterface
 {
     protected array $defaultIgnoredTables = [
         'be_groups',
@@ -71,7 +71,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addArray(
                                      'envVars',
                                      Builder::start()->addGenericScalar(Node::T_STRING),
-                                     []
+                                     [],
                                  )
                                  ->addArray(
                                      'database',
@@ -80,13 +80,13 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString('username', 'username_123')
                                             ->addOptionalString('password', 'Password_123')
                                             ->addString('hostname', '127.0.0.1')
-                                            ->addInteger('port', 3306, [IPv4PortValidator::class])
-                                 )
+                                            ->addInteger('port', 3306, [IPv4PortValidator::class]),
+                                 ),
                       )
                       ->addArray(
                           'excludeRelatedTables',
                           Builder::start()->addGenericScalar(Node::T_INTEGER),
-                          $this->defaultIgnoredTables
+                          $this->defaultIgnoredTables,
                       )
                       ->addOptionalArray(
                           'ignoreFieldsForDifferenceView',
@@ -94,7 +94,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addGenericArray(
                                      Node::T_STRING,
                                      Builder::start()
-                                            ->addGenericScalar(Node::T_INTEGER)
+                                            ->addGenericScalar(Node::T_INTEGER),
                                  ),
                       )
                       ->addArray(
@@ -106,8 +106,8 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addGenericArray(
                                                 Node::T_STRING,
                                                 Builder::start()
-                                                       ->addGenericScalar(Node::T_INTEGER)
-                                            )
+                                                       ->addGenericScalar(Node::T_INTEGER),
+                                            ),
                                  ),
                           [
                               '.*' => [
@@ -139,20 +139,20 @@ class In2publishCoreDefiner implements DefinerInterface
                                       'last_indexed',
                                   ],
                               ],
-                          ]
+                          ],
                       )
                       ->addArray(
                           'factory',
                           Builder::start()
                                  ->addBoolean('resolvePageRelations', false)
                                  ->addBoolean('includeSysFileReference', false)
-                                 ->addBoolean('treatRemovedAndDeletedAsDifference', false)
+                                 ->addBoolean('treatRemovedAndDeletedAsDifference', false),
                       )
                       ->addArray(
                           'filePreviewDomainName',
                           Builder::start()
                                  ->addString('local', 'stage.example.com')
-                                 ->addString('foreign', 'www.example.com')
+                                 ->addString('foreign', 'www.example.com'),
                       )
                       ->addArray(
                           'view',
@@ -161,27 +161,27 @@ class In2publishCoreDefiner implements DefinerInterface
                                      'records',
                                      Builder::start()
                                             ->addBoolean('filterButtons', true)
-                                            ->addBoolean('breadcrumb', false)
+                                            ->addBoolean('breadcrumb', false),
                                  )
                                  ->addArray(
                                      'files',
                                      Builder::start()
-                                            ->addBoolean('filterButtons', true)
+                                            ->addBoolean('filterButtons', true),
                                  )
-                                 ->addString('titleField', 'title')
+                                 ->addString('titleField', 'title'),
                       )
                       ->addArray(
                           'module',
                           Builder::start()
                                  ->addBoolean('m1', true)
                                  ->addBoolean('m3', true)
-                                 ->addBoolean('m4', true)
+                                 ->addBoolean('m4', true),
                       )
                       ->addArray(
                           'debug',
                           Builder::start()
                                  ->addBoolean('keepEnvelopes', false)
-                                 ->addBoolean('traceDemand', false)
+                                 ->addBoolean('traceDemand', false),
                       )
                       ->addArray(
                           'backup',
@@ -193,11 +193,11 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString(
                                                 'backupLocation',
                                                 '/var/backup/',
-                                                [DirectoryExistsValidator::class]
+                                                [DirectoryExistsValidator::class],
                                             )
                                             ->addBoolean('addDropTable', true)
-                                            ->addBoolean('zipBackup', true, [ZipExtensionInstalledValidator::class])
-                                 )
+                                            ->addBoolean('zipBackup', true, [ZipExtensionInstalledValidator::class]),
+                                 ),
                       )
                       ->addArray(
                           'features',
@@ -205,8 +205,8 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addArray(
                                      'contextMenuPublishEntry',
                                      Builder::start()
-                                            ->addBoolean('enable', false)
-                                 )
+                                            ->addBoolean('enable', false),
+                                 ),
                       )
                       ->end();
     }
@@ -224,11 +224,11 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString(
                                                 'backupLocation',
                                                 '/app/foreign/backup',
-                                                [DirectoryExistsValidator::class]
+                                                [DirectoryExistsValidator::class],
                                             )
                                             ->addBoolean('addDropTable', true)
-                                            ->addBoolean('zipBackup', true, [ZipExtensionInstalledValidator::class])
-                                 )
+                                            ->addBoolean('zipBackup', true, [ZipExtensionInstalledValidator::class]),
+                                 ),
                       )
                       ->end();
     }

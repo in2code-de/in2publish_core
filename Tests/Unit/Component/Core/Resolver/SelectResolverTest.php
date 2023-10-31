@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Resolver\SelectResolver
@@ -21,13 +23,13 @@ class SelectResolverTest extends UnitTestCase
     public function testGetTargetTables(): void
     {
         $selectResolver = new SelectResolver();
-        $foreignTable = new \ReflectionProperty(SelectResolver::class, 'foreignTable');
+        $foreignTable = new ReflectionProperty(SelectResolver::class, 'foreignTable');
         $foreignTable->setAccessible(true);
 
         $selectResolver->configure(
             'column_foo',
             'foreignTable_foo',
-            'foreignTableWhere_foo'
+            'foreignTableWhere_foo',
         );
 
         $this->assertEquals(['foreignTable_foo'], $selectResolver->getTargetTables());
@@ -39,17 +41,17 @@ class SelectResolverTest extends UnitTestCase
     public function testConfigure(): void
     {
         $selectResolver = new SelectResolver();
-        $column = new \ReflectionProperty(SelectResolver::class, 'column');
+        $column = new ReflectionProperty(SelectResolver::class, 'column');
         $column->setAccessible(true);
-        $foreignTable = new \ReflectionProperty(SelectResolver::class, 'foreignTable');
+        $foreignTable = new ReflectionProperty(SelectResolver::class, 'foreignTable');
         $foreignTable->setAccessible(true);
-        $foreignTableWhere = new \ReflectionProperty(SelectResolver::class, 'foreignTableWhere');
+        $foreignTableWhere = new ReflectionProperty(SelectResolver::class, 'foreignTableWhere');
         $foreignTableWhere->setAccessible(true);
 
         $selectResolver->configure(
             'column_foo',
             'foreignTable_foo',
-            'foreignTableWhere_foo'
+            'foreignTableWhere_foo',
         );
 
         $this->assertEquals('column_foo', $column->getValue($selectResolver));
@@ -70,15 +72,15 @@ class SelectResolverTest extends UnitTestCase
         $selectResolver->configure(
             'column_foo',
             'foreignTable_foo',
-            'foreignTableWhere_foo'
+            'foreignTableWhere_foo',
         );
         $demands = new DemandsCollection();
-        $record = new DatabaseRecord('foreignTable_foo', 42, ['column_foo' => 'value_foo'],[],[]);
+        $record = new DatabaseRecord('foreignTable_foo', 42, ['column_foo' => 'value_foo'], [], []);
         $selectResolver->resolve($demands, $record);
 
-        $selectDemandForTableFoo = $demands->getSelect()['foreignTable_foo'];
+        $selectDemandForTableFoo = $demands->getDemandsByType(SelectDemand::class)['foreignTable_foo'];
 
-        foreach($selectDemandForTableFoo as $selectDemand) {
+        foreach ($selectDemandForTableFoo as $selectDemand) {
             $resolvedRecordInSelectDemand = $selectDemand['uid']['value_foo']['foreignTable_foo\42'];
             $this->assertEquals($resolvedRecordInSelectDemand, $record);
         }

@@ -33,6 +33,8 @@ use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
 use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
+use In2code\In2publishCore\Component\Core\Demand\Type\SysRedirectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
 use In2code\In2publishCore\Component\Core\RecordCollection;
@@ -97,7 +99,7 @@ class RedirectController extends ActionController
             'stylesheet',
             'all',
             '',
-            false
+            false,
         );
     }
 
@@ -141,7 +143,7 @@ class RedirectController extends ActionController
         $recordTree = new RecordTree();
 
         $demands = $this->demandsFactory->createDemand();
-        $demands->addSysRedirectSelect('sys_redirect', $additionalWhere, $recordTree);
+        $demands->addDemand(new SysRedirectDemand('sys_redirect', $additionalWhere, $recordTree));
 
         $recordCollection = new RecordCollection();
         $this->demandResolver->resolveDemand($demands, $recordCollection);
@@ -156,7 +158,7 @@ class RedirectController extends ActionController
                 'hosts' => $this->sysRedirectRepo->findHostsOfRedirects(),
                 'statusCodes' => $this->sysRedirectRepo->findStatusCodesOfRedirects(),
                 'filter' => $filter,
-            ]
+            ],
         );
         return $this->htmlResponse();
     }
@@ -168,7 +170,7 @@ class RedirectController extends ActionController
             $this->addFlashMessage(
                 'No redirect has been selected for publishing',
                 'Skipping publishing',
-                AbstractMessage::NOTICE
+                AbstractMessage::NOTICE,
             );
             $this->redirect('list');
         }
@@ -177,7 +179,7 @@ class RedirectController extends ActionController
 
         $demands = $this->demandsFactory->createDemand();
         foreach ($redirects as $redirect) {
-            $demands->addSelect('sys_redirect', '', 'uid', $redirect, $recordTree);
+            $demands->addDemand(new SelectDemand('sys_redirect', '', 'uid', $redirect, $recordTree));
         }
 
         $recordCollection = new RecordCollection();
@@ -213,8 +215,8 @@ class RedirectController extends ActionController
                 sprintf(
                     'Associated redirect %s with site %s',
                     $redirectDto->__toString(),
-                    $redirectDto->tx_in2publishcore_foreign_site_id
-                )
+                    $redirectDto->tx_in2publishcore_foreign_site_id,
+                ),
             );
             if (isset($_POST['_saveandpublish'])) {
                 $this->redirect('publish', null, null, ['redirects' => [$redirectDto->uid]]);
@@ -224,7 +226,7 @@ class RedirectController extends ActionController
         $sites = $this->foreignSiteFinder->getAllSites();
         $siteOptions = [
             '*' => LocalizationUtility::translate(
-                'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host_global_text'
+                'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host_global_text',
             ),
         ];
         foreach ($sites as $site) {

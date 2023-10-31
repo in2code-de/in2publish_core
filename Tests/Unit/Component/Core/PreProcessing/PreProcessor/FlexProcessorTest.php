@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\FlexProcessor;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
@@ -96,14 +97,14 @@ class FlexProcessorTest extends UnitTestCase
         $flexFormTools = $this->createMock(FlexFormTools::class);
         $flexFormTools->expects($this->exactly(2))->method('parseDataStructureByIdentifier')->withConsecutive(
             [$json1],
-            [$json2]
+            [$json2],
         );
         $flexFormFlatteningService = $this->createMock(FlexFormFlatteningService::class);
         $flexFormFlatteningService->expects($this->exactly(2))
                                   ->method('flattenFlexFormDefinition')
                                   ->willReturnOnConsecutiveCalls(
                                       ['foo' => 'bar'],
-                                      ['bar' => 'baz']
+                                      ['bar' => 'baz'],
                                   );
         $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $tcaPreProcessingService->expects($this->exactly(2))->method('preProcessTcaColumns')->withConsecutive(
@@ -146,7 +147,7 @@ class FlexProcessorTest extends UnitTestCase
                 'tableName' => 'tableNameFoo',
                 'fieldName' => 'fieldNameBar',
                 'dataStructureKey' => 'foo_pi2,baz',
-            ])
+            ]),
         );
 
         $flexFormContent = [
@@ -180,7 +181,9 @@ class FlexProcessorTest extends UnitTestCase
                 public function resolve(Demands $demands, Record $record): void
                 {
                     $this->called['select.fooBar']++;
-                    $demands->addSelect('tableNameBar', '', 'columnNameFoo', 3, $this->databaseRecord);
+                    $demands->addDemand(
+                        new SelectDemand('tableNameBar', '', 'columnNameFoo', 3, $this->databaseRecord),
+                    );
                 }
             };
         $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] =
@@ -202,7 +205,9 @@ class FlexProcessorTest extends UnitTestCase
                 public function resolve(Demands $demands, Record $record): void
                 {
                     $this->called['inline.barFoo']++;
-                    $demands->addSelect('tableNameFoo', '', 'columnNameBar', 5, $this->databaseRecord);
+                    $demands->addDemand(
+                        new SelectDemand('tableNameFoo', '', 'columnNameBar', 5, $this->databaseRecord),
+                    );
                 }
             };
 

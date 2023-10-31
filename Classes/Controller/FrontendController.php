@@ -41,11 +41,11 @@ class FrontendController extends ActionController
     {
         $this->view->assign(
             'local_preview',
-            (string)BackendUtility::buildPreviewUri('pages', $identifier, 'local')
+            (string)BackendUtility::buildPreviewUri('pages', $identifier, 'local'),
         );
         $this->view->assign(
             'foreign_preview',
-            (string)BackendUtility::buildPreviewUri('pages', $identifier, 'foreign')
+            (string)BackendUtility::buildPreviewUri('pages', $identifier, 'foreign'),
         );
         return $this->htmlResponse();
     }

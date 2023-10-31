@@ -6,8 +6,8 @@ You will find more detailed information and hints in each section of the documen
 ## Operating System / OS Software
 
 in2publish_core depends on various common system properties and software for faultless operations.
-The most basic dependency is the operating system or short "OS". We've built and tested in2publish on various UNIX based
-OS to ensure it works in most cases.
+The most basic dependency is the operating system or short "OS". We've built and tested in2publish on various LINUX und
+UNIX based OS to ensure it works in most cases.
 Because there are so many different OS out there we can't develop and test in2publish_core on each, so there are a few
 requirements to the OS that ensure in2publish_core will not run into problems in this level.
 

@@ -58,7 +58,7 @@ class ToolsController extends ActionController
             $this->addFlashMessage(
                 implode(PHP_EOL, $messages),
                 LocalizationUtility::translate('test_state_error', 'in2publish_core'),
-                AbstractMessage::ERROR
+                AbstractMessage::ERROR,
             );
         }
 

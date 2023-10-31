@@ -18,7 +18,7 @@ class TcaEscapingMarkerService
             $sql = preg_replace_callback(
                 '/{#(?P<identifier>[^}]+)}/',
                 fn(array $matches) => $this->localDatabase->quoteIdentifier($matches['identifier']),
-                $sql
+                $sql,
             );
         }
 

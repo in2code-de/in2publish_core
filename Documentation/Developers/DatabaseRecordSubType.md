@@ -15,8 +15,9 @@ a `DatabaseRecord` subtype. Everything you require is a `XxxDatabaseRecordFactor
 implements `\In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactory` and the
 corresponding `XxxDatabaseRecord` model.
 
-Your new `Factory` will be automatically registered by the interface it implements (don't forget to clear your DI caches!)
-and if it has a higher priority then every other factory that can produce objects for the given table, it will be used.
+Your new `Factory` will be automatically registered by the interface it implements (don't forget to clear your DI
+caches!) and if it has a higher priority then every other factory that can produce objects for the given table, it will
+be used.
 
 ## Example
 

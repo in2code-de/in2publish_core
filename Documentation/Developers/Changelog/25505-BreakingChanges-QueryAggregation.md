@@ -4,16 +4,16 @@ Issue https://projekte.in2code.de/issues/25505
 
 ## Description
 
-Query Aggregation (QUAG) was introduced to reduce the number of queries and therefore the time that the Content Publisher
-takes to build up and display the record tree. As the project's working title suggests, we achieve this by aggregating
-queries.
+Query Aggregation (QUAG) was introduced to reduce the number of queries and therefore the time that the Content
+Publisher takes to build up and display the record tree. As the project's working title suggests, we achieve this by
+aggregating queries.
 
 Please read the section Removed Components / RecordHandling for detailed information about how we resolve relations.
 
 ## Impact
 
-QUAG results in a noticable performance improvement.
-Therefore features which had been offered in previous versions to overcome performance issues are now superfluous and
+QUAG results in a noticeable performance improvement.
+Therefore, features which had been offered in previous versions to overcome performance issues are now superfluous and
 have therefore been removed.
 
 ### Class structure
@@ -81,12 +81,12 @@ Following configuration options have been removed, because the feature or compon
 
 #### SimplifiedOverviewAndPublishing (SOAP)
 
-The purpose of SimplifiedOverviewAndPublishing was to increase the Content Publisher`s performance. This feature actually
-has a long line of history, because it precedes the features SimpleOverviewAndAjax and SimplePublishing from the
-Content Publisher Enterprise Edition by combining them. SOAP could be understood as a prototype or rather predecessor of
-QUAG. It also did query one table at a time and in fact, the Repository classes have been maintained. SOAP, however, did
-not recurse into the record relations and only resolved the first relation level. This was the big disadvantage of
-that feature. It was fast but at the cost of leaving out records.
+The purpose of SimplifiedOverviewAndPublishing was to increase the Content Publisher`s performance. This feature
+actually has a long line of history, because it precedes the features SimpleOverviewAndAjax and SimplePublishing from
+the Content Publisher Enterprise Edition by combining them. SOAP could be understood as a prototype or rather
+predecessor of QUAG. It also did query one table at a time and in fact, the Repository classes have been maintained.
+SOAP, however, did not recurse into the record relations and only resolved the first relation level. This was the big
+disadvantage of that feature. It was fast but at the cost of leaving out records.
 
 The reason that this feature is dropped is simply that the new core is as fast as SOAP but with 100% precision. So it is
 like SOAP but without the drawbacks, which makes SOAP superfluous.
@@ -96,11 +96,11 @@ like SOAP but without the drawbacks, which makes SOAP superfluous.
 #### FalHandling
 
 FalHandling was the component that was responsible for building the record tree for the Publish Files Module. It was
-very complex, error-prone and hard to understand and debug. In fact, it had bugs that dated back to as early as 2015, which
-could never be resolved because of the way the module worked. To alleviate these pains, the FAL handling was rewritten into a
-more Filelist-ish way. Previously, the files shown in the Publish Files Module had been based on the File Index records (
-sys_file). Neither had this been a good idea for several reasons, nor does it represent what the Filelist Module shows us.
-The Filelist Module is based on the actual files in your storage.
+very complex, error-prone and hard to understand and debug. In fact, it had bugs that dated back to as early as 2015,
+which could never be resolved because of the way the module worked. To alleviate these pains, the FAL handling was
+rewritten into a more Filelist-ish way. Previously, the files shown in the Publish Files Module had been based on the
+File Index records (sys_file). Neither had this been a good idea for several reasons, nor does it represent what the
+Filelist Module shows us. The Filelist Module is based on the actual files in your storage.
 
 The Publish Files Module contents are now based on actual files, but we still rely on sys_file to detect if files have
 been renamed or moved, because this information is not persisted with the file itself.
@@ -115,14 +115,15 @@ QUAG replaces the RecordHandling.
 
 ##### How did the Content Publisher work before QUAG?
 
-Before QUAG, the Content Publisher queried the Database for aevery single record. If it was a page, it would then query all
-tables that could contain records which lived on the page. Upon the first record found, the Content Publisher would look at
-the record's TCA and identify all columns that pointed to another table. Then, the Content Publisher would query each table
-from the TCA until a new record was found. The Content Publisher examined the record's TCA for columns that pointed to
-other tables and the process was repeated recursively, until no more records were found.
+Before QUAG, the Content Publisher queried the Database for every single record. If it was a page, it would then query
+all tables that could contain records which lived on the page. Upon the first record found, the Content Publisher would
+look at the record's TCA and identify all columns that pointed to another table. Then, the Content Publisher would query
+each table from the TCA until a new record was found. The Content Publisher examined the record's TCA for columns that
+pointed to other tables and the process was repeated recursively, until no more records were found.
 
-In other words, the old version of the Content Publisher queried the database for *each possible record*. This means that
-for a single page record, the Content Publisher would produce 9 queries. For a tt_content record it produced 12 queries.
+In other words, the old version of the Content Publisher queried the database for *each possible record*. This means
+that for a single page record, the Content Publisher would produce 9 queries. For a tt_content record it produced 12
+queries.
 
 Additionally, it was virtually impossible to identify bugs that occurred at deep recursion levels, especially for bugs
 that occurred at deep nesting levels, which include FlexForms on customer instances without the possibility to debug
@@ -135,8 +136,8 @@ All these pains will vanish with our completely new all-fresh prepare-execute-or
 In QUAG we first separate the process of database queries and TCA lookups. Since the TCA is already available before the
 first database row and serves as the basis for all further steps, it is processed first.
 
-The PreProcessors search the TCA for columns that refer to other tables or may contain a link to other data by other means,
-e.g. through wizards. A corresponding resolver is created for each possible link.
+The PreProcessors search the TCA for columns that refer to other tables or may contain a link to other data by other
+means, e.g. through wizards. A corresponding resolver is created for each possible link.
 
 Then the first record, usually the page clicked in the Publish Overview Module, is fetched from the database.
 Depending on the selected depth, we use the PID to search the subpages of the first page. The pages to be searched for
@@ -144,15 +145,16 @@ are collected in a demand object until all information has been collected. Then 
 as possible are built from the demand. These queries are executed in the local and foreign database and the rows found
 are converted into DatabaseRecord objects.
 
-When all pages have been found, a query is created for each table which finds all data records on all found pages (via the PID).
+When all pages have been found, a query is created for each table which finds all data records on all found pages (via
+the PID).
 
 Once all non-TCA relations have been resolved, the actual process begins. All records are passed into the resolvers from
 the first step. The resolvers take the properties of the records and build the Demands object from them. Once all
 records have been processed, the demand is fully built and will be resolved. Here again, as few queries as possible are
 executed in order to find all rows that should be found and to convert them into DatabaseRecord objects.
 
-The last step is repeated for all newly found records until no more records are found or the safety limit of 8 iterations
-has been reached. It is extremely unlikely that there are linking chains longer than 8.
+The last step is repeated for all newly found records until no more records are found or the safety limit of 8
+iterations has been reached. It is extremely unlikely that there are linking chains longer than 8.
 
 ### Remove/Replaced Events
 
@@ -171,7 +173,8 @@ result.
 
 * `\In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped`
 * `\In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped`
-* `\In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped` (Or [ExcludeRecordsByParentRecord](../Guides/ExcludeRecordsByParentRecord.md))
+* `\In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped`
+  (Or [ExcludeRecordsByParentRecord](../Guides/ExcludeRecordsByParentRecord.md))
 * `\In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped`
 * `\In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped`
 * `\In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped`

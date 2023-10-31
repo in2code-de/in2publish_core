@@ -27,7 +27,7 @@ class FolderDoesNotExistOnBothSidesException extends Exception
         parent::__construct(
             sprintf(self::MESSAGE, $givenCombinedIdentifier, $rootLevelCombinedIdentifier),
             self::CODE,
-            $previous
+            $previous,
         );
         $this->givenCombinedIdentifier = $givenCombinedIdentifier;
         $this->rootLevelCombinedIdentifier = $rootLevelCombinedIdentifier;

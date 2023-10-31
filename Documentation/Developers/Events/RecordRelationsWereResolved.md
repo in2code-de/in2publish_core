@@ -12,13 +12,14 @@ After the `RecordTree` was built.
 ## Possibilities
 
 This is the central event to process the recordTree before it will be displayed in the UI or published. You can:
+
 * Traverse the record tree to:
-  * change record values
-  * add/remove records
-  * change relations between records
+    * change record values
+    * add/remove records
+    * change relations between records
 * Get specific records from the record tree by their classifier and identifier to:
-  * Recurse through the record tree to get a specific record
-  * ...
+    * Recurse through the record tree to get a specific record
+    * ...
 
 ... virtually anything you can imagine.
 

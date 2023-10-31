@@ -89,7 +89,7 @@ class FileController extends ActionController
     {
         $this->actualInjectPageRenderer($pageRenderer);
         $this->pageRenderer->addInlineLanguageLabelFile(
-            'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf'
+            'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf',
         );
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
         $this->pageRenderer->addCssFile(
@@ -97,7 +97,7 @@ class FileController extends ActionController
             'stylesheet',
             'all',
             '',
-            false
+            false,
         );
     }
 
@@ -120,10 +120,14 @@ class FileController extends ActionController
 
         if (null !== $recordTree) {
             $this->view->assign('recordTree', $recordTree);
+            $this->view->assign('publishingAvailable', true);
         }
 
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Tooltip');
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Modal');
+        $this->pageRenderer->addInlineLanguageLabelFile(
+            'EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf',
+        );
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
         $moduleTemplate->setContent($this->view->render());
@@ -145,7 +149,7 @@ class FileController extends ActionController
             if (!$skipNotification) {
                 $this->addFlashMessage(
                     LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$combinedIdentifier]),
-                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core'),
                 );
             }
         } catch (Throwable $exception) {
@@ -154,10 +158,10 @@ class FileController extends ActionController
                     LocalizationUtility::translate(
                         'file_publishing.failure.folder',
                         'in2publish_core',
-                        [$combinedIdentifier]
+                        [$combinedIdentifier],
                     ),
                     LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-                    AbstractMessage::ERROR
+                    AbstractMessage::ERROR,
                 );
             }
         }
@@ -178,9 +182,12 @@ class FileController extends ActionController
             $this->publisherService->publishRecordTree($recordTree);
             if (!$skipNotification) {
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$combinedIdentifier]
+                    LocalizationUtility::translate(
+                        'file_publishing.file',
+                        'in2publish_core',
+                        [$combinedIdentifier],
                     ),
-                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core'),
                 );
             }
         } catch (Throwable $e) {
@@ -189,11 +196,11 @@ class FileController extends ActionController
                     LocalizationUtility::translate(
                         'file_publishing.failure.file',
                         'in2publish_core',
-                        [$combinedIdentifier]
+                        [$combinedIdentifier],
                     )
                     . $e->getMessage(),
                     LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-                    AbstractMessage::ERROR
+                    AbstractMessage::ERROR,
                 );
             }
         }

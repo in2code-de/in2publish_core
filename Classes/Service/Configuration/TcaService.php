@@ -37,6 +37,9 @@ use function implode;
 use function in_array;
 use function strpos;
 use function ucfirst;
+use function user_error;
+
+use const E_USER_DEPRECATED;
 
 class TcaService implements SingletonInterface
 {
@@ -155,5 +158,65 @@ class TcaService implements SingletonInterface
             $this->rtc['_types'] = $allowed;
         }
         return $this->rtc['_types'][$type];
+    }
+
+    /**
+     * @deprecated Please access $GLOBALS['TCA'] directly. This Method will be removed in in2publish_core v13.
+     */
+    public function getDeletedField(string $tableName): string
+    {
+        user_error(
+            '\In2code\In2publishCore\Service\Configuration\TcaService::getDeletedField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
+            E_USER_DEPRECATED,
+        );
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['delete'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['delete'];
+        }
+        return '';
+    }
+
+    /**
+     * @deprecated Please access $GLOBALS['TCA'] directly. This Method will be removed in in2publish_core v13.
+     */
+    public function getDisableField(string $tableName): string
+    {
+        user_error(
+            '\In2code\In2publishCore\Service\Configuration\TcaService::getDisableField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
+            E_USER_DEPRECATED,
+        );
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'];
+        }
+        return '';
+    }
+
+    /**
+     * @deprecated Please access $GLOBALS['TCA'] directly. This Method will be removed in in2publish_core v13.
+     */
+    public function getLanguageField(string $tableName): string
+    {
+        user_error(
+            '\In2code\In2publishCore\Service\Configuration\TcaService::getLanguageField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
+            E_USER_DEPRECATED,
+        );
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['languageField'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['languageField'];
+        }
+        return '';
+    }
+
+    /**
+     * @deprecated Please access $GLOBALS['TCA'] directly. This Method will be removed in in2publish_core v13.
+     */
+    public function getTransOrigPointerField(string $tableName): string
+    {
+        user_error(
+            '\In2code\In2publishCore\Service\Configuration\TcaService::getTransOrigPointerField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
+            E_USER_DEPRECATED,
+        );
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'];
+        }
+        return '';
     }
 }

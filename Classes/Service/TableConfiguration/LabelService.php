@@ -70,7 +70,7 @@ class LabelService
                 '%d [%d,%d]',
                 $record->getId(),
                 $props['uid_local'],
-                $props['uid_foreign']
+                $props['uid_foreign'],
             );
         }
         $props = $record->getPropsBySide($stagingLevel);

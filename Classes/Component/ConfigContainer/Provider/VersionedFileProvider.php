@@ -29,16 +29,20 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\ConfigContainer\Cache\EarlyCacheInjection;
 use In2code\In2publishCore\Service\Extension\ExtensionServiceInjection;
 use Spyc;
 
 use function explode;
 use function file_exists;
+use function hash_file;
 use function implode;
+use function var_export;
 
 class VersionedFileProvider extends FileProvider
 {
     use ExtensionServiceInjection;
+    use EarlyCacheInjection;
 
     public function getConfig(): array
     {
@@ -46,16 +50,25 @@ class VersionedFileProvider extends FileProvider
 
         $version = $this->extensionService->getExtensionVersion('in2publish_core');
         [$major, $minor, $patch] = explode('.', $version);
+        $context = $this->contextService->getContext();
         $candidates = [
-            implode('.', [$major, $minor, $patch]),
-            implode('.', [$major, $minor]),
-            implode('.', [$major]),
+            $path . $context . 'Configuration_' . implode('.', [$major, $minor, $patch]) . '.yaml',
+            $path . $context . 'Configuration_' . implode('.', [$major, $minor]) . '.yaml',
+            $path . $context . 'Configuration_' . implode('.', [$major]) . '.yaml',
         ];
 
-        foreach ($candidates as $candidate) {
-            $file = $path . $this->contextService->getContext() . 'Configuration_' . $candidate . '.yaml';
+        foreach ($candidates as $file) {
             if (file_exists($file)) {
-                return Spyc::YAMLLoad($file);
+                $cacheKey = 'config_versioned_file_provider_' . hash_file('sha1', $file);
+                if (!$this->earlyCache->has($cacheKey)) {
+                    $this->loadSpycIfRequired();
+                    $config = Spyc::YAMLLoad($file);
+                    $code = 'return ' . var_export($config, true) . ';';
+                    $this->earlyCache->flushByTag('config_versioned_file_provider');
+                    $this->earlyCache->set($cacheKey, $code, ['config_versioned_file_provider']);
+                }
+
+                return $this->earlyCache->require($cacheKey);
             }
         }
 

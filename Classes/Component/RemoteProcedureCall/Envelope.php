@@ -128,7 +128,7 @@ class Envelope
                 'command' => $this->command,
                 'request' => $this->request,
                 'response' => $this->response,
-            ]
+            ],
         );
     }
 

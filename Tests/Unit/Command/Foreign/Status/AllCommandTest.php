@@ -31,7 +31,7 @@ class AllCommandTest extends UnitTestCase
                 {
                     return 0;
                 }
-            }
+            },
         );
 
         $input = new ArrayInput([]);

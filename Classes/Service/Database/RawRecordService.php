@@ -80,7 +80,7 @@ class RawRecordService implements SingletonInterface
         if (null === $database) {
             throw new In2publishCoreException(
                 sprintf('Invalid side "%s" or database is not available', $side),
-                1631722413
+                1631722413,
             );
         }
         $query = $database->createQueryBuilder();

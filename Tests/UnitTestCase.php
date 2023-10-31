@@ -11,8 +11,6 @@ use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderInterface;
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function get_class;
-
 class UnitTestCase extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
     protected $resetSingletonInstances = true;
@@ -39,10 +37,13 @@ class UnitTestCase extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         };
         $contextService = GeneralUtility::makeInstance(ContextService::class);
         $testConfigProvider->config = $config;
-        $configContainer = new ConfigContainer($contextService);
-        $configContainer->registerDefiner(In2publishCoreDefiner::class);
-        $configContainer->registerProvider(DefaultProvider::class);
-        $configContainer->registerProvider(get_class($testConfigProvider));
+        $configContainer = new ConfigContainer(
+            [new DefaultProvider(), $testConfigProvider],
+            [new In2publishCoreDefiner()],
+            [],
+            [],
+        );
+        $configContainer->injectContextService($contextService);
         GeneralUtility::setSingletonInstance(ConfigContainer::class, $configContainer);
     }
 }

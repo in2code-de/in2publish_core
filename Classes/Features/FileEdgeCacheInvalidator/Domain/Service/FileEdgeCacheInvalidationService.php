@@ -79,8 +79,8 @@ class FileEdgeCacheInvalidationService
         $query->select('tablename as table', 'recuid as uid')->from('sys_refindex')->where(
             $query->expr()->andX(
                 $query->expr()->eq('ref_table', '"sys_file"'),
-                $query->expr()->in('ref_uid', $uidList)
-            )
+                $query->expr()->in('ref_uid', $uidList),
+            ),
         );
         return $query->execute();
     }
@@ -99,8 +99,8 @@ class FileEdgeCacheInvalidationService
               ->where(
                   $query->expr()->andX(
                       $query->expr()->eq('table_local', '"sys_file"'),
-                      $query->expr()->in('uid_local', $uidList)
-                  )
+                      $query->expr()->in('uid_local', $uidList),
+                  ),
               );
         return $query->execute();
     }
@@ -123,6 +123,8 @@ class FileEdgeCacheInvalidationService
             if (
                 !in_array($table, $tableNames, true)
                 || !array_key_exists('pid', $schemaManager->listTableColumns($table))
+                || $table === '_file'
+                || $table === '_folder'
             ) {
                 continue;
             }

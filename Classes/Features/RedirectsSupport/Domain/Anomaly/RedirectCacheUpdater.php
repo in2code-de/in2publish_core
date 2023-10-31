@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly;
  */
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
-use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Event\RecordWasPublished;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Task\RebuildRedirectCacheTask;
 
 class RedirectCacheUpdater
@@ -39,7 +39,7 @@ class RedirectCacheUpdater
 
     protected bool $redirectWasPublished = false;
 
-    public function publishRecordRecursiveAfterPublishing(PublishingOfOneRecordEnded $event): void
+    public function publishRecordRecursiveAfterPublishing(RecordWasPublished $event): void
     {
         $record = $event->getRecord();
         if ('sys_redirect' !== $record->getClassification()) {

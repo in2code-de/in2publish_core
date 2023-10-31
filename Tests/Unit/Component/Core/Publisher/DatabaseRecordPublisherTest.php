@@ -40,10 +40,10 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     public function testPublishInsertsAddedRecords()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase =  $this->createMock(Connection::class);
+        $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('insert')->with(
             'tx_in2publishcore_domain_model_test',
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
         );
         $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -54,16 +54,17 @@ class DatabaseRecordPublisherTest extends UnitTestCase
 
         $databaseRecordPublisher->publish($addedRecord);
     }
+
     /**
      * @covers ::publish
      */
     public function testPublishDeletesRemovedRecords()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase =  $this->createMock(Connection::class);
+        $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('delete')->with(
             'tx_in2publishcore_domain_model_test',
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
         );
         $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -81,10 +82,10 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     public function testPublishUpdatesChangedRecords()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase =  $this->createMock(Connection::class);
+        $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('update')->with(
             'tx_in2publishcore_domain_model_test',
-            ['prop1' => 'localValue', 'prop2' => 'localValue']
+            ['prop1' => 'localValue', 'prop2' => 'localValue'],
         );
         $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -103,7 +104,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     public function testFinishCommitsDatabaseChanges()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase =  $this->createMock(Connection::class);
+        $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->method('isTransactionActive')->willReturn(true);
 
         $foreignDatabase->expects($this->once())->method('commit');
@@ -118,7 +119,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     public function testCancelRollsBackDatabaseChanges()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase =  $this->createMock(Connection::class);
+        $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->method('isTransactionActive')->willReturn(true);
 
         $foreignDatabase->expects($this->once())->method('rollBack');

@@ -5,8 +5,9 @@ Replaces the `VoteIfRecordShouldBeSkipped` event.
 
 ## When
 
-This event is created for each record which is going to be published. This means that this event can be fired thousands
-of times during a single publishing process, depending on the number of records on your page.
+This event is created for each record when the record is checked if it can be published. This means that this event can
+be fired thousands of times during a single publishing process or when the Publish Overview Module, depending on the
+number of records that you show or publish.
 
 ## What
 
@@ -16,6 +17,9 @@ of times during a single publishing process, depending on the number of records 
 
 You can listen on this event and add reasons why the record must be skipped. If there is at least one reason why the
 record can not be published, it will not be published.
+
+Adding a reason will show the reason everywhere, where the user could publish the record. Other than dependencies,
+reasons can not be ignored by the user.
 
 ### Example
 

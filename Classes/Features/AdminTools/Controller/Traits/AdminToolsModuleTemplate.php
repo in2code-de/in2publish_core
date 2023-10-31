@@ -73,12 +73,12 @@ trait AdminToolsModuleTemplate
                 $this->uriBuilder->reset()->uriFor(
                     GeneralUtility::trimExplode(',', $entry['action'])[0],
                     null,
-                    $entry['alias']
-                )
+                    $entry['alias'],
+                ),
             );
             if (
                 $this->request->getControllerObjectName() === $entry['controller']
-                && $this->request->getControllerActionName() === $entry['action']
+                && in_array($this->request->getControllerActionName(), explode(',', $entry['action']))
             ) {
                 $button->setClasses('btn-primary');
             }

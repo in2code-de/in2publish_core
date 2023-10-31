@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
@@ -50,6 +51,13 @@ class InlineSelectResolver extends AbstractResolver
             $additionalWhere = $matches['where'];
         }
 
-        $demands->addSelect($this->foreignTable, $additionalWhere, $this->foreignField, $record->getId(), $record);
+        $demand = new SelectDemand(
+            $this->foreignTable,
+            $additionalWhere,
+            $this->foreignField,
+            $record->getId(),
+            $record,
+        );
+        $demands->addDemand($demand);
     }
 }

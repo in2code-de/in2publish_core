@@ -92,7 +92,7 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
                     '_language' => $language,
                     'tx_in2publishcore_pi1[identifier]' => $identifier,
                     'type' => 9815,
-                ]
+                ],
             );
         } catch (Throwable $exception) {
             return '';

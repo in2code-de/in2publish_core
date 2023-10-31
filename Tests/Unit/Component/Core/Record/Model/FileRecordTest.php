@@ -21,7 +21,7 @@ class FileRecordTest extends UnitTestCase
      */
     public function testCreationOfNewFileRecord(): void
     {
-        $fileRecord = new FileRecord(['identifier' => 'file1', 'storage' => 42],[]);
+        $fileRecord = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);
         $this->assertSame('42:file1', $fileRecord->getId());
         $this->assertSame('_file', $fileRecord->getClassification());
         $this->assertSame(Record::S_ADDED, $fileRecord->getState());
@@ -32,7 +32,7 @@ class FileRecordTest extends UnitTestCase
      */
     public function testGetForeignIdentificationProps(): void
     {
-        $fileRecord = new FileRecord(['identifier' => 'file1', 'storage' => 42],[]);
+        $fileRecord = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);
         $this->assertSame([], $fileRecord->getForeignIdentificationProps());
     }
 
@@ -43,7 +43,7 @@ class FileRecordTest extends UnitTestCase
      */
     public function testCalculateState(): void
     {
-        $addedFileRecord =  new FileRecord(['identifier' => 'file1', 'storage' => 42],[]);
+        $addedFileRecord = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);
         $this->assertSame(Record::S_ADDED, $addedFileRecord->getState());
 
         $deletedFileRecord = new FileRecord([], ['identifier' => 'file1', 'storage' => 42]);
@@ -51,15 +51,14 @@ class FileRecordTest extends UnitTestCase
 
         $unchangedFileRecord = new FileRecord(
             ['identifier' => 'file1', 'storage' => 42],
-            ['identifier' => 'file1', 'storage' => 42]
+            ['identifier' => 'file1', 'storage' => 42],
         );
         $this->assertSame(Record::S_UNCHANGED, $unchangedFileRecord->getState());
 
         $changedFileRecord = new FileRecord(
             ['identifier' => 'file1', 'storage' => 42],
-            ['identifier' => 'file2', 'storage' => 42]
+            ['identifier' => 'file2', 'storage' => 42],
         );
         $this->assertSame(Record::S_MOVED, $changedFileRecord->getState());
-
     }
 }

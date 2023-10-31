@@ -30,45 +30,68 @@ namespace In2code\In2publishCore\Component\ConfigContainer;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\Definer\DefinerInterface;
+use In2code\In2publishCore\Component\ConfigContainer\Definer\DefinerServiceInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Migration\MigrationInterface;
+use In2code\In2publishCore\Component\ConfigContainer\Migration\MigrationServiceInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Node\Node;
 use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\PostProcessorInterface;
+use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\PostProcessorServiceInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ContextualProvider;
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderInterface;
+use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderServiceInterface;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
+use JsonException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function array_combine;
-use function array_fill;
 use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function asort;
-use function count;
 use function explode;
 use function is_array;
+use function json_encode;
+use function sha1;
 use function trim;
+
+use const JSON_THROW_ON_ERROR;
 
 class ConfigContainer implements SingletonInterface
 {
     use ContextServiceInjection;
+    use DeprecatedConfigContainer;
 
-    protected array $providers = [];
-    /** @var array<class-string<DefinerInterface>, DefinerInterface|null> */
-    protected array $definers = [];
-    /** @var array<class-string<PostProcessorInterface>, PostProcessorInterface|null> */
-    protected array $postProcessors = [];
-    /** @var array<class-string<MigrationInterface>, MigrationInterface|null> */
-    protected array $migrations = [];
+    /** @var array<class-string<ProviderInterface>, array> */
+    protected array $providerConfig = [];
     protected ?array $config = null;
+    protected array $incompleteConfig = [];
     /** @var NodeCollection[]|null[] */
     protected array $definition = [
         'local' => null,
         'foreign' => null,
     ];
+    /** @var array<class-string<ProviderServiceInterface>, ProviderServiceInterface> */
+    private array $providerServices;
+    /** @var array<class-string<DefinerServiceInterface>, DefinerServiceInterface> */
+    private array $definerServices;
+    /** @var array<class-string<MigrationServiceInterface>, MigrationServiceInterface> */
+    private array $migrationServices;
+    /** @var array<class-string<PostProcessorServiceInterface>, PostProcessorServiceInterface> */
+    private array $postProcessorServices;
+
+    public function __construct(
+        array $providerServices,
+        array $definerServices,
+        array $migrationServices,
+        array $postProcessorServices
+    ) {
+        $this->providerServices = $providerServices;
+        $this->definerServices = $definerServices;
+        $this->migrationServices = $migrationServices;
+        $this->postProcessorServices = $postProcessorServices;
+    }
 
     /** @return mixed */
     public function get(string $path = '')
@@ -95,27 +118,22 @@ class ConfigContainer implements SingletonInterface
         if (null !== $this->config) {
             return $this->config;
         }
+
         $complete = true;
-        $priority = [];
-        foreach ($this->providers as $class => $config) {
-            $provider = GeneralUtility::makeInstance($class);
-            if ($provider instanceof ProviderInterface) {
-                if (null === $config) {
-                    if ($provider->isAvailable()) {
-                        $this->providers[$class] = $provider->getConfig();
-                        $priority[$class] = $provider->getPriority();
-                    } else {
-                        $complete = false;
-                    }
+        $priority = $this->callLegacyProviders([], $complete);
+
+        foreach ($this->providerServices as $class => $provider) {
+            $priority[$class] = $provider->getPriority();
+            if (!array_key_exists($class, $this->providerConfig)) {
+                if ($provider->isAvailable()) {
+                    $this->providerConfig[$class] = $provider->getConfig();
                 } else {
-                    $priority[$class] = $provider->getPriority();
+                    $complete = false;
                 }
             }
         }
 
-        asort($priority);
-
-        $config = $this->processConfig($priority);
+        $config = $this->processConfig($priority, $complete);
 
         if (true === $complete) {
             $this->config = $config;
@@ -130,70 +148,81 @@ class ConfigContainer implements SingletonInterface
      */
     public function getContextFreeConfig(): array
     {
-        $priority = [];
-        foreach ($this->providers as $class => $config) {
-            $provider = GeneralUtility::makeInstance($class);
-            if ($provider instanceof ProviderInterface && !($provider instanceof ContextualProvider)) {
-                if (null === $config) {
-                    if ($provider->isAvailable()) {
-                        $this->providers[$class] = $provider->getConfig();
-                        $priority[$class] = $provider->getPriority();
-                    }
-                } else {
-                    $priority[$class] = $provider->getPriority();
-                }
+        $complete = true;
+        $priority = $this->callLegacyProviders([], $complete);
+
+        foreach ($this->providerServices as $class => $provider) {
+            if ($provider instanceof ContextualProvider) {
+                continue;
             }
+            if (!array_key_exists($class, $this->providerConfig) && $provider->isAvailable()) {
+                $this->providerConfig[$class] = $provider->getConfig();
+            }
+            $priority[$class] = $provider->getPriority();
         }
 
-        return $this->processConfig($priority);
+        return $this->processConfig($priority, false);
     }
 
     /**
      * Applies the configuration of each provider in order of priority.
      *
-     * @param array $priority
-     *
      * @return array|array[]|bool[]|int[]|string[] Sorted, merged and type cast configuration.
+     * @throws JsonException
      */
-    protected function processConfig(array $priority): array
+    protected function processConfig(array $priority, bool $complete): array
     {
         asort($priority);
 
+        if (!$complete) {
+            $processedConfigKey = sha1(json_encode($priority, JSON_THROW_ON_ERROR));
+            if (array_key_exists($processedConfigKey, $this->incompleteConfig)) {
+                return $this->incompleteConfig[$processedConfigKey];
+            }
+        }
+
         $config = [];
         foreach (array_keys($priority) as $class) {
-            $providerConfig = $this->providers[$class];
-            $config = ConfigurationUtility::mergeConfiguration($config, $providerConfig);
+            $config = ConfigurationUtility::mergeConfiguration($config, $this->providerConfig[$class] ?? []);
         }
 
-        foreach ($this->postProcessors as $class => $object) {
-            if (null === $object) {
-                $object = GeneralUtility::makeInstance($class);
-                $this->postProcessors[$class] = $object;
-            }
-            if ($object instanceof PostProcessorInterface) {
-                $config = $object->process($config);
-            }
-        }
-
+        $config = $this->postProcessConfig($config);
         $config = $this->migrateConfig($config);
+        $config = $this->castConfig($config);
 
-        if ($this->contextService->isLocal()) {
-            $config = $this->getLocalDefinition()->cast($config);
-        } else {
-            $config = $this->getForeignDefinition()->cast($config);
+        // Remove previous caches or all if complete
+        $this->incompleteConfig = [];
+        if (!$complete) {
+            $this->incompleteConfig[$processedConfigKey] = $config;
         }
 
         return $config;
     }
 
+    protected function postProcessConfig(array $config): array
+    {
+        $config = $this->processLegacyPostProcessors($config);
+        foreach ($this->postProcessorServices as $postProcessor) {
+            $config = $postProcessor->process($config);
+        }
+        return $config;
+    }
+
     protected function migrateConfig(array $config): array
     {
-        foreach ($this->migrations as $class => $migration) {
-            if (null === $migration) {
-                $this->migrations[$class] = $migration = GeneralUtility::makeInstance($class);
-            }
-
+        $config = $this->processLegacyMigrations($config);
+        foreach ($this->migrationServices as $migration) {
             $config = $migration->migrate($config);
+        }
+        return $config;
+    }
+
+    protected function castConfig(array $config): array
+    {
+        if ($this->contextService->isLocal()) {
+            $config = $this->getLocalDefinition()->cast($config);
+        } else {
+            $config = $this->getForeignDefinition()->cast($config);
         }
         return $config;
     }
@@ -202,13 +231,12 @@ class ConfigContainer implements SingletonInterface
     {
         if (null === $this->definition['local']) {
             $definition = GeneralUtility::makeInstance(NodeCollection::class);
-            foreach ($this->definers as $class => $definer) {
-                if ($definer === null) {
-                    $this->definers[$class] = $definer = GeneralUtility::makeInstance($class);
+            $this->addLocalDefinitionFromLegacyDefiners($definition);
+            foreach ($this->definerServices as $definer) {
+                if ($definer instanceof ConditionalConfigServiceInterface && !$definer->isEnabled()) {
+                    continue;
                 }
-                if ($definer instanceof DefinerInterface) {
-                    $definition->addNodes($definer->getLocalDefinition());
-                }
+                $definition->addNodes($definer->getLocalDefinition());
             }
             $this->definition['local'] = $definition;
         }
@@ -219,105 +247,51 @@ class ConfigContainer implements SingletonInterface
     {
         if (null === $this->definition['foreign']) {
             $definition = GeneralUtility::makeInstance(NodeCollection::class);
-            foreach ($this->definers as $class => $definer) {
-                if ($definer === null) {
-                    $this->definers[$class] = $definer = GeneralUtility::makeInstance($class);
-                }
-                if ($definer instanceof DefinerInterface) {
-                    $definition->addNodes($definer->getForeignDefinition());
-                }
+            $this->addForeignDefinitionFromLegacyDefiners($definition);
+            foreach ($this->definerServices as $definer) {
+                $definition->addNodes($definer->getForeignDefinition());
             }
             $this->definition['foreign'] = $definition;
         }
         return $this->definition['foreign']->getNodePath($path);
     }
 
-    /**
-     * All providers must be registered in ext_localconf.php!
-     * Providers registered in ext_tables.php will not overrule configurations of already loaded extensions.
-     * Providers must implement the ProviderInterface, or they won't be called.
-     */
-    public function registerProvider(string $provider): void
-    {
-        $this->providers[$provider] = null;
-    }
-
-    /**
-     * All definers must be registered in ext_localconf.php!
-     * Definers must implement the DefinerInterface, or they won't be called.
-     */
-    public function registerDefiner(string $definer): void
-    {
-        $this->definers[$definer] = null;
-    }
-
-    /**
-     * All post processors must be registered in ext_localconf.php!
-     * PostProcessors must implement the PostProcessorInterface, or they won't be called.
-     */
-    public function registerPostProcessor(string $postProcessor): void
-    {
-        $this->postProcessors[$postProcessor] = null;
-    }
-
-    /**
-     * All migrations must be registered in ext_localconf.php!
-     * Migrations must implement the MigrationInterface.
-     */
-    public function registerMigration(string $migration): void
-    {
-        $this->migrations[$migration] = null;
-    }
-
     public function getMigrationMessages(): array
     {
         $messages = [];
-        foreach ($this->migrations as $class => $migration) {
-            if (null === $migration) {
-                $this->migrations[$class] = $migration = GeneralUtility::makeInstance($class);
-            }
-            $messages[] = $migration->getMessages();
+        $messages = $this->addMessagesFromLegacyMigrations($messages);
+        foreach ($this->migrationServices as $migrationService) {
+            $messages[] = $migrationService->getMessages();
         }
         return array_merge([], ...$messages);
     }
 
     /**
-     * Returns the information about all registered classes which are responsible for the resulting configuration.
+     * @return array{
+     *     providerServices: array<class-string<ProviderServiceInterface>, ProviderServiceInterface>,
+     *     legacyProviders: array<class-string<ProviderInterface>, ProviderInterface|null|false>,
+     *     definerServices: array<class-string<DefinerServiceInterface>, DefinerServiceInterface>,
+     *     legacyDefiners: array<class-string<DefinerInterface>, DefinerInterface|null|false>,
+     *     migrationServices: array<class-string<MigrationServiceInterface>, MigrationServiceInterface>,
+     *     legacyMigrations: array<class-string<MigrationInterface>, MigrationInterface|null>,
+     *     postProcessorServices: array<class-string<PostProcessorServiceInterface>, PostProcessorServiceInterface>,
+     *     legacyPostProcessors: array<class-string<PostProcessorInterface>, PostProcessorInterface|null>,
+     * }
+     * @internal Use the ConfigContainerDumper to dump the ConfigContainer
      */
-    public function dump(): array
+    public function dumpRaw(): array
     {
-        // Clone this instance and reset it
-        $cloned = clone $this;
-        $cloned->config = null;
-        $cloned->providers = array_combine(array_keys($this->providers), array_fill(0, count($this->providers), null));
-        $cloned->definers = array_combine(array_keys($this->definers), array_fill(0, count($this->definers), null));
-        $cloned->postProcessors = array_combine(
-            array_keys($this->postProcessors),
-            array_fill(0, count($this->postProcessors), null)
-        );
-        $fullConfig = $cloned->get();
-
-        $priority = [];
-        foreach (array_keys($cloned->providers) as $class) {
-            $provider = GeneralUtility::makeInstance($class);
-            if ($provider instanceof ProviderInterface) {
-                $priority[$class] = $provider->getPriority();
-            }
-        }
-
-        asort($priority);
-
-        $orderedProviderConfig = [];
-        foreach (array_keys($priority) as $class) {
-            $orderedProviderConfig[$class] = $cloned->providers[$class];
-        }
-
+        // Trigger the config so all legacy objects are created
+        $this->getConfig();
         return [
-            'fullConfig' => $fullConfig,
-            'providers' => $orderedProviderConfig,
-            'definers' => array_keys($cloned->definers),
-            'postProcessors' => array_keys($cloned->postProcessors),
-            'migrations' => $cloned->migrations,
+            'providerServices' => $this->providerServices,
+            'legacyProviders' => $this->legacyProviders,
+            'definerServices' => $this->definerServices,
+            'legacyDefiners' => $this->legacyDefiners,
+            'migrationServices' => $this->migrationServices,
+            'legacyMigrations' => $this->legacyMigrations,
+            'postProcessorServices' => $this->postProcessorServices,
+            'legacyPostProcessors' => $this->legacyPostProcessors,
         ];
     }
 }

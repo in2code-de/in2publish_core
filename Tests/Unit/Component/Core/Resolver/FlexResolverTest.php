@@ -11,6 +11,7 @@ use In2code\In2publishCore\Component\Core\Resolver\FlexResolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 use In2code\In2publishCore\Component\Core\Service\ResolverService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
 
@@ -43,9 +44,9 @@ class FlexResolverTest extends UnitTestCase
     public function testConfigure(): void
     {
         $flexResolver = new FlexResolver();
-        $table = new \ReflectionProperty(FlexResolver::class, 'table');
-        $column = new \ReflectionProperty(FlexResolver::class, 'column');
-        $processedTca = new \ReflectionProperty(FlexResolver::class, 'processedTca');
+        $table = new ReflectionProperty(FlexResolver::class, 'table');
+        $column = new ReflectionProperty(FlexResolver::class, 'column');
+        $processedTca = new ReflectionProperty(FlexResolver::class, 'processedTca');
         $table->setAccessible(true);
         $column->setAccessible(true);
         $processedTca->setAccessible(true);
@@ -86,7 +87,8 @@ class FlexResolverTest extends UnitTestCase
             [
                 'type' => 'record',
                 'dataStructureKey' => 'column_foo',
-            ]);
+            ],
+        );
 
         $flexFormTools->method('getDataStructureIdentifier')->willReturn($dataStructure);
         $flexFormService = $this->createMock(FlexFormService::class);
@@ -144,9 +146,9 @@ class FlexResolverTest extends UnitTestCase
     protected function createConfiguredFlexResolver($tca = ['tca_key1' => 'tca_value1']): FlexResolver
     {
         $flexResolver = new FlexResolver();
-        $table = new \ReflectionProperty(FlexResolver::class, 'table');
-        $column = new \ReflectionProperty(FlexResolver::class, 'column');
-        $processedTca = new \ReflectionProperty(FlexResolver::class, 'processedTca');
+        $table = new ReflectionProperty(FlexResolver::class, 'table');
+        $column = new ReflectionProperty(FlexResolver::class, 'column');
+        $processedTca = new ReflectionProperty(FlexResolver::class, 'processedTca');
         $table->setAccessible(true);
         $column->setAccessible(true);
         $processedTca->setAccessible(true);
@@ -179,6 +181,5 @@ class FlexResolverTest extends UnitTestCase
 //[],
 //[]
 //);
-
 
 }

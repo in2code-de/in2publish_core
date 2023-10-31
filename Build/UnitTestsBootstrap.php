@@ -82,13 +82,13 @@ call_user_func(function () {
 
     $cache = new PhpFrontend(
         'core',
-        new NullBackend('production', [])
+        new NullBackend('production', []),
     );
 
     // Set all packages to active
     $packageManager = Bootstrap::createPackageManager(
         PackageManager::class,
-        Bootstrap::createPackageCache($cache)
+        Bootstrap::createPackageCache($cache),
     );
 
     GeneralUtility::setSingletonInstance(PackageManager::class, $packageManager);
@@ -128,7 +128,7 @@ call_user_func(function () {
     $container = $builder->createDependencyInjectionContainer(
         $packageManager,
         $dependencyInjectionContainerCache,
-        false
+        false,
     );
 
     // Push the container to GeneralUtility as we want to make sure its

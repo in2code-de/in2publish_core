@@ -30,12 +30,31 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Definer;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\Builder;
+use In2code\In2publishCore\Component\ConfigContainer\ConditionalConfigServiceInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
 use In2code\In2publishCore\Component\ConfigContainer\Validator\FileExistsValidator as FEV;
 use In2code\In2publishCore\Component\ConfigContainer\Validator\IPv4PortValidator;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistryInjection;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistryInjection;
+use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 
-class SshConnectionDefiner implements DefinerInterface
+class SshConnectionDefiner implements DefinerServiceInterface, ConditionalConfigServiceInterface
 {
+    use ContextServiceInjection;
+    use RemoteAdapterRegistryInjection;
+    use TransmissionAdapterRegistryInjection;
+
+    public function isEnabled(): bool
+    {
+        // Require extending classes to override this method
+        if (static::class !== self::class) {
+            return false;
+        }
+        return $this->contextService->isForeign()
+            || 'ssh' === $this->remoteAdapterRegistry->getSelectedAdapter()
+            || 'ssh' === $this->transmissionAdapterRegistry->getSelectedAdapter();
+    }
+
     public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()
@@ -49,18 +68,18 @@ class SshConnectionDefiner implements DefinerInterface
                                  ->addString(
                                      'publicKeyFileAndPathName',
                                      '/home/ssh-account/.ssh/id_rsa.pub',
-                                     [FEV::class]
+                                     [FEV::class],
                                  )
                                  ->addOptionalString('privateKeyPassphrase', '')
                                  ->addBoolean('enableForeignKeyFingerprintCheck', true)
                                  ->addString('foreignKeyFingerprint', '00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00')
                                  ->addString('foreignKeyFingerprintHashingMethod', 'SSH2_FINGERPRINT_MD5')
-                                 ->addBoolean('ignoreChmodFail', false)
+                                 ->addBoolean('ignoreChmodFail', false),
                       )
                       ->addArray(
                           'debug',
                           Builder::start()
-                                 ->addBoolean('showForeignKeyFingerprint', false)
+                                 ->addBoolean('showForeignKeyFingerprint', false),
                       )
                       ->end();
     }

@@ -125,7 +125,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
                     $propertyValue = $record->getProp($propertyName);
                     return $this->localDatabase->quote((string)$propertyValue);
                 },
-                $string
+                $string,
             );
         }
         return $string;
@@ -184,7 +184,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
                 0,
                 '#_SITEROOT',
             ],
-            $string
+            $string,
         );
     }
 
@@ -280,9 +280,9 @@ class ReplaceMarkersService implements LoggerAwareInterface
                 sprintf(
                     'Cannot quote site configuration setting "%s" of type "%s", only "int", "bool", "string" and "array" are supported',
                     $key,
-                    gettype($value)
+                    gettype($value),
                 ),
-                1630324435
+                1630324435,
             );
         }
 

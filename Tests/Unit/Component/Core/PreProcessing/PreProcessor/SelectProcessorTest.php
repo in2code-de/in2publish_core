@@ -11,6 +11,7 @@ use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionMethod;
 use Symfony\Component\DependencyInjection\Container;
 
 use function array_merge;
@@ -180,7 +181,6 @@ class SelectProcessorTest extends UnitTestCase
         $this->assertInstanceOf(SelectMmResolver::class, $resolver);
     }
 
-
     /**
      * @covers ::isSysCategoryField
      * @dataProvider isSysCategoryFieldDataProvider
@@ -189,7 +189,7 @@ class SelectProcessorTest extends UnitTestCase
     {
         $selectProcessor = new SelectProcessor();
         // access protected method isSysCategoryField()
-        $reflectionMethod = new \ReflectionMethod(SelectProcessor::class, 'isSysCategoryField');
+        $reflectionMethod = new ReflectionMethod(SelectProcessor::class, 'isSysCategoryField');
         $reflectionMethod->setAccessible(true);
         $isSysCategoryField = $reflectionMethod->invoke($selectProcessor, $config);
 

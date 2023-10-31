@@ -29,6 +29,10 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+/**
+ * @deprecated Use MigrationServiceInterface to automatically register your migration instead. This interface will
+ *     be removed in in2publish_core v13.
+ */
 interface MigrationInterface
 {
     /**

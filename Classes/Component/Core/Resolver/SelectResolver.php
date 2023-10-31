@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Service\ReplaceMarkersServiceInject;
@@ -44,7 +45,7 @@ class SelectResolver extends AbstractResolver
         $additionalWhere = $this->replaceMarkersService->replaceMarkers(
             $record,
             $this->foreignTableWhere,
-            $this->column
+            $this->column,
         );
         $additionalWhere = trim($additionalWhere);
         if (str_starts_with($additionalWhere, 'AND ')) {
@@ -56,7 +57,7 @@ class SelectResolver extends AbstractResolver
 
         $splitValues = GeneralUtility::trimExplode(',', $value);
         foreach ($splitValues as $splitValue) {
-            $demands->addSelect($this->foreignTable, $additionalWhere, 'uid', $splitValue, $record);
+            $demands->addDemand(new SelectDemand($this->foreignTable, $additionalWhere, 'uid', $splitValue, $record));
         }
     }
 }

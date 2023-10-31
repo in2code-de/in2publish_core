@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\RecordTree;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
+use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
@@ -19,7 +20,6 @@ use In2code\In2publishCore\Component\Core\Service\RelevantTablesService;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
-use In2code\In2publishCore\Component\Core\Demand\Demands;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder
@@ -57,21 +57,21 @@ class RecordTreeBuilderTest extends UnitTestCase
         $pageRecord = new DatabaseRecord('pages', 42, ['doktype' => 1], [], []);
 
         $fooRecord = new DatabaseRecord('table_foo', 33, ['pid' => 42], [], []);
-        $recordCollection = new RecordCollection([$pageRecord, $fooRecord]);
 
         $recordIndex = $this->createMock(RecordIndex::class);
-        $recordIndex->expects($this->once())->method('getRecords')->with('pages')
-            ->willReturn(
-                [
-                    0 => $pageRecord
-                ]
-            );
+        $recordIndex->expects($this->once())->method('getRecords')
+                    ->willReturn(
+                        [
+                            0 => $pageRecord,
+                            1 => $fooRecord,
+                        ],
+                    );
 
         $demandResolver = $this->createMock(DemandResolver::class);
         $demandResolver->expects(self::once())->method('resolveDemand')->willReturnCallback(
             function (Demands $demands, RecordCollection $recordCollection) use ($fooRecord) {
                 $recordCollection->addRecord($fooRecord);
-            }
+            },
         );
 
         $demandsFactory = $this->createMock(DemandsFactory::class);
@@ -80,7 +80,7 @@ class RecordTreeBuilderTest extends UnitTestCase
         $relevantTablesService = $this->createMock(RelevantTablesService::class);
         $relevantTablesService->method('getAllNonEmptyNonExcludedTcaTables')->willReturn([
             0 => 'pages',
-            1 => 'table_foo'
+            1 => 'table_foo',
         ]);
 
         $tcaService = $this->createMock(TcaService::class);
@@ -93,7 +93,7 @@ class RecordTreeBuilderTest extends UnitTestCase
         $recordTreeBuilder->injectTcaService($tcaService);
 
         // act
-        $recordsInCollection = $recordTreeBuilder->findAllRecordsOnPages($recordCollection);
+        $recordsInCollection = $recordTreeBuilder->findAllRecordsOnPages();
 
         // assert
         $pageRecordsInCollection = $recordsInCollection->getRecords('pages');

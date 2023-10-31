@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Event\RecordWasPublished;
 
 class SysLogPublisher
 {
@@ -41,7 +41,7 @@ class SysLogPublisher
 
     protected const TABLE_SYS_LOG = 'sys_log';
 
-    public function publishSysLog(PublishingOfOneRecordEnded $event): void
+    public function publishSysLog(RecordWasPublished $event): void
     {
         $record = $event->getRecord();
         if ('pages' !== $record->getClassification()) {

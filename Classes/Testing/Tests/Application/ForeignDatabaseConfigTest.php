@@ -73,14 +73,14 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
                 $testResult = new TestResult(
                     'application.foreign_database_config.failure',
                     TestResult::ERROR,
-                    ['application.foreign_database_config.configuration_invalid']
+                    ['application.foreign_database_config.configuration_invalid'],
                 );
             }
         } else {
             $testResult = new TestResult(
                 'application.foreign_database_config.unexpected_error',
                 TestResult::ERROR,
-                [$response->getErrorsString(), $response->getOutputString()]
+                [$response->getErrorsString(), $response->getOutputString()],
             );
         }
         $this->foreignDatabase->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);

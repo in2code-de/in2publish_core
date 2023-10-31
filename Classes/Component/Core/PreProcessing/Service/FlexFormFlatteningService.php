@@ -59,7 +59,7 @@ class FlexFormFlatteningService
                         $flattenedDefinition = $this->flattenFieldFlexForm(
                             $flattenedDefinition,
                             $fieldDefinition,
-                            $fieldKey
+                            $fieldKey,
                         );
                     }
                 }
@@ -112,7 +112,7 @@ class FlexFormFlatteningService
                         $flattenedDefinition = $this->flattenFieldFlexForm(
                             $flattenedDefinition,
                             $subFieldDefinition,
-                            $newFieldKey
+                            $newFieldKey,
                         );
                     }
                 }

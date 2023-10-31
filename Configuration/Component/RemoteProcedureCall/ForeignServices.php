@@ -14,7 +14,7 @@ return static function (ContainerConfigurator $configurator): void {
 
     $services->load(
         'In2code\\In2publishCore\\Component\\RemoteProcedureCall\\Command\\Foreign\\',
-        __DIR__ . '/../../../Classes/Component/RemoteProcedureCall/Command/Foreign/'
+        __DIR__ . '/../../../Classes/Component/RemoteProcedureCall/Command/Foreign/',
     );
     $services->set(ExecuteCommand::class)
              ->tag(
@@ -23,6 +23,6 @@ return static function (ContainerConfigurator $configurator): void {
                      'command' => ExecuteCommand::IDENTIFIER,
                      'description' => 'Receives an envelope and executes the contained command',
                      'schedulable' => false,
-                 ]
+                 ],
              );
 };

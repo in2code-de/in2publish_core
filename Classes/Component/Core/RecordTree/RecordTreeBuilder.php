@@ -8,6 +8,7 @@ use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
@@ -37,7 +38,7 @@ class RecordTreeBuilder
 
     public function buildRecordTree(RecordTreeBuildRequest $request): RecordTree
     {
-        $recordTree = new RecordTree();
+        $recordTree = new RecordTree([], $request);
 
         $recordCollection = new RecordCollection();
 
@@ -49,17 +50,17 @@ class RecordTreeBuilder
 
         $recordCollection = $this->findAllRecordsOnPages();
 
-        $this->findRecordsByTca($recordCollection);
+        $this->findRecordsByTca($recordCollection, $request);
 
         $this->recordIndex->connectTranslations();
 
-        $this->recordIndex->processDependencies($request->getDependencyRecursionLimit());
+        $this->recordIndex->processDependencies($request);
 
         $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
 
         if ($defaultIdRequest->getId() !== $request->getId()) {
             $record = $recordTree->getChild($request->getTable(), $request->getId());
-            $recordTree = new RecordTree();
+            $recordTree = new RecordTree([], $request);
             if (null !== $record) {
                 $recordTree->addChild($record);
             }
@@ -103,11 +104,11 @@ class RecordTreeBuilder
             return;
         }
         $demands = $this->demandsFactory->createDemand();
-        $demands->addSelect($table, '', 'uid', $id, $recordTree);
+        $demands->addDemand(new SelectDemand($table, '', 'uid', $id, $recordTree));
 
         $transOrigPointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
         if (null !== $transOrigPointerField) {
-            $demands->addSelect($table, '', $transOrigPointerField, $id, $recordTree);
+            $demands->addDemand(new SelectDemand($table, '', $transOrigPointerField, $id, $recordTree));
         }
 
         $this->demandResolver->resolveDemand($demands, $recordCollection);
@@ -121,8 +122,11 @@ class RecordTreeBuilder
         while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
             $demands = $this->demandsFactory->createDemand();
             $recordsArray = $recordCollection->getRecords('pages');
+            if (empty($recordsArray)) {
+                break;
+            }
             foreach ($recordsArray as $record) {
-                $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
+                $demands->addDemand(new SelectDemand('pages', '', 'pid', $record->getId(), $record));
             }
             $recordCollection = new RecordCollection();
             $this->demandResolver->resolveDemand($demands, $recordCollection);
@@ -131,10 +135,12 @@ class RecordTreeBuilder
 
     public function findAllRecordsOnPages(): RecordCollection
     {
-        $pages = $this->recordIndex->getRecords('pages');
-        $recordCollection = new RecordCollection($pages);
+        // Make a new record collection with all records (pages and subpages or other non-page records).
+        // Required for subsequent method calls.
+        $recordCollection = new RecordCollection($this->recordIndex->getRecords());
 
-        if ($recordCollection->isEmpty()) {
+        $pages = $recordCollection->getRecords('pages');
+        if (empty($pages)) {
             return $recordCollection;
         }
         $demands = $this->demandsFactory->createDemand();
@@ -151,11 +157,11 @@ class RecordTreeBuilder
         foreach ($pages as $page) {
             $tablesAllowedOnPage = $this->tcaService->getTablesAllowedOnPage(
                 $page->getId(),
-                $page->getProp('doktype')
+                $page->getProp('doktype'),
             );
             foreach ($tables as $table) {
                 if (in_array($table, $tablesAllowedOnPage)) {
-                    $demands->addSelect($table, '', 'pid', $page->getId(), $page);
+                    $demands->addDemand(new SelectDemand($table, '', 'pid', $page->getId(), $page));
                 }
             }
         }
@@ -166,10 +172,10 @@ class RecordTreeBuilder
     /**
      * @param RecordCollection<string, array<int|string, Record>> $recordCollection
      */
-    public function findRecordsByTca(RecordCollection $recordCollection): void
+    public function findRecordsByTca(RecordCollection $recordCollection, RecordTreeBuildRequest $request = null): void
     {
         $currentRecursion = 0;
-        $recursionLimit = 8;
+        $recursionLimit = $request !== null ? $request->getContentRecursionLimit() : 8;
 
         while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
             $demand = $this->demandBuilder->buildDemandForRecords($recordCollection);

@@ -55,7 +55,7 @@ class DbConfigTestCommand extends Command
         $queryBuilder = $this->localDatabase->createQueryBuilder();
         $predicates = $queryBuilder->expr()->eq(
             'task_type',
-            $queryBuilder->createNamedParameter(ForeignDatabaseConfigTest::DB_CONFIG_TEST_TYPE)
+            $queryBuilder->createNamedParameter(ForeignDatabaseConfigTest::DB_CONFIG_TEST_TYPE),
         );
         $queryBuilder->select('*')->from('tx_in2code_in2publish_task')->where($predicates);
         $result = $queryBuilder->execute()->fetchAllAssociative();

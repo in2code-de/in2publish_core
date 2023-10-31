@@ -60,21 +60,15 @@ CREATE TABLE tx_in2code_rpc_data
     KEY request_and_type (request, data_type)
 ) ENGINE = InnoDB;
 
-CREATE TABLE tx_in2publishcore_filepublisher_task
+CREATE TABLE tx_in2publishcore_filepublisher_instruction
 (
     -- Properties for data management
-    request_token        char(32)                     NOT NULL,
-    crdate               int(11) UNSIGNED             NOT NULL,
-    tstamp               int(11) UNSIGNED DEFAULT '0' NOT NULL,
+    request_token char(32)                     NOT NULL,
+    crdate        int(11) UNSIGNED             NOT NULL,
+    tstamp        int(11) UNSIGNED DEFAULT '0' NOT NULL,
 
     -- Values from Local
-    storage_uid          int(11)                      NOT NULL,
-    identifier           text,
-    identifier_hash      char(40)                     NOT NULL,
-    temp_identifier_hash char(40)         DEFAULT NULL,
-    previous_identifier  text,
-    -- One of "insert", "delete", "update"
-    file_action          char(6)          DEFAULT NULL,
-    folder_action        char(6)          DEFAULT NULL,
-    UNIQUE INDEX id (request_token, storage_uid, identifier_hash)
+    instruction   varchar(255)                 NOT NULL,
+    configuration text                         NOT NULL,
+    UNIQUE INDEX id (request_token)
 ) ENGINE = InnoDB;

@@ -86,7 +86,7 @@ class PublishItemProvider extends AbstractProvider
             $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
             $publishUrl = (string)$uriBuilder->buildUriFromRoute(
                 'ajax_in2publishcore_contextmenupublishentry_publish',
-                ['id' => $this->identifier]
+                ['id' => $this->identifier],
             );
             $attributes += [
                 'data-publish-url' => $publishUrl,

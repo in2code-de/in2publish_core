@@ -10,6 +10,8 @@ use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
+use ReflectionMethod;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor
@@ -25,11 +27,11 @@ class AbstractProcessorTest extends UnitTestCase
     {
         $abstractProcessor = $this->getMockAbstractProcessor();
 
-        $forbidden = new \ReflectionProperty(AbstractProcessor::class, 'forbidden');
+        $forbidden = new ReflectionProperty(AbstractProcessor::class, 'forbidden');
         $forbidden->setAccessible(true);
         $forbidden->setValue(
             $abstractProcessor,
-            ['forbidden_key_1' => 'first_reason', 'forbidden_key_2' => 'second_reason']
+            ['forbidden_key_1' => 'first_reason', 'forbidden_key_2' => 'second_reason'],
         );
 
         $tca = ['type' => 'inline', 'forbidden_key_1' => 'foo'];
@@ -53,7 +55,7 @@ class AbstractProcessorTest extends UnitTestCase
     {
         $abstractProcessor = $this->getMockAbstractProcessor();
 
-        $required = new \ReflectionProperty(AbstractProcessor::class, 'required');
+        $required = new ReflectionProperty(AbstractProcessor::class, 'required');
         $required->setAccessible(true);
         $required->setValue($abstractProcessor, ['key_1' => 'Key 1 is required', 'key_2' => 'Key 2 is required']);
 
@@ -107,7 +109,7 @@ class AbstractProcessorTest extends UnitTestCase
         $this->assertFalse($result->isCompatible());
         $this->assertSame(
             'The processor did not return a valid resolver. The target table might be excluded or empty.',
-            $reason
+            $reason,
         );
     }
 
@@ -120,15 +122,15 @@ class AbstractProcessorTest extends UnitTestCase
         $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
         $abstractProcessor->injectContainer($container);
 
-        $requiredFields = new \ReflectionProperty(AbstractProcessor::class, 'required');
+        $requiredFields = new ReflectionProperty(AbstractProcessor::class, 'required');
         $requiredFields->setAccessible(true);
         $requiredFields->setValue($abstractProcessor, ['key_1' => 'Key 1 is required', 'key_2' => 'Key 2 is required']);
 
-        $allowedFields = new \ReflectionProperty(AbstractProcessor::class, 'allowed');
+        $allowedFields = new ReflectionProperty(AbstractProcessor::class, 'allowed');
         $allowedFields->setAccessible(true);
         $allowedFields->setValue($abstractProcessor, ['allowed_field_1', 'allowed_field_2']);
 
-        $getImportantFields = new \ReflectionMethod(AbstractProcessor::class, 'getImportantFields');
+        $getImportantFields = new ReflectionMethod(AbstractProcessor::class, 'getImportantFields');
         $getImportantFields->setAccessible(true);
 
         $expectedImportantFields = ['type', 'key_1', 'key_2', 'allowed_field_1', 'allowed_field_2'];

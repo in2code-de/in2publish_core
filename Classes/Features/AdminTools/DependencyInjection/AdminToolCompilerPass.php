@@ -75,7 +75,7 @@ class AdminToolCompilerPass implements CompilerPassInterface
                         $serviceName,
                         $this->tagName,
                         self::REQUIRED_ATTRIBUTES,
-                        $missingRequiredKeys
+                        $missingRequiredKeys,
                     );
                 }
 
@@ -102,7 +102,7 @@ class AdminToolCompilerPass implements CompilerPassInterface
                     $adminTool['description'],
                     $adminTool['actions'],
                     $adminTool['condition'],
-                ]
+                ],
             );
         }
     }

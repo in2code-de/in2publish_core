@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 
-class DefaultProvider implements ProviderInterface
+class DefaultProvider implements ProviderServiceInterface
 {
     use ConfigContainerInjection;
     use ContextServiceInjection;

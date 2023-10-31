@@ -31,14 +31,7 @@ class FileSystemInfoService
         } catch (InvalidArgumentException $exception) {
             return [];
         }
-        $files = [];
-        foreach ($fileIdentifiers as $fileIdentifier) {
-            $foundFile = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
-            $publicUrl = $driver->getPublicUrl($foundFile['identifier']);
-            // TODO: If the publicUrl does not contain the host we need to add it here
-            $foundFile['publicUrl'] = $publicUrl;
-            $files[] = $foundFile;
-        }
+        $files = $this->getFileInfo([$storageUid => $fileIdentifiers]);
         return [
             'folders' => $folders,
             'files' => $files,
@@ -57,6 +50,7 @@ class FileSystemInfoService
             foreach ($fileIdentifiers as $fileIdentifier) {
                 try {
                     $fileInfo = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
+                    $fileInfo['sha1'] = $driver->hash($fileIdentifier, 'sha1');
                     $fileInfo['publicUrl'] = $driver->getPublicUrl($fileInfo['identifier']);
                     $info[$storage][$fileIdentifier] = $fileInfo;
                 } catch (Throwable $exception) {

@@ -57,9 +57,9 @@ contact [info@in2code.de](mailto:info@in2code.de) for more information about the
 
 PHP configuration values:
 
-| Name            | Value   |
-|-----------------|---------|
-| allow_url_fopen | On      |
+| Name            | Value |
+|-----------------|-------|
+| allow_url_fopen | On    |
 
 Hint:
 

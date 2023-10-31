@@ -10,6 +10,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Database\Connection;
 
 /**
@@ -41,15 +42,15 @@ class FolderRecordPublisherTest extends UnitTestCase
     public function testPublishRemovesDeletedFolder()
     {
         $folderRecordPublisher = new FolderRecordPublisher();
-        $foreignDatabase =  $this->createMock(Connection::class);
+        $foreignDatabase = $this->createMock(Connection::class);
         $deletedFolder = $this->createMock(FileRecord::class);
         $deletedFolder->method('getClassification')->willReturn('_folder');
         $deletedFolder->method('getState')->willReturn(Record::S_DELETED);
         $deletedFolder->method('getForeignProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar']
+            ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar'],
         );
 
-        $reflectionProperty = new \ReflectionProperty($folderRecordPublisher, 'requestToken');
+        $reflectionProperty = new ReflectionProperty($folderRecordPublisher, 'requestToken');
         $reflectionProperty->setAccessible(true);
 
         $foreignDatabase->expects($this->once())->method('insert')->with(
@@ -62,7 +63,7 @@ class FolderRecordPublisherTest extends UnitTestCase
                 'identifier' => $deletedFolder->getForeignProps()['combinedIdentifier'],
                 'identifier_hash' => '',
                 'folder_action' => $folderRecordPublisher::A_DELETE,
-            ]
+            ],
         );
         $folderRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -75,16 +76,16 @@ class FolderRecordPublisherTest extends UnitTestCase
     public function testPublishAddsAddedFolder()
     {
         $folderRecordPublisher = new FolderRecordPublisher();
-        $foreignDatabase =  $this->createMock(Connection::class);
+        $foreignDatabase = $this->createMock(Connection::class);
         $addedFolder = $this->createMock(FileRecord::class);
         $addedFolder->method('getClassification')->willReturn('_folder');
         $addedFolder->method('getState')->willReturn(Record::S_ADDED);
         $addedFolder->method('getLocalProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar']
+            ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar'],
         );
         $addedFolder->method('getForeignProps')->willReturn([]);
 
-        $reflectionProperty = new \ReflectionProperty($folderRecordPublisher, 'requestToken');
+        $reflectionProperty = new ReflectionProperty($folderRecordPublisher, 'requestToken');
         $reflectionProperty->setAccessible(true);
 
         $foreignDatabase->expects($this->once())->method('insert')->with(
@@ -97,7 +98,7 @@ class FolderRecordPublisherTest extends UnitTestCase
                 'identifier' => $addedFolder->getLocalProps()['combinedIdentifier'],
                 'identifier_hash' => '',
                 'folder_action' => $folderRecordPublisher::A_INSERT,
-            ]
+            ],
         );
         $folderRecordPublisher->injectForeignDatabase($foreignDatabase);
 

@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Factory;
 use In2code\In2publishCore\Component\Core\Record\Factory\TtContentDatabaseRecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Model\TtContentDatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Factory\TtContentDatabaseRecordFactory
@@ -20,7 +21,7 @@ class TfContentDatabaseRecordFactoryTest extends UnitTestCase
     public function testConstructor(): void
     {
         $databaseRecordFactoryFactory = new TtContentDatabaseRecordFactory();
-        $this->assertInstanceOf(TtContentDatabaseRecordFactory::class,$databaseRecordFactoryFactory);
+        $this->assertInstanceOf(TtContentDatabaseRecordFactory::class, $databaseRecordFactoryFactory);
         $this->assertSame(100, $databaseRecordFactoryFactory->getPriority());
         $this->assertTrue($databaseRecordFactoryFactory->isResponsible('tt_content'));
         $this->assertFalse($databaseRecordFactoryFactory->isResponsible('table_foo'));
@@ -37,9 +38,9 @@ class TfContentDatabaseRecordFactoryTest extends UnitTestCase
             42,
             ['foo' => 'bar'],
             ['bar' => 'foo'],
-            []
+            [],
         );
-        $reflectionProperty = new \ReflectionProperty($databaseRecord, 'ignoredProps');
+        $reflectionProperty = new ReflectionProperty($databaseRecord, 'ignoredProps');
         $reflectionProperty->setAccessible(true);
         $ignoredProps = $reflectionProperty->getValue($databaseRecord);
 
@@ -50,5 +51,4 @@ class TfContentDatabaseRecordFactoryTest extends UnitTestCase
         $this->assertSame(['bar' => 'foo'], $databaseRecord->getForeignProps());
         $this->assertSame([], $ignoredProps);
     }
-
 }

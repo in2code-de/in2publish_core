@@ -8,9 +8,10 @@ use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
-use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Event\RecordWasPublished;
+use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use Throwable;
@@ -47,7 +48,7 @@ class PublisherService
         $this->publishRecordTree($recordTree);
     }
 
-    public function publishRecordTree(RecordTree $recordTree): void
+    public function publishRecordTree(RecordTree $recordTree, bool $includeChildPages = false): void
     {
         $this->eventDispatcher->dispatch(new RecursiveRecordPublishingBegan($recordTree));
 
@@ -57,7 +58,7 @@ class PublisherService
             $visitedRecords = [];
             foreach ($recordTree->getChildren() as $records) {
                 foreach ($records as $record) {
-                    $this->publishRecord($record, $visitedRecords);
+                    $this->publishRecord($record, $visitedRecords, $includeChildPages);
                 }
             }
         } catch (Throwable $exception) {
@@ -78,7 +79,7 @@ class PublisherService
         $this->taskExecutionService->runTasks();
     }
 
-    protected function publishRecord(Record $record, array &$visitedRecords = []): void
+    protected function publishRecord(Record $record, array &$visitedRecords = [], bool $includeChildPages = false): void
     {
         $classification = $record->getClassification();
         $id = $record->getId();
@@ -88,20 +89,32 @@ class PublisherService
         }
         $visitedRecords[$classification][$id] = true;
 
-        if ($record->getState() !== Record::S_UNCHANGED) {
-            $event = new CollectReasonsWhyTheRecordIsNotPublishable($record);
-            $this->eventDispatcher->dispatch($event);
-            if ($event->isPublishable()) {
-                $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
-                $this->publisherCollection->publish($record);
-                $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));
-            }
+        $this->eventDispatcher->dispatch(new RecordWasSelectedForPublishing($record));
+
+        // Do not use Record::isPublishable(). Check only the record's reasons but not dependencies.
+        // Dependencies might have been fulfilled during publishing or ignored by the user by choice.
+        if (
+            $record->getState() !== Record::S_UNCHANGED
+            && !$record->hasReasonsWhyTheRecordIsNotPublishable()
+        ) {
+            // deprecated, remove in v13
+            $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
+            $this->publisherCollection->publish($record);
+            // deprecated, remove in v13
+            $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));
+            $this->eventDispatcher->dispatch(new RecordWasPublished($record));
         }
 
         foreach ($record->getChildren() as $table => $children) {
             if ('pages' !== $table) {
                 foreach ($children as $child) {
-                    $this->publishRecord($child, $visitedRecords);
+                    $this->publishRecord($child, $visitedRecords, true);
+                }
+            } else {
+                if ($includeChildPages === true) {
+                    foreach ($children as $child) {
+                        $this->publishRecord($child, $visitedRecords, true);
+                    }
                 }
             }
         }

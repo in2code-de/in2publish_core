@@ -1,11 +1,38 @@
 {
 	"name": "in2code/in2publish_core",
 	"description": "Content publishing extension to connect stage and production server",
-	"keywords": ["TYPO3 CMS", "publishing", "publisher", "stage", "content", "multiserver", "workflow", "workspace", "security", "publish", "synchronization", "stage", "staging", "contentstaging", "headless", "bodyless", "deployment"],
+	"keywords": [
+		"TYPO3 CMS",
+		"publishing",
+		"publisher",
+		"stage",
+		"content",
+		"multiserver",
+		"workflow",
+		"workspace",
+		"security",
+		"publish",
+		"synchronization",
+		"stage",
+		"staging",
+		"contentstaging",
+		"headless",
+		"bodyless",
+		"deployment"
+	],
 	"authors": [
-		{"name": "Oliver Eglseder", "email": "oliver.eglseder@in2code.de"},
-		{"name": "Alex Kellner", "email": "alexander.kellner@in2code.de"},
-		{"name": "Stefan Busemann", "email": "stefan.busemann@in2code.de"}
+		{
+			"name": "Oliver Eglseder",
+			"email": "oliver.eglseder@in2code.de"
+		},
+		{
+			"name": "Alex Kellner",
+			"email": "alexander.kellner@in2code.de"
+		},
+		{
+			"name": "Stefan Busemann",
+			"email": "stefan.busemann@in2code.de"
+		}
 	],
 	"type": "typo3-cms-extension",
 	"license": "GPL-3.0-or-later",
@@ -54,8 +81,8 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-develop-v12": "12.1.x-dev",
-			"dev-master-v12": "12.1.x-dev"
+			"dev-develop-v12": "12.3.x-dev",
+			"dev-master-v12": "12.3.x-dev"
 		},
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",

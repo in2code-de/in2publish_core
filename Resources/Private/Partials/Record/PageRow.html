@@ -1,5 +1,4 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
@@ -7,9 +6,8 @@
 		class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive} {f:if(condition:record.removedFromLocalDatabase, then:'in2publish-stagelisting__item--removed')} in2publish-clearfix"
 		data-record-identifier="{record.classification}-{record.id}"
 	>
-		<f:comment>
-			Left
-		</f:comment>
+		<f:comment>Left</f:comment>
+
 		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
 			<i
 				class="in2publish-icon-folder"
@@ -24,44 +22,14 @@
 				stagingLevel="local"
 				fallbackProperty="title"
 			/>
+
 			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
-			<f:if condition="{record.publishable}">
-				<f:then>
-					<f:link.action
-						action="publishRecord"
-						class="in2publish-link-publish"
-						arguments="{id:record.id}"
-						title="{f:translate(key:'publish_pages', default:'Publish this page')}"
-					>
-						<i class="in2publish-icon-publish"></i>
-					</f:link.action>
-				</f:then>
-				<f:else>
-					<f:if condition="{record.publishableIgnoringUnreachableDependencies}">
-						<f:then>
-							<f:link.action
-								action="publishRecord"
-								class="in2publish-link-publish js-publish-trigger"
-								arguments="{id:record.id}"
-								title="{f:translate(key:'publish_pages', default:'Publish this page')}"
-								data="{type: 'page_with_dependencies', severity: '1'}"
-							>
-								<i class="in2publish-icon-publish"></i>
-							</f:link.action>
-						</f:then>
-						<f:else>
-							<div class="in2publish-link-publish">
-								<core:icon identifier="actions-exclamation-triangle-alt"/>
-							</div>
-						</f:else>
-					</f:if>
-				</f:else>
-			</f:if>
+
+			<f:render partial="Record/Publishing/Decision" arguments="{record: record}" />
 		</div>
 
-		<f:comment>
-			Right
-		</f:comment>
+		<f:comment>Right</f:comment>
+
 		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--right">
 			<i class="in2publish-icon-folder"
 			   title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"
@@ -75,4 +43,5 @@
 
 		<f:render partial="Record/DirtyPropertiesList" arguments="{_all}"/>
 	</div>
+
 </html>

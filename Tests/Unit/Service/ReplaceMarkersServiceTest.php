@@ -80,7 +80,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,
             'foo ###PAGE_TSCONFIG_ID### bar',
-            'tx_unit_test_field'
+            'tx_unit_test_field',
         );
 
         $this->assertSame('foo 52 bar', $replacement);
@@ -121,7 +121,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,
             'foo ###PAGE_TSCONFIG_IDLIST### bar',
-            'tx_unit_test_field'
+            'tx_unit_test_field',
         );
 
         $this->assertSame('foo 52,11,9 bar', $replacement);
@@ -152,7 +152,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
                     ],
                 ],
                 'boolOption' => false,
-            ])
+            ]),
         );
         $connection = $this->createMock(Connection::class);
         $connection->method('quote')->willReturnCallback(static fn(string $input): string => "'$input'");
@@ -166,7 +166,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,
             '###SITE:rootPageId### ###SITE:nested.custom### ###SITE:stringArray### ###SITE:boolOption###',
-            'tx_unit_test_field'
+            'tx_unit_test_field',
         );
 
         $this->assertSame('1 \'test\' \'string1\',\'string2\',\'foo1\',\'foo2\' 0', $replacement);

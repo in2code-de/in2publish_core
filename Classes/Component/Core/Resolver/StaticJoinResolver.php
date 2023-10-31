@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 class StaticJoinResolver extends AbstractResolver
@@ -29,13 +30,14 @@ class StaticJoinResolver extends AbstractResolver
 
     public function resolve(Demands $demands, Record $record): void
     {
-        $demands->addJoin(
+        $demand = new JoinDemand(
             $this->mmTable,
             $this->joinTable,
             $this->additionalWhere,
             $this->property,
             $record->getId(),
-            $record
+            $record,
         );
+        $demands->addDemand($demand);
     }
 }

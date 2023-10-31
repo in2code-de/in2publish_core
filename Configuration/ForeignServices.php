@@ -31,7 +31,7 @@ return static function (ContainerConfigurator $configurator): void {
 
     $services->load(
         'In2code\\In2publishCore\\Command\\Foreign\\',
-        __DIR__ . '/../Classes/Command/Foreign'
+        __DIR__ . '/../Classes/Command/Foreign',
     );
     $services->set(AllCommand::class)
              ->tag(
@@ -41,7 +41,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Prints the configured fileCreateMask and folderCreateMask',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(AllSitesCommand::class)
              ->tag(
@@ -51,7 +51,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Prints all Sites serialized and encoded. Internal CLI API.',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(ConfigFormatTestCommand::class)
              ->tag(
@@ -61,7 +61,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Tests the configuration on foreign for its format',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(CreateMasksCommand::class)
              ->tag(
@@ -71,7 +71,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Prints the configured fileCreateMask and folderCreateMask',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(DbConfigTestCommand::class)
              ->tag(
@@ -81,7 +81,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Reads from the local task table and writes all found hashes for the db config test',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(DbInitQueryEncodedCommand::class)
              ->tag(
@@ -91,7 +91,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Prints the initCommands as json and base64 encoded string',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(GlobalConfigurationCommand::class)
              ->tag(
@@ -101,7 +101,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Prints global configuration values',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(EncryptionKeyCommand::class)
              ->tag(
@@ -111,7 +111,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Prints the encryption key as base64 encoded string',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(ShortSiteConfigurationCommand::class)
              ->tag(
@@ -121,7 +121,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Prints a base64 encoded json array containing all configured sites',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(SiteConfigurationCommand::class)
              ->tag(
@@ -131,7 +131,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Outputs the requested Site serialized and encoded.',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(Typo3VersionCommand::class)
              ->tag(
@@ -141,7 +141,7 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Prints TYPO3 version',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
     $services->set(VersionCommand::class)
              ->tag(
@@ -151,6 +151,6 @@ return static function (ContainerConfigurator $configurator): void {
                      'description' => 'Prints the version number of the currently installed in2publish_core extension',
                      'hidden' => true,
                      'schedulable' => false,
-                 ]
+                 ],
              );
 };

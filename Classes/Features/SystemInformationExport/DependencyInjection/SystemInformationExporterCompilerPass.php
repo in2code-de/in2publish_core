@@ -61,7 +61,7 @@ class SystemInformationExporterCompilerPass implements CompilerPassInterface
                 'registerExporter',
                 [
                     new Reference($serviceName),
-                ]
+                ],
             );
         }
     }

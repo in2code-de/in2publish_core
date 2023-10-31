@@ -56,7 +56,7 @@ class BackendUtilityTest extends UnitTestCase
         $schemaManager->method('listTableNames')->willReturn(
             [
                 'tt_content',
-            ]
+            ],
         );
         $connection->method('getSchemaManager')->willReturn($schemaManager);
 
@@ -64,7 +64,7 @@ class BackendUtilityTest extends UnitTestCase
         $result->method('fetchAssociative')->willReturnCallback(
             function () {
                 return $this->rows;
-            }
+            },
         );
         $restrictionContainer = $this->createMock(DefaultRestrictionContainer::class);
         $queryBuilder = $this->createMock(QueryBuilder::class);

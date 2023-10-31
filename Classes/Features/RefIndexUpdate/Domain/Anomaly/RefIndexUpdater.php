@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly;
  */
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
-use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Event\RecordWasPublished;
 use In2code\In2publishCore\Features\RefIndexUpdate\Domain\Model\Task\RefIndexUpdateTask;
 
 use function is_int;
@@ -43,7 +43,7 @@ class RefIndexUpdater
     /** @var array<string, array<int, int>> */
     protected array $configuration = [];
 
-    public function registerRefIndexUpdate(PublishingOfOneRecordEnded $event): void
+    public function registerRefIndexUpdate(RecordWasPublished $event): void
     {
         $record = $event->getRecord();
         $uid = $record->getId();

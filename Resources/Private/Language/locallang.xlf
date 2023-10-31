@@ -19,6 +19,9 @@
 			<trans-unit id="module_m4_title">
 				<source>administration tools</source>
 			</trans-unit>
+			<trans-unit id="module_m5_title">
+				<source>Publish redirects</source>
+			</trans-unit>
 
 			<trans-unit id="m1.page_recursion">
 				<source>Depth</source>
@@ -348,7 +351,7 @@
 			</trans-unit>
 
 			<trans-unit id="file_publishing.success">
-				<source>Successful published.</source>
+				<source>Successfully published.</source>
 			</trans-unit>
 			<trans-unit id="file_publishing.failure">
 				<source>Something went wrong.</source>
@@ -378,10 +381,10 @@
 			</trans-unit>
 
 			<trans-unit id="help.slack_channel">
-				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
+				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
 			</trans-unit>
 			<trans-unit id="help.github_issues">
-				<source><![CDATA[Official documentation for in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
+				<source><![CDATA[Official documentation for in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
 			</trans-unit>
 
 			<trans-unit id="context_menu_publish_entry.forbidden">
@@ -596,7 +599,7 @@
 				<source>"%s" requires that the record "%s" (which is the default language version) is published first.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.enablecolumns">
-				<source>"%s" requires that the record "%s" (which is the default language version) has all of its properties published (%s) which determine if the record is visible.</source>
+				<source>The record "%s" cannot be published until all visibility settings (%s) of the default language "%s" have been published.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_published_page.existing">
 				<source>"%s" requires that the page "%s" is published first.</source>

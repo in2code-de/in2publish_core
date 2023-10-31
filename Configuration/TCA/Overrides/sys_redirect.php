@@ -13,7 +13,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
     }
 
     $configContainer = GeneralUtility::makeInstance(
-        ConfigContainer::class
+        ConfigContainer::class,
     );
 
     if ($configContainer->get('features.redirectsSupport.enable')) {
@@ -66,7 +66,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
             'sys_redirect',
             '--palette--;;tx_in2publishcore_association',
             '',
-            'after:keep_query_parameters'
+            'after:keep_query_parameters',
         );
 
         $GLOBALS['TCA']['sys_redirect']['columns']['deleted'] = [

@@ -64,7 +64,7 @@ class LocalInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.superfluous_excluded_tables_detected',
                 TestResult::WARNING,
-                array_merge(['application.superfluous_excluded_tables'], $missingTables)
+                array_merge(['application.superfluous_excluded_tables'], $missingTables),
             );
         }
 

@@ -115,7 +115,7 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
                 'language' => 1,
                 'trans_parent' => 5,
             ],
-            []
+            [],
         );
 
         $actual = $record->getPageId();

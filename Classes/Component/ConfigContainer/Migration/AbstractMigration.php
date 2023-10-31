@@ -31,9 +31,14 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
 
 use function array_key_exists;
 use function sha1;
+use function user_error;
 
+/**
+ * @deprecated Use the MigrationMessages trait instead. This class will be remove in in2publish_core v13.
+ */
 abstract class AbstractMigration implements MigrationInterface
 {
+    protected const DEPRECATION_MESSAGE = '%s uses %s which is deprecated and will be removed in in2publish_core v13. Use the MigrationMessages trait instead.';
     /** @var string[] */
     protected array $messages = [];
 
@@ -48,5 +53,10 @@ abstract class AbstractMigration implements MigrationInterface
     public function getMessages(): array
     {
         return $this->messages;
+    }
+
+    public function __destruct()
+    {
+        user_error(sprintf(self::DEPRECATION_MESSAGE, static::class, self::class));
     }
 }

@@ -44,7 +44,7 @@ use function strlen;
  * The actual value comes from the provider registered with the shortcut name.
  * Register provider at the registry.
  */
-class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareInterface
+class DynamicValuesPostProcessor implements PostProcessorServiceInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use DynamicValueProviderRegistryInjection;
@@ -83,7 +83,7 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
             $this->rtc['missing'][$providerKey] = true;
             $this->logger->error(
                 'Identified dynamic configuration provider key but no provider was registered for it',
-                ['providerKey' => $providerKey]
+                ['providerKey' => $providerKey],
             );
         }
     }

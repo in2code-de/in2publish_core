@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Record\Model;
 
 use Generator;
+use In2code\In2publishCore\Component\Core\Reason\Reasons;
 
 interface Record extends Node
 {
@@ -20,6 +21,8 @@ interface Record extends Node
     public function getLocalProps(): array;
 
     public function setLocalProps(array $localProps): void;
+
+    public function addLocalProp(string $prop, $value): void;
 
     public function getForeignProps(): array;
 
@@ -98,9 +101,31 @@ interface Record extends Node
      */
     public function getDependencies(): array;
 
+    /**
+     * @param array<string, array<array-key, true>> $visited
+     * @return Generator<Dependency>
+     */
     public function getAllDependencies(array &$visited = []): Generator;
 
+    /**
+     * @return array<string>
+     */
+    public function getUnfulfilledDependenciesHumanReadableRecursively(): array;
+
     public function isPublishable(): bool;
+
+    /**
+     * @return array<string>
+     */
+    public function getReasonsWhyTheRecordIsNotPublishableHumanReadable(): array;
+
+    public function hasReasonsWhyTheRecordIsNotPublishable(): bool;
+
+    public function getReasonsWhyTheRecordIsNotPublishable(): Reasons;
+
+    public function hasUnfulfilledDependenciesRecursively(): bool;
+
+    public function isPublishableIgnoringUnreachableDependencies(): bool;
 
     public function __toString(): string;
 }

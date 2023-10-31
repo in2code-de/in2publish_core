@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport;
  */
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Node;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
@@ -87,13 +88,14 @@ class PageRecordRedirectEnhancer
                 ]);
             }
 
-            $demands->addSelect(
+            $demand = new SelectDemand(
                 'sys_redirect',
                 'tx_in2publishcore_foreign_site_id IS NULL',
                 'target',
                 $targetLink,
-                $node
+                $node,
             );
+            $demands->addDemand($demand);
         }
         foreach ($node->getChildren() as $children) {
             foreach ($children as $child) {

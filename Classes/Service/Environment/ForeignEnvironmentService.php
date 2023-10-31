@@ -83,7 +83,7 @@ class ForeignEnvironmentService implements LoggerAwareInterface
                     'errors' => $response->getErrors(),
                     'exit_status' => $response->getExitStatus(),
                     'output' => $response->getOutput(),
-                ]
+                ],
             );
         }
 
@@ -115,7 +115,7 @@ class ForeignEnvironmentService implements LoggerAwareInterface
                         'errors' => $response->getErrors(),
                         'exit_status' => $response->getExitStatus(),
                         'output' => $response->getOutput(),
-                    ]
+                    ],
                 );
 
                 $createMasks = [

@@ -10,9 +10,9 @@ services:
   In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly\CacheInvalidator:
     tags:
       - name: event.listener
-        identifier: 'in2publishcore-CacheInvalidator-PublishingOfOneRecordBegan'
+        identifier: 'in2publishcore-CacheInvalidator-RecordWasPublished'
         method: 'registerClearCacheTasks'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
+        event: In2code\In2publishCore\Event\RecordWasPublished
       - name: event.listener
         identifier: 'in2publishcore-CacheInvalidator-RecursiveRecordPublishingEnded'
         method: 'writeClearCacheTask'

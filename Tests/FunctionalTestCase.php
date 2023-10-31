@@ -26,7 +26,6 @@ use function copy;
 use function defined;
 use function dirname;
 use function get_called_class;
-use function get_class;
 use function getenv;
 use function in_array;
 use function putenv;
@@ -174,7 +173,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
             $testbase->setUpLocalConfiguration(
                 $this->instancePath,
                 $localConfiguration,
-                $this->configurationToUseInTestInstance
+                $this->configurationToUseInTestInstance,
             );
 
             $defaultCoreExtensionsToLoad = [
@@ -191,7 +190,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
                 $defaultCoreExtensionsToLoad,
                 $this->coreExtensionsToLoad,
                 $this->testExtensionsToLoad,
-                $this->frameworkExtensionsToLoad
+                $this->frameworkExtensionsToLoad,
             );
             $this->container = $testbase->setUpBasicTypo3Bootstrap($this->instancePath);
             if ($this->initializeDatabase) {
@@ -290,7 +289,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
                 . ' For this instance this could be fixed executing:'
                 . ' GRANT ALL ON `' . $originalDatabaseName . '_%`.* TO `' . $user . '`@`' . $host . '`;'
                 . ' Original message thrown by database layer: ' . $e->getMessage(),
-                1376579070
+                1376579070,
             );
         }
     }
@@ -317,10 +316,13 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         };
         $contextService = GeneralUtility::makeInstance(ContextService::class);
         $testConfigProvider->config = $config;
-        $configContainer = new ConfigContainer($contextService);
-        $configContainer->registerDefiner(In2publishCoreDefiner::class);
-        $configContainer->registerProvider(DefaultProvider::class);
-        $configContainer->registerProvider(get_class($testConfigProvider));
+        $configContainer = new ConfigContainer(
+            [new DefaultProvider(), $testConfigProvider],
+            [new In2publishCoreDefiner()],
+            [],
+            [],
+        );
+        $configContainer->injectContextService($contextService);
         GeneralUtility::setSingletonInstance(ConfigContainer::class, $configContainer);
     }
 }

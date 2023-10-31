@@ -8,6 +8,7 @@ use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\Exception\MissingDatabaseRecordFactoryException;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory
@@ -33,14 +34,13 @@ class DatabaseRecordFactoryFactoryTest extends UnitTestCase
         $factoryFactory->addFactory($factory2);
         $factoryFactory->addFactory($factory3);
 
-
-        $reflectionProperty = new \ReflectionProperty(DatabaseRecordFactoryFactory::class, 'factories');
+        $reflectionProperty = new ReflectionProperty(DatabaseRecordFactoryFactory::class, 'factories');
         $reflectionProperty->setAccessible(true);
         $factories = $reflectionProperty->getValue($factoryFactory);
         $expectedFactoryOrder = [
             10 => [$factory3],
             2 => [$factory2],
-            1 => [$factory1]
+            1 => [$factory1],
         ];
         $this->assertSame($expectedFactoryOrder, $factories);
     }
@@ -61,7 +61,6 @@ class DatabaseRecordFactoryFactoryTest extends UnitTestCase
         $factoryFactory = new DatabaseRecordFactoryFactory();
         $factoryFactory->addFactory($factory1);
         $factoryFactory->addFactory($factory2);
-
 
         $createdFactory = $factoryFactory->createFactoryForTable($table);
         $this->assertSame($factory2, $createdFactory);

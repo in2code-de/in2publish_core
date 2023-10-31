@@ -97,7 +97,7 @@ class TestCaseService
             if (!is_subclass_of($class, TestCaseInterface::class)) {
                 throw new InvalidArgumentException(
                     'The test class ' . $class . ' must implement the TestCaseInterface',
-                    1470244507
+                    1470244507,
                 );
             }
             $tests[$class] = GeneralUtility::makeInstance($class);

@@ -60,7 +60,7 @@ class IdenticalDriverTest implements TestCaseInterface
                     $key,
                     $storages['local'][$key]['name'],
                     $storages['local'][$key]['driver'],
-                    $storages['foreign'][$key]['driver']
+                    $storages['foreign'][$key]['driver'],
                 );
             }
         }
@@ -73,7 +73,7 @@ class IdenticalDriverTest implements TestCaseInterface
             return new TestResult(
                 'fal.driver_mismatch',
                 TestResult::ERROR,
-                array_merge(['fal.affected_storages'], $affected, $explanations)
+                array_merge(['fal.affected_storages'], $affected, $explanations),
             );
         }
 

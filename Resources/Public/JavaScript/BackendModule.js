@@ -300,6 +300,10 @@ define([
 		const type = target.dataset.type;
 		const severity = parseInt(target.dataset.severity || '0');
 		let actionButtonClass = 'btn-default';
+		let modalTitle = '';
+		let modalContent = '';
+		let modalButtonAbort = '';
+		let modalButtonPublish = '';
 		switch(severity) {
 			/*
 			 * TYPO3.Severity.error = 2
@@ -322,23 +326,34 @@ define([
 				actionButtonClass = 'btn-danger';
 				break;
 		}
+		if (TYPO3.lang['tx_in2publishcore.modal.publish.' + type + '.text'] !== undefined) {
+			modalTitle = TYPO3.lang['tx_in2publishcore.modal.publish.title'];
+			modalContent = TYPO3.lang['tx_in2publishcore.modal.publish.' + type + '.text'].replace('$name$', target.dataset.name);
+			modalButtonAbort = TYPO3.lang['tx_in2publishcore.action.abort'];
+			modalButtonPublish = TYPO3.lang['tx_in2publishcore.actions.publish'];
+		} else {
+			modalTitle = target.dataset.modalTitle;
+			modalContent = target.dataset.modalText + '\n' + target.dataset.modalReasons;
+			modalButtonAbort = target.dataset.modalButtonAbortCaption;
+			modalButtonPublish = target.dataset.modalButtonPublishCaption;
+		}
 		const configuration = {
-			title: TYPO3.lang['tx_in2publishcore.modal.publish.title'],
-			content: TYPO3.lang['tx_in2publishcore.modal.publish.' + type + '.text']
-				.replace('$name$', target.dataset.name),
+			title: modalTitle,
+			content: modalContent,
 			severity: severity,
 			buttons: [
 				{
-					text: TYPO3.lang['tx_in2publishcore.action.abort'],
+					text: modalButtonAbort,
 					btnClass: 'btn btn-default',
 					name: 'abort',
 					active: true,
 					trigger: function () {
 						Modal.currentModal.trigger('modal-dismiss');
+						In2publishCoreModule.hidePreLoader();
 					}
 				},
 				{
-					text: TYPO3.lang['tx_in2publishcore.actions.publish'],
+					text: modalButtonPublish,
 					btnClass: 'btn ' + actionButtonClass,
 					name: 'publish',
 					trigger: () => {

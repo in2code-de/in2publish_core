@@ -76,7 +76,7 @@ class TransmissionAdapterTest implements TestCaseInterface
             return new TestResult(
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.asset_transmitter_error',
                 TestResult::ERROR,
-                [(string)$exception]
+                [(string)$exception],
             );
         }
 
@@ -89,7 +89,7 @@ class TransmissionAdapterTest implements TestCaseInterface
                 return new TestResult(
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.file_not_transferred',
                     TestResult::ERROR,
-                    [$getContentResponse->getOutputString(), $getContentResponse->getErrorsString()]
+                    [$getContentResponse->getOutputString(), $getContentResponse->getErrorsString()],
                 );
             }
             $rmResponse = $this->removeForeignFile($foreignTmpFile);
@@ -97,7 +97,7 @@ class TransmissionAdapterTest implements TestCaseInterface
                 return new TestResult(
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.file_cat_failed',
                     TestResult::ERROR,
-                    [$getContentResponse->getOutputString(), $getContentResponse->getErrorsString()]
+                    [$getContentResponse->getOutputString(), $getContentResponse->getErrorsString()],
                 );
             }
             return new TestResult(
@@ -109,7 +109,7 @@ class TransmissionAdapterTest implements TestCaseInterface
                     $rmResponse->getOutputString(),
                     $rmResponse->getErrorsString(),
                 ],
-                [$foreignTmpFile]
+                [$foreignTmpFile],
             );
         }
 
@@ -120,7 +120,7 @@ class TransmissionAdapterTest implements TestCaseInterface
                 return new TestResult(
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.content_altered',
                     TestResult::ERROR,
-                    [$getContentResponse->getOutputString(), $getContentResponse->getErrorsString()]
+                    [$getContentResponse->getOutputString(), $getContentResponse->getErrorsString()],
                 );
             }
             return new TestResult(
@@ -133,7 +133,7 @@ class TransmissionAdapterTest implements TestCaseInterface
                     $rmResponse->getOutputString(),
                     $rmResponse->getErrorsString(),
                 ],
-                [$foreignTmpFile]
+                [$foreignTmpFile],
             );
         }
 
@@ -142,12 +142,12 @@ class TransmissionAdapterTest implements TestCaseInterface
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.file_deletion_failed',
                 TestResult::ERROR,
                 [$rmResponse->getOutputString(), $rmResponse->getErrorsString()],
-                [$foreignTmpFile]
+                [$foreignTmpFile],
             );
         }
 
         return new TestResult(
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.all_tests_passed'
+            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.all_tests_passed',
         );
     }
 
@@ -178,7 +178,7 @@ class TransmissionAdapterTest implements TestCaseInterface
         if (isset($GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class])) {
             $dependencies = array_merge(
                 $dependencies,
-                $GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class]
+                $GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class],
             );
         }
         return $dependencies;

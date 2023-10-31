@@ -24,6 +24,10 @@
 				<source>administration tools</source>
 				<target state="translated">Tools für Administratoren</target>
 			</trans-unit>
+			<trans-unit id="module_m5_title">
+				<source>Publish redirects</source>
+				<target state="translated">Redirects veröffentlichen</target>
+			</trans-unit>
 
 			<trans-unit id="m1.page_recursion">
 				<source>Depth</source>
@@ -498,12 +502,12 @@
 			</trans-unit>
 
 			<trans-unit id="help.slack_channel">
-				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
-				<target state="translated"><![CDATA[Frag die Community: Wir haben einen Slack Channel #ext-in2publish im offiziellen TYPO3 Slack: <a href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></target>
+				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
+				<target state="translated"><![CDATA[Frag die Community: Wir haben einen Slack Channel #ext-in2publish im offiziellen TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></target>
 			</trans-unit>
 			<trans-unit id="help.github_issues">
-				<source><![CDATA[Official documentation for in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
-				<target state="translated"><![CDATA[Offizielle Dokumentation von in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></target>
+				<source><![CDATA[Official documentation for in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
+				<target state="translated"><![CDATA[Offizielle Dokumentation von in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></target>
 			</trans-unit>
 
 			<trans-unit id="context_menu_publish_entry.forbidden">
@@ -785,8 +789,8 @@
 				<target state="translated">"%s" erfordert, dass der Datensatz "%s" (das ist die Standardsprachversion) zuerst veröffentlicht wird.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.enablecolumns">
-				<source>"%s" requires that the record "%s" (which is the default language version) has all of its properties published (%s) which determine if the record is visible.</source>
-				<target state="translated">"%s" erfordert, dass der Datensatz "%s" (das ist die Standardsprachversion) alle seine Eigenschaften veröffentlicht hat (%s), die bestimmen, ob der Datensatz sichtbar ist.</target>
+				<source>The record "%s" cannot be published until all visibility settings (%s) of the default language "%s" have been published.</source>
+				<target state="translated">Der Datensatz "%s" kann nicht veröffentlicht werden, bevor nicht alle Sichtbarkeitseinstellung (%s) der Standardsprache "%s" veröffentlicht wurden.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_published_page.existing">
 				<source>"%s" requires that the page "%s" is published first.</source>

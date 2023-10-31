@@ -6,6 +6,8 @@ namespace In2code\In2publishCore\Component\Core\Record\Model;
 
 use TYPO3\CMS\Core\Utility\PathUtility;
 
+use function in_array;
+
 class FileRecord extends AbstractRecord
 {
     public const CLASSIFICATION = '_file';
@@ -22,7 +24,19 @@ class FileRecord extends AbstractRecord
     {
         $state = parent::calculateState();
         if (Record::S_CHANGED === $state) {
-            $state = Record::S_MOVED;
+            $changedProps = $this->getChangedProps();
+            // File contents changed!
+            if (in_array('sha1', $changedProps, true)) {
+                return Record::S_CHANGED;
+            }
+            // File was renamed
+            if (in_array('name', $changedProps, true)) {
+                return Record::S_CHANGED;
+            }
+            // File contents did not change but the folder
+            if (in_array('folder_hash', $changedProps, true)) {
+                return Record::S_MOVED;
+            }
         }
         return $state;
     }

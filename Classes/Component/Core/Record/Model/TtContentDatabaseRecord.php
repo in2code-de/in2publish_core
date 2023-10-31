@@ -15,7 +15,12 @@ class TtContentDatabaseRecord extends DatabaseRecord
     public function calculateDependencies(): array
     {
         $dependencies = parent::calculateDependencies();
+        $this->calculateShortcutDependencies($dependencies);
+        return $dependencies;
+    }
 
+    protected function calculateShortcutDependencies(array &$dependencies): void
+    {
         $referencedRecords = '';
         if (($this->localProps['CType'] ?? null) === 'shortcut') {
             $referencedRecords .= $this->localProps['records'];
@@ -23,21 +28,7 @@ class TtContentDatabaseRecord extends DatabaseRecord
         if (($this->foreignProps['CType'] ?? null) === 'shortcut') {
             $referencedRecords .= ',' . $this->foreignProps['records'];
         }
-        $resolveShortcutDependencies = $this->resolveShortcutDependencies($referencedRecords);
-        foreach ($resolveShortcutDependencies as $dependency) {
-            $dependencies[] = $dependency;
-        }
-
-        return $dependencies;
-    }
-
-    /**
-     * @return array<Dependency>
-     */
-    protected function resolveShortcutDependencies(string $recordList): array
-    {
-        $dependencies = [];
-        $records = array_unique(GeneralUtility::trimExplode(',', $recordList, true));
+        $records = array_unique(GeneralUtility::trimExplode(',', $referencedRecords, true));
         foreach ($records as $record) {
             $position = strrpos($record, '_');
             if (false === $position) {
@@ -55,10 +46,8 @@ class TtContentDatabaseRecord extends DatabaseRecord
                 fn(Record $record): array => [
                     $record->__toString() ?: "{$record->getClassification()} [{$record->getId()}]",
                     $this->__toString() ?: "{$this->getClassification()} [{$this->getId()}]",
-                ]
+                ],
             );
         }
-
-        return $dependencies;
     }
 }

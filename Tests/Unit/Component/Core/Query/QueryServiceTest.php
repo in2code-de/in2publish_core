@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Query;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
@@ -40,7 +41,7 @@ class QueryServiceTest extends TestCase
                                            'foreign' => [],
                                            'additional' => [],
                                        ],
-                                   ]
+                                   ],
                                );
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $foreignSingleDatabaseRepository->expects($this->once())
@@ -60,8 +61,8 @@ class QueryServiceTest extends TestCase
         $record = $this->createMock(DatabaseRecord::class);
 
         $demands = new DemandsCollection();
-        $demands->addSelect('foo', 'AND 1=1', 'pid', 6, $record);
-        $demands->addSelect('foo', 'AND 1=1', 'pid', 8, $record);
+        $demands->addDemand(new SelectDemand('foo', 'AND 1=1', 'pid', 6, $record));
+        $demands->addDemand(new SelectDemand('foo', 'AND 1=1', 'pid', 8, $record));
 
         $recordCollection = new RecordCollection();
         $queryService->resolveDemand($demands, $recordCollection);
@@ -87,7 +88,7 @@ class QueryServiceTest extends TestCase
                                            'foreign' => [],
                                            'additional' => [],
                                        ],
-                                   ]
+                                   ],
                                );
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $foreignSingleDatabaseRepository->expects($this->never())->method('findByProperty');
@@ -105,8 +106,8 @@ class QueryServiceTest extends TestCase
         $record = $this->createMock(DatabaseRecord::class);
 
         $demands = new DemandsCollection();
-        $demands->addSelect('foo', 'AND 1=1', 'uid', 14, $record);
-        $demands->addSelect('foo', 'AND 1=1', 'uid', 19, $record);
+        $demands->addDemand(new SelectDemand('foo', 'AND 1=1', 'uid', 14, $record));
+        $demands->addDemand(new SelectDemand('foo', 'AND 1=1', 'uid', 19, $record));
 
         $recordCollection = new RecordCollection();
         $queryService->resolveDemand($demands, $recordCollection);
@@ -134,7 +135,7 @@ class QueryServiceTest extends TestCase
                                            ],
                                            'additional' => [],
                                        ],
-                                   ]
+                                   ],
                                );
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
@@ -154,8 +155,8 @@ class QueryServiceTest extends TestCase
         $record = $this->createMock(DatabaseRecord::class);
 
         $demands = new DemandsCollection();
-        $demands->addSelect('foo', 'AND 1=1', 'pid', 6, $record);
-        $demands->addSelect('foo', 'AND 1=1', 'pid', 8, $record);
+        $demands->addDemand(new SelectDemand('foo', 'AND 1=1', 'pid', 6, $record));
+        $demands->addDemand(new SelectDemand('foo', 'AND 1=1', 'pid', 8, $record));
 
         $recordCollection = new RecordCollection();
         $queryService->resolveDemand($demands, $recordCollection);
@@ -181,7 +182,7 @@ class QueryServiceTest extends TestCase
                                            ],
                                            'additional' => [],
                                        ],
-                                   ]
+                                   ],
                                );
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
@@ -199,8 +200,8 @@ class QueryServiceTest extends TestCase
         $record = $this->createMock(DatabaseRecord::class);
 
         $demands = new DemandsCollection();
-        $demands->addSelect('foo', 'AND 1=1', 'uid', 14, $record);
-        $demands->addSelect('foo', 'AND 1=1', 'uid', 19, $record);
+        $demands->addDemand(new SelectDemand('foo', 'AND 1=1', 'uid', 14, $record));
+        $demands->addDemand(new SelectDemand('foo', 'AND 1=1', 'uid', 19, $record));
 
         $recordCollection = new RecordCollection();
         $queryService->resolveDemand($demands, $recordCollection);
@@ -230,7 +231,7 @@ class QueryServiceTest extends TestCase
                                            ],
                                            'additional' => [],
                                        ],
-                                   ]
+                                   ],
                                );
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
@@ -242,7 +243,7 @@ class QueryServiceTest extends TestCase
                                                   'uid' => 14,
                                                   'title' => 'local',
                                               ],
-                                          ]
+                                          ],
                                       );
         $recordFactory = $this->createMock(RecordFactory::class);
         $recordIndex = $this->createMock(RecordIndex::class);
@@ -255,8 +256,8 @@ class QueryServiceTest extends TestCase
         $queryService->injectRecordIndex($recordIndex);
 
         $demands = new DemandsCollection();
-        $demands->addSelect('foo', 'AND 1=1', 'pid', 14, $record);
-        $demands->addSelect('foo', 'AND 1=1', 'pid', 19, $record);
+        $demands->addDemand(new SelectDemand('foo', 'AND 1=1', 'pid', 14, $record));
+        $demands->addDemand(new SelectDemand('foo', 'AND 1=1', 'pid', 19, $record));
 
         $recordCollection = new RecordCollection();
         $queryService->resolveDemand($demands, $recordCollection);

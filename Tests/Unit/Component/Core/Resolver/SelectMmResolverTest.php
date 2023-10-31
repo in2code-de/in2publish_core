@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass  \In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver
@@ -30,15 +32,15 @@ class SelectMmResolverTest extends UnitTestCase
     public function testConfigure()
     {
         $selectMmResolver = new SelectMmResolver();
-        $foreignTableWhere = new \ReflectionProperty(SelectMmResolver::class, 'foreignTableWhere');
+        $foreignTableWhere = new ReflectionProperty(SelectMmResolver::class, 'foreignTableWhere');
         $foreignTableWhere->setAccessible(true);
-        $column = new \ReflectionProperty(SelectMmResolver::class, 'column');
+        $column = new ReflectionProperty(SelectMmResolver::class, 'column');
         $column->setAccessible(true);
-        $mmTable = new \ReflectionProperty(SelectMmResolver::class, 'mmTable');
+        $mmTable = new ReflectionProperty(SelectMmResolver::class, 'mmTable');
         $mmTable->setAccessible(true);
-        $foreignTable = new \ReflectionProperty(SelectMmResolver::class, 'foreignTable');
+        $foreignTable = new ReflectionProperty(SelectMmResolver::class, 'foreignTable');
         $foreignTable->setAccessible(true);
-        $selectField = new \ReflectionProperty(SelectMmResolver::class, 'selectField');
+        $selectField = new ReflectionProperty(SelectMmResolver::class, 'selectField');
         $selectField->setAccessible(true);
 
         $selectMmResolver->configure(
@@ -46,7 +48,7 @@ class SelectMmResolverTest extends UnitTestCase
             'column',
             'mmTable',
             'foreignTable',
-            'selectField'
+            'selectField',
         );
 
         $this->assertEquals('foreignTableWhere', $foreignTableWhere->getValue($selectMmResolver));
@@ -68,11 +70,11 @@ class SelectMmResolverTest extends UnitTestCase
         $selectMmResolver->injectReplaceMarkersService($replaceMarkersService);
 
         $demands = new DemandsCollection();
-        $record = new DatabaseRecord('table_foo', 42, ['local_prop1' => 'value_1'],[],[]);
+        $record = new DatabaseRecord('table_foo', 42, ['local_prop1' => 'value_1'], [], []);
 
         $selectMmResolver->resolve($demands, $record);
 
-        $joinDemand = $demands->getJoin();
+        $joinDemand = $demands->getDemandsByType(JoinDemand::class);
         $resolvedRecord = $joinDemand['mmTable']['foreignTable']['foreignTableWhereClause']['selectField'][42]['table_foo\42'];
         $this->assertEquals($resolvedRecord, $record);
     }
@@ -88,19 +90,18 @@ class SelectMmResolverTest extends UnitTestCase
             'column',
             'mmTable',
             'foreignTable',
-            'selectField'
+            'selectField',
         );
 
-        $record = new DatabaseRecord('table_foo', 42, ['value_foo' => 'value_1'],[],[]);
+        $record = new DatabaseRecord('table_foo', 42, ['value_foo' => 'value_1'], [], []);
 
         $additionalWhere = 'AND {#foreignTable}.{#column} LIKE \'%value%\' ORDER BY uid';
 
         $replaceMarkersService = $this->createMock(ReplaceMarkersService::class);
-        $replaceMarkersService->expects(
-            $this->once())
-            ->method('replaceMarkers')
-            ->with($record,$additionalWhere,'column')
-            ->willReturn('AND foreignTable.column LIKE \'%value%\'');
+        $replaceMarkersService->expects($this->once())
+                              ->method('replaceMarkers')
+                              ->with($record, $additionalWhere, 'column')
+                              ->willReturn('AND foreignTable.column LIKE \'%value%\'');
 
         $selectMmResolver->injectReplaceMarkersService($replaceMarkersService);
 
@@ -108,7 +109,7 @@ class SelectMmResolverTest extends UnitTestCase
 
         $selectMmResolver->resolve($demands, $record);
 
-        $joinDemand = $demands->getJoin();
+        $joinDemand = $demands->getDemandsByType(JoinDemand::class);
         $resolvedRecord = $joinDemand['mmTable']['foreignTable']['AND foreignTable.column LIKE \'%value%\'']['selectField'][42]['table_foo\42'];
         $this->assertEquals($resolvedRecord, $record);
     }
@@ -121,9 +122,8 @@ class SelectMmResolverTest extends UnitTestCase
             'column',
             'mmTable',
             'foreignTable',
-            'selectField'
+            'selectField',
         );
         return $selectMmResolver;
     }
-
 }

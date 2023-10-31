@@ -26,7 +26,7 @@ class ForeignFileSystemInfoService
     {
         $envelope = new Envelope(
             EnvelopeDispatcher::CMD_FOLDER_EXISTS,
-            ['storage' => $storageUid, 'folderIdentifier' => $identifier]
+            ['storage' => $storageUid, 'folderIdentifier' => $identifier],
         );
         return $this->executeEnvelope($envelope);
     }
@@ -35,7 +35,7 @@ class ForeignFileSystemInfoService
     {
         $envelope = new Envelope(
             EnvelopeDispatcher::CMD_FILE_EXISTS,
-            ['storage' => $storageUid, 'fileIdentifier' => $identifier]
+            ['storage' => $storageUid, 'fileIdentifier' => $identifier],
         );
         return $this->executeEnvelope($envelope);
     }
@@ -44,7 +44,7 @@ class ForeignFileSystemInfoService
     {
         $envelope = new Envelope(
             EnvelopeDispatcher::CMD_LIST_FOLDER_CONTENTS,
-            ['storageUid' => $storageUid, 'identifier' => $identifier]
+            ['storageUid' => $storageUid, 'identifier' => $identifier],
         );
         return $this->executeEnvelope($envelope);
     }
@@ -53,7 +53,7 @@ class ForeignFileSystemInfoService
     {
         $envelope = new Envelope(
             EnvelopeDispatcher::CMD_GET_FILE_INFO,
-            ['files' => $files]
+            ['files' => $files],
         );
         return $this->executeEnvelope($envelope);
     }
@@ -73,9 +73,9 @@ class ForeignFileSystemInfoService
                     'Could not execute RPC [%d]. Errors and Output: %s %s',
                     $uid,
                     $response->getErrorsString(),
-                    $response->getOutputString()
+                    $response->getOutputString(),
                 ),
-                1655988997
+                1655988997,
             );
         }
 

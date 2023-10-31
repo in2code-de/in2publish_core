@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Component\Core\DemandResolver\Join;
 use Doctrine\DBAL\Exception;
 use In2code\In2publishCore\Component\Core\Demand\CallerAwareDemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\DemandResolver\Exception\InvalidDemandException;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
@@ -36,7 +37,7 @@ class JoinDemandResolver implements DemandResolver
     protected function resolveJoinDemands(Demands $demands): JoinRowCollection
     {
         $joinRowCollection = new JoinRowCollection();
-        foreach ($demands->getJoin() as $joinTable => $JoinSelect) {
+        foreach ($demands->getDemandsByType(JoinDemand::class) as $joinTable => $JoinSelect) {
             foreach ($JoinSelect as $table => $tableSelect) {
                 foreach ($tableSelect as $additionalWhere => $properties) {
                     foreach ($properties as $property => $valueMaps) {
@@ -46,15 +47,17 @@ class JoinDemandResolver implements DemandResolver
                                 $table,
                                 $property,
                                 array_keys($valueMaps),
-                                $additionalWhere
+                                $additionalWhere,
                             );
                         } catch (Exception $exception) {
                             if ($demands instanceof CallerAwareDemandsCollection) {
-                                $callers = [];
-                                $meta = $demands->getMeta();
-                                if (isset($meta['join'][$joinTable][$table][$additionalWhere][$property])) {
-                                    $callers = $meta['join'][$joinTable][$table][$additionalWhere][$property];
-                                }
+                                $callers = $demands->getMeta(
+                                    JoinDemand::class,
+                                    $joinTable,
+                                    $table,
+                                    $additionalWhere,
+                                    $property,
+                                );
                                 $exception = new InvalidDemandException($callers, $exception);
                             }
                             throw $exception;
@@ -124,7 +127,7 @@ class JoinDemandResolver implements DemandResolver
                             $joinTable,
                             $mmId,
                             $row['local']['mmtbl'] ?? [],
-                            $row['foreign']['mmtbl'] ?? []
+                            $row['foreign']['mmtbl'] ?? [],
                         );
                         if (null === $mmRecord) {
                             continue;
@@ -137,7 +140,7 @@ class JoinDemandResolver implements DemandResolver
                                     $table,
                                     $uid,
                                     $row['local']['table'] ?? [],
-                                    $row['foreign']['table'] ?? []
+                                    $row['foreign']['table'] ?? [],
                                 );
                                 if (null !== $tableRecord) {
                                     $recordCollection->addRecord($tableRecord);

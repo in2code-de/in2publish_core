@@ -25,7 +25,11 @@ class InputProcessorTest extends UnitTestCase
 
         $inputProcessor = new InputProcessor();
         $inputProcessor->injectContainer($container);
-        $processingResult = $inputProcessor->process('tableNameFoo', 'fieldNameBar', ['softref' => 'typolink', 'enableRichtext' => true]);
+        $processingResult = $inputProcessor->process(
+            'tableNameFoo',
+            'fieldNameBar',
+            ['softref' => 'typolink', 'enableRichtext' => true],
+        );
         $this->assertTrue($processingResult->isCompatible());
     }
 
@@ -35,11 +39,15 @@ class InputProcessorTest extends UnitTestCase
     public function testInputProcessorIgnoresFieldsWithoutSupportedSoftref(): void
     {
         $inputProcessor = new InputProcessor();
-        $processingResult = $inputProcessor->process('tableNameFoo', 'fieldNameBar', ['softref' => 'asdasd', 'enableRichtext' => true]);
+        $processingResult = $inputProcessor->process(
+            'tableNameFoo',
+            'fieldNameBar',
+            ['softref' => 'asdasd', 'enableRichtext' => true],
+        );
         $this->assertFalse($processingResult->isCompatible());
         $this->assertSame(
             ['An input field must either have renderType="inputLink" or softref="typolink" or softref="typolink_tag"'],
-            $processingResult->getValue()
+            $processingResult->getValue(),
         );
     }
 

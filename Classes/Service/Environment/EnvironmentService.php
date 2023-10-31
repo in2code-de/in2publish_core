@@ -69,7 +69,7 @@ class EnvironmentService implements SingletonInterface
                 'success' => $success,
                 'packages_hash' => $this->getPackagesHash(),
                 'configuration_hash' => $this->getConfigurationHash(),
-            ]
+            ],
         );
     }
 

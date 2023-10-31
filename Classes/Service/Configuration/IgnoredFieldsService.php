@@ -32,6 +32,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_unique;
 use function explode;
+use function implode;
 use function is_array;
 use function is_string;
 use function preg_match;
@@ -63,7 +64,7 @@ class IgnoredFieldsService
                     foreach ($ignoreConfig['ctrl'] ?? [] as $ignoredCtrl) {
                         $ignoredCtrlFieldNames = $this->getValueByPath(
                             $GLOBALS['TCA'][$table]['ctrl'] ?? [],
-                            $ignoredCtrl
+                            $ignoredCtrl,
                         );
                         if (null === $ignoredCtrlFieldNames) {
                             continue;
@@ -96,6 +97,9 @@ class IgnoredFieldsService
             } else {
                 return null;
             }
+        }
+        if (is_array($value)) {
+            return implode(',', $value);
         }
         if (!is_string($value)) {
             return null;

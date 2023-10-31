@@ -13,6 +13,6 @@ services:
   In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly\SysLogPublisher:
     tags:
       - name: event.listener
-        identifier: 'in2publishcore-SysLogPublisher-PublishingOfOneRecordEnded'
+        identifier: 'in2publishcore-SysLogPublisher-RecordWasPublished'
         method: 'publishSysLog'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
+        event: In2code\In2publishCore\Event\RecordWasPublished

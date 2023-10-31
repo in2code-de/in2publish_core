@@ -145,7 +145,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
             return new TestResult(
                 'fal.storage_targets_test_error',
                 TestResult::ERROR,
-                $messages
+                $messages,
             );
         }
 
@@ -153,7 +153,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
             return new TestResult(
                 'fal.storage_targets_test_skipped',
                 TestResult::WARNING,
-                array_merge(['fal.offline_storage_names'], $skippedStorages)
+                array_merge(['fal.offline_storage_names'], $skippedStorages),
             );
         }
 

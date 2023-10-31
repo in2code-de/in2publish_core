@@ -50,7 +50,7 @@ class RemoteAdapterTest implements TestCaseInterface
         if (isset($GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class])) {
             $dependencies = array_merge(
                 $dependencies,
-                $GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class]
+                $GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class],
             );
         }
         return $dependencies;

@@ -39,7 +39,7 @@ class ShortSiteConfigurationCommandTest extends UnitTestCase
         $this->assertSame(0, $code);
         $this->assertSame(
             'ShortSiteConfig: eyJmb28iOnsiYmFzZSI6IiIsInJvb3RQYWdlSWQiOjN9fQ==' . PHP_EOL,
-            $output->fetch()
+            $output->fetch(),
         );
     }
 }

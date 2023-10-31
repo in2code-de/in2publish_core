@@ -66,7 +66,7 @@ class LogsExporter implements SystemInformationExporter
                 $log['component'],
                 $log['level'],
                 strftime('%F %T', (int)$log['time_micro']),
-                $log['message']
+                $log['message'],
             );
             $logData = $log['data'];
             $logDataJson = substr($logData, 2);

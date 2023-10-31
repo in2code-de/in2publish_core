@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\TextResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
@@ -41,11 +42,11 @@ class TextResolverTest extends UnitTestCase
             1,
             ['header_link' => 't3://page?uid=1 t3://page?uid=2 t3://file?uid=3'],
             [],
-            []
+            [],
         );
         $textResolver->resolve($demands, $databaseRecord);
 
-        $selectDemand = $demands->getSelect();
+        $selectDemand = $demands->getDemandsByType(SelectDemand::class);
 
         $this->assertArrayHasKey('pages', $selectDemand);
 
