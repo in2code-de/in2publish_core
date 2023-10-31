@@ -189,11 +189,15 @@ class DefaultFalFinder
         }
 
         $files = [];
-        foreach ($localFolderContents['files'] ?? [] as $file) {
-            $files[$file['identifier']]['local'] = $file;
+        foreach ($localFolderContents['files'] ?? [] as $localFiles) {
+            foreach ($localFiles as $file) {
+                $files[$file['identifier']]['local'] = $file;
+            }
         }
-        foreach ($foreignFolderContents['files'] ?? [] as $file) {
-            $files[$file['identifier']]['foreign'] = $file;
+        foreach ($foreignFolderContents['files'] ?? [] as $foreignFiles) {
+            foreach ($foreignFiles as $file) {
+                $files[$file['identifier']]['foreign'] = $file;
+            }
         }
         $demands = $this->demandsFactory->createDemand();
         foreach ($files as $sides) {
@@ -313,27 +317,17 @@ class DefaultFalFinder
     public function findFileRecord(?string $combinedIdentifier): RecordTree
     {
         [$storage, $fileIdentifier] = explode(':', $combinedIdentifier);
-        $driver = $this->falDriverService->getDriver((int)$storage);
 
         $localProps = [];
-        if ($driver->fileExists($fileIdentifier)) {
-            $localProps = [
-                'combinedIdentifier' => $combinedIdentifier,
-                'identifier' => $fileIdentifier,
-                'identifier_hash' => sha1($fileIdentifier),
-                'name' => PathUtility::basename($fileIdentifier),
-                'storage' => (int)$storage,
-            ];
+        $localFileInfo = $this->fileSystemInfoService->getFileInfo([$storage => [$fileIdentifier]]);
+
+        if (!empty($localFileInfo[$storage][$fileIdentifier])) {
+            $localProps = $localFileInfo[$storage][$fileIdentifier];
         }
         $foreignProps = [];
-        if ($this->foreignFileSystemInfoService->fileExists((int)$storage, $fileIdentifier)) {
-            $foreignProps = [
-                'combinedIdentifier' => $combinedIdentifier,
-                'identifier' => $fileIdentifier,
-                'identifier_hash' => sha1($fileIdentifier),
-                'name' => PathUtility::basename($fileIdentifier),
-                'storage' => (int)$storage,
-            ];
+        $foreignFileInfo = $this->foreignFileSystemInfoService->getFileInfo([$storage => [$fileIdentifier]]);
+        if (!empty($foreignFileInfo[$storage][$fileIdentifier])) {
+            $foreignProps = $foreignFileInfo[$storage][$fileIdentifier];
         }
         $fileRecord = $this->recordFactory->createFileRecord($localProps, $foreignProps);
         if (null === $fileRecord) {
@@ -363,25 +357,21 @@ class DefaultFalFinder
                     $localIdentifier = $localSysFileProps['identifier'];
                     $foreignIdentifier = $foreignSysFileProps['identifier'];
                     $foreignStorage = (int)$foreignSysFileProps['storage'];
-                    if (
-                        ($localIdentifier !== $foreignIdentifier)
-                        && $this->foreignFileSystemInfoService->fileExists($foreignStorage, $foreignIdentifier)
-                    ) {
-                        $foreignProps = [
-                            'combinedIdentifier' => $foreignSysFileProps['storage'] . ':' . $foreignIdentifier,
-                            'identifier' => $foreignIdentifier,
-                            'identifier_hash' => sha1($foreignIdentifier),
-                            'name' => PathUtility::basename($foreignIdentifier),
-                            'storage' => $foreignStorage,
-                        ];
-                        $fileRecord = $this->recordFactory->createFileRecord(
-                            $localProps,
-                            $foreignProps,
+                    if ($localIdentifier !== $foreignIdentifier) {
+                        $foreignFileInfo = $this->foreignFileSystemInfoService->getFileInfo(
+                            [$foreignStorage => [$foreignIdentifier]],
                         );
-                        if (null === $fileRecord) {
-                            return new RecordTree();
+                        if (!empty($foreignFileInfo[$foreignStorage][$foreignIdentifier])) {
+                            $foreignProps = $foreignFileInfo[$foreignStorage][$foreignIdentifier];
+                            $fileRecord = $this->recordFactory->createFileRecord(
+                                $localProps,
+                                $foreignProps,
+                            );
+                            if (null === $fileRecord) {
+                                return new RecordTree();
+                            }
+                            $fileRecord->addChild($sysFileRecord);
                         }
-                        $fileRecord->addChild($sysFileRecord);
                     }
                 }
             }

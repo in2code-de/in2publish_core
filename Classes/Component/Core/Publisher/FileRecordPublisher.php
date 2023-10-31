@@ -4,39 +4,21 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
-use In2code\In2publishCore\CommonInjection\ForeignDatabaseReconnectedInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceInjection;
-use In2code\In2publishCore\Component\Core\Publisher\Exception\FalPublisherExecutionFailedException;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFileInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFileInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\MoveFileInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\PublishInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceAndRenameFileInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceFileInstruction;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitterInjection;
-use TYPO3\CMS\Core\Utility\PathUtility;
 
-use function bin2hex;
-use function random_bytes;
-use function unlink;
-
-class FileRecordPublisher implements Publisher, FinishablePublisher
+class FileRecordPublisher extends AbstractFilesystemPublisher
 {
-    use ForeignDatabaseReconnectedInjection;
-    use FalDriverServiceInjection;
-    use RemoteCommandDispatcherInjection;
     use AssetTransmitterInjection;
-
-    // All A_* constant values must be 6 chars
-    public const A_DELETE = 'delete';
-    public const A_INSERT = 'insert';
-    public const A_UPDATE = 'update';
-    public const A_RENAME = 'rename';
-    protected string $requestToken;
-    protected bool $hasTasks = false;
-
-    public function __construct()
-    {
-        $this->requestToken = bin2hex(random_bytes(16));
-    }
+    use FalDriverServiceInjection;
 
     public function canPublish(Record $record): bool
     {
@@ -46,70 +28,79 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     public function publish(Record $record): void
     {
         $recordState = $record->getState();
-        if ($recordState === Record::S_DELETED) {
-            $this->hasTasks = true;
-            $this->foreignDatabase->insert('tx_in2publishcore_filepublisher_task', [
-                'request_token' => $this->requestToken,
-                'crdate' => $GLOBALS['EXEC_TIME'],
-                'tstamp' => $GLOBALS['EXEC_TIME'],
-                'storage_uid' => $record->getForeignProps()['storage'],
-                'identifier' => $record->getForeignProps()['identifier'],
-                'identifier_hash' => $record->getForeignProps()['identifier_hash'],
-                'file_action' => self::A_DELETE,
-            ]);
-            return;
+        $localProps = $record->getLocalProps();
+        $foreignProps = $record->getForeignProps();
+
+        $instruction = null;
+
+        switch ($recordState) {
+            case Record::S_DELETED:
+                $instruction = new DeleteFileInstruction(
+                    (int)$foreignProps['storage'],
+                    $foreignProps['identifier'],
+                );
+                break;
+            case Record::S_ADDED:
+                $storage = (int)$localProps['storage'];
+                $transmitTemporaryFile = $this->transmitTemporaryFile($record);
+                $identifier = $localProps['identifier'];
+                $instruction = new AddFileInstruction(
+                    $storage,
+                    $transmitTemporaryFile,
+                    $identifier,
+                );
+                break;
+            case Record::S_MOVED:
+                $storage = (int)$localProps['storage'];
+                $oldFileIdentifier = $foreignProps['identifier'];
+                $newFileIdentifier = $localProps['identifier'];
+                $instruction = new MoveFileInstruction(
+                    $storage,
+                    $oldFileIdentifier,
+                    $newFileIdentifier,
+                );
+                break;
+            case Record::S_CHANGED:
+                $storage = (int)$localProps['storage'];
+                $localFileIdentifier = $localProps['identifier'];
+                $foreignFileIdentifier = $foreignProps['identifier'];
+                if ($localFileIdentifier !== $foreignFileIdentifier) {
+                    if ($localProps['sha1'] === $foreignProps['sha1']) {
+                        $instruction = new MoveFileInstruction(
+                            $storage,
+                            $foreignFileIdentifier,
+                            $localFileIdentifier,
+                        );
+                    } else {
+                        $transmitTemporaryFile = $this->transmitTemporaryFile($record);
+                        $instruction = new ReplaceAndRenameFileInstruction(
+                            $storage,
+                            $foreignFileIdentifier,
+                            $localFileIdentifier,
+                            $transmitTemporaryFile
+                        );
+                    }
+                } else {
+                    $transmitTemporaryFile = $this->transmitTemporaryFile($record);
+                    $instruction = new ReplaceFileInstruction(
+                        $storage,
+                        $localFileIdentifier,
+                        $transmitTemporaryFile,
+                    );
+                }
+                break;
         }
-        if ($recordState === Record::S_ADDED) {
-            $this->hasTasks = true;
-            $this->transmitFile($record, self::A_INSERT);
-            return;
-        }
-        if ($recordState === Record::S_CHANGED) {
-            $this->hasTasks = true;
-            $this->transmitFile($record, self::A_UPDATE);
-        }
-        if ($recordState === Record::S_MOVED) {
-            $this->foreignDatabase->insert('tx_in2publishcore_filepublisher_task', [
-                'request_token' => $this->requestToken,
-                'crdate' => $GLOBALS['EXEC_TIME'],
-                'tstamp' => $GLOBALS['EXEC_TIME'],
-                'storage_uid' => $record->getLocalProps()['storage'],
-                'identifier' => $record->getLocalProps()['identifier'],
-                'identifier_hash' => $record->getLocalProps()['identifier_hash'],
-                'previous_identifier' => $record->getForeignProps()['identifier'],
-                'file_action' => self::A_RENAME,
-            ]);
-            $this->hasTasks = true;
+        if (null !== $instruction) {
+            $this->instructions[] = $instruction;
         }
     }
 
-    protected function transmitFile(Record $record, string $action): void
+    protected function transmitTemporaryFile(Record $record): string
     {
-        $driver = $this->falDriverService->getDriver($record->getLocalProps()['storage']);
-        $localFile = $driver->getFileForLocalProcessing($record->getLocalProps()['identifier']);
-        $identifier = PathUtility::basename($this->assetTransmitter->transmitTemporaryFile($localFile));
-        [$storage, $fileIdentifier] = explode(':', $record->getId());
-        unlink($localFile);
-        $this->foreignDatabase->insert('tx_in2publishcore_filepublisher_task', [
-            'request_token' => $this->requestToken,
-            'crdate' => $GLOBALS['EXEC_TIME'],
-            'tstamp' => $GLOBALS['EXEC_TIME'],
-            'storage_uid' => $record->getLocalProps()['storage'],
-            'identifier' => $record->getLocalProps()['identifier'],
-            'identifier_hash' => $record->getLocalProps()['identifier_hash'] ?? sha1($fileIdentifier),
-            'file_action' => $action,
-            'temp_identifier_hash' => $identifier,
-        ]);
-    }
-
-    public function finish(): void
-    {
-        if ($this->hasTasks) {
-            $request = new RemoteCommandRequest('in2publish_core:core:falpublisher', [], [$this->requestToken]);
-            $response = $this->remoteCommandDispatcher->dispatch($request);
-            if (!$response->isSuccessful()) {
-                throw new FalPublisherExecutionFailedException($response);
-            }
-        }
+        $storage = (int)$record->getLocalProps()['storage'];
+        $identifier = $record->getLocalProps()['identifier'];
+        $driver = $this->falDriverService->getDriver($storage);
+        $localFile = $driver->getFileForLocalProcessing($identifier);
+        return $this->assetTransmitter->transmitTemporaryFile($localFile);
     }
 }
