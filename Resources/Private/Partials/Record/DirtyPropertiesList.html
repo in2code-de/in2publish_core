@@ -37,9 +37,9 @@
 			<div class="in2publish-stagelisting__dropdown__actions">
 				<f:if condition="{record.state} != 'added'">
 					<f:then>
-						<f:if condition="{record.foreignPreviewAvailable}">
+						<f:if condition="{record.classification} == 'pages' && {record.foreignProps.uid} > 0 && {record.foreignProps.doktype} < 200">
 							<f:then>
-								<f:if condition="{record.localPreviewAvailable}">
+								<f:if condition="{record.classification} == 'pages' && {record.localProps.uid} > 0 && {record.localProps.doktype} < 200">
 									<publish:uri.compareUri identifier="{record.id}" class="in2publish-notextdecoration"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></publish:uri.compareUri>
 								</f:if>
 								<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.id}" table="{record.classification}" stagingLevel="foreign" target="_blank">
@@ -48,7 +48,7 @@
 								</publish:Link.PreviewRecord>
 							</f:then>
 							<f:else>
-								&nbsp;
+
 							</f:else>
 						</f:if>
 					</f:then>
