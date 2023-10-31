@@ -1,5 +1,129 @@
 # In2publish Core Change Log
 
+12.2.0:
+
+- [META] Set the EM conf version number to 12.2.0
+- [META] Set the branch alias version number to 12.3.x-dev
+- [CLEANUP] Remove all leftover unused imports and add trailing commas
+- [BUGFIX] Use AddFolderInstruction to create folders
+- [BUGFIX] Restore the compare and preview links in the Publish Overview Module
+- [BUGFIX] Hide Preview/Compare links for non-renderable pages
+- [BUGFIX] Restored Compare & Foreign Preview Button
+- [CLEANUP] Remove unused imports, fix code style
+- [BUGFIX] Identify file states and publish replaced files correctly
+- [DOCS] Update Demands::addXyz deprecation with issue
+- [BUGFIX] Exclude extension-provided forms from publishing
+- [FEATURE] Introduce demand types to expand the possibilities of record resolving
+- Wip: [BUGFIX] Support Form Framework
+- [BUGFIX] Prevent exceptions when legacy adapters extend SshConnectionDefiner
+- [BUGFIX] Initialize TransmissionAdapterRegistry::$legacyAdapters
+- [FEATURE] Cache all yaml config files based on content
+- [FEATURE] Register adapters using the service container
+- [FEATURE] Register dynamic value provider through the service container
+- [FEATURE] Register config definer, providers, migrations and post processors via interface
+- [BUGFIX] Respect TCA type category relationship setting
+- [BUGFIX] Only publish the selected record without translations
+- [FEATURE] Restore the single record publishing feature
+- [BUGFIX] Remove method Record::getParentPageRecord because it is inaccurate
+- [CLEANUP] Remove console.log from BackendEnhancements.js
+- [REFACTOR] Inject the Core UriBuilder via injection trait
+- [CODESTYLE] Fix indentation in new DirtyProperties partials
+- [REFACTOR] Split up DirtyProperties Partial
+- [BUGFIX] Rename IgnoredFieldsMigration
+- [BUGFIX] Move all migrations to their feature folders (into in2publish)
+- [BUGFIX] Fix SolrIntegrationMigration
+- [TASK] Delete SolrFalMigrationMigration because feature is not available yet
+- [TASK] Add configuration migration classes for 7 moved configurations
+- Revert "[TASK] Add configuration migration classes for 7 moved configurations"
+- [BUGFIX] Correctly check if there are no reasons
+- [BUGFIX] Support ignoredFields.*.ctrl.enablecolumns
+- [TASK] Add configuration migration classes for 7 moved configurations
+- [FEATURE] Make the Dependency Modal reusable and add missing interface
+- [BUGFIX] Reenable preloading overlay on publishing
+- [BUGFIX] Adds method to record interface
+- [FEATURE] Make Dependency Modal usable from other then the Overviewmodule
+- [DOCS] We develop and test mostly on LINUX, not UNIX
+- [FEATURE] Cache incomplete config based on providers to reduce computations
+- [FEATURE] Introduce ConditionalProviderInterface to disable provider on the fly
+- [FEATURE] Introduce ConditionalDefinerInterface to disable definer on the fly
+- [BUGFIX] Check for the constant TYPO3 instead of TYPO3_REQUESTTYPE in ext_localconf.php
+- [REFACTOR] Import all used classes in ext_*.php files
+- [BUGFIX] Make the new RTBRequest parameter optional as other methods can not provide it
+- [CODESTYLE] Fix remaining code style issues
+- [CODESTYLE] Fix whitespace and linebreak issues
+- [REFACTOR] Import all classes in test cases and fix import ordering
+- [CODESTYLE] Add/remove empty lines where required
+- [CODESTYLE] Add trailing commas in multi line argument lists where possible
+- [FEATURE] Allow setting the content recursion limit in the RecordTreeBuildRequest
+- [BUGFIX] Dispatch the event CollectReasonsWhy... when a record is asked if it is publishable
+- [CLEANUP] Remove unused method isRemovedOnOneSideAndDeletedOnTheOtherSide
+- [BUGFIX] Set the RecordBuildRequest for the RecordTree if the requested page is not the default language record
+- [BUGFIX] Split RunningRequest inserts into chunks
+- [BUGFIX] Respect allowLanguageSynchronization behaviour when defining visibility dependencies
+- [BUGFIX] Rewrite the label that explains the visibility dependency on the default language for brevity and clarity
+- [BUGFIX] Replace deprecated (PHP 8.1) function strftime with date
+- [BUGFIX] Set correct value for publish files data-name attribute
+- [FEATURE] Implement treatRemovedAndDeletedAsDifference as new feature
+- [DEPRECATION] Deprecate anemic TcaService methods
+- [TASK] Hide records deleted on foreign and removed on local and vice versa if feature is disabled (default)
+- [TASK] Enable feature and add documentation
+- [BUGFIX] Update FileList to show identifiers for moved files
+- [BUGFIX] Pass on non-page records in the RecordTreeBuilder to find records by TCA
+- [DOC] Adjust LocalConfiguration.yaml.example
+- [BUGFIX] Add the request for the RecordTree to the RecordTree
+- [BUGFIX] Show dirty properties of page records
+- [CLEANUP] Remove option for inclusion of translations in RecordTreeBuilder
+- [TASK] Add label for Publish redirects module m5
+- [TASK] Add label for Publish redirects module m5
+- [TASK] Enable option to exclude translations from record tree
+- [TASK] Only skip files starting with a dot in PublishFilesModule
+- [BUGFIX] Avoid FalPublisherExecutionFailedException when a file is attempted to be transferred twice in one Publishing request
+- [TASK] Skip OS-specific files in the PublishFiles module
+- [BUGFIX] Fix file publishing
+- [BUGFIX] Corrects SSH Adapter
+- [DOC] Fix typos in documentation
+- [BUGFIX] Add missing methods to tcaService
+- [BUGFIX] Dispatch correct event after publishing
+- [TASK] Add option to include child pages when publishing a record tree
+- [BUGFIX] Avoid empty array key access error
+- [FIX] Corrects Backend Module Tools View
+- [TASK] Add method to get current page in pageTree
+- [BUGFIX] Restore condition isPublishingAvailabe in RecordController indexAction
+- [BUGFIX] Fix links to file previews in PublishFiles module
+- [CLEANUP] Remove outdated configuration option once again
+- [BUGFIX] Fix typo in publish success message
+- [TASK] Add missing methods to Record
+- [TASK] Adjust documentation and argument description
+- [TASK] Add configuration option to add a timeout after file transmission in order to restore file transmission on slow file systems
+- [TASK] Adds Badge Style for States
+- [BUGFIX] Fix links to file previews in PublishFiles module
+- [BUGFIX] Fix errors in partial FileList
+- [TASK] Make timeout for file transmission configurable
+- [TASK] Add comment with sleep statement to make AssetTransmitter test run on Macs
+- [TASK] Adjust documentation and argument description
+- [TASK] Add methods for language fields in TcaService
+- [TASK] Add missing methods to Record
+- [TASK] Adds Badge Style for States
+- [BUGFIX] Corrects Caption of Login Configuration
+- [WIP] Mark deprectated test as skipped
+- [DOCS] Add upgrade documentation
+- [BUGFIX] Add missing return type to Dependency::isReachableisReachable
+- [REFACTOR] Accumulate dependencies by an array passed as reference
+- [META] Update branch-alias to 12.2.x
+- [CLEANUP] Remove the no-op usage of the publish ns in the PageRecursion template
+- [FEATURE] Provide new events to actually replace the old publishing events
+- [CLEANUP] Remove the setting filePreviewDomainName, it is obsolete
+- [BUGFIX] Update the copyright year range
+- [BUGFIX] Make the support links absolute so they open in a new tab
+- [DOCS] Remove reference to the managed config of the enterprise edition
+- [BUGFIX] Show loading indicator when changing the depth in the overview module
+- [BUGFIX] Don't search for sys_file _file children when the _file occurs as parent
+- [BUGFIX] Remove previous sys_file _file parents if the file state is moved
+- [BUGFIX] Early return when resolving an empty files demand to prevent useless RCE dispatching
+- [REFACTOR] Extract record state to variable to call method once
+- [CODESTYLE] Remove superfluous whitespace after unset
+- [CLEANUP] Remove unused methods from SysRedirectRepository
+
 12.1.0:
 
 - **Everything included in the 11.0.4 release**
