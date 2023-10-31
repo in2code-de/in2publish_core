@@ -320,7 +320,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
             [new DefaultProvider(), $testConfigProvider],
             [new In2publishCoreDefiner()],
             [],
-            []
+            [],
         );
         $configContainer->injectContextService($contextService);
         GeneralUtility::setSingletonInstance(ConfigContainer::class, $configContainer);

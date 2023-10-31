@@ -10,7 +10,6 @@ use In2code\In2publishCore\Component\Core\Demand\Remover\SelectDemandRemover;
 use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
 use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
-use In2code\In2publishCore\Component\Core\Demand\Type\UniqueRecordKeyGenerator;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use PHPUnit\Framework\TestCase;
 

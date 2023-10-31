@@ -8,7 +8,6 @@ use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerServiceInjection;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
-
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 
 use function array_key_exists;
