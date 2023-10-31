@@ -33,30 +33,50 @@ use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueP
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function sprintf;
+use function user_error;
+
+use const E_USER_DEPRECATED;
+
 class DynamicValueProviderRegistry implements SingletonInterface
 {
-    /** @var string[] */
-    protected array $classes = [];
-    /** @var DynamicValueProviderInterface[] */
-    protected array $objects = [];
+    protected const DEPRECATED_MANUAL_REGISTRATION = 'Manual registration of DynamicValueProvider is deprecated. Implement DynamicValueProviderInterface in %s instead and return %s as the key. This method and the interface will be removed in in2publish_core v13.';
+    /** @var array<DynamicValueProviderServiceInterface> */
+    protected array $providers = [];
+
+    /**
+     * @param array<DynamicValueProviderServiceInterface> $providers
+     */
+    public function __construct(array $providers)
+    {
+        foreach ($providers as $provider) {
+            $this->providers[$provider->getKey()] = $provider;
+        }
+    }
 
     /**
      * @param string $key The key which will be used in the configuration to call the registered provider
-     * @param string $class The FQCN of the provider. Must implement `DynamicValueProviderInterface`.
+     * @param class-string<DynamicValueProviderInterface> $class The FQCN of the provider. Must implement
+     *     `DynamicValueProviderInterface`.
+     *
+     * @deprecated Implement DynamicValueProviderServiceInterface in your provider to automatically register it.
      */
     public function registerDynamicValue(string $key, string $class): void
     {
-        $this->classes[$key] = $class;
+        user_error(sprintf(self::DEPRECATED_MANUAL_REGISTRATION, $class, $key), E_USER_DEPRECATED);
+        if (!isset($this->providers[$key])) {
+            $this->providers[$key] = GeneralUtility::makeInstance($class);
+        }
     }
 
     public function getRegisteredClasses(): array
     {
-        return $this->classes;
+        return $this->providers;
     }
 
     public function hasDynamicValueProviderForKey(string $key): bool
     {
-        return isset($this->classes[$key]);
+        return isset($this->providers[$key]);
     }
 
     public function getDynamicValueProviderByKey(string $key): DynamicValueProviderInterface
@@ -64,9 +84,6 @@ class DynamicValueProviderRegistry implements SingletonInterface
         if (!$this->hasDynamicValueProviderForKey($key)) {
             throw new InvalidDynamicValueProviderKeyException($key);
         }
-        if (!isset($this->objects[$key])) {
-            $this->objects[$key] = GeneralUtility::makeInstance($this->classes[$key]);
-        }
-        return $this->objects[$key];
+        return $this->providers[$key];
     }
 }

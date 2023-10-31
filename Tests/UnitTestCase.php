@@ -39,10 +39,13 @@ class UnitTestCase extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         };
         $contextService = GeneralUtility::makeInstance(ContextService::class);
         $testConfigProvider->config = $config;
-        $configContainer = new ConfigContainer($contextService);
-        $configContainer->registerDefiner(In2publishCoreDefiner::class);
-        $configContainer->registerProvider(DefaultProvider::class);
-        $configContainer->registerProvider(get_class($testConfigProvider));
+        $configContainer = new ConfigContainer(
+            [new DefaultProvider(), $testConfigProvider],
+            [new In2publishCoreDefiner()],
+            [],
+            []
+        );
+        $configContainer->injectContextService($contextService);
         GeneralUtility::setSingletonInstance(ConfigContainer::class, $configContainer);
     }
 }

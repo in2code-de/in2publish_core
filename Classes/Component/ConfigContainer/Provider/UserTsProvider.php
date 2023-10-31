@@ -30,11 +30,12 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  */
 
 use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
+use In2code\In2publishCore\Component\ConfigContainer\ConditionalConfigServiceInterface;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class UserTsProvider implements ProviderInterface, ContextualProvider, ConditionalProviderInterface
+class UserTsProvider implements ProviderServiceInterface, ContextualProvider, ConditionalConfigServiceInterface
 {
     use ExtensionConfigurationInjection;
 

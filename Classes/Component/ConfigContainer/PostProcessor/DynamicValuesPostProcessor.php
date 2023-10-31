@@ -44,7 +44,7 @@ use function strlen;
  * The actual value comes from the provider registered with the shortcut name.
  * Register provider at the registry.
  */
-class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareInterface
+class DynamicValuesPostProcessor implements PostProcessorServiceInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use DynamicValueProviderRegistryInjection;

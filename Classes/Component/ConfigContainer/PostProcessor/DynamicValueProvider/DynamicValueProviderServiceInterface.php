@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
+namespace In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider;
 
 /*
  * Copyright notice
  *
- * (c) 2018 in2code.de and the following authors:
+ * (c) 2023 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,29 +29,13 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
-use In2code\In2publishCore\Service\Context\ContextServiceInjection;
-
-class DefaultProvider implements ProviderServiceInterface
+/**
+ * Copy the methods of the inherited interface into this one when removing it.
+ */
+interface DynamicValueProviderServiceInterface extends DynamicValueProviderInterface
 {
-    use ConfigContainerInjection;
-    use ContextServiceInjection;
-
-    public function isAvailable(): bool
-    {
-        return true;
-    }
-
-    public function getConfig(): array
-    {
-        if ($this->contextService->isLocal()) {
-            return $this->configContainer->getLocalDefinition()->getDefaults();
-        }
-        return $this->configContainer->getForeignDefinition()->getDefaults();
-    }
-
-    public function getPriority(): int
-    {
-        return 10;
-    }
+    /**
+     * @return string The key this provider can replace
+     */
+    public function getKey(): string;
 }

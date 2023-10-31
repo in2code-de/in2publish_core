@@ -26,7 +26,6 @@ use function copy;
 use function defined;
 use function dirname;
 use function get_called_class;
-use function get_class;
 use function getenv;
 use function in_array;
 use function putenv;
@@ -317,10 +316,13 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         };
         $contextService = GeneralUtility::makeInstance(ContextService::class);
         $testConfigProvider->config = $config;
-        $configContainer = new ConfigContainer($contextService);
-        $configContainer->registerDefiner(In2publishCoreDefiner::class);
-        $configContainer->registerProvider(DefaultProvider::class);
-        $configContainer->registerProvider(get_class($testConfigProvider));
+        $configContainer = new ConfigContainer(
+            [new DefaultProvider(), $testConfigProvider],
+            [new In2publishCoreDefiner()],
+            [],
+            []
+        );
+        $configContainer->injectContextService($contextService);
         GeneralUtility::setSingletonInstance(ConfigContainer::class, $configContainer);
     }
 }

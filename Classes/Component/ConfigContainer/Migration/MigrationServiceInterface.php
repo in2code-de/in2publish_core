@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\ConfigContainer\Definer;
+namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
 
 /*
  * Copyright notice
@@ -29,7 +29,21 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Definer;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-interface ConditionalDefinerInterface
+interface MigrationServiceInterface
 {
-    public function isEnabled(): bool;
+    /**
+     * Run over the whole configuration and set new configuration values for deprecated options.
+     * Log deprecations once per request at max!
+     *
+     * @param array $config
+     * @return array
+     */
+    public function migrate(array $config): array;
+
+    /**
+     * Returns all collected messages/deprecations created during the migration. Used to debug the config container.
+     *
+     * @return array
+     */
+    public function getMessages(): array;
 }

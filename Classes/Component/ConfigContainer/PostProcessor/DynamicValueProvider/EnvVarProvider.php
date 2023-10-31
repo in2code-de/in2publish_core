@@ -34,8 +34,13 @@ use function getenv;
 /**
  * Replaces configurations values like %env(MYSQL_PASSWORD)% with the env var value of MYSQL_PASSWORD.
  */
-class EnvVarProvider implements DynamicValueProviderInterface
+class EnvVarProvider implements DynamicValueProviderServiceInterface
 {
+    public function getKey(): string
+    {
+        return 'env';
+    }
+
     /** @return array|false|string */
     public function getValueFor(string $string)
     {

@@ -30,12 +30,20 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
+use In2code\In2publishCore\Component\ConfigContainer\Dumper\ConfigContainerDumper;
 use Throwable;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 
 class ConfigContainerExporter implements SystemInformationExporter
 {
     use ConfigContainerInjection;
+
+    private ConfigContainerDumper $configContainerDumper;
+
+    public function __construct(ConfigContainerDumper $configContainerDumper)
+    {
+        $this->configContainerDumper = $configContainerDumper;
+    }
 
     public function getUniqueKey(): string
     {
@@ -47,8 +55,7 @@ class ConfigContainerExporter implements SystemInformationExporter
         $full = $this->configContainer->getContextFreeConfig();
         $personal = $this->configContainer->get();
 
-        $containerDump = $this->configContainer->dump();
-        unset($containerDump['fullConfig']);
+        $containerDump = $this->configContainerDumper->dump($this->configContainer);
 
         $protectedValues = [
             'foreign.database.password',
@@ -56,34 +63,35 @@ class ConfigContainerExporter implements SystemInformationExporter
         ];
         foreach ($protectedValues as $protectedValue) {
             foreach ([&$full, &$personal] as &$cfgArray) {
-                try {
-                    $value = ArrayUtility::getValueByPath($cfgArray, $protectedValue, '.');
-                    if (!empty($value)) {
-                        /** @noinspection SpellCheckingInspection */
-                        $value = 'xxxxxxxx (masked)';
-                        $cfgArray = ArrayUtility::setValueByPath($cfgArray, $protectedValue, $value, '.');
-                    }
-                } catch (Throwable $e) {
-                    // Ignore errors from get/setValueByPath. They may occur, although they shouldn't.
-                }
+                $this->maskValue($cfgArray, $protectedValue);
             }
             unset($cfgArray);
-
-            foreach ($containerDump['providers'] as &$providerCfg) {
-                try {
-                    $value = ArrayUtility::getValueByPath($providerCfg, $protectedValue, '.');
-                    if (!empty($value)) {
-                        /** @noinspection SpellCheckingInspection */
-                        $value = 'xxxxxxxx (masked)';
-                        $providerCfg = ArrayUtility::setValueByPath($providerCfg, $protectedValue, $value, '.');
-                    }
-                } catch (Throwable $e) {
-                    // Ignore errors from get/setValueByPath. They may occur, although they shouldn't.
-                }
+            foreach ($containerDump['providerServiceConfig'] as &$providers) {
+                $config = &$providers['config'];
+                $this->maskValue($config, $protectedValue);
             }
-            unset($providerCfg);
+            unset($providers);
+            foreach ($containerDump['legacyProviderConfig'] as &$providers) {
+                $config = &$providers['config'];
+                $this->maskValue($config, $protectedValue);
+            }
+            unset($providers);
         }
 
         return $containerDump;
+    }
+
+    public function maskValue(&$cfgArray, string $protectedValue): void
+    {
+        try {
+            $value = ArrayUtility::getValueByPath($cfgArray, $protectedValue, '.');
+            if (!empty($value)) {
+                /** @noinspection SpellCheckingInspection */
+                $value = 'xxxxxxxx (masked)';
+                $cfgArray = ArrayUtility::setValueByPath($cfgArray, $protectedValue, $value, '.');
+            }
+        } catch (Throwable $e) {
+            // Ignore errors from get/setValueByPath. They may occur, although they shouldn't.
+        }
     }
 }

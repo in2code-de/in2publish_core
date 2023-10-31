@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Definer;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\Builder;
+use In2code\In2publishCore\Component\ConfigContainer\ConditionalConfigServiceInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
 use In2code\In2publishCore\Component\ConfigContainer\Validator\FileExistsValidator as FEV;
 use In2code\In2publishCore\Component\ConfigContainer\Validator\IPv4PortValidator;
@@ -37,7 +38,7 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\Remote
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistryInjection;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 
-class SshConnectionDefiner implements DefinerInterface, ConditionalDefinerInterface
+class SshConnectionDefiner implements DefinerServiceInterface, ConditionalConfigServiceInterface
 {
     use ContextServiceInjection;
     use RemoteAdapterRegistryInjection;
@@ -45,6 +46,10 @@ class SshConnectionDefiner implements DefinerInterface, ConditionalDefinerInterf
 
     public function isEnabled(): bool
     {
+        // Require extending classes to override this method
+        if (static::class !== self::class) {
+            return false;
+        }
         return $this->contextService->isForeign()
             || 'ssh' === $this->remoteAdapterRegistry->getSelectedAdapter()
             || 'ssh' === $this->transmissionAdapterRegistry->getSelectedAdapter();

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
+namespace In2code\In2publishCore\Component\ConfigContainer\Definer;
 
 /*
  * Copyright notice
  *
- * (c) 2018 in2code.de and the following authors:
+ * (c) 2023 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,29 +29,11 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
-use In2code\In2publishCore\Service\Context\ContextServiceInjection;
+use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
 
-class DefaultProvider implements ProviderServiceInterface
+interface DefinerServiceInterface
 {
-    use ConfigContainerInjection;
-    use ContextServiceInjection;
+    public function getLocalDefinition(): NodeCollection;
 
-    public function isAvailable(): bool
-    {
-        return true;
-    }
-
-    public function getConfig(): array
-    {
-        if ($this->contextService->isLocal()) {
-            return $this->configContainer->getLocalDefinition()->getDefaults();
-        }
-        return $this->configContainer->getForeignDefinition()->getDefaults();
-    }
-
-    public function getPriority(): int
-    {
-        return 10;
-    }
+    public function getForeignDefinition(): NodeCollection;
 }

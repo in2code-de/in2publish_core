@@ -10,5 +10,20 @@ services:
   In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\AdapterInterface:
     factory: [ '@In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistry', 'createSelectedAdapter' ]
 
+  In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterInterface:
+    factory: [ '@In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistry', 'createSelectedAdapter' ]
+
   In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistry:
     public: true
+
+  In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\SshAdapter:
+    tags:
+      - name: 'in2publish_core.adapter.remote_adapter'
+        key: 'ssh'
+        tests: 'in2publish_core.adapter.ssh.remote_adapter_test'
+
+  In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter:
+    tags:
+      - name: 'in2publish_core.adapter.remote_adapter'
+        key: 'ssh'
+        tests: 'in2publish_core.adapter.ssh.transmission_adapter_test'

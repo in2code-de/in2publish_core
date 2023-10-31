@@ -28,7 +28,7 @@ from `DynamicValuesPostProcessor::DYNAMIC_REFERENCE_PATTERN`.
 
 ## Custom Provider
 
-Your provider must implement the interface `DynamicValueProviderInterface`.
+Your provider must implement the interface `DynamicValueProviderServiceInterface`. It will be automatically registered.
 
 ```php
 <?php
@@ -37,10 +37,15 @@ Your provider must implement the interface `DynamicValueProviderInterface`.
 
 namespace MyVendor\MyPackage\Config\PostProcessor\DynamicValueProvider;
 
-use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderInterface;
+use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderServiceInterface;
 
-class MyProvider implements DynamicValueProviderInterface
+class MyProvider implements DynamicValueProviderServiceInterface
 {
+    public function getKey() : string
+    {
+        return 'myKey';
+    }
+
     /**
      * @param string $string
      * @return mixed
@@ -50,15 +55,6 @@ class MyProvider implements DynamicValueProviderInterface
         // Return the value which must be returned according to $string
     }
 }
-```
-
-Register your custom provider in your `ext_localconf.php`:
-
-```php
-use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;use MyVendor\MyPackage\Config\PostProcessor\DynamicValueProvider\MyProvider;use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-$registry = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class);
-$registry->registerDynamicValue('myKey', MyProvider::class);
 ```
 
 Use your provider in the configuration:
@@ -88,5 +84,5 @@ value (like `3306`) will be cast to integer.
 ^------------------^    = "Dynamic Configuration Reference" `%env(TYPO3_CONTEXT)%`
  ^-^                    = "Provider Key"                    `env`
      ^-----------^      = "Provider String"                 `TYPO3_CONTEXT`
-^                  ^    = "Dynamic Reference Indicator"     `^`
+^                  ^    = "Dynamic Reference Indicator"     `%`
 ```

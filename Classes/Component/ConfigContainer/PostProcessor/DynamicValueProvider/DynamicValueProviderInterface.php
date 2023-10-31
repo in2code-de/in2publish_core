@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\Component\ConfigContainer\PostProcessor\Dynamic
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+/**
+ * @deprecated Use DynamicValueProviderServiceInterface instead. This interface will be removed in in2publish_core v13
+ */
 interface DynamicValueProviderInterface
 {
     /**

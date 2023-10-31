@@ -10,5 +10,14 @@ services:
   In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface:
     factory: [ '@In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistry', 'createSelectedAdapter' ]
 
+  In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterInterface:
+    factory: [ '@In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistry', 'createSelectedAdapter' ]
+
   In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistry:
     public: true
+
+  In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter:
+    tags:
+      - name: 'in2publish_core.adapter.transmission_adapter'
+        key: 'ssh'
+        tests: 'in2publish_core.adapter.ssh.transmission_adapter_test'

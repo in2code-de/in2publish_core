@@ -3,6 +3,8 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $earlyCache: '@in2publish_core.early_cache'
 
   In2code\In2publishCore\Component\ConfigContainer\:
     resource: '../../../Classes/Component/ConfigContainer/*'
@@ -13,3 +15,13 @@ services:
         identifier: 'in2publishcore-PageTsProvider-bootCompleted'
         method: 'processData'
         event: In2code\In2publishCore\Event\ExtTablesPostProcessingEvent
+
+  In2code\In2publishCore\Component\ConfigContainer\ConfigContainer:
+    shared: true
+    public: true
+    factory: [ '@In2code\In2publishCore\Component\ConfigContainer\Factory\ConfigContainerFactory', 'create' ]
+
+  in2publish_core.early_cache:
+    class: 'TYPO3\CMS\Core\Cache\Frontend\FrontendInterface'
+    factory: [ '@In2code\In2publishCore\Component\ConfigContainer\Cache\EarlyCacheManager', 'create' ]
+    arguments: [ 'in2publish_core_early' ]

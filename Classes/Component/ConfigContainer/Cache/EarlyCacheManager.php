@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
+namespace In2code\In2publishCore\Component\ConfigContainer\Cache;
 
 /*
  * Copyright notice
  *
- * (c) 2018 in2code.de and the following authors:
+ * (c) 2023 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,7 +29,16 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-interface ConditionalProviderInterface
+use TYPO3\CMS\Core\Cache\Backend\FileBackend;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Cache\Frontend\PhpFrontend;
+use TYPO3\CMS\Core\Core\Environment;
+
+class EarlyCacheManager
 {
-    public function isEnabled(): bool;
+    public function create(string $identifier): FrontendInterface
+    {
+        $backend = new FileBackend(Environment::getContext()->__toString());
+        return new PhpFrontend($identifier, $backend);
+    }
 }

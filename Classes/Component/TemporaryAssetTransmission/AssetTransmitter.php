@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Component\TemporaryAssetTransmission;
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\Exception\FileMissingException;
-use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterInjection;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -43,9 +43,9 @@ use function rtrim;
 class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use TransmissionAdapterInjection;
 
     protected string $foreignVarPath;
-    protected AdapterInterface $adapter;
     protected int $fileTransmissionTimeout = 0;
 
     /**
@@ -56,15 +56,6 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
     {
         $this->foreignVarPath = rtrim($configContainer->get('foreign.varPath'), '/');
         $this->fileTransmissionTimeout = (int)$configContainer->get('adapter.local.fileTransmissionTimeout');
-    }
-
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
-    public function injectAdapter(AdapterInterface $adapter): void
-    {
-        $this->adapter = $adapter;
     }
 
     /**
@@ -87,7 +78,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
         $identifierHash = hash('sha1', $source);
         $target = $this->foreignVarPath . '/transient/' . $identifierHash;
 
-        $success = $this->adapter->copyFileToRemote($source, $target);
+        $success = $this->transmissionAdapter->copyFileToRemote($source, $target);
 
         // On slow file systems PublisherTests may fail with a TATAPI error. A timeout may resolve this problem.
         // see: https://projekte.in2code.de/issues/48012

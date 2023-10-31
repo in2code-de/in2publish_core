@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
 /*
  * Copyright notice
  *
- * (c) 2022 in2code.de and the following authors:
+ * (c) 2023 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,23 +29,24 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-class IgnoredFieldsMigration implements MigrationServiceInterface
+use function array_key_exists;
+use function sha1;
+
+trait MigrationMessages
 {
-    use MigrationMessages;
+    /** @var string[] */
+    protected array $messages = [];
 
-    protected const MIGRATION_MESSAGE = 'You are using the old "ignoreFieldsForDifferenceView" format to ignore fields for tables. Please use the new "ignoreFields" setting. Your settings have been migrated on the fly.';
-
-    public function migrate(array $config): array
+    protected function addMessage(string $message): void
     {
-        if (!empty($config['ignoreFieldsForDifferenceView'])) {
-            $this->addMessage(self::MIGRATION_MESSAGE);
-            foreach ($config['ignoreFieldsForDifferenceView'] as $table => $fields) {
-                foreach ($fields as $field) {
-                    $config['ignoredFields'][$table]['fields'][] = $field;
-                }
-            }
-            unset($config['ignoreFieldsForDifferenceView']);
+        $key = sha1($message);
+        if (!array_key_exists($key, $this->messages)) {
+            $this->messages[$key] = $message;
         }
-        return $config;
+    }
+
+    public function getMessages(): array
+    {
+        return $this->messages;
     }
 }
