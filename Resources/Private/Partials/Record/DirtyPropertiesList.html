@@ -9,19 +9,19 @@
 
 		<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--left">
 			<div class="in2publish-stagelisting__dropdown__actions">
-				<f:if condition="{record.state} != 'deleted'">
+				<f:if condition="{record.state} != 'deleted' && {record.id} > 1">
 					<f:then>
 						<publish:Link.RecordHistory class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}"><i class="in2publish-icon-history"></i><f:translate key="dirty_properties_history_page">Page History</f:translate></publish:Link.RecordHistory>
-						<f:if condition="{record.id} > 1">
-							<be:link.editRecord class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}">
-								<i class="in2publish-icon-edit"></i>
-								<f:translate key="dirty_properties_edit" default="edit" />
-							</be:link.editRecord>
+						<be:link.editRecord class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}">
+							<i class="in2publish-icon-edit"></i>
+							<f:translate key="dirty_properties_edit" default="edit" />
+						</be:link.editRecord>
+						<f:if condition="{record.localProps.doktype} < 199">
+							<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.id}" table="{record.classification}" stagingLevel="local" target="_blank">
+								<i class="in2publish-icon-eye"></i>
+								<f:translate key="dirty_properties_preview_page">Preview</f:translate>
+							</publish:Link.PreviewRecord>
 						</f:if>
-						<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.id}" table="{record.classification}" stagingLevel="local" target="_blank">
-							<i class="in2publish-icon-eye"></i>
-							<f:translate key="dirty_properties_preview_page">Preview</f:translate>
-						</publish:Link.PreviewRecord>
 					</f:then>
 					<f:else>
 						&nbsp;
@@ -35,11 +35,11 @@
 
 		<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--right">
 			<div class="in2publish-stagelisting__dropdown__actions">
-				<f:if condition="{record.state} != 'added'">
+				<f:if condition="{record.state} != 'added' && {record.id} > 1">
 					<f:then>
-						<f:if condition="{record.classification} == 'pages' && {record.foreignProps.uid} > 0 && {record.foreignProps.doktype} < 200">
+						<f:if condition="{record.foreignProps.doktype} < 199">
 							<f:then>
-								<f:if condition="{record.classification} == 'pages' && {record.localProps.uid} > 0 && {record.localProps.doktype} < 200">
+								<f:if condition="{record.state} != 'deleted' && {record.localProps.doktype} < 199">
 									<publish:uri.compareUri identifier="{record.id}" class="in2publish-notextdecoration"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></publish:uri.compareUri>
 								</f:if>
 								<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.id}" table="{record.classification}" stagingLevel="foreign" target="_blank">
@@ -48,7 +48,7 @@
 								</publish:Link.PreviewRecord>
 							</f:then>
 							<f:else>
-
+								&nbsp;
 							</f:else>
 						</f:if>
 					</f:then>
