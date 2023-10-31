@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
 use In2code\In2publishCore\Component\Core\FileHandling\FileDemandResolver;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
+use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
 use function hash;
@@ -78,8 +80,9 @@ class FileDemandResolverTest extends UnitTestCase
 
         $demands = $this->createMock(DemandsCollection::class);
 
-        $demands->method('getFiles')->willReturn($filesArray);
-        $fileDemandResolver->resolveDemand($demands);
+        $demands->method('getDemandsByType')->with(FileDemand::class)->willReturn($filesArray);
+        $recordCollection = new RecordCollection();
+        $fileDemandResolver->resolveDemand($demands, $recordCollection);
 
         $file1Children = $file1->getChildren();
         $this->assertSame($fileRecordChild1, $file1Children['_file']['42:foo/bar']);

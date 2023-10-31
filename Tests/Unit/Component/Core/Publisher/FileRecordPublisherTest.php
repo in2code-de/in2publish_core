@@ -95,6 +95,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $assetTransmitter = $this->createMock(AssetTransmitter::class);
 
         $addedFile = $this->createMock(FileRecord::class);
+        $addedFile->method('getId')->willReturn('1:/bar');
         $addedFile->method('getClassification')->willReturn('_file');
         $addedFile->method('getState')->willReturn(Record::S_ADDED);
         $addedFile->method('getLocalProps')->willReturn(
@@ -145,6 +146,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $assetTransmitter = $this->createMock(AssetTransmitter::class);
 
         $changedFile = $this->createMock(FileRecord::class);
+        $changedFile->method('getId')->willReturn('1:/bar');
         $changedFile->method('getClassification')->willReturn('_file');
         $changedFile->method('getState')->willReturn(Record::S_CHANGED);
         $changedFile->method('getLocalProps')->willReturn(

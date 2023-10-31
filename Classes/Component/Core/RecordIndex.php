@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Component\Core;
 
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
@@ -137,7 +138,8 @@ class RecordIndex
                     $properties = $dependency->getProperties();
                     if (!$this->records->getRecordsByProperties($classification, $properties)) {
                         if (isset($properties['uid'])) {
-                            $demands->addSelect($classification, '', 'uid', $properties['uid'], $dependencyTree);
+                            $demand = new SelectDemand($classification, '', 'uid', $properties['uid'], $dependencyTree);
+                            $demands->addDemand($demand);
                         } else {
                             $property = array_key_first($properties);
                             $value = $properties[$property];
@@ -149,7 +151,8 @@ class RecordIndex
                                 $where[] = $quotedIdentifier . '=' . $quotedValue;
                             }
                             $where = implode(' AND ', $where);
-                            $demands->addSelect($classification, $where, $property, $value, $dependencyTree);
+                            $demand = new SelectDemand($classification, $where, $property, $value, $dependencyTree);
+                            $demands->addDemand($demand);
                         }
                     }
                 }

@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Component\Core\DemandResolver\SysRedirect;
 use Exception;
 use In2code\In2publishCore\Component\Core\Demand\CallerAwareDemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\SysRedirectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\DemandResolver\Exception\InvalidDemandException;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
@@ -35,17 +36,13 @@ class SysRedirectSelectDemandResolver implements DemandResolver
     protected function resolveSelectWithoutPropertyDemand(Demands $demands): SysRedirectRowCollection
     {
         $rowCollection = new SysRedirectRowCollection();
-        foreach ($demands->getSysRedirectSelect() as $table => $wheres) {
+        foreach ($demands->getDemandsByType(SysRedirectDemand::class) as $table => $wheres) {
             foreach ($wheres as $where => $parentRecords) {
                 try {
                     $rows = $this->dualDatabaseRepository->findByWhere($table, $where);
                 } catch (Exception $exception) {
                     if ($demands instanceof CallerAwareDemandsCollection) {
-                        $callers = [];
-                        $meta = $demands->getMeta();
-                        if (isset($meta['sysRedirectSelect'][$table][$where])) {
-                            $callers = $meta['sysRedirectSelect'][$table][$where];
-                        }
+                        $callers = $demands->getMeta(SysRedirectDemand::class, $table, $where);
                         $exception = new InvalidDemandException($callers, $exception);
                     }
                     throw $exception;

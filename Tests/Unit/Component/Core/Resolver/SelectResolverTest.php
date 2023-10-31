@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
@@ -77,7 +78,7 @@ class SelectResolverTest extends UnitTestCase
         $record = new DatabaseRecord('foreignTable_foo', 42, ['column_foo' => 'value_foo'], [], []);
         $selectResolver->resolve($demands, $record);
 
-        $selectDemandForTableFoo = $demands->getSelect()['foreignTable_foo'];
+        $selectDemandForTableFoo = $demands->getDemandsByType(SelectDemand::class)['foreignTable_foo'];
 
         foreach ($selectDemandForTableFoo as $selectDemand) {
             $resolvedRecordInSelectDemand = $selectDemand['uid']['value_foo']['foreignTable_foo\42'];

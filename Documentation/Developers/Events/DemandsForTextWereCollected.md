@@ -17,6 +17,7 @@ You can add and remove records that should be selected by using the demand's met
 ### Example
 
 ```php
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Event\DemandsForTextWereCollected;
 
 class RecordIgnoreListener
@@ -25,7 +26,8 @@ class RecordIgnoreListener
     {
         $text = $event->getText();
         if (preg_match('###special_link_marker_(?P<uid>\d+)###', $text, $matches)) {
-            $event->getDemands()->addSelect('tx_myext_domain_model_linktarget', '', 'uid', $matches['uid']);
+            $demand = new SelectDemand('tx_myext_domain_model_linktarget', '', 'uid', $matches['uid']);
+            $event->getDemands()->addDemand($demand);
         }
     }
 }

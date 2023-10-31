@@ -57,13 +57,13 @@ class RecordTreeBuilderTest extends UnitTestCase
         $pageRecord = new DatabaseRecord('pages', 42, ['doktype' => 1], [], []);
 
         $fooRecord = new DatabaseRecord('table_foo', 33, ['pid' => 42], [], []);
-        $recordCollection = new RecordCollection([$pageRecord, $fooRecord]);
 
         $recordIndex = $this->createMock(RecordIndex::class);
-        $recordIndex->expects($this->once())->method('getRecords')->with('pages')
+        $recordIndex->expects($this->once())->method('getRecords')
                     ->willReturn(
                         [
                             0 => $pageRecord,
+                            1 => $fooRecord,
                         ],
                     );
 

@@ -8,6 +8,7 @@ use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
@@ -40,7 +41,7 @@ class DemandServiceTest extends UnitTestCase
 
                 public function resolve(Demands $demands, Record $record): void
                 {
-                    $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                    $demands->addDemand(new SelectDemand('foo', 'bar', 'baz', 'beng', $record));
                 }
             },
         ];
@@ -53,7 +54,7 @@ class DemandServiceTest extends UnitTestCase
         $this->assertInstanceOf(Demands::class, $demand);
         $expected = [];
         $expected['foo']['bar']['baz']['beng']['table_foo\\1234'] = $record;
-        $this->assertSame($expected, $demand->getSelect());
+        $this->assertSame($expected, $demand->getDemandsByType(SelectDemand::class));
     }
 
     /**
@@ -77,7 +78,7 @@ class DemandServiceTest extends UnitTestCase
 
                 public function resolve(Demands $demands, Record $record): void
                 {
-                    $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                    $demands->addDemand(new SelectDemand('foo', 'bar', 'baz', 'beng', $record));
                 }
             },
         ];
@@ -90,7 +91,7 @@ class DemandServiceTest extends UnitTestCase
 
                 public function resolve(Demands $demands, Record $record): void
                 {
-                    $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                    $demands->addDemand(new SelectDemand('foo', 'bar', 'baz', 'beng', $record));
                 }
             },
         ];
@@ -109,6 +110,6 @@ class DemandServiceTest extends UnitTestCase
         $expected['foo']['bar']['baz']['beng']['table_foo\\1234'] = $record1;
         $expected['foo']['bar']['baz']['beng']['table_bar\\1234'] = $record2;
 
-        $this->assertEquals($expected, $demand->getSelect());
+        $this->assertEquals($expected, $demand->getDemandsByType(SelectDemand::class));
     }
 }

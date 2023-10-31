@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Event\DemandsForTextWereCollected;
 
@@ -59,10 +60,10 @@ class TextResolver extends AbstractResolver
             parse_str(htmlspecialchars_decode($urnParsed['query']), $data);
 
             if ('file' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands->addSelect('sys_file', '', 'uid', $data['uid'], $record);
+                $demands->addDemand(new SelectDemand('sys_file', '', 'uid', $data['uid'], $record));
             }
             if ('page' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands->addSelect('pages', '', 'uid', $data['uid'], $record);
+                $demands->addDemand(new SelectDemand('pages', '', 'uid', $data['uid'], $record));
             }
         }
 

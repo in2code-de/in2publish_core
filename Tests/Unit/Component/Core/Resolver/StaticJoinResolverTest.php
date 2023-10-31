@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
@@ -76,7 +77,7 @@ class StaticJoinResolverTest extends UnitTestCase
 
         $staticJoinResolver->resolve($demands, $record);
 
-        $joinDemands = $demands->getJoin();
+        $joinDemands = $demands->getDemandsByType(JoinDemand::class);
 
         $resolvedRecordInJoinDemand = $joinDemands['mmTable']['joinTable']['additionalWhere']['property'][42]['table_foo\42'];
 

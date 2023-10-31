@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Service\ReplaceMarkersServiceInject;
@@ -53,6 +54,14 @@ class SelectMmResolver extends AbstractResolver
 
         $value = $record->getId();
 
-        $demands->addJoin($this->mmTable, $this->foreignTable, $additionalWhere, $this->selectField, $value, $record);
+        $demand = new JoinDemand(
+            $this->mmTable,
+            $this->foreignTable,
+            $additionalWhere,
+            $this->selectField,
+            $value,
+            $record,
+        );
+        $demands->addDemand($demand);
     }
 }
