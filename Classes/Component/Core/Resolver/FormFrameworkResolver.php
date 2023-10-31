@@ -9,6 +9,7 @@ use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 use function explode;
+use function is_numeric;
 use function str_contains;
 
 class FormFrameworkResolver extends AbstractResolver
@@ -25,6 +26,8 @@ class FormFrameworkResolver extends AbstractResolver
             return;
         }
         [$storage, $identifier] = explode(':', $file);
-        $demands->addDemand(new FileDemand((int)$storage, $identifier, $record));
+        if (is_numeric($storage)) {
+            $demands->addDemand(new FileDemand((int)$storage, $identifier, $record));
+        }
     }
 }
