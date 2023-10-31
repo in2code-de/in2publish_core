@@ -128,6 +128,7 @@ class DefaultFalFinder
         if ($localFolderExists) {
             $localProps = [
                 'combinedIdentifier' => $combinedIdentifier,
+                'identifier' => $folderIdentifier,
                 'name' => $folderName ?: $storageName,
                 'storage' => $storageUid,
             ];
@@ -137,6 +138,7 @@ class DefaultFalFinder
         if ($foreignFolderExists) {
             $foreignProps = [
                 'combinedIdentifier' => $combinedIdentifier,
+                'identifier' => $folderIdentifier,
                 'name' => $folderName ?: $storageName,
                 'storage' => $storageUid,
             ];
@@ -164,6 +166,7 @@ class DefaultFalFinder
             $combinedIdentifier = $storageUid . ':/' . ltrim($folder, '/');
             $folders[$combinedIdentifier]['local'] = [
                 'combinedIdentifier' => $combinedIdentifier,
+                'identifier' => $folder,
                 'name' => PathUtility::basename($folder),
                 'storage' => $storageUid,
             ];
@@ -172,6 +175,7 @@ class DefaultFalFinder
             $combinedIdentifier = $storageUid . ':/' . ltrim($folder, '/');
             $folders[$combinedIdentifier]['foreign'] = [
                 'combinedIdentifier' => $combinedIdentifier,
+                'identifier' => $folder,
                 'name' => PathUtility::basename($folder),
                 'storage' => $storageUid,
             ];

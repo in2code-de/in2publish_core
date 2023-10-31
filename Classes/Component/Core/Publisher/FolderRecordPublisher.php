@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFolderInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFolderInstruction;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
@@ -32,7 +33,7 @@ class FolderRecordPublisher extends AbstractFilesystemPublisher
             case Record::S_ADDED:
                 $storage = (int)$record->getLocalProps()['storage'];
                 $identifier = $record->getLocalProps()['identifier'];
-                $instruction = new DeleteFolderInstruction(
+                $instruction = new AddFolderInstruction(
                     $storage,
                     $identifier,
                 );

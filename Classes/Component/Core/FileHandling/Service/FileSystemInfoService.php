@@ -7,8 +7,6 @@ namespace In2code\In2publishCore\Component\Core\FileHandling\Service;
 use InvalidArgumentException;
 use Throwable;
 
-use function in_array;
-
 class FileSystemInfoService
 {
     use FalDriverServiceInjection;

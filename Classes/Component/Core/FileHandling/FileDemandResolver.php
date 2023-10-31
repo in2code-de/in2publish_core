@@ -10,7 +10,6 @@ use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
-
 use In2code\In2publishCore\Component\Core\RecordCollection;
 
 use function array_keys;
