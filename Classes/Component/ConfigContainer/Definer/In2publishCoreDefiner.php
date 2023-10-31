@@ -52,7 +52,6 @@ class In2publishCoreDefiner implements DefinerServiceInterface
         'tx_in2code_in2publish_task',
         'tx_in2code_rpc_data',
         'tx_in2code_rpc_request',
-        'tx_in2publishcore_filepublisher_task',
         'tx_in2publishcore_log',
         'tx_in2publishcore_running_request',
     ];
