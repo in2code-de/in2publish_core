@@ -7,8 +7,6 @@ namespace In2code\In2publishCore\Component\Core\Publisher\Instruction;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
-use function explode;
-
 class AddFolderInstruction implements PublishInstruction
 {
     protected int $storage;

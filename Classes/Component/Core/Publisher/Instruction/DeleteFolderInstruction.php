@@ -6,8 +6,6 @@ namespace In2code\In2publishCore\Component\Core\Publisher\Instruction;
 
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
 
-use function explode;
-
 class DeleteFolderInstruction implements PublishInstruction
 {
     protected int $storage;

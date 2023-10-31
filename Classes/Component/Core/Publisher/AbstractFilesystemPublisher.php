@@ -18,6 +18,7 @@ abstract class AbstractFilesystemPublisher implements Publisher, FinishablePubli
 {
     use ForeignDatabaseReconnectedInjection;
     use RemoteCommandDispatcherInjection;
+
     protected string $requestToken;
     protected array $instructions = [];
 

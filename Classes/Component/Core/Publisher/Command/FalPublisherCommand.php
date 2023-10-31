@@ -6,22 +6,14 @@ namespace In2code\In2publishCore\Component\Core\Publisher\Command;
 
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceInjection;
-use In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher;
-use In2code\In2publishCore\Component\Core\Publisher\FolderRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\PublishInstruction;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
-use TYPO3\CMS\Core\Utility\PathUtility;
 
-use function array_keys;
-use function explode;
 use function json_decode;
-use function trim;
 
 class FalPublisherCommand extends Command
 {
@@ -39,7 +31,7 @@ class FalPublisherCommand extends Command
         $this->addArgument('requestToken', InputArgument::REQUIRED);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $requestToken = $input->getArgument('requestToken');
 

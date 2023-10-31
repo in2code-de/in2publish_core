@@ -8,7 +8,6 @@ use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceI
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\MoveFileInstruction;
-use In2code\In2publishCore\Component\Core\Publisher\Instruction\PublishInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceAndRenameFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceFileInstruction;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
@@ -77,7 +76,7 @@ class FileRecordPublisher extends AbstractFilesystemPublisher
                             $storage,
                             $foreignFileIdentifier,
                             $localFileIdentifier,
-                            $transmitTemporaryFile
+                            $transmitTemporaryFile,
                         );
                     }
                 } else {
