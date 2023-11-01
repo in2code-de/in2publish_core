@@ -19,6 +19,7 @@ use TYPO3\CMS\Core\Utility\DebugUtility;
 use function array_column;
 use function array_sum;
 use function date;
+use function sort;
 use function str_replace;
 use function str_starts_with;
 
@@ -79,6 +80,8 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
                 unset($query['caller']);
                 $queriesByCaller[$caller][] = $query;
             }
+            uksort($queriesByCaller, static fn($a, $b) => count($queriesByCaller[$b]) - count($queriesByCaller[$a]));
+
             foreach ($queriesByCaller as $caller => $callerQueries) {
                 $times = array_column($callerQueries, 'executionNS');
                 $durationNS = array_sum($times);
