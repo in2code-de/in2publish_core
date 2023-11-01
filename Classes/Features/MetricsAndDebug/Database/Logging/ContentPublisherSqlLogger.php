@@ -33,7 +33,7 @@ class ContentPublisherSqlLogger implements SQLLogger
     ];
     protected static array $queries = [];
     protected float $start;
-    protected int $currentQuery = 0;
+    protected static int $currentQuery = 0;
 
     public function startQuery($sql, array $params = null, array $types = null)
     {
@@ -113,12 +113,12 @@ class ContentPublisherSqlLogger implements SQLLogger
         $entry['executionNS'] = 0;
         $entry['backtrace'] = $backtrace;
 
-        self::$queries[++$this->currentQuery] = $entry;
+        self::$queries[++self::$currentQuery] = $entry;
     }
 
     public function stopQuery(): void
     {
-        self::$queries[$this->currentQuery]['executionNS'] = (int)(hrtime(true) - $this->start);
+        self::$queries[self::$currentQuery]['executionNS'] = (int)(hrtime(true) - $this->start);
     }
 
     public static function getQueries(): array
