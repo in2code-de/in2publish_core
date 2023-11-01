@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Cache\Exception;
 
-use In2code\In2publish\In2publishException;
+use In2code\In2publishCore\In2publishCoreException;
 use Throwable;
 
-class CacheableValueCanNotBeGeneratedException extends In2publishException
+class CacheableValueCanNotBeGeneratedException extends In2publishCoreException
 {
     /** @var mixed */
     private $value;
