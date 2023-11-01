@@ -22,6 +22,7 @@ use function date;
 use function sort;
 use function str_replace;
 use function str_starts_with;
+use function uniqid;
 
 class MetricsAndDebugMiddleware implements MiddlewareInterface
 {
@@ -93,9 +94,11 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
                 $queriesByCaller["$caller ($duration)"] = $callerQueries;
             }
             if (!empty($queries)) {
-                DebugUtility::debug($queries, 'Content Publisher Queries');
-                DebugUtility::debug($queriesByCaller, 'Queries By Caller');
-                DebugUtility::debug(array_sum(array_column($queries, 'executionNS')), 'Timing');
+                /** @noinspection PhpRedundantOptionalArgumentInspection */
+                $requestGroup = uniqid('request_', false);
+                DebugUtility::debug($queries, 'Content Publisher Queries', $requestGroup);
+                DebugUtility::debug($queriesByCaller, 'Queries By Caller', $requestGroup);
+                DebugUtility::debug(array_sum(array_column($queries, 'executionNS')), 'Timing', $requestGroup);
             }
         }
     }
