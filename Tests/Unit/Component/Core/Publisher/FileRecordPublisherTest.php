@@ -4,23 +4,31 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Publisher;
 
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFileInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFileInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\MoveFileInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceAndRenameFileInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceFileInstruction;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
-use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
-use In2code\In2publishCore\Tests\UnitTestCase;
-use org\bovigo\vfs\vfsStream;
-use ReflectionProperty;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
+
+use function json_encode;
+use function sha1;
+use function str_replace;
+use function strrpos;
+use function substr;
+use function trim;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher
  */
-class FileRecordPublisherTest extends UnitTestCase
+class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
 {
     /**
      * @covers ::__construct
@@ -45,34 +53,33 @@ class FileRecordPublisherTest extends UnitTestCase
      */
     public function testPublishDeletesRemovedFile()
     {
-        $fileRecordPublisher = new FileRecordPublisher();
+        $fileRecordPublisher = $this->createFileRecordPublisher();
+
         $foreignDatabase = $this->createMock(Connection::class);
-
-        $deletedFile = $this->createMock(FileRecord::class);
-        $deletedFile->method('getClassification')->willReturn('_file');
-        $deletedFile->method('getState')->willReturn(Record::S_DELETED);
-        $deletedFile->method('getForeignProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz'],
-        );
-
-        $reflectionProperty = new ReflectionProperty($fileRecordPublisher, 'requestToken');
-        $reflectionProperty->setAccessible(true);
-
-        $foreignDatabase->expects($this->once())->method('insert')->with(
-            'tx_in2publishcore_filepublisher_task',
+        $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
+            'tx_in2publishcore_filepublisher_instruction',
             [
-                'request_token' => $reflectionProperty->getValue($fileRecordPublisher),
-                'crdate' => $GLOBALS['EXEC_TIME'],
-                'tstamp' => $GLOBALS['EXEC_TIME'],
-                'storage_uid' => $deletedFile->getForeignProps()['storage'],
-                'identifier' => $deletedFile->getForeignProps()['identifier'],
-                'identifier_hash' => $deletedFile->getForeignProps()['identifier_hash'],
-                'file_action' => $fileRecordPublisher::A_DELETE,
+                [
+                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
+                    'crdate' => $GLOBALS['EXEC_TIME'],
+                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'instruction' => DeleteFileInstruction::class,
+                    'configuration' => json_encode([
+                        'storage' => 1,
+                        'fileIdentifier' => '/foo/bar',
+                    ]),
+                ],
             ],
         );
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
+        $deletedFile = new FileRecord(
+            [],
+            $this->createFileInfo('bar', 1, '23149872364', '/foo'),
+        );
+
         $fileRecordPublisher->publish($deletedFile);
+        $fileRecordPublisher->finish();
     }
 
     /**
@@ -80,104 +87,72 @@ class FileRecordPublisherTest extends UnitTestCase
      */
     public function testPublishTransmitsAddedRecord()
     {
-        $fileRecordPublisher = new FileRecordPublisher();
+        $fileRecordPublisher = $this->createFileRecordPublisher('/var/tmp/asdfasdf.tmp');
+
         $foreignDatabase = $this->createMock(Connection::class);
-        $falDriverService = $this->createMock(FalDriverService::class);
-        $mockDriver = $this->createMock(DriverInterface::class);
-
-        $structure = [
-            'Api.php' => '',
-        ];
-        $root = vfsStream::setup('root', null, $structure);
-        $file = $root->url() . '/Api.php';
-        $mockDriver->method('getFileForLocalProcessing')->willReturn($file);
-        $falDriverService->method('getDriver')->willReturn($mockDriver);
-        $assetTransmitter = $this->createMock(AssetTransmitter::class);
-
-        $addedFile = $this->createMock(FileRecord::class);
-        $addedFile->method('getId')->willReturn('1:/bar');
-        $addedFile->method('getClassification')->willReturn('_file');
-        $addedFile->method('getState')->willReturn(Record::S_ADDED);
-        $addedFile->method('getLocalProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz'],
-        );
-
-        $reflectionProperty = new ReflectionProperty($fileRecordPublisher, 'requestToken');
-        $reflectionProperty->setAccessible(true);
-
-        $foreignDatabase->expects($this->once())->method('insert')->with(
-            'tx_in2publishcore_filepublisher_task',
+        $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
+            'tx_in2publishcore_filepublisher_instruction',
             [
-                'request_token' => $reflectionProperty->getValue($fileRecordPublisher),
-                'crdate' => $GLOBALS['EXEC_TIME'],
-                'tstamp' => $GLOBALS['EXEC_TIME'],
-                'storage_uid' => $addedFile->getLocalProps()['storage'],
-                'identifier' => $addedFile->getLocalProps()['identifier'],
-                'identifier_hash' => $addedFile->getLocalProps()['identifier_hash'],
-                'file_action' => $fileRecordPublisher::A_INSERT,
-                'temp_identifier_hash' => '',
+                [
+                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
+                    'crdate' => $GLOBALS['EXEC_TIME'],
+                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'instruction' => AddFileInstruction::class,
+                    'configuration' => json_encode([
+                        'storage' => 1,
+                        'foreignTemporaryFileIdentifier' => '/var/tmp/asdfasdf.tmp',
+                        'foreignTargetFileIdentifier' => '/foo/bar',
+                    ]),
+                ],
             ],
         );
-
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
-        $fileRecordPublisher->injectFalDriverService($falDriverService);
-        $fileRecordPublisher->injectAssetTransmitter($assetTransmitter);
+
+        $addedFile = new FileRecord(
+            $this->createFileInfo('bar', 1, '23450978', '/foo'),
+            [],
+        );
 
         $fileRecordPublisher->publish($addedFile);
+        $fileRecordPublisher->finish();
     }
 
     /**
      * @covers ::publish
      */
-    public function testPublishTransmitsChangedRecord()
+    public function testPublishTransmitsRenamedRecord()
     {
-        $fileRecordPublisher = new FileRecordPublisher();
-        $foreignDatabase = $this->createMock(Connection::class);
-        $falDriverService = $this->createMock(FalDriverService::class);
-        $mockDriver = $this->createMock(DriverInterface::class);
+        $fileRecordPublisher = $this->createFileRecordPublisher();
 
-        $structure = [
-            'Api.php' => '',
-        ];
-        $root = vfsStream::setup('root', null, $structure);
-        $file = $root->url() . '/Api.php';
-        $mockDriver->method('getFileForLocalProcessing')->willReturn($file);
-        $falDriverService->method('getDriver')->willReturn($mockDriver);
         $assetTransmitter = $this->createMock(AssetTransmitter::class);
-
-        $changedFile = $this->createMock(FileRecord::class);
-        $changedFile->method('getId')->willReturn('1:/bar');
-        $changedFile->method('getClassification')->willReturn('_file');
-        $changedFile->method('getState')->willReturn(Record::S_CHANGED);
-        $changedFile->method('getLocalProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz'],
-        );
-        $changedFile->method('getForeignProps')->willReturn(
-            ['storage' => 2, 'identifier' => 'bar2', 'identifier_hash' => 'baz2'],
-        );
-
-        $reflectionProperty = new ReflectionProperty($fileRecordPublisher, 'requestToken');
-        $reflectionProperty->setAccessible(true);
-
-        $foreignDatabase->expects($this->once())->method('insert')->with(
-            'tx_in2publishcore_filepublisher_task',
-            [
-                'request_token' => $reflectionProperty->getValue($fileRecordPublisher),
-                'crdate' => $GLOBALS['EXEC_TIME'],
-                'tstamp' => $GLOBALS['EXEC_TIME'],
-                'storage_uid' => $changedFile->getLocalProps()['storage'],
-                'identifier' => $changedFile->getLocalProps()['identifier'],
-                'identifier_hash' => $changedFile->getLocalProps()['identifier_hash'],
-                'file_action' => $fileRecordPublisher::A_UPDATE,
-                'temp_identifier_hash' => '',
-            ],
-        );
-
-        $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
-        $fileRecordPublisher->injectFalDriverService($falDriverService);
         $fileRecordPublisher->injectAssetTransmitter($assetTransmitter);
 
+        $changedFile = new FileRecord(
+            $this->createFileInfo('bar2', 1, '23149872364', '/foo'),
+            $this->createFileInfo('bar', 1, '23149872364', '/foo'),
+        );
+
+        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
+            'tx_in2publishcore_filepublisher_instruction',
+            [
+                [
+                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
+                    'crdate' => $GLOBALS['EXEC_TIME'],
+                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'instruction' => MoveFileInstruction::class,
+                    'configuration' => json_encode([
+                        'storage' => 1,
+                        'oldFileIdentifier' => '/foo/bar',
+                        'newFileIdentifier' => '/foo/bar2',
+                    ]),
+                ],
+            ],
+        );
+        $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
+
         $fileRecordPublisher->publish($changedFile);
+        $fileRecordPublisher->finish();
     }
 
     /**
@@ -185,37 +160,140 @@ class FileRecordPublisherTest extends UnitTestCase
      */
     public function testPublishTransmitsMovedRecord()
     {
-        $fileRecordPublisher = new FileRecordPublisher();
+        $fileRecordPublisher = $this->createFileRecordPublisher();
+
+        $movedFile = new FileRecord(
+            $this->createFileInfo('foo', 1, '452093485', '/foo'),
+            $this->createFileInfo('foo', 1, '452093485', '/bar'),
+        );
+
         $foreignDatabase = $this->createMock(Connection::class);
-
-        $movedFile = $this->createMock(FileRecord::class);
-        $movedFile->method('getClassification')->willReturn('_file');
-        $movedFile->method('getState')->willReturn(Record::S_MOVED);
-        $movedFile->method('getLocalProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'identifier_hash' => 'baz'],
-        );
-        $movedFile->method('getForeignProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar_foreign', 'identifier_hash' => 'baz_foreign'],
-        );
-
-        $reflectionProperty = new ReflectionProperty($fileRecordPublisher, 'requestToken');
-        $reflectionProperty->setAccessible(true);
-
-        $foreignDatabase->expects($this->once())->method('insert')->with(
-            'tx_in2publishcore_filepublisher_task',
+        $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
+            'tx_in2publishcore_filepublisher_instruction',
             [
-                'request_token' => $reflectionProperty->getValue($fileRecordPublisher),
-                'crdate' => $GLOBALS['EXEC_TIME'],
-                'tstamp' => $GLOBALS['EXEC_TIME'],
-                'storage_uid' => $movedFile->getLocalProps()['storage'],
-                'identifier' => $movedFile->getLocalProps()['identifier'],
-                'identifier_hash' => $movedFile->getLocalProps()['identifier_hash'],
-                'previous_identifier' => $movedFile->getForeignProps()['identifier'],
-                'file_action' => $fileRecordPublisher::A_RENAME,
+                [
+                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
+                    'crdate' => $GLOBALS['EXEC_TIME'],
+                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'instruction' => MoveFileInstruction::class,
+                    'configuration' => json_encode([
+                        'storage' => 1,
+                        'oldFileIdentifier' => '/bar/foo',
+                        'newFileIdentifier' => '/foo/foo',
+                    ]),
+                ],
             ],
         );
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $fileRecordPublisher->publish($movedFile);
+        $fileRecordPublisher->finish();
+    }
+
+    /**
+     * @covers ::publish
+     */
+    public function testPublishTransmitsReplacedFileWithNewNameRecord()
+    {
+        $fileRecordPublisher = $this->createFileRecordPublisher('/var/tmp/transient/sadsdas.tmp');
+
+        $movedFile = new FileRecord(
+            $this->createFileInfo('foo', 1, '452093485', '/foo'),
+            $this->createFileInfo('bar', 1, '234587', '/bar'),
+        );
+
+        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
+            'tx_in2publishcore_filepublisher_instruction',
+            [
+                [
+                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
+                    'crdate' => $GLOBALS['EXEC_TIME'],
+                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'instruction' => ReplaceAndRenameFileInstruction::class,
+                    'configuration' => json_encode([
+                        'storage' => 1,
+                        'oldFileIdentifier' => '/bar/bar',
+                        'foreignTargetFileIdentifier' => '/foo/foo',
+                        'foreignTemporaryFileIdentifier' => '/var/tmp/transient/sadsdas.tmp',
+                    ]),
+                ],
+            ],
+        );
+        $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
+
+        $fileRecordPublisher->publish($movedFile);
+        $fileRecordPublisher->finish();
+    }
+
+    /**
+     * @covers ::publish
+     */
+    public function testPublishTransmitsReplacedFileWithSameNameRecord()
+    {
+        $fileRecordPublisher = $this->createFileRecordPublisher('/var/tmp/transient/sadsdas.tmp');
+
+        $movedFile = new FileRecord(
+            $this->createFileInfo('foo', 1, '452093485', '/foo'),
+            $this->createFileInfo('foo', 1, '234587', '/foo'),
+        );
+
+        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
+            'tx_in2publishcore_filepublisher_instruction',
+            [
+                [
+                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
+                    'crdate' => $GLOBALS['EXEC_TIME'],
+                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'instruction' => ReplaceFileInstruction::class,
+                    'configuration' => json_encode([
+                        'storage' => 1,
+                        'foreignTargetFileIdentifier' => '/foo/foo',
+                        'foreignTemporaryFileIdentifier' => '/var/tmp/transient/sadsdas.tmp',
+                    ]),
+                ],
+            ],
+        );
+        $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
+
+        $fileRecordPublisher->publish($movedFile);
+        $fileRecordPublisher->finish();
+    }
+
+    protected function createFileInfo(
+        string $name,
+        int $storage,
+        string $hash,
+        string $folder,
+        string $mimeType = 'image/jpeg',
+        int $size = 12345
+    ): array {
+        return [
+            'size' => $size,
+            'mimetype' => $mimeType,
+            'name' => $name,
+            'extension' => strrpos($name, '.') ? substr($name, strrpos($name, '.')) : '',
+            'folder_hash' => sha1($folder),
+            'identifier' => str_replace('//', '/', '/' . trim($folder, '/') . '/') . $name,
+            'storage' => $storage,
+            'sha1' => $hash,
+            'publicUrl' => 'fileadmin/' . $name,
+        ];
+    }
+
+    protected function createFileRecordPublisher(string $temporaryFileIdentifier = '_undefined_'): FileRecordPublisher
+    {
+        $fileRecordPublisher = $this->createPartialMock(FileRecordPublisher::class, ['transmitTemporaryFile']);
+        $fileRecordPublisher->__construct();
+        $remoteCommandResponse = $this->createMock(RemoteCommandResponse::class);
+        $remoteCommandResponse->method('isSuccessful')->willReturn(true);
+        $remoteCommandDispatcher = $this->createMock(RemoteCommandDispatcher::class);
+        $remoteCommandDispatcher->method('dispatch')->willReturn($remoteCommandResponse);
+        $fileRecordPublisher->injectRemoteCommandDispatcher($remoteCommandDispatcher);
+
+        $fileRecordPublisher->method('transmitTemporaryFile')->willReturn($temporaryFileIdentifier);
+
+        return $fileRecordPublisher;
     }
 }

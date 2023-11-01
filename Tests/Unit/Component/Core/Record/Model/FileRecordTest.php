@@ -59,6 +59,18 @@ class FileRecordTest extends UnitTestCase
             ['identifier' => 'file1', 'storage' => 42],
             ['identifier' => 'file2', 'storage' => 42],
         );
-        $this->assertSame(Record::S_MOVED, $changedFileRecord->getState());
+        $this->assertSame(Record::S_CHANGED, $changedFileRecord->getState());
+
+        $movedFileRecord = new FileRecord(
+            ['identifier' => 'file1', 'folder_hash' => '/bar', 'storage' => 42],
+            ['identifier' => 'file1', 'folder_hash' => '/foo', 'storage' => 42],
+        );
+        $this->assertSame(Record::S_MOVED, $movedFileRecord->getState());
+
+        $replacedFileRecord = new FileRecord(
+            ['identifier' => 'file1', 'folder_hash' => '/bar', 'storage' => 42, 'sha1' => '234572364958734'],
+            ['identifier' => 'file1', 'folder_hash' => '/foo', 'storage' => 42, 'sha1' => '238497569384765'],
+        );
+        $this->assertSame(Record::S_CHANGED, $replacedFileRecord->getState());
     }
 }

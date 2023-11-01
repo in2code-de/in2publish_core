@@ -5,18 +5,21 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Publisher;
 
 use In2code\In2publishCore\Component\Core\Publisher\FolderRecordPublisher;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFolderInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFolderInstruction;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
-use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Tests\UnitTestCase;
-use ReflectionProperty;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 use TYPO3\CMS\Core\Database\Connection;
+
+use function json_encode;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\FolderRecordPublisher
  */
-class FolderRecordPublisherTest extends UnitTestCase
+class FolderRecordPublisherTest extends AbstractFilesystemPublisherTest
 {
     /**
      * @covers ::__construct
@@ -41,33 +44,39 @@ class FolderRecordPublisherTest extends UnitTestCase
      */
     public function testPublishRemovesDeletedFolder()
     {
-        $folderRecordPublisher = new FolderRecordPublisher();
-        $foreignDatabase = $this->createMock(Connection::class);
-        $deletedFolder = $this->createMock(FileRecord::class);
-        $deletedFolder->method('getClassification')->willReturn('_folder');
-        $deletedFolder->method('getState')->willReturn(Record::S_DELETED);
-        $deletedFolder->method('getForeignProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar'],
+        $folderRecordPublisher = $this->createFolderRecordPublisher();
+
+        $deletedFolder = new FolderRecord(
+            '1:/foo/bar',
+            [],
+            [
+                'combinedIdentifier' => '1:/foo/bar',
+                'identifier' => '/foo/bar',
+                'name' => 'bar',
+                'storage' => 1,
+            ],
         );
 
-        $reflectionProperty = new ReflectionProperty($folderRecordPublisher, 'requestToken');
-        $reflectionProperty->setAccessible(true);
-
-        $foreignDatabase->expects($this->once())->method('insert')->with(
-            'tx_in2publishcore_filepublisher_task',
+        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
+            'tx_in2publishcore_filepublisher_instruction',
             [
-                'request_token' => $reflectionProperty->getValue($folderRecordPublisher),
-                'crdate' => $GLOBALS['EXEC_TIME'],
-                'tstamp' => $GLOBALS['EXEC_TIME'],
-                'storage_uid' => $deletedFolder->getForeignProps()['storage'],
-                'identifier' => $deletedFolder->getForeignProps()['combinedIdentifier'],
-                'identifier_hash' => '',
-                'folder_action' => $folderRecordPublisher::A_DELETE,
+                [
+                    'request_token' => $this->getRequestTokenFromPublisher($folderRecordPublisher),
+                    'crdate' => $GLOBALS['EXEC_TIME'],
+                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'instruction' => DeleteFolderInstruction::class,
+                    'configuration' => json_encode([
+                        'storage' => 1,
+                        'folderIdentifier' => '/foo/bar',
+                    ]),
+                ],
             ],
         );
         $folderRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $folderRecordPublisher->publish($deletedFolder);
+        $folderRecordPublisher->finish();
     }
 
     /**
@@ -75,33 +84,52 @@ class FolderRecordPublisherTest extends UnitTestCase
      */
     public function testPublishAddsAddedFolder()
     {
-        $folderRecordPublisher = new FolderRecordPublisher();
-        $foreignDatabase = $this->createMock(Connection::class);
-        $addedFolder = $this->createMock(FileRecord::class);
-        $addedFolder->method('getClassification')->willReturn('_folder');
-        $addedFolder->method('getState')->willReturn(Record::S_ADDED);
-        $addedFolder->method('getLocalProps')->willReturn(
-            ['storage' => 1, 'identifier' => 'bar', 'combinedIdentifier' => '1:bar'],
-        );
-        $addedFolder->method('getForeignProps')->willReturn([]);
+        $folderRecordPublisher = $this->createFolderRecordPublisher();
 
-        $reflectionProperty = new ReflectionProperty($folderRecordPublisher, 'requestToken');
-        $reflectionProperty->setAccessible(true);
-
-        $foreignDatabase->expects($this->once())->method('insert')->with(
-            'tx_in2publishcore_filepublisher_task',
+        $addedFolder = new FolderRecord(
+            '1:/foo/bar',
             [
-                'request_token' => $reflectionProperty->getValue($folderRecordPublisher),
-                'crdate' => $GLOBALS['EXEC_TIME'],
-                'tstamp' => $GLOBALS['EXEC_TIME'],
-                'storage_uid' => $addedFolder->getLocalProps()['storage'],
-                'identifier' => $addedFolder->getLocalProps()['combinedIdentifier'],
-                'identifier_hash' => '',
-                'folder_action' => $folderRecordPublisher::A_INSERT,
+                'combinedIdentifier' => '1:/foo/bar',
+                'identifier' => '/foo/bar',
+                'name' => 'bar',
+                'storage' => 1,
+            ],
+            [],
+        );
+
+        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
+            'tx_in2publishcore_filepublisher_instruction',
+            [
+                [
+                    'request_token' => $this->getRequestTokenFromPublisher($folderRecordPublisher),
+                    'crdate' => $GLOBALS['EXEC_TIME'],
+                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'instruction' => AddFolderInstruction::class,
+                    'configuration' => json_encode([
+                        'storage' => 1,
+                        'folderIdentifier' => '/foo/bar',
+                    ]),
+                ],
             ],
         );
         $folderRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $folderRecordPublisher->publish($addedFolder);
+        $folderRecordPublisher->finish();
+    }
+
+    /**
+     * @return FolderRecordPublisher
+     */
+    public function createFolderRecordPublisher(): FolderRecordPublisher
+    {
+        $folderRecordPublisher = new FolderRecordPublisher();
+        $remoteCommandResponse = $this->createMock(RemoteCommandResponse::class);
+        $remoteCommandResponse->method('isSuccessful')->willReturn(true);
+        $remoteCommandDispatcher = $this->createMock(RemoteCommandDispatcher::class);
+        $remoteCommandDispatcher->method('dispatch')->willReturn($remoteCommandResponse);
+        $folderRecordPublisher->injectRemoteCommandDispatcher($remoteCommandDispatcher);
+        return $folderRecordPublisher;
     }
 }
