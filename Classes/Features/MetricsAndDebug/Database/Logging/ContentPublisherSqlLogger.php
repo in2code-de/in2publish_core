@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Features\MetricsAndDebug\Database\Logging;
 
 use Doctrine\DBAL\Logging\SQLLogger;
+use In2code\In2publishCore\Cache\CachedRuntimeCache;
 
 use function array_key_last;
 use function array_shift;
@@ -129,7 +130,12 @@ class ContentPublisherSqlLogger implements SQLLogger
     protected function findFirstCpFrame(array $backtrace): ?int
     {
         foreach ($backtrace as $index => $frame) {
-            if (isset($frame['class']) && str_starts_with($frame['class'], 'In2code\\In2publish')) {
+            if (
+                isset($frame['class'], $frame['function'])
+                && $frame['class'] !== CachedRuntimeCache::class
+                && $frame['function'] !== 'executeCached'
+                && str_starts_with($frame['class'], 'In2code\\In2publish')
+            ) {
                 return $index;
             }
         }

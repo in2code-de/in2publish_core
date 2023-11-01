@@ -29,10 +29,11 @@ namespace In2code\In2publishCore\Service\Environment;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Cache\CachedRuntimeCacheInjection;
+use In2code\In2publishCore\Cache\Exception\CacheableValueCanNotBeGeneratedException;
 use In2code\In2publishCore\Command\Foreign\Status\CreateMasksCommand;
 use In2code\In2publishCore\Command\Foreign\Status\DbInitQueryEncodedCommand;
 use In2code\In2publishCore\Command\Foreign\Status\EncryptionKeyCommand;
-use In2code\In2publishCore\CommonInjection\CacheInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use Psr\Log\LoggerAwareInterface;
@@ -53,20 +54,26 @@ class ForeignEnvironmentService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use RemoteCommandDispatcherInjection;
-    use CacheInjection;
+    use CachedRuntimeCacheInjection;
 
     public function getDatabaseInitializationCommands(): string
     {
-        if ($this->cache->has('foreign_db_init')) {
-            return $this->cache->get('foreign_db_init');
-        }
+        return $this->cachedRuntimeCache->get('foreign_db_init', function (): string {
+            $request = new RemoteCommandRequest(DbInitQueryEncodedCommand::IDENTIFIER);
+            $response = $this->remoteCommandDispatcher->dispatch($request);
 
-        $request = new RemoteCommandRequest(DbInitQueryEncodedCommand::IDENTIFIER);
-        $response = $this->remoteCommandDispatcher->dispatch($request);
+            if (!$response->isSuccessful()) {
+                $this->logger->error(
+                    'Could not get DB init. Falling back to empty configuration value',
+                    [
+                        'errors' => $response->getErrors(),
+                        'exit_status' => $response->getExitStatus(),
+                        'output' => $response->getOutput(),
+                    ],
+                );
+                throw new CacheableValueCanNotBeGeneratedException('');
+            }
 
-        $decodedDbInit = '';
-        if ($response->isSuccessful()) {
-            // String (two double quotes): ""
             $encodedDbInit = 'IiI=';
             foreach ($response->getOutput() as $line) {
                 if (false !== strpos($line, 'DBinit: ')) {
@@ -74,25 +81,13 @@ class ForeignEnvironmentService implements LoggerAwareInterface
                     break;
                 }
             }
-            $decodedDbInit = json_decode(base64_decode($encodedDbInit), true, 512, JSON_THROW_ON_ERROR);
-            $this->cache->set('foreign_db_init', $decodedDbInit, [], 86400);
-        } else {
-            $this->logger->error(
-                'Could not get DB init. Falling back to empty configuration value',
-                [
-                    'errors' => $response->getErrors(),
-                    'exit_status' => $response->getExitStatus(),
-                    'output' => $response->getOutput(),
-                ],
-            );
-        }
-
-        return $decodedDbInit;
+            return json_decode(base64_decode($encodedDbInit), true, 512, JSON_THROW_ON_ERROR);
+        });
     }
 
     public function getCreateMasks(): array
     {
-        if (!$this->cache->has('create_masks')) {
+        return $this->cachedRuntimeCache->get('create_masks', function (): ?array {
             $request = new RemoteCommandRequest(CreateMasksCommand::IDENTIFIER);
             $response = $this->remoteCommandDispatcher->dispatch($request);
 
@@ -124,15 +119,13 @@ class ForeignEnvironmentService implements LoggerAwareInterface
                 ];
             }
 
-            $this->cache->set('create_masks', $createMasks, [], 86400);
-        }
-
-        return (array)$this->cache->get('create_masks');
+            return $createMasks;
+        });
     }
 
     public function getEncryptionKey(): ?string
     {
-        if (!$this->cache->has('encryption_key')) {
+        return $this->cachedRuntimeCache->get('encryption_key', function (): ?string {
             $encryptionKey = null;
 
             $request = new RemoteCommandRequest(EncryptionKeyCommand::IDENTIFIER);
@@ -144,10 +137,8 @@ class ForeignEnvironmentService implements LoggerAwareInterface
                     $encryptionKey = base64_decode($values['EKey']);
                 }
             }
-            $this->cache->set('encryption_key', $encryptionKey, [], 86400);
-        }
-
-        return $this->cache->get('encryption_key');
+            return $encryptionKey;
+        });
     }
 
     protected function tokenizeResponse(array $output): array
