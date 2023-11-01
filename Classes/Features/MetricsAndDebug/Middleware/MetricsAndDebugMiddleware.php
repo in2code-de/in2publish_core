@@ -95,6 +95,7 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
             if (!empty($queries)) {
                 DebugUtility::debug($queries, 'Content Publisher Queries');
                 DebugUtility::debug($queriesByCaller, 'Queries By Caller');
+                DebugUtility::debug(array_sum(array_column($queries, 'executionNS')), 'Timing');
             }
         }
     }
