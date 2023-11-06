@@ -23,7 +23,11 @@ abstract class AbstractResolver implements Resolver
                     && $frame['object'] instanceof AbstractProcessor
                     && 'buildResolver' === $frame['function']
                 ) {
-                    $this->metaInfo['builtBy'] = $frame;
+                    $this->metaInfo['builtBy'] = [
+                        'class' => $frame['class'],
+                        'args' => $frame['args'],
+                    ];
+                    break;
                 }
             }
         }
