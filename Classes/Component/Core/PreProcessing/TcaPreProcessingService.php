@@ -49,23 +49,23 @@ class TcaPreProcessingService implements SingletonInterface
 
     public function getIncompatibleTcaParts(): array
     {
-        if (!$this->initialized) {
-            $this->initialize();
-        }
+        $this->initialize();
         return $this->incompatibleTca;
     }
 
     public function getCompatibleTcaParts(): array
     {
-        if (!$this->initialized) {
-            $this->initialize();
-        }
+        $this->initialize();
 
         return $this->compatibleTca;
     }
 
     public function initialize(): void
     {
+        if ($this->initialized) {
+            return;
+        }
+
         $this->initialized = true;
 
         $tables = $this->excludedTablesService->getAllNonExcludedTcaTables();

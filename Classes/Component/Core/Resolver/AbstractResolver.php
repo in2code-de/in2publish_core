@@ -11,7 +11,7 @@ use function debug_backtrace;
 
 abstract class AbstractResolver implements Resolver
 {
-    private array $metaInfo = [];
+    protected array $metaInfo = [];
 
     public function __construct()
     {

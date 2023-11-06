@@ -33,7 +33,6 @@ namespace In2code\In2publishCore\Service;
 use In2code\In2publishCore\CommonInjection\FlexFormToolsInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
-use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\Record\Model\VirtualFlexFormRecord;
@@ -71,12 +70,6 @@ class ReplaceMarkersService implements LoggerAwareInterface
     // Also replace optional quotes around the REC_FIELD_ because we will quote the actual value
     protected const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
     protected const SITE_FIELD_REGEX = '(###SITE:([^#]+)###)';
-    protected TcaPreProcessingService $tcaPreProcessingService;
-
-    public function injectTcaPreProcessingService(TcaPreProcessingService $tcaPreProcessingService): void
-    {
-        $this->tcaPreProcessingService = $tcaPreProcessingService;
-    }
 
     /**
      * replaces ###MARKER### where possible. It's missing
