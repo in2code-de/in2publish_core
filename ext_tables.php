@@ -43,10 +43,6 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         // Early return when installing per ZIP: autoload is not yet generated
         return;
     }
-    if (!(TYPO3_REQUESTTYPE & (TYPO3_REQUESTTYPE_BE | TYPO3_REQUESTTYPE_CLI))) {
-        // Do nothing when not in any of the desirable modes.
-        return;
-    }
 
     /**************************************************** Instances ***************************************************/
     $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
