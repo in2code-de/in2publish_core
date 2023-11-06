@@ -4,8 +4,6 @@
 #    Fields annotated with "@user" can be overridden using PageTS or UserTS
 #
 
----
-
 # PHP & Database settings on foreign server (for SSH access see "sshConnection")
 foreign:
 

@@ -26,7 +26,6 @@
         </InternalClass>
         <UndefinedClass>
             <errorLevel type="suppress">
-                <referencedClass name="Spyc"/>
                 <referencedClass name="CoStack\Logs\Controller\LogController"/>
             </errorLevel>
         </UndefinedClass>

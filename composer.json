@@ -41,7 +41,8 @@
 		"ext-json": "*",
 		"ext-pdo": "*",
 		"ext-zip": "*",
-		"typo3/cms-core": "^11.5 || ^12.4"
+		"typo3/cms-core": "^11.5 || ^12.4",
+		"symfony/yaml": "^v5.4 || ^v6.3"
 	},
 	"require-dev": {
 		"symfony/polyfill-php80": "^1.24",

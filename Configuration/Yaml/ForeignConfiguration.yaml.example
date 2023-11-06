@@ -2,8 +2,6 @@
 #    Example Configuration for in2publish on foreign
 #
 
----
-
 # Backup configuration
 backup:
 

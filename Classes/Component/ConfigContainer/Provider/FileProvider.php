@@ -34,15 +34,16 @@ use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Spyc;
+use Symfony\Component\Yaml\Parser;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function class_exists;
 use function file_exists;
+use function file_get_contents;
 use function hash_file;
 use function rtrim;
+use function str_replace;
 use function strpos;
 use function substr;
 use function trigger_error;
@@ -83,8 +84,10 @@ class FileProvider implements ProviderServiceInterface, LoggerAwareInterface
 
         $cacheKey = 'config_file_provider_' . hash_file('sha1', $file);
         if (!$this->earlyCache->has($cacheKey)) {
-            $this->loadSpycIfRequired();
-            $config = Spyc::YAMLLoad($file);
+            $yamlContents = file_get_contents($file);
+            $yamlContents = str_replace(['groups: *', '---'], ['groups: "*"', ''], $yamlContents);
+            $yaml = new Parser();
+            $config = $yaml->parse($yamlContents);
             $code = 'return ' . var_export($config, true) . ';';
             $this->earlyCache->flushByTag('config_file_provider');
             $this->earlyCache->set($cacheKey, $code, ['config_file_provider']);
@@ -114,16 +117,5 @@ class FileProvider implements ProviderServiceInterface, LoggerAwareInterface
             $path = Environment::getPublicPath() . '/' . $path;
         }
         return rtrim($path, '/') . '/';
-    }
-
-    protected function loadSpycIfRequired(): void
-    {
-        if (class_exists(Spyc::class)) {
-            return;
-        }
-        $file = ExtensionManagementUtility::extPath('in2publish_core', 'Resources/Private/Libraries/Spyc/Spyc.php');
-        if (file_exists($file)) {
-            require_once($file);
-        }
     }
 }
