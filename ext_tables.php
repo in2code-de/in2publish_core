@@ -123,6 +123,7 @@ use TYPO3\CMS\Core\Information\Typo3Version;
         }
     }
 
+
     /******************************************* Context Menu Publish Entry *******************************************/
     if ($configContainer->get('features.contextMenuPublishEntry.enable')) {
         $GLOBALS['TYPO3_CONF_VARS']['BE']['ContextMenu']['ItemProviders'][1595598780] = PublishItemProvider::class;
