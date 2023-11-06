@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Closure;
 use In2code\In2publishCore\Cache\CachedRuntimeCacheInjection;
 use In2code\In2publishCore\Command\Foreign\Status\AllSitesCommand;
 use In2code\In2publishCore\Command\Foreign\Status\SiteConfigurationCommand;

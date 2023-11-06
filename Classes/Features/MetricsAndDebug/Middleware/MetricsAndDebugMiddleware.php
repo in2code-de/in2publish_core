@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Utility\DebugUtility;
 use function array_column;
 use function array_sum;
 use function date;
-use function sort;
 use function str_replace;
 use function str_starts_with;
 use function uniqid;
