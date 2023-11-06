@@ -125,7 +125,7 @@ class ToolsRegistry implements SingletonInterface
             $controllerActions,
             [
                 'access' => 'admin',
-                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Tools.svg',
+                'iconIdentifier' => 'in2publish-core-tools-module',
                 'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
             ],
         );

@@ -42,4 +42,8 @@ return [
         'provider' => SvgIconProvider::class,
         'source' => 'EXT:in2publish_core/Resources/Public/Icons/Redirect.svg',
     ],
+    'in2publish-core-tools-module' => [
+        'provider' => SvgIconProvider::class,
+        'source' => 'EXT:in2publish_core/Resources/Public/Icons/Tools.svg',
+    ],
 ];
