@@ -179,20 +179,20 @@ class RecordController extends ActionController
         }
     }
 
-    public function publishRecordAction(int $id): void
+    public function publishRecordAction(int $id): ResponseInterface
     {
         $request = new RecordTreeBuildRequest('pages', $id, 0);
         $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
 
         $actualRecord = $recordTree->getChild('pages', $id);
         if (null === $actualRecord) {
-            $this->addFlashMessagesAndRedirectToIndex();
+            return $this->addFlashMessagesAndRedirectToIndex();
         }
         $subRecordTree = new RecordTree([$actualRecord], $request);
         $publishingContext = new PublishingContext($subRecordTree);
         $this->publisherService->publish($publishingContext);
 
-        $this->addFlashMessagesAndRedirectToIndex();
+        return $this->addFlashMessagesAndRedirectToIndex();
     }
 
     /**
@@ -209,10 +209,8 @@ class RecordController extends ActionController
 
     /**
      * Add success message and redirect to indexAction
-     *
-     * @throws StopActionException
      */
-    protected function addFlashMessagesAndRedirectToIndex(): void
+    protected function addFlashMessagesAndRedirectToIndex(): ResponseInterface
     {
         $failures = $this->failureCollector->getFailures();
 
@@ -233,6 +231,6 @@ class RecordController extends ActionController
         }
         $this->addFlashMessage($message, $title, $severity);
 
-        $this->redirect('index', 'Record');
+        return $this->redirect('index', 'Record');
     }
 }
