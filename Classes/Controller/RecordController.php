@@ -117,7 +117,7 @@ class RecordController extends ActionController
             $data['pageRecursionLimit'] = $pageRecursionLimit;
             $BE_USER->pushModuleData('tx_in2publishcore_m1', $data);
         } else {
-            $this->request->setArgument('pageRecursionLimit', $data['pageRecursionLimit'] ?? 1);
+            $this->request = $this->request->withArgument('pageRecursionLimit', $data['pageRecursionLimit'] ?? 1);
         }
 
         $menuRegistry = $this->moduleTemplate->getDocHeaderComponent()->getMenuRegistry();

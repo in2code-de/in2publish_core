@@ -112,7 +112,7 @@ class RedirectController extends ActionController
         } else {
             $filter = $GLOBALS['BE_USER']->getSessionData('tx_in2publishcore_redirects_filter');
             if (null !== $filter) {
-                $this->request->setArgument('filter', $filter);
+                $this->request = $this->request->withArgument('filter', $filter);
             }
             $this->arguments->getArgument('filter')->getPropertyMappingConfiguration()->allowAllProperties();
         }
