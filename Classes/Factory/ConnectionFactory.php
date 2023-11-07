@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Driver\Connection;
+use TYPO3\CMS\Core\Database\Connection;
 use In2code\In2publishCore\Factory\Exception\ConnectionUnavailableException;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use In2code\In2publishCore\Utility\DatabaseUtility;
