@@ -81,6 +81,9 @@ class ToolsRegistry implements SingletonInterface
                 $processedTools[$key]['initialAction'] = $actions[0];
                 if (isset($controllerConfig[$controller]['alias'])) {
                     $processedTools[$key]['alias'] = $controllerConfig[$controller]['alias'];
+                } else {
+                    $controllerParts = explode('\\', $controller);
+                    $processedTools[$key]['alias'] = str_replace('Controller', '', array_pop($controllerParts));
                 }
             }
         }
