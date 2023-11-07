@@ -123,7 +123,6 @@ use TYPO3\CMS\Core\Information\Typo3Version;
         }
     }
 
-
     /******************************************* Context Menu Publish Entry *******************************************/
     if ($configContainer->get('features.contextMenuPublishEntry.enable')) {
         $GLOBALS['TYPO3_CONF_VARS']['BE']['ContextMenu']['ItemProviders'][1595598780] = PublishItemProvider::class;
@@ -156,6 +155,4 @@ use TYPO3\CMS\Core\Information\Typo3Version;
     $GLOBALS['in2publish_core']['tests'][] = ForeignConfigurationFormatTest::class;
     $GLOBALS['in2publish_core']['tests'][] = SiteConfigurationTest::class;
     $GLOBALS['in2publish_core']['tests'][] = TableGarbageCollectorTest::class;
-
-
 })();
