@@ -30,6 +30,7 @@ declare(strict_types=1);
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Controller\FileController;
 use In2code\In2publishCore\Controller\RecordController;
+use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
 use In2code\In2publishCore\Features\RedirectsSupport\Controller\RedirectController;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -68,6 +69,24 @@ if ($configContainer->get('module.m3')) {
             FileController::class => ['index', 'publishFolder', 'publishFile', 'toggleFilterStatus'],
         ],
     ];
+}
+
+if ($configContainer->get('module.m4')) {
+    $toolsRegistry = GeneralUtility::makeInstance(ToolsRegistry::class);
+    $controllerActions = $toolsRegistry->processData();
+    if (!empty($controllerActions)) {
+        $backendModulesToRegister['in2publish_core_m4'] = [
+            'parent' => 'tools',
+            'position' => [],
+            'access' => 'admin',
+            'workspaces' => 'live',
+            'path' => '/module/in2publish_core/m4',
+            'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
+            'extensionName' => 'in2publish_core',
+            'iconIdentifier' => 'in2publish-core-tools-module',
+            'controllerActions' => $controllerActions,
+        ];
+    }
 }
 
 if ($configContainer->get('features.redirectsSupport.enable')) {
