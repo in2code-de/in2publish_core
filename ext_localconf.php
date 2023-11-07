@@ -8,6 +8,7 @@ use In2code\In2publishCore\Middleware\BackendRouteInitialization;
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\Writer\DatabaseWriter;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -27,9 +28,12 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
     /************************************************* Patching TYPO3 *************************************************/
     // Issue: https://forge.typo3.org/issues/95962
     // Patch: https://review.typo3.org/c/Packages/TYPO3.CMS/+/72160
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\Middleware\BackendRouteInitialization::class] = [
-        'className' => BackendRouteInitialization::class,
-    ];
+    $typo3Version = new Typo3Version();
+    if (version_compare($typo3Version->getVersion(), '12', '<')) {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\Middleware\BackendRouteInitialization::class] = [
+            'className' => BackendRouteInitialization::class,
+        ];
+    }
 
     /************************************************ Record Extension ************************************************/
     $file = Environment::getVarPath() . '/cache/code/content_publisher/record_extension_trait.php';
