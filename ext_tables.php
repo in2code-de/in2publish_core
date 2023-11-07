@@ -3,6 +3,7 @@
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Controller\FileController;
 use In2code\In2publishCore\Controller\RecordController;
+use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
 use In2code\In2publishCore\Features\ContextMenuPublishEntry\ContextMenu\PublishItemProvider;
 use In2code\In2publishCore\Features\RedirectsSupport\Controller\RedirectController;
 use In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer;
@@ -101,6 +102,26 @@ use TYPO3\CMS\Core\Information\Typo3Version;
                 ],
             );
         }
+
+        if ($configContainer->get('module.m4')) {
+            $toolsRegistry = GeneralUtility::makeInstance(ToolsRegistry::class);
+            $controllerActions = $toolsRegistry->processDataForTypo3V11();
+            if (!empty($controllerActions)) {
+                ExtensionUtility::registerModule(
+                    'in2publish_core',
+                    'tools',
+                    'm4',
+                    '',
+                    $controllerActions,
+                    [
+                        'access' => 'admin',
+                        'iconIdentifier' => 'in2publish-core-tools-module',
+                        'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
+                    ],
+                );
+            }
+        }
+
         /************************************************ Redirect Support ************************************************/
         if (
             $configContainer->get('features.redirectsSupport.enable')

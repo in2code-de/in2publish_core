@@ -7,13 +7,6 @@ services:
   In2code\In2publishCore\Features\AdminTools\:
     resource: '../../../Classes/Features/AdminTools/*'
 
-  In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry:
-    tags:
-      - name: 'event.listener'
-        identifier: 'in2publish_core-ToolsRegistry-BootCompletedEvent'
-        event: 'In2code\In2publishCore\Event\ExtTablesPostProcessingEvent'
-        method: 'processData'
-
   In2code\In2publishCore\Features\AdminTools\Controller\LetterboxController:
     tags:
       - name: 'in2publish_core.admin_tool'

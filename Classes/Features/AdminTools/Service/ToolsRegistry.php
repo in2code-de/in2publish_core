@@ -91,12 +91,8 @@ class ToolsRegistry implements SingletonInterface
     /**
      * @throws ClassNotFoundException
      */
-    public function processData(): void
+    public function processData(): array
     {
-        if (!$this->configContainer->get('module.m4')) {
-            return;
-        }
-
         $controllerActions = [];
         foreach ($this->entries as $entry) {
             if ($this->evaluateCondition($entry)) {
@@ -113,22 +109,20 @@ class ToolsRegistry implements SingletonInterface
             }
         }
 
+        return $controllerActions;
+    }
+
+    /**
+     * @throws ClassNotFoundException
+     * @deprecated Will be removed in TYPO3 v13
+     */
+    public function processDataForTypo3V11(): array
+    {
+        $controllerActions = $this->processData();
         foreach ($controllerActions as $controllerName => $actions) {
             $controllerActions[$controllerName] = implode(',', $actions);
         }
-
-        ExtensionUtility::registerModule(
-            'in2publish_core',
-            'tools',
-            'm4',
-            '',
-            $controllerActions,
-            [
-                'access' => 'admin',
-                'iconIdentifier' => 'in2publish-core-tools-module',
-                'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
-            ],
-        );
+        return $controllerActions;
     }
 
     protected function evaluateCondition(array $config): bool
