@@ -35,7 +35,11 @@ use TYPO3\CMS\Backend\ContextMenu\ItemProviders\AbstractProvider;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+use function func_get_args;
+use function version_compare;
 
 class PublishItemProvider extends AbstractProvider
 {
@@ -48,9 +52,13 @@ class PublishItemProvider extends AbstractProvider
     ];
     protected PermissionService $permissionService;
 
-    public function __construct(string $table, string $identifier, string $context = '')
+    public function __construct()
     {
-        parent::__construct($table, $identifier, $context);
+        $typo3Version = new Typo3Version();
+        if (version_compare($typo3Version->getVersion(), '12', '<')) {
+            parent::__construct(...func_get_args());
+        }
+
         // Sorry, no DI available for Context Menu Item Provider
         $this->permissionService = GeneralUtility::makeInstance(PermissionService::class);
     }
