@@ -33,6 +33,7 @@ use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+use TYPO3\CMS\Core\Information\Typo3Version;
 
 (static function (): void {
     /***************************************************** Guards *****************************************************/
@@ -49,6 +50,8 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     $contextService = GeneralUtility::makeInstance(ContextService::class);
     $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
     $isForeign = $contextService->isForeign();
+    /** @var Typo3Version $versionInformation */
+    $versionInformation = GeneralUtility::makeInstance(Typo3Version::class);
 
     /******************************************* Colorize the BE on Foreign *******************************************/
     if ($isForeign && $configContainer->get('features.warningOnForeign.colorizeHeader.enable')) {
@@ -60,39 +63,66 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         return;
     }
 
-    /******************************************** Register Backend Modules ********************************************/
-    if ($configContainer->get('module.m1')) {
-        ExtensionUtility::registerModule(
-            'in2publish_core',
-            'web',
-            'm1',
-            '',
-            [
-                RecordController::class => 'index,detail,publishRecord,toggleFilterStatus',
-            ],
-            [
-                'access' => 'user,group',
-                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Overview.svg',
-                'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod1.xlf',
-            ],
-        );
+    if ($versionInformation->getMajorVersion() < 12) {
+        /**
+         * Deprecated registering of Backend Modules
+         * Register Backend Modules for TYPO3 v11
+         * can be removed in TYPO3 v13
+         */
+        if ($configContainer->get('module.m1')) {
+            ExtensionUtility::registerModule(
+                'in2publish_core',
+                'web',
+                'm1',
+                '',
+                [
+                    RecordController::class => 'index,detail,publishRecord,toggleFilterStatus',
+                ],
+                [
+                    'access' => 'user,group',
+                    'iconIdentifier' => 'in2publish-core-overview-module',
+                    'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod1.xlf',
+                ],
+            );
+        }
+        if ($configContainer->get('module.m3')) {
+            ExtensionUtility::registerModule(
+                'in2publish_core',
+                'file',
+                'm3',
+                '',
+                [
+                    FileController::class => 'index,publishFolder,publishFile,toggleFilterStatus',
+                ],
+                [
+                    'access' => 'user,group',
+                    'iconIdentifier' => 'in2publish-core-file-module',
+                    'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod3.xlf',
+                ],
+            );
+        }
+        /************************************************ Redirect Support ************************************************/
+        if (
+            $configContainer->get('features.redirectsSupport.enable')
+            && ExtensionManagementUtility::isLoaded('redirects')
+        ) {
+            ExtensionUtility::registerModule(
+                'in2publish_core',
+                'site',
+                'm5',
+                'after:redirects',
+                [
+                    RedirectController::class => 'list,publish,selectSite',
+                ],
+                [
+                    'access' => 'user,group',
+                    'iconIdentifier' => 'in2publish-core-redirect-module',
+                    'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod5.xlf',
+                ],
+            );
+        }
     }
-    if ($configContainer->get('module.m3')) {
-        ExtensionUtility::registerModule(
-            'in2publish_core',
-            'file',
-            'm3',
-            '',
-            [
-                FileController::class => 'index,publishFolder,publishFile,toggleFilterStatus',
-            ],
-            [
-                'access' => 'user,group',
-                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/File.svg',
-                'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod3.xlf',
-            ],
-        );
-    }
+
 
     /******************************************* Context Menu Publish Entry *******************************************/
     if ($configContainer->get('features.contextMenuPublishEntry.enable')) {
@@ -127,24 +157,5 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     $GLOBALS['in2publish_core']['tests'][] = SiteConfigurationTest::class;
     $GLOBALS['in2publish_core']['tests'][] = TableGarbageCollectorTest::class;
 
-    /************************************************ Redirect Support ************************************************/
-    if (
-        $configContainer->get('features.redirectsSupport.enable')
-        && ExtensionManagementUtility::isLoaded('redirects')
-    ) {
-        ExtensionUtility::registerModule(
-            'in2publish_core',
-            'site',
-            'm5',
-            'after:redirects',
-            [
-                RedirectController::class => 'list,publish,selectSite',
-            ],
-            [
-                'access' => 'user,group',
-                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Redirect.svg',
-                'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod5.xlf',
-            ],
-        );
-    }
+
 })();
