@@ -21,10 +21,6 @@ services:
       - '../Classes/Component/*'
       - '../Classes/Features/*'
 
-  TYPO3\CMS\Backend\Middleware\BackendRouteInitialization:
-    alias: In2code\In2publishCore\Middleware\BackendRouteInitialization
-    public: true
-
   # Services
 
   In2code.In2publishCore.Database.Local:
