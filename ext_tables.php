@@ -51,7 +51,7 @@ use TYPO3\CMS\Core\Information\Typo3Version;
     $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
     $isForeign = $contextService->isForeign();
     /** @var Typo3Version $versionInformation */
-    $versionInformation = GeneralUtility::makeInstance(Typo3Version::class);
+    $typo3Version = new Typo3Version();
 
     /******************************************* Colorize the BE on Foreign *******************************************/
     if ($isForeign && $configContainer->get('features.warningOnForeign.colorizeHeader.enable')) {
@@ -63,7 +63,7 @@ use TYPO3\CMS\Core\Information\Typo3Version;
         return;
     }
 
-    if ($versionInformation->getMajorVersion() < 12) {
+    if (version_compare($typo3Version->getVersion(), '12', '<')) {
         /**
          * Deprecated registering of Backend Modules
          * Register Backend Modules for TYPO3 v11
