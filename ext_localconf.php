@@ -1,5 +1,6 @@
 <?php
 
+use In2code\In2publishCore\Component\ConfigContainer\Provider\PageTsProvider;
 use In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtensionTrait;
 use In2code\In2publishCore\Controller\FrontendController;
 use In2code\In2publishCore\Log\Processor\BackendUserProcessor;
@@ -96,4 +97,7 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
         'dateField' => 'timestamp_begin',
         'expirePeriod' => 1,
     ];
+
+    /*********************************************** Enable PageTSProvider  *******************************************/
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['postUserLookUp'][1699367499] = PageTsProvider::class . '->processData';
 })();
