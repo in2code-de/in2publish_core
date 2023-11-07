@@ -42,8 +42,10 @@ use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Core\Localization\Locale;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Site\Entity\SiteSettings;
 
 use function array_key_exists;
 use function base64_decode;
@@ -56,7 +58,13 @@ class ForeignSiteFinder implements LoggerAwareInterface
     use RemoteCommandDispatcherInjection;
     use CachedRuntimeCacheInjection;
 
-    private const UNSERIALIZE_ALLOWED_CLASS = [Site::class, Uri::class, SiteLanguage::class];
+    private const UNSERIALIZE_ALLOWED_CLASS = [
+        Site::class,
+        Uri::class,
+        SiteLanguage::class,
+        Locale::class,
+        SiteSettings::class,
+    ];
 
     public function getSiteByPageId(int $pageId): Site
     {
