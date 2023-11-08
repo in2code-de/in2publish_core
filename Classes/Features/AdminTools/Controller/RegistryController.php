@@ -47,10 +47,10 @@ class RegistryController extends ActionController
     }
 
     /** @throws StopActionException */
-    public function flushRegistryAction(): void
+    public function flushRegistryAction(): ResponseInterface
     {
         $this->registry->removeAllByNamespace('tx_in2publishcore');
         $this->addFlashMessage(LocalizationUtility::translate('module.m4.registry_flushed', 'in2publish_core'));
-        $this->redirect('index');
+        return $this->redirect('index');
     }
 }

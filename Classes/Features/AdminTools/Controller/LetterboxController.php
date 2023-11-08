@@ -33,7 +33,6 @@ use In2code\In2publishCore\Component\RemoteProcedureCall\LetterboxInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class LetterboxController extends ActionController
@@ -47,8 +46,7 @@ class LetterboxController extends ActionController
         return $this->htmlResponse();
     }
 
-    /** @throws StopActionException */
-    public function flushEnvelopesAction(): void
+    public function flushEnvelopesAction(): ResponseInterface
     {
         $this->letterbox->removeAnsweredEnvelopes();
         $this->addFlashMessage(
@@ -57,6 +55,6 @@ class LetterboxController extends ActionController
                 'in2publish_core',
             ),
         );
-        $this->redirect('index');
+        return $this->redirect('index');
     }
 }

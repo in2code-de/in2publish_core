@@ -79,12 +79,7 @@ class ToolsRegistry implements SingletonInterface
                 $processedTools[$key] = $config;
                 $actions = GeneralUtility::trimExplode(',', $processedTools[$key]['action']);
                 $processedTools[$key]['initialAction'] = $actions[0];
-                if (isset($controllerConfig[$controller]['alias'])) {
-                    $processedTools[$key]['alias'] = $controllerConfig[$controller]['alias'];
-                } else {
-                    $controllerParts = explode('\\', $controller);
-                    $processedTools[$key]['alias'] = str_replace('Controller', '', array_pop($controllerParts));
-                }
+                $processedTools[$key]['alias'] = ExtensionUtility::resolveControllerAliasFromControllerClassName($controller);
             }
         }
 

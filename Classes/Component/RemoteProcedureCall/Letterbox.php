@@ -110,7 +110,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
               ->where($query->expr()->eq('uid', $uid))
               ->orderBy('data.sorting');
         try {
-            $result = $query->execute();
+            $result = $query->executeQuery();
             $rows = $result->fetchAllAssociative();
         } catch (Throwable $exception) {
             $this->logger->error(
@@ -157,7 +157,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
               ->from('tx_in2code_rpc_request', 'req')
               ->join('req', 'tx_in2code_rpc_data', 'data', 'req.uid = data.request')
               ->where($query->expr()->eq('data.data_type', $query->createNamedParameter('response')));
-        return $query->execute()->fetchOne() > 0;
+        return $query->executeQuery()->fetchOne() > 0;
     }
 
     public function removeAnsweredEnvelopes(): void
@@ -168,7 +168,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
               ->from('tx_in2code_rpc_request', 'req')
               ->join('req', 'tx_in2code_rpc_data', 'data', 'req.uid = data.request')
               ->where($query->expr()->eq('data.data_type', $query->createNamedParameter('response')));
-        $uid = $query->execute()->fetchColumn();
+        $uid = $query->executeQuery()->fetchOne();
         $this->databaseOfForeign->delete('tx_in2code_rpc_request', ['uid' => $uid]);
         $this->databaseOfForeign->delete('tx_in2code_rpc_data', ['request' => $uid]);
     }

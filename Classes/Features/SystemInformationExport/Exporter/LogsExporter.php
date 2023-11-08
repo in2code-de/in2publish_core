@@ -34,7 +34,7 @@ use JsonException;
 
 use function json_decode;
 use function sprintf;
-use function strftime;
+use function date;
 use function substr;
 
 use const JSON_THROW_ON_ERROR;
@@ -56,7 +56,7 @@ class LogsExporter implements SystemInformationExporter
                                 ->where($logQueryBuilder->expr()->lte('level', 4))
                                 ->setMaxResults(500)
                                 ->orderBy('uid', 'DESC')
-                                ->execute()
+                                ->executeQuery()
                                 ->fetchAllAssociative();
 
         $logsFormatted = [];
@@ -65,7 +65,7 @@ class LogsExporter implements SystemInformationExporter
                 '[%s] [lvl:%d] @%s "%s"',
                 $log['component'],
                 $log['level'],
-                strftime('%F %T', (int)$log['time_micro']),
+                date('Y-m-d H:i:s', (int)$log['time_micro']),
                 $log['message'],
             );
             $logData = $log['data'];
