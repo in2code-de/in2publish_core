@@ -10,33 +10,9 @@
 
 		<div class="in2publish-messages">
 			<f:for each="{testingResults}" as="testResult">
-				<div class="typo3-message message-{testResult.severityLabel} callout callout-{testResult.severityLabel}">
-					<div class="media">
-						<div class="media-left">
-						<span class="fa-stack fa-lg callout-icon">
-							<i class="fa fa-circle fa-stack-2x"></i>
-							<f:switch expression="{testResult.severityLabel}">
-							   <f:case value="danger"><i class="fa fa-times fa-stack-1x"></i></f:case>
-							   <f:case value="error"><i class="fa fa-times fa-stack-1x"></i></f:case>
-							   <f:case value="warning"><i class="fa fa-exclamation fa-stack-1x"></i></f:case>
-							   <f:case value="success"><i class="fa fa-check fa-stack-1x"></i></f:case>
-							   <f:case value="ok"><i class="fa fa-check fa-stack-1x"></i></f:case>
-							   <f:case value="info"><i class="fa fa-info fa-stack-1x"></i></f:case>
-							   <f:defaultCase><i class="fa fa-times fa-stack-1x"></i></f:defaultCase>
-							</f:switch>
-
-						</span>
-						</div>
-						<div class="media-body">
-							<div class="message-header callout-title">{testResult.translatedLabel}</div>
-							<div class="message-body callout-body">
-								<p>
-									<f:format.nl2br>{testResult.translatedMessages}</f:format.nl2br>
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
+				<f:be.infobox title="{testResult.translatedLabel}" state="{testResult.severityState}">
+					<f:format.nl2br>{testResult.translatedMessages}</f:format.nl2br>
+				</f:be.infobox>
 			</f:for>
 		</div>
 	</f:section>
