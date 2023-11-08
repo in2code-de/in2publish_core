@@ -38,6 +38,10 @@ class AdminToolButton extends LinkButton
 {
     protected $showLabelText = true;
 
+    protected $defaultClasses = [
+        'btn','btn-default'
+    ];
+
     public function isValid(): bool
     {
         return trim($this->getHref()) !== ''
@@ -49,7 +53,7 @@ class AdminToolButton extends LinkButton
     {
         $attributes = [
             'href' => $this->getHref(),
-            'class' => 'btn btn-default ' . $this->getClasses(),
+            'class' => $this->getDefaultClassesAsString() . ' ' . $this->getClasses(),
             'title' => $this->getTitle(),
         ];
         $labelText = '';
@@ -71,4 +75,18 @@ class AdminToolButton extends LinkButton
 
         return '<a ' . $attributesString . '>' . $labelText . '</a>';
     }
+
+    protected function getDefaultClassesAsString(): string
+    {
+        return implode(' ', $this->defaultClasses);
+    }
+
+    public function makeButtonPrimary(): void
+    {
+        $index = array_search('btn-default', $this->defaultClasses, true);
+        if (false !== $index) {
+            $this->defaultClasses[$index] = 'btn-primary';
+        }
+    }
+
 }

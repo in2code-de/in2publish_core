@@ -80,7 +80,7 @@ trait AdminToolsModuleTemplate
                 $this->request->getControllerObjectName() === $entry['controller']
                 && in_array($this->request->getControllerActionName(), explode(',', $entry['action']))
             ) {
-                $button->setClasses('btn-primary');
+                $button->makeButtonPrimary();
             }
             $buttonBar->addButton($button);
         }
