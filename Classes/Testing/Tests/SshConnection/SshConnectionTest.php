@@ -35,6 +35,7 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Throwable;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_diff;
@@ -99,8 +100,12 @@ class SshConnectionTest implements TestCaseInterface
             $requiredNames = [
                 'typo3',
                 'index.php',
-                'typo3conf',
             ];
+            /** @var Typo3Version $versionInformation */
+            $typo3Version = new Typo3Version();
+            if (version_compare($typo3Version->getVersion(), '12', '<')) {
+                $requiredNames[] = 'typo3conf';
+            }
 
             if (!empty(array_diff($requiredNames, $documentRootFiles))) {
                 return new TestResult('ssh_connection.foreign_document_root_wrong', TestResult::ERROR);
