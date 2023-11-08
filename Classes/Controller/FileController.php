@@ -140,7 +140,7 @@ class FileController extends ActionController
      * @throws StopActionException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
-    public function publishFolderAction(string $combinedIdentifier, bool $skipNotification = false): void
+    public function publishFolderAction(string $combinedIdentifier, bool $skipNotification = false): ResponseInterface
     {
         $recordTree = $this->tryToGetFolderInstance($combinedIdentifier, true);
 
@@ -166,7 +166,7 @@ class FileController extends ActionController
             }
         }
 
-        $this->redirect('index');
+        return $this->redirect('index');
     }
 
     /**
@@ -174,7 +174,7 @@ class FileController extends ActionController
      * @throws StopActionException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
-    public function publishFileAction(string $combinedIdentifier, bool $skipNotification = false): void
+    public function publishFileAction(string $combinedIdentifier, bool $skipNotification = false): ResponseInterface
     {
         $recordTree = $this->defaultFalFinder->findFileRecord($combinedIdentifier);
 
@@ -216,7 +216,7 @@ class FileController extends ActionController
             }
         }
 
-        $this->redirect('index');
+        return $this->redirect('index');
     }
 
     /**
