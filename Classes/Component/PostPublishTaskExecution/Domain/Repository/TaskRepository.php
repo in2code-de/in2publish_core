@@ -104,7 +104,7 @@ class TaskRepository
         $tasksPropertiesArray = $query->select('*')
                                       ->from(self::TASK_TABLE_NAME)
                                       ->where($predicates)
-                                      ->execute()
+                                      ->executeQuery()
                                       ->fetchAllAssociative();
         foreach ($tasksPropertiesArray as $taskProperties) {
             $taskObjects[] = $this->taskFactory->convertToObject($taskProperties);
@@ -125,6 +125,6 @@ class TaskRepository
               ->where(
                   $query->expr()->lte('execution_end', $query->createNamedParameter($executionEnd)),
               );
-        $query->execute();
+        $query->executeStatement();
     }
 }

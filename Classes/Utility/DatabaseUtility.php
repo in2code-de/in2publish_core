@@ -201,7 +201,7 @@ class DatabaseUtility
             if ($permClause !== '') {
                 $queryBuilder->andWhere(self::stripLogicalOperatorPrefix($permClause));
             }
-            $statement = $queryBuilder->execute();
+            $statement = $queryBuilder->executeQuery();
             while ($row = $statement->fetchAssociative()) {
                 if ($begin <= 0) {
                     $theList .= ',' . $row['uid'];

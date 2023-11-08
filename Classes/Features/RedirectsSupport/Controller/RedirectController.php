@@ -47,10 +47,10 @@ use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedire
 use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -120,8 +120,6 @@ class RedirectController extends ActionController
 
     /**
      * @param Filter|null $filter
-     * @param int $page
-     * @return ResponseInterface
      * @throws Throwable
      */
     public function listAction(Filter $filter = null, int $page = 1): ResponseInterface
@@ -129,7 +127,7 @@ class RedirectController extends ActionController
         $query = $this->foreignDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
-        $foreignDeletedRedirects = $query->execute()->fetchAll();
+        $foreignDeletedRedirects = $query->executeQuery()->fetchAllAssociative();
         $additionalWhere = '';
         if (!empty($foreignDeletedRedirects)) {
             $uidList = implode(',', array_column($foreignDeletedRedirects, 'uid'));
@@ -170,7 +168,7 @@ class RedirectController extends ActionController
             $this->addFlashMessage(
                 'No redirect has been selected for publishing',
                 'Skipping publishing',
-                AbstractMessage::NOTICE,
+                ContextualFeedbackSeverity::NOTICE,
             );
             $this->redirect('list');
         }
@@ -196,9 +194,7 @@ class RedirectController extends ActionController
     }
 
     /**
-     * @param int $redirect
      * @param array|null $properties
-     * @return ResponseInterface
      * @throws Throwable
      */
     public function selectSiteAction(int $redirect, array $properties = null): ResponseInterface

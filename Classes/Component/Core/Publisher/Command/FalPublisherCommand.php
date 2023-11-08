@@ -39,7 +39,7 @@ class FalPublisherCommand extends Command
         $query->select('*')
               ->from('tx_in2publishcore_filepublisher_instruction')
               ->where($query->expr()->eq('request_token', $query->createNamedParameter($requestToken)));
-        $result = $query->execute();
+        $result = $query->executeQuery();
         $rows = $result->fetchAllAssociative();
 
         /** @var array<PublishInstruction> $instructions */

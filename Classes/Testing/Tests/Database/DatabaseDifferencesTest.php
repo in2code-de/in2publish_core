@@ -217,7 +217,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
         $statement = $query->select('*')
                            ->from('tx_in2code_in2publish_task')
                            ->where($query->expr()->eq('task_type', $query->createNamedParameter('Backend Test')))
-                           ->execute();
+                           ->executeQuery();
         $identical = false;
         while ($result = $statement->fetchAssociative()) {
             if ($uid === (int)$result['uid'] && $random === (int)$result['configuration']) {
@@ -234,7 +234,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
     protected function readTableStructure(Connection $database): array
     {
         $tableStructure = [];
-        $tables = $database->getSchemaManager()->listTables();
+        $tables = $database->createSchemaManager()->listTables();
 
         foreach ($tables as $table) {
             $tableName = $table->getName();
@@ -244,7 +244,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
             }
             $fieldStructure = [];
 
-            $fields = $database->getSchemaManager()->listTableColumns($tableName);
+            $fields = $database->createSchemaManager()->listTableColumns($tableName);
             foreach ($fields as $field) {
                 $fieldName = $field->getName();
                 $fieldStructure[$fieldName] = [

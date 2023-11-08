@@ -97,7 +97,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
         $rows = $query->select('*')
                       ->from('sys_file_storage')
                       ->where($query->expr()->eq('deleted', 0))
-                      ->execute()
+                      ->executeQuery()
                       ->fetchAllAssociative();
         return array_combine(array_column($rows, 'uid'), $rows);
     }
