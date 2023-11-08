@@ -714,10 +714,12 @@ div#typo3-docbody.stopScrolling {
 
   &--changed {
     background-color: $goldentainoi;
+    color: black;
   }
 
   &--moved-and-changed {
     background-color: $goldentainoi;
+    color: black;
   }
 
   &--added {
