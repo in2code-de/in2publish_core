@@ -705,10 +705,11 @@ div#typo3-docbody.stopScrolling {
   }
 }
 
-.in2publish-badge {
+.badge.in2publish-badge {
   &--unchanged {
-    color: #000!important;
-    background-color: $nobel!important;
+    color: #000;
+    background-color: $nobel;
+    color: white;
   }
 
   &--changed {
@@ -721,10 +722,12 @@ div#typo3-docbody.stopScrolling {
 
   &--added {
     background-color: $apple;
+    color: white;
   }
 
   &--deleted {
     background-color: $appleblossom;
+    color: white;
   }
 
   &--moved {
