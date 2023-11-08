@@ -64,7 +64,7 @@ class SysLogPublisher
               ->where($query->expr()->eq('event_pid', $query->createNamedParameter($identifier)))
               ->orderBy('uid', 'DESC')
               ->setMaxResults(1);
-        $result = $query->execute();
+        $result = $query->executeQuery();
         $row = $result->fetchAssociative();
         if (!$row) {
             return null;

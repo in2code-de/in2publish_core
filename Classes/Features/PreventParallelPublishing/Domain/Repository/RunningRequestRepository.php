@@ -58,7 +58,7 @@ class RunningRequestRepository
             return;
         }
         foreach (array_chunk($this->inserts, 1000) as $chunk) {
-            $this->localDatabase->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
+            $this->localDatabase->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $chunk);
         }
         $this->inserts = [];
     }
@@ -73,8 +73,8 @@ class RunningRequestRepository
             $query->select('*')
                   ->from(self::RUNNING_REQUEST_TABLE_NAME)
                   ->where($query->expr()->neq('request_token', $query->createNamedParameter($token)));
-            $result = $query->execute();
-            foreach ($result->fetchAll() as $row) {
+            $result = $query->executeQuery();
+            foreach ($result->fetchAllAssociative() as $row) {
                 $this->rtc['content'][$row['table_name']][$row['record_id']] = true;
             }
         }
@@ -86,6 +86,6 @@ class RunningRequestRepository
         $query = $this->localDatabase->createQueryBuilder();
         $query->delete(self::RUNNING_REQUEST_TABLE_NAME)
               ->where($query->expr()->eq('request_token', $query->createNamedParameter($token)))
-              ->execute();
+              ->executeStatement();
     }
 }

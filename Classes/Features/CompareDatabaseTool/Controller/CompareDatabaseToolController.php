@@ -37,7 +37,7 @@ use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonReq
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -120,23 +120,23 @@ class CompareDatabaseToolController extends ActionController
                 $localResult = $localQuery->select('*')
                                           ->from($table)
                                           ->where(
-                                              $localQuery->expr()->andX(
+                                              $localQuery->expr()->and(
                                                   $localQuery->expr()->gte('uid', $offset),
                                                   $localQuery->expr()->lt('uid', $limit),
                                               ),
                                           )
-                                          ->execute();
+                                          ->executeQuery();
                 $localRows = array_column($localResult->fetchAllAssociative(), null, 'uid');
                 $foreignQuery = $this->foreignDatabase->createQueryBuilder();
                 $foreignResult = $foreignQuery->select('*')
                                               ->from($table)
                                               ->where(
-                                                  $foreignQuery->expr()->andX(
+                                                  $foreignQuery->expr()->and(
                                                       $foreignQuery->expr()->gte('uid', $offset),
                                                       $foreignQuery->expr()->lt('uid', $limit),
                                                   ),
                                               )
-                                              ->execute();
+                                              ->executeQuery();
                 $foreignRows = array_column($foreignResult->fetchAllAssociative(), null, 'uid');
 
                 $uidList = array_unique(array_merge(array_keys($localRows), array_keys($foreignRows)));
@@ -190,7 +190,7 @@ class CompareDatabaseToolController extends ActionController
                    ->from($table)
                    ->where($localQuery->expr()->eq('uid', $localQuery->createNamedParameter($uid)))
                    ->setMaxResults(1);
-        $localResult = $localQuery->execute();
+        $localResult = $localQuery->executeQuery();
         $localRow = $localResult->fetchAssociative();
 
         $foreignQuery = $this->foreignDatabase->createQueryBuilder();
@@ -199,14 +199,14 @@ class CompareDatabaseToolController extends ActionController
                      ->from($table)
                      ->where($foreignQuery->expr()->eq('uid', $foreignQuery->createNamedParameter($uid)))
                      ->setMaxResults(1);
-        $foreignResult = $foreignQuery->execute();
+        $foreignResult = $foreignQuery->executeQuery();
         $foreignRow = $foreignResult->fetchAssociative();
 
         if (empty($localRow) && empty($foreignRow)) {
             $this->addFlashMessage(
                 LocalizationUtility::translate('compare_database.transfer.record_missing', 'in2publish_core'),
                 LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                AbstractMessage::ERROR,
+                ContextualFeedbackSeverity::ERROR,
             );
             $this->redirect('index');
         }
@@ -216,14 +216,14 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate('compare_database.transfer.exists_on_foreign', 'in2publish_core'),
                     LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                    AbstractMessage::ERROR,
+                    ContextualFeedbackSeverity::ERROR,
                 );
                 $this->redirect('index');
             }
-            $foreignQuery = $foreignDatabase->createQueryBuilder();
+            $foreignQuery = $this->foreignDatabase->createQueryBuilder();
             $foreignQuery->delete($table)
                          ->where($localQuery->expr()->eq('uid', $foreignQuery->createNamedParameter($uid)));
-            $foreignResult = $foreignQuery->execute();
+            $foreignResult = $foreignQuery->executeStatement();
             if (1 === $foreignResult) {
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
@@ -241,14 +241,14 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate('compare_database.transfer.exists_on_local', 'in2publish_core'),
                     LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                    AbstractMessage::ERROR,
+                    ContextualFeedbackSeverity::ERROR,
                 );
                 $this->redirect('index');
             }
-            $foreignQuery = $foreignDatabase->createQueryBuilder();
+            $foreignQuery = $this->foreignDatabase->createQueryBuilder();
             $foreignQuery->insert($table)
                          ->values($localRow);
-            $foreignResult = $foreignQuery->execute();
+            $foreignResult = $foreignQuery->executeStatement();
             if (1 === $foreignResult) {
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
@@ -269,11 +269,11 @@ class CompareDatabaseToolController extends ActionController
                         'in2publish_core',
                     ),
                     LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                    AbstractMessage::ERROR,
+                    ContextualFeedbackSeverity::ERROR,
                 );
                 $this->redirect('index');
             }
-            $foreignQuery = $foreignDatabase->createQueryBuilder();
+            $foreignQuery = $this->foreignDatabase->createQueryBuilder();
             $foreignQuery->update($table);
             foreach ($localRow as $field => $value) {
                 if ($foreignRow[$field] !== $value) {
@@ -281,7 +281,7 @@ class CompareDatabaseToolController extends ActionController
                 }
             }
             $foreignQuery->where($foreignQuery->expr()->eq('uid', $foreignQuery->createNamedParameter($uid)));
-            $foreignResult = $foreignQuery->execute();
+            $foreignResult = $foreignQuery->executeStatement();
             if (1 === $foreignResult) {
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
@@ -299,7 +299,7 @@ class CompareDatabaseToolController extends ActionController
 
     protected function getAllNonExcludedTables(): array
     {
-        $tables = $this->localDatabase->getSchemaManager()->listTableNames();
+        $tables = $this->localDatabase->createSchemaManager()->listTableNames();
         $excludedTables = $this->configContainer->get('excludeRelatedTables');
         return array_diff($tables, $excludedTables);
     }

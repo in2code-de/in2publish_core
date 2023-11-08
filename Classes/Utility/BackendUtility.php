@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Utility;
  */
 
 use Closure;
+use Doctrine\DBAL\Exception;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Service\Routing\SiteService;
@@ -86,6 +87,7 @@ class BackendUtility
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.IfStatementAssignment)
      * @noinspection CallableParameterUseCaseInTypeContextInspection
+     * @throws Exception
      */
     public static function getPageIdentifier($identifier = null, string $table = null)
     {
@@ -133,7 +135,10 @@ class BackendUtility
         }
 
         $localConnection = DatabaseUtility::buildLocalDatabaseConnection();
-        $tableNames = $localConnection->getSchemaManager()->listTableNames();
+        if (null === $localConnection) {
+            return 0;
+        }
+        $tableNames = $localConnection->createSchemaManager()->listTableNames();
 
         // get id from record ?data[tt_content][13]=foo
         $data = GeneralUtility::_GP('data');
@@ -158,7 +163,7 @@ class BackendUtility
                                 ->from($table)
                                 ->where($query->expr()->eq('uid', (int)key($data[$table])))
                                 ->setMaxResults(1)
-                                ->execute()
+                                ->executeQuery()
                                 ->fetchAssociative();
                 if (false !== $result && isset($result['pid'])) {
                     return (int)$result['pid'];
@@ -180,7 +185,7 @@ class BackendUtility
                                 ->from($rollbackData[0])
                                 ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
                                 ->setMaxResults(1)
-                                ->execute()
+                                ->executeQuery()
                                 ->fetchAssociative();
                 if (false !== $result && isset($result['pid'])) {
                     return (int)$result['pid'];
@@ -197,7 +202,7 @@ class BackendUtility
                          ->from($table)
                          ->where($query->expr()->eq('uid', (int)$identifier))
                          ->setMaxResults(1)
-                         ->execute()
+                         ->executeQuery()
                          ->fetchAssociative();
             if (isset($row['pid'])) {
                 return (int)$row['pid'];
@@ -209,12 +214,6 @@ class BackendUtility
 
     /**
      * Please don't blame me for this.
-     *
-     * @param string $table
-     * @param int $identifier
-     * @param string $stagingLevel
-     *
-     * @return UriInterface|null
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -338,8 +337,6 @@ class BackendUtility
     }
 
     /**
-     * @return VariableFrontend
-     *
      * @throws NoSuchCacheException
      */
     protected static function getRuntimeCache(): VariableFrontend
@@ -419,11 +416,6 @@ class BackendUtility
     }
 
     /**
-     * @param Site $site
-     * @param int $language
-     * @param int $pageUid
-     *
-     * @return string
      * @throws AspectNotFoundException
      */
     protected static function getPageRepositoryPageCacheIdentifier(Site $site, int $language, int $pageUid): string

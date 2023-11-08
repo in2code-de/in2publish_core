@@ -14,7 +14,7 @@ class TableTransferService
 
         $query = $source->createQueryBuilder();
         $query->select('*')->from($table);
-        $result = $query->execute();
+        $result = $query->executeQuery();
         while ($row = $result->fetchAssociative()) {
             $target->insert($table, $row);
         }

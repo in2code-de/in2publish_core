@@ -77,12 +77,12 @@ class FileEdgeCacheInvalidationService
         $query = $this->localDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('tablename as table', 'recuid as uid')->from('sys_refindex')->where(
-            $query->expr()->andX(
+            $query->expr()->and(
                 $query->expr()->eq('ref_table', '"sys_file"'),
                 $query->expr()->in('ref_uid', $uidList),
             ),
         );
-        return $query->execute();
+        return $query->executeQuery();
     }
 
     /**
@@ -97,12 +97,12 @@ class FileEdgeCacheInvalidationService
         $query->select('tablenames as table', 'uid_foreign as uid')
               ->from('sys_file_reference')
               ->where(
-                  $query->expr()->andX(
+                  $query->expr()->and(
                       $query->expr()->eq('table_local', '"sys_file"'),
                       $query->expr()->in('uid_local', $uidList),
                   ),
               );
-        return $query->execute();
+        return $query->executeQuery();
     }
 
     protected function addResultsToCollection(Result $statement, RecordCollection $recordCollection): void
@@ -116,15 +116,15 @@ class FileEdgeCacheInvalidationService
 
     protected function resolveRecordsToPages(RecordCollection $recordCollection): void
     {
-        $schemaManager = $this->localDatabase->getSchemaManager();
+        $schemaManager = $this->localDatabase->createSchemaManager();
         $tableNames = $schemaManager->listTableNames();
 
         foreach ($recordCollection->getRecords() as $table => $recordUidList) {
             if (
-                !in_array($table, $tableNames, true)
-                || !array_key_exists('pid', $schemaManager->listTableColumns($table))
-                || $table === '_file'
+                $table === '_file'
                 || $table === '_folder'
+                || !in_array($table, $tableNames, true)
+                || !array_key_exists('pid', $schemaManager->listTableColumns($table))
             ) {
                 continue;
             }
@@ -133,7 +133,7 @@ class FileEdgeCacheInvalidationService
             $query->select('pid')->from($table);
             $query->where($query->expr()->in('uid', $recordUidList));
             $query->groupBy('pid');
-            $statement = $query->execute();
+            $statement = $query->executeQuery();
             while ($page = $statement->fetchOne()) {
                 $recordCollection->addRecord('pages', $page);
             }

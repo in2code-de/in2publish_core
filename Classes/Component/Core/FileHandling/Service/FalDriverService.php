@@ -42,7 +42,7 @@ class FalDriverService
                 $query->select('*')
                       ->from('sys_file_storage')
                       ->where($query->expr()->eq('uid', $query->createNamedParameter($storage)));
-                $result = $query->execute();
+                $result = $query->executeQuery();
                 $storageRow = $result->fetchAssociative();
                 $driver = $this->createFalDriver($storageRow);
             }
@@ -61,7 +61,7 @@ class FalDriverService
         $query->select('*')
               ->from('sys_file_storage')
               ->where($query->expr()->in('uid', $storagesUids));
-        $result = $query->execute();
+        $result = $query->executeQuery();
         $storages = $result->fetchAllAssociative();
 
         $drivers = [];
