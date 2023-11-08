@@ -54,9 +54,9 @@ class TableGarbageCollectorTest implements TestCaseInterface
                       $query->createNamedParameter('%tx_in2publishcore_running_request%'),
                   ),
               );
-        $statement = $query->execute();
+        $statement = $query->executeQuery();
 
-        if (0 === $statement->fetchColumn()) {
+        if (0 === $statement->fetchOne()) {
             return new TestResult(
                 'database.garbage_collector_task_missing',
                 TestResult::ERROR,
