@@ -59,7 +59,10 @@
 	"autoload": {
 		"psr-4": {
 			"In2code\\In2publishCore\\": "Classes"
-		}
+		},
+		"files": [
+			"constants.php"
+		]
 	},
 	"autoload-dev": {
 		"psr-4": {
