@@ -773,3 +773,14 @@ div#typo3-docbody.stopScrolling {
     width: 50%;
   }
 }
+
+.in2publish_core_m1 {
+  .module-docheader-bar-column-left {
+    .form-group {
+      display: flex;
+      .form-select {
+        margin-left: 1em;
+      }
+    }
+  }
+}

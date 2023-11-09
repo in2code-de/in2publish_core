@@ -120,6 +120,8 @@ class RecordController extends ActionController
             $this->request = $this->request->withArgument('pageRecursionLimit', $data['pageRecursionLimit'] ?? 1);
         }
 
+        $this->moduleTemplate->setModuleClass('in2publish_core_m1');
+
         $menuRegistry = $this->moduleTemplate->getDocHeaderComponent()->getMenuRegistry();
         $menu = $menuRegistry->makeMenu();
         $menu->setIdentifier('depth');
