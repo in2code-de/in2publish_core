@@ -3,73 +3,75 @@
 	  data-namespace-typo3-fluid="true"
 >
 	<f:form action="list" method="post" objectName="filter" object="{filter}" class="form-inline form-inline-spaced">
-		<div class="form-group">
-			<label for="filter-source-host">
-				<f:translate
-					key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host" />
-			</label>
-			<f:form.select id="filter-source-host"
-						   property="domain"
-						   options="{hosts}"
-						   class="form-control input-sm"
-						   optionValueField="name"
-						   optionLabelField="name"
-						   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
-						   prependOptionValue=""
-			/>
-		</div>
-		<div class="form-group">
-			<label for="filter-source-path">
-				<f:translate
-					key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_path" />
-			</label>
-			<f:form.textfield id="filter-source-path"
-							  class="form-control input-sm"
-							  property="source"
-			/>
-		</div>
-		<div class="form-group">
-			<label for="filter-target">
-				<f:translate
-					key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.destination" />
-			</label>
-			<f:form.textfield id="filter-target"
-							  class="form-control input-sm"
-							  property="target"
-			/>
-		</div>
-		<div class="form-group">
-			<label for="filter-status-code">
-				<f:translate
-					key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.targetStatusCode" />
-			</label>
-			<f:form.select property="code"
-						   id="filter-status-code"
-						   options="{statusCodes}"
-						   class="form-control input-sm"
-						   optionValueField="code"
-						   optionLabelField="code"
-						   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
-						   prependOptionValue=""
-			/>
-		</div>
-		<div class="form-group">
-			<label for="filter-has-page">
-				<f:translate key="filter.field.has_association" />
-			</label>
-			<f:form.select property="association"
-						   id="filter-status-code"
-						   options="{
+		<div class="row row-cols-auto align-items-end g-3">
+			<div class="col">
+				<label for="filter-source-host" class="form-label">
+					<f:translate
+						key="LLL:EXT:redirects/Resources/Private/Language/locallang_db.xlf:sys_redirect.source_host"/>
+				</label>
+				<f:form.select id="filter-source-host"
+							   property="domain"
+							   options="{hosts}"
+							   class="form-select"
+							   optionValueField="name"
+							   optionLabelField="name"
+							   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
+							   prependOptionValue=""
+				/>
+			</div>
+			<div class="col">
+				<label for="filter-source-path" class="form-label">
+					<f:translate
+						key="LLL:EXT:redirects/Resources/Private/Language/locallang_db.xlf:sys_redirect.source_path"/>
+				</label>
+				<f:form.textfield id="filter-source-path"
+								  class="form-control"
+								  property="source"
+				/>
+			</div>
+			<div class="col">
+				<label for="filter-target" class="form-label">
+					<f:translate
+						key="LLL:EXT:redirects/Resources/Private/Language/locallang_db.xlf:sys_redirect.target"/>
+				</label>
+				<f:form.textfield id="filter-target"
+								  class="form-control"
+								  property="target"
+				/>
+			</div>
+			<div class="col">
+				<label for="filter-status-code" class="form-label">
+					<f:translate
+						key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.targetStatusCode"/>
+				</label>
+				<f:form.select property="code"
+							   id="filter-status-code"
+							   options="{statusCodes}"
+							   class="form-select"
+							   optionValueField="code"
+							   optionLabelField="code"
+							   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
+							   prependOptionValue=""
+				/>
+			</div>
+			<div class="col">
+				<label for="filter-has-page" class="form-label">
+					<f:translate key="filter.field.has_association"/>
+				</label>
+				<f:form.select property="association"
+							   id="filter-has-page"
+							   options="{
 						      present: '{f:translate(key:\'filter.field.has_association.present\')}',
 						      missing: '{f:translate(key:\'filter.field.has_association.missing\')}'
 						   }"
-						   class="form-control input-sm"
-						   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
-						   prependOptionValue=""
-			/>
-		</div>
-		<div class="form-group">
-			<input type="submit" value="{f:translate(key: 'filter.form.submit')}" class="btn btn-default btn-sm" />
+							   class="form-select"
+							   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
+							   prependOptionValue=""
+				/>
+			</div>
+			<div class="col">
+				<input type="submit" value="{f:translate(key: 'filter.form.submit')}" class="btn btn-light"/>
+			</div>
 		</div>
 	</f:form>
 </html>

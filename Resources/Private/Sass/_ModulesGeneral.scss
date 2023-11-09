@@ -53,6 +53,7 @@ div.typo3-fullDoc {
 .in2publish-backend {
   font-size: 15px;
   color: $white;
+  padding-top: 1em;
 
   h1,
   h2,
@@ -771,5 +772,16 @@ div#typo3-docbody.stopScrolling {
 .in2publish-table {
   .col-filename {
     width: 50%;
+  }
+}
+
+.in2publish_core_m1 {
+  .module-docheader-bar-column-left {
+    .form-group {
+      display: flex;
+      .form-select {
+        margin-left: 1em;
+      }
+    }
   }
 }
