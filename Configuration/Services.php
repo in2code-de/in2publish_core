@@ -12,8 +12,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use TYPO3\CMS\Core\DependencyInjection\PublicServicePass;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+use const In2code\In2publishCore\TYPO3_V11;
 
 return static function (ContainerConfigurator $configurator, ContainerBuilder $builder): void {
     $configurator->import('Component/*/Services.php');
@@ -34,8 +35,8 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
     $pageTypeServiceDefinition->setAutowired(true);
     $pageTypeServiceDefinition->setShared(true);
     $pageTypeServiceDefinition->setPublic(true);
-    $typo3version = new Typo3Version();
-    if (version_compare($typo3version->getVersion(), '12', '<')) {
+
+    if (TYPO3_V11) {
         $pageTypeServiceDefinition->setClass(LegacyPageTypeService::class);
     } else {
         $pageTypeServiceDefinition->setClass(PageTypeRegistryService::class);

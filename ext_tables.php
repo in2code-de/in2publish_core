@@ -34,7 +34,8 @@ use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
-use TYPO3\CMS\Core\Information\Typo3Version;
+
+use const In2code\In2publishCore\TYPO3_V11;
 
 (static function (): void {
     /***************************************************** Guards *****************************************************/
@@ -51,8 +52,6 @@ use TYPO3\CMS\Core\Information\Typo3Version;
     $contextService = GeneralUtility::makeInstance(ContextService::class);
     $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
     $isForeign = $contextService->isForeign();
-    /** @var Typo3Version $versionInformation */
-    $typo3Version = new Typo3Version();
 
     /******************************************* Colorize the BE on Foreign *******************************************/
     if ($isForeign && $configContainer->get('features.warningOnForeign.colorizeHeader.enable')) {
@@ -64,7 +63,7 @@ use TYPO3\CMS\Core\Information\Typo3Version;
         return;
     }
 
-    if (version_compare($typo3Version->getVersion(), '12', '<')) {
+    if (TYPO3_V11) {
         /**
          * Deprecated registering of Backend Modules
          * Register Backend Modules for TYPO3 v11

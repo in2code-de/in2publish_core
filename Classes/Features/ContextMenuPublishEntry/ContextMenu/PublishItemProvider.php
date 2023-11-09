@@ -35,11 +35,11 @@ use TYPO3\CMS\Backend\ContextMenu\ItemProviders\AbstractProvider;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function func_get_args;
-use function version_compare;
+
+use const In2code\In2publishCore\TYPO3_V11;
 
 class PublishItemProvider extends AbstractProvider
 {
@@ -54,8 +54,7 @@ class PublishItemProvider extends AbstractProvider
 
     public function __construct()
     {
-        $typo3Version = new Typo3Version();
-        if (version_compare($typo3Version->getVersion(), '12', '<')) {
+        if (TYPO3_V11) {
             parent::__construct(...func_get_args());
         }
 

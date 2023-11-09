@@ -35,11 +35,12 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Throwable;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_diff;
 use function preg_match;
+
+use const In2code\In2publishCore\TYPO3_V11;
 
 class SshConnectionTest implements TestCaseInterface
 {
@@ -101,9 +102,7 @@ class SshConnectionTest implements TestCaseInterface
                 'typo3',
                 'index.php',
             ];
-            /** @var Typo3Version $versionInformation */
-            $typo3Version = new Typo3Version();
-            if (version_compare($typo3Version->getVersion(), '12', '<')) {
+            if (TYPO3_V11) {
                 $requiredNames[] = 'typo3conf';
             }
 
