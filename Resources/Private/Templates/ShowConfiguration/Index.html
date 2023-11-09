@@ -1,26 +1,93 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-	<f:layout name="Default" />
+	<f:layout name="Submodule" />
+
+	<f:section name="Header">
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'module.m4.configuration\')}'}" />
+	</f:section>
 
 	<f:section name="Main">
-		<h2><f:translate key="module_main_title">Publish Content</f:translate></h2>
-
-		<h3><f:translate key="module.m4.global_config">global config</f:translate></h3>
-
-		<f:debug title="{f:translate(key:'module.m4.global_config')}" inline="true">{globalConfig}</f:debug>
-
-		<h3><f:translate key="module.m4.personal_config">personal config</f:translate></h3>
-
-		<f:debug title="{f:translate(key:'module.m4.personal_config')}" inline="true">{fullConfig}</f:debug>
-
-		<h3><f:translate key="module.m4.container_dump">module.m4.container_dump</f:translate></h3>
-
-		<f:form class="form-inline" method="post" addQueryString="1">
-			<div class="form-group mb-2">
-				<label for="emulatePage"><f:translate key="module.m4.emulate_page">module.m4.emulate_page</f:translate></label>
-				<f:form.textfield id="emulatePage" class="form-control" name="emulatePage" value="{emulatePage}" />
+		<a id="global-configuration"></a>
+		<f:render section="navigation" />
+		<div class="card card-default">
+			<div class="card-header">
+				<div class="card-header-body">
+					<h2 class="card-title">
+						<f:translate key="module.m4.global_config">global config</f:translate>
+					</h2>
+				</div>
 			</div>
-		</f:form>
+			<div class="card-body">
+				<f:debug title="{f:translate(key:'module.m4.global_config')}" inline="true">{globalConfig}</f:debug>
+			</div>
+		</div>
 
-		<f:debug title="{f:translate(key:'module.m4.container_dump')}" inline="true">{containerDump}</f:debug>
+		<a id="personal-configuration"></a>
+		<f:render section="navigation" />
+		<div class="card card-default">
+			<div class="card-header">
+				<div class="card-header-body">
+					<h2 class="card-title">
+						<f:translate key="module.m4.personal_config">personal config</f:translate>
+					</h2>
+				</div>
+			</div>
+			<div class="card-body">
+				<f:debug title="{f:translate(key:'module.m4.personal_config')}" inline="true">{fullConfig}</f:debug>
+			</div>
+		</div>
+
+		<a id="config-container-dump"></a>
+		<f:render section="navigation" />
+		<div class="card card-default">
+			<div class="card-header">
+				<div class="card-header-body">
+					<h2 class="card-title">
+						<f:translate key="module.m4.container_dump">module.m4.container_dump</f:translate>
+					</h2>
+				</div>
+			</div>
+			<div class="card-body">
+				<div class="row g-3">
+					<div class="col-lg-4">
+						<f:form class="form-inline" method="post" addQueryString="1">
+							<div class="row row-cols-auto align-items-end g-3">
+								<div class="col">
+									<label for="emulatePage" class="form-label">
+										<f:translate key="module.m4.emulate_page">module.m4.emulate_page</f:translate>
+									</label>
+									<f:form.textfield id="emulatePage" class="form-control" name="emulatePage" value="{emulatePage}" />
+								</div>
+								<div class="col">
+									<f:form.submit class="btn btn-primary" value="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:submit')}" />
+								</div>
+							</div>
+						</f:form>
+					</div>
+					<div class="col-lg-8">
+						<f:debug title="{f:translate(key:'module.m4.container_dump')}" inline="true">{containerDump}</f:debug>
+					</div>
+				</div>
+			</div>
+		</div>
+	</f:section>
+
+	<f:section name="navigation">
+		<ul>
+			<li>
+				<a href="#global-configuration">
+					<f:translate key="module.m4.configuration.navigate.to_global_configuration" />
+				</a>
+			</li>
+			<li>
+				<a href="#personal-configuration">
+					<f:translate key="module.m4.configuration.navigate.to_personal_configuration" />
+				</a>
+			</li>
+			<li>
+				<a href="#config-container-dump">
+					<f:translate key="module.m4.configuration.navigate.config_container_dump" />
+				</a>
+			</li>
+		</ul>
 	</f:section>
 </html>

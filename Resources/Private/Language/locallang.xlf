@@ -16,8 +16,23 @@
 			<trans-unit id="module_m3_title">
 				<source>Publish files</source>
 			</trans-unit>
-			<trans-unit id="module_m4_title">
-				<source>administration tools</source>
+			<trans-unit id="module.m4.introduction.title">
+				<source>Administration Tools</source>
+			</trans-unit>
+			<trans-unit id="module.m4.introduction.get_help.title">
+				<source>Getting Help</source>
+			</trans-unit>
+			<trans-unit id="module.m4.tests.title">
+				<source>Tests</source>
+			</trans-unit>
+			<trans-unit id="module.m4.compare_database">
+				<source>Compare Database</source>
+			</trans-unit>
+			<trans-unit id="module.m4.recordinspector">
+				<source>Record Inspector</source>
+			</trans-unit>
+			<trans-unit id="module.m4.recordinspector.inspection_hint">
+				<source>Select Classification and Identifier for inspection</source>
 			</trans-unit>
 			<trans-unit id="module_m5_title">
 				<source>Publish redirects</source>
@@ -269,11 +284,20 @@
 			<trans-unit id="module.m4.configuration">
 				<source>Configuration</source>
 			</trans-unit>
+			<trans-unit id="module.m4.configuration.navigate.to_global_configuration">
+				<source>Navigate to Global Configuration</source>
+			</trans-unit>
+			<trans-unit id="module.m4.configuration.navigate.to_personal_configuration">
+				<source>Navigate to Personal Configuration</source>
+			</trans-unit>
+			<trans-unit id="module.m4.configuration.navigate.config_container_dump">
+				<source>Navigate to Config Container Dump</source>
+			</trans-unit>
 			<trans-unit id="module.m4.global_config">
 				<source>Global Configuration</source>
 			</trans-unit>
 			<trans-unit id="module.m4.personal_config">
-				<source>Personal Config</source>
+				<source>Personal Configuration</source>
 			</trans-unit>
 			<trans-unit id="module.m4.container_dump">
 				<source>Config Container Dump</source>
@@ -308,14 +332,26 @@
 			<trans-unit id="module.m4.tca.navigate.to_controls">
 				<source>Navigate to controls</source>
 			</trans-unit>
+			<trans-unit id="module.m4.registry_entries">
+				<source>Registry entries</source>
+			</trans-unit>
+			<trans-unit id="module.m4.system_information">
+				<source>System Information</source>
+			</trans-unit>
 			<trans-unit id="module.m4.registry_flushed">
 				<source>Flushed all related registry entries.</source>
+			</trans-unit>
+			<trans-unit id="module.m4.superfluous_envelopes">
+				<source>Superfluous Envelopes</source>
 			</trans-unit>
 			<trans-unit id="module.m4.superfluous_envelopes_flushed">
 				<source>Flushed all superfluous envelopes.</source>
 			</trans-unit>
 			<trans-unit id="module.m4.flush_envelopes">
 				<source>Flush superfluous envelopes.</source>
+			</trans-unit>
+			<trans-unit id="module.m4.flush_envelopes.description">
+				<source>There are superfluous envelopes in the foreign database.</source>
 			</trans-unit>
 			<trans-unit id="module.m4.nothing_to_flush">
 				<source>There are no envelopes to flush.</source>

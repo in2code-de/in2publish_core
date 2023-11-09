@@ -30,20 +30,17 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
-use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Service\Environment\EnvironmentServiceInjection;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function implode;
 
 use const PHP_EOL;
 
-class ToolsController extends ActionController
+class ToolsController extends AbstractAdminToolsController
 {
-    use AdminToolsModuleTemplate;
     use EnvironmentServiceInjection;
 
     public function indexAction(): ResponseInterface

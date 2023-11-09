@@ -29,17 +29,14 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentServiceInjection;
 use In2code\In2publishCore\Testing\Service\TestingServiceInjection;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
-class TestController extends ActionController
+class TestController extends AbstractAdminToolsController
 {
-    use AdminToolsModuleTemplate;
     use EnvironmentServiceInjection;
     use TestingServiceInjection;
 

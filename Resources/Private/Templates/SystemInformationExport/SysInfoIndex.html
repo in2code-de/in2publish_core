@@ -1,25 +1,55 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-	<f:layout name="Default" />
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
+	<f:layout name="Submodule" />
+
+	<f:section name="Header">
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'module.m4.system_information\')}'}" />
+	</f:section>
 
 	<f:section name="Main">
-		<f:link.action class="btn btn-default" action="sysInfoShow">
-			<f:translate id="system_info.show">system_info.show</f:translate>
-		</f:link.action>
-		<f:link.action class="btn btn-default" action="sysInfoDownload">
-			<f:translate id="system_info.download">system_info.download</f:translate>
-		</f:link.action>
-		<f:link.action class="btn btn-default" action="sysInfoDecode">
-			<f:translate id="system_info.decode">system_info.decode</f:translate>
-		</f:link.action>
-		<f:form action="sysInfoUpload" enctype="multipart/form-data" method="post">
-			<div class="form-group">
-				<label for="json_file">
-					<f:translate id="system_info.upload.file">system_info.upload.file</f:translate>
-				</label>
-				<f:form.upload id="json_file" class="form-control" name="jsonFile" />
+		<div class="card-container">
+			<div class="card card-default card-size-medium">
+				<div class="card-body">
+					<p class="card-body-text">
+						<f:link.action class="btn btn-dark btn-block" action="sysInfoShow">
+							<core:icon identifier="apps-toolbar-menu-systeminformation" />
+							<f:translate id="system_info.show">system_info.show</f:translate>
+						</f:link.action>
+					</p>
+					<p class="card-body-text">
+						<f:link.action class="btn btn-dark btn-block" action="sysInfoDownload">
+							<core:icon identifier="actions-download" />
+							<f:translate id="system_info.download">system_info.download</f:translate>
+						</f:link.action>
+					</p>
+					<p class="card-body-text">
+						<f:link.action class="btn btn-dark btn-block" action="sysInfoDecode">
+							<core:icon identifier="actions-search" />
+							<f:translate id="system_info.decode">system_info.decode</f:translate>
+						</f:link.action>
+					</p>
+				</div>
 			</div>
-			<f:form.submit class="btn btn-default"
-						   value="{system_info.upload.upload -> f:translate(id:'system_info.upload.upload')}" />
-		</f:form>
+			<div class="card card-default card-size-medium">
+				<div class="card-body">
+					<f:form action="sysInfoUpload" enctype="multipart/form-data" method="post">
+						<div class="row row-cols-auto align-items-end g-3">
+							<div class="col">
+								<label for="json_file" class="form-label">
+									<f:translate id="system_info.upload.file">system_info.upload.file</f:translate>
+								</label>
+								<f:form.upload id="json_file" class="form-control" name="jsonFile" />
+							</div>
+							<div class="col">
+								<f:form.submit class="btn btn-primary"
+											   value="{system_info.upload.upload -> f:translate(id:'system_info.upload.upload')}" />
+							</div>
+						</div>
+					</f:form>
+				</div>
+			</div>
+		</div>
 	</f:section>
 </html>

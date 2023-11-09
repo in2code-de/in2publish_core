@@ -1,11 +1,27 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-	<f:layout name="Default" />
+	<f:layout name="Submodule" />
+
+	<f:section name="Header">
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'module.m4.system_information\')}'}" />
+	</f:section>
 
 	<f:section name="Main">
-		<div class="form-group">
-			<label for="json_input">JSON</label>
-			<textarea readonly id="json_input" class="form-control" onclick="this.select()">{infoJson}</textarea>
+		<div class="card card-default">
+			<div class="card-header">
+				<div class="card-header-body">
+					<h2 class="card-title">
+						JSON
+					</h2>
+				</div>
+			</div>
+			<div class="card-body">
+				<textarea readonly id="json_input" class="form-control" rows="10" onclick="this.select()">{infoJson}</textarea>
+			</div>
 		</div>
-		<f:debug inline="true" maxDepth="20">{info}</f:debug>
+		<div class="card card-default">
+			<div class="card-body">
+				<f:debug inline="true" maxDepth="20">{info}</f:debug>
+			</div>
+		</div>
 	</f:section>
 </html>

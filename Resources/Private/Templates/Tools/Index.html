@@ -1,30 +1,16 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-	<f:layout name="Default" />
+	<f:layout name="Submodule" />
+
+	<f:section name="Header">
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'module.m4.introduction.title\')}'}" />
+	</f:section>
 
 	<f:section name="Main">
-		<f:if condition="{supports}">
-			<h2>Getting Help</h2>
-
-			<ul>
-				<f:for each="{supports}" as="support">
-					<li>
-						<f:format.raw>{support}</f:format.raw>
-					</li>
-				</f:for>
-			</ul>
-		</f:if>
-
-
-		<h2>
-			<f:translate key="module_main_title">Publish Content</f:translate>
-			-
-			<f:translate key="module_m4_title">Tools</f:translate>
-		</h2>
-
-		<p>
-			<f:translate key="module_m3_index_content">admin tools</f:translate>
-		</p>
-
-		<f:render partial="Tools/IntroductionMenu" arguments="{_all}" />
+		<div class="card-container">
+			<f:if condition="{supports}">
+				<f:render partial="Tools/GetHelp" arguments="{_all}" />
+			</f:if>
+			<f:render partial="Tools/IntroductionMenu" arguments="{_all}" />
+		</div>
 	</f:section>
 </html>
