@@ -47,7 +47,6 @@ use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
@@ -101,14 +100,11 @@ class FileController extends ActionController
         );
     }
 
-    /**
-     * @throws StopActionException
-     */
     public function indexAction(): ResponseInterface
     {
         $pid = BackendUtility::getPageIdentifier();
         try {
-            $recordTree = $this->tryToGetFolderInstance($pid === 0 ? null : $pid);
+            $recordTree = $this->defaultFalFinder->findFolderRecord($pid === 0 ? null : $pid);
         } catch (FolderDoesNotExistOnBothSidesException $e) {
             $uri = $this->request->getUri();
             $queryParts = [];
@@ -137,12 +133,12 @@ class FileController extends ActionController
     /**
      * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
      *
-     * @throws StopActionException
+     * @throws FolderDoesNotExistOnBothSidesException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
     public function publishFolderAction(string $combinedIdentifier, bool $skipNotification = false): ResponseInterface
     {
-        $recordTree = $this->tryToGetFolderInstance($combinedIdentifier, true);
+        $recordTree = $this->defaultFalFinder->findFolderRecord($combinedIdentifier, true);
 
         try {
             $this->publisherService->publishRecordTree($recordTree);
@@ -171,7 +167,6 @@ class FileController extends ActionController
 
     /**
      * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
-     * @throws StopActionException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
     public function publishFileAction(string $combinedIdentifier, bool $skipNotification = false): ResponseInterface
@@ -235,15 +230,6 @@ class FileController extends ActionController
      */
     protected function tryToGetFolderInstance(?string $combinedIdentifier, bool $onlyRoot = false): ?RecordTree
     {
-        if (is_string($combinedIdentifier) && strpos($combinedIdentifier, ':') < strlen($combinedIdentifier)) {
-            [$storage, $name] = explode(':', $combinedIdentifier);
-            $name = trim($name, '/');
-            if (!empty($name)) {
-                $combinedIdentifier = $storage . ':/' . $name . '/';
-            } else {
-                $combinedIdentifier = $storage . ':/';
-            }
-        }
         return $this->defaultFalFinder->findFolderRecord($combinedIdentifier, $onlyRoot);
     }
 }

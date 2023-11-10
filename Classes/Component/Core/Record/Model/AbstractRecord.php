@@ -6,6 +6,8 @@ namespace In2code\In2publishCore\Component\Core\Record\Model;
 
 use Generator;
 use In2code\In2publishCore\Component\Core\Reason\Reasons;
+use In2code\In2publishCore\Component\Core\Record\Iterator\IterationControls\StopIteration;
+use In2code\In2publishCore\Component\Core\Record\Iterator\RecordIterator;
 use In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtensionTrait;
 use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use LogicException;
@@ -33,7 +35,6 @@ abstract class AbstractRecord implements Record
      * @var array<Dependency>
      */
     protected array $dependencies = [];
-    protected bool $hasBeenAskedForRecursiveState = false;
     /**
      * @var array<string, array<Record>>
      */
@@ -220,24 +221,21 @@ abstract class AbstractRecord implements Record
     public function getStateRecursive(): string
     {
         $state = $this->getState();
-        if ($state !== Record::S_UNCHANGED || $this->hasBeenAskedForRecursiveState) {
+        if ($state !== Record::S_UNCHANGED) {
             return $state;
         }
-        $this->hasBeenAskedForRecursiveState = true;
-        foreach ($this->children as $table => $records) {
-            if ('pages' === $table) {
-                continue;
+        $recordState = Record::S_UNCHANGED;
+        $recordIterator = new RecordIterator();
+        $recordIterator->recurse($this, function (Record $record) use (&$recordState) {
+            if ($record->getClassification() === 'pages') {
+                return;
             }
-            foreach ($records as $record) {
-                $state = $record->getStateRecursive();
-                if ($state !== Record::S_UNCHANGED) {
-                    $this->hasBeenAskedForRecursiveState = false;
-                    return Record::S_CHANGED;
-                }
+            if ($record->getState() !== Record::S_UNCHANGED) {
+                $recordState = Record::S_CHANGED;
+                throw new StopIteration();
             }
-        }
-        $this->hasBeenAskedForRecursiveState = false;
-        return Record::S_UNCHANGED;
+        });
+        return $recordState;
     }
 
     public function calculateDependencies(): array

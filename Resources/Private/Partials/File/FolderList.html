@@ -22,7 +22,7 @@
 				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" fallbackProperty="combinedIdentifier" />
 			</td>
 			<td class="col-control col-publish">
-				<f:if condition="{record.changed}">
+				<f:if condition="{record.stateRecursive} != 'unchanged'">
 					<f:link.action
 						class="js-publish-trigger js-publish-overlay btn btn-default"
 						action="publishFolder"

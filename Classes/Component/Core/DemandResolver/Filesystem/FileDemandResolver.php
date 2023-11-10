@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\Core\FileHandling;
+namespace In2code\In2publishCore\Component\Core\DemandResolver\Filesystem;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoServiceInjection;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FilesystemInformationCollection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\ForeignFileInfoServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\LocalFileInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 
 use function array_keys;
-use function hash;
 
 class FileDemandResolver implements DemandResolver
 {
     use RecordFactoryInjection;
-    use ForeignFileSystemInfoServiceInjection;
-    use FileSystemInfoServiceInjection;
+    use LocalFileInfoServiceInjection;
+    use ForeignFileInfoServiceInjection;
 
     public function resolveDemand(Demands $demands, RecordCollection $recordCollection): void
     {
@@ -35,9 +35,9 @@ class FileDemandResolver implements DemandResolver
             }
         }
 
-        $localDriverInfo = $this->fileSystemInfoService->getFileInfo($filesArray);
+        $localDriverInfo = $this->localFileInfoService->getFileInfo($filesArray);
         $localFileInfo = $this->addFileInfoToDriverInfo($files, $localDriverInfo);
-        $foreignDriverInfo = $this->foreignFileSystemInfoService->getFileInfo($filesArray);
+        $foreignDriverInfo = $this->foreignFileInfoService->getFileInfo($filesArray);
         $foreignFileInfo = $this->addFileInfoToDriverInfo($files, $foreignDriverInfo);
 
         foreach ($files as $storage => $identifiers) {
@@ -57,24 +57,13 @@ class FileDemandResolver implements DemandResolver
         }
     }
 
-    protected function addFileInfoToDriverInfo(array $files, array $driverInfo): array
+    protected function addFileInfoToDriverInfo(array $files, FilesystemInformationCollection $driverInfo): array
     {
         $result = [];
         foreach ($files as $storage => $identifiers) {
             foreach ($identifiers as $identifier => $parentRecords) {
-                if (isset($driverInfo[$storage][$identifier])) {
-                    $fileInfo = $driverInfo[$storage][$identifier];
-                    $result[$storage][$identifier] = [
-                        'storage' => $storage,
-                        'identifier' => $identifier,
-                        'identifier_hash' => hash('sha1', $identifier),
-                        'size' => $fileInfo['size'],
-                        'mimetype' => $fileInfo['mimetype'],
-                        'name' => $fileInfo['name'],
-                        'extension' => $fileInfo['extension'],
-                        'folder_hash' => $fileInfo['folder_hash'],
-                    ];
-                }
+                $fileInfo = $driverInfo->getInfo($storage, $identifier);
+                $result[$storage][$identifier] = $fileInfo->toArray();
             }
         }
         return $result;

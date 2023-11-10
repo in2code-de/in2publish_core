@@ -30,9 +30,10 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall;
  */
 
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FilesystemInformationCollection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\LocalFileInfoServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\LocalFolderInfoServiceInjection;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Exception\StorageIsOfflineException;
-use InvalidArgumentException;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 
@@ -42,12 +43,12 @@ use function method_exists;
 class EnvelopeDispatcher
 {
     use ResourceFactoryInjection;
-    use FileSystemInfoServiceInjection;
+    use LocalFolderInfoServiceInjection;
+    use LocalFileInfoServiceInjection;
 
-    public const CMD_FOLDER_EXISTS = 'folderExists';
-    public const CMD_FILE_EXISTS = 'fileExists';
-    public const CMD_LIST_FOLDER_CONTENTS = 'listFolderContents';
+    public const CMD_GET_FOLDER_INFO = 'getFolderInfo';
     public const CMD_GET_FILE_INFO = 'getFileInfo';
+    public const CMD_FILE_EXISTS = 'fileExists';
 
     public function dispatch(Envelope $envelope): bool
     {
@@ -62,30 +63,19 @@ class EnvelopeDispatcher
         return false;
     }
 
-    protected function folderExists(array $request): bool
+    protected function getFolderInfo(array $request): FilesystemInformationCollection
     {
-        return $this->getStorageDriver($request)->folderExists($request['folderIdentifier']);
+        return $this->localFolderInfoService->getFolderInfo($request);
+    }
+
+    public function getFileInfo(array $request): FilesystemInformationCollection
+    {
+        return $this->localFileInfoService->getFileInfo($request);
     }
 
     protected function fileExists(array $request): bool
     {
         return $this->getStorageDriver($request)->fileExists($request['fileIdentifier']);
-    }
-
-    public function listFolderContents(array $request): array
-    {
-        $storageUid = $request['storageUid'];
-        $identifier = $request['identifier'];
-        try {
-            return $this->fileSystemInfoService->listFolderContents($storageUid, $identifier);
-        } catch (InvalidArgumentException $e) {
-            return [];
-        }
-    }
-
-    public function getFileInfo(array $request): array
-    {
-        return $this->fileSystemInfoService->getFileInfo($request['files']);
     }
 
     protected function getStorageDriver(array $request): DriverInterface

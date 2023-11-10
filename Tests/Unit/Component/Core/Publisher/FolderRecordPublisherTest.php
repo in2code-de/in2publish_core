@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Publisher;
 
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FolderInfo;
 use In2code\In2publishCore\Component\Core\Publisher\FolderRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFolderInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFolderInstruction;
@@ -47,14 +48,8 @@ class FolderRecordPublisherTest extends AbstractFilesystemPublisherTest
         $folderRecordPublisher = $this->createFolderRecordPublisher();
 
         $deletedFolder = new FolderRecord(
-            '1:/foo/bar',
             [],
-            [
-                'combinedIdentifier' => '1:/foo/bar',
-                'identifier' => '/foo/bar',
-                'name' => 'bar',
-                'storage' => 1,
-            ],
+            (new FolderInfo(1, '/foo/bar', 'bar'))->toArray(),
         );
 
         $foreignDatabase = $this->createMock(Connection::class);
@@ -87,13 +82,7 @@ class FolderRecordPublisherTest extends AbstractFilesystemPublisherTest
         $folderRecordPublisher = $this->createFolderRecordPublisher();
 
         $addedFolder = new FolderRecord(
-            '1:/foo/bar',
-            [
-                'combinedIdentifier' => '1:/foo/bar',
-                'identifier' => '/foo/bar',
-                'name' => 'bar',
-                'storage' => 1,
-            ],
+            (new FolderInfo(1, '/foo/bar', 'bar'))->toArray(),
             [],
         );
 

@@ -84,14 +84,14 @@ class RecordTreeBuilderTest extends UnitTestCase
             1 => 'table_foo',
         ]);
 
-        $tcaService = $this->createMock(PageTypeService::class);
-        $tcaService->method('getTablesAllowedOnPage')->willReturn(['table_foo']);
+        $pageTypeService = $this->createMock(PageTypeService::class);
+        $pageTypeService->method('getTablesAllowedOnPage')->willReturn(['table_foo']);
 
         $recordTreeBuilder->injectDemandResolver($demandResolver);
         $recordTreeBuilder->injectRecordIndex($recordIndex);
         $recordTreeBuilder->injectDemandsFactory($demandsFactory);
         $recordTreeBuilder->injectRelevantTablesService($relevantTablesService);
-        $recordTreeBuilder->injectTcaService($tcaService);
+        $recordTreeBuilder->injectPageTypeService($pageTypeService);
 
         // act
         $recordsInCollection = $recordTreeBuilder->findAllRecordsOnPages();

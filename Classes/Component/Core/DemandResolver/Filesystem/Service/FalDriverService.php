@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\Core\FileHandling\Service;
+namespace In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service;
 
 use In2code\In2publishCore\CommonInjection\FlexFormServiceInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
@@ -11,8 +11,6 @@ use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Driver\DriverRegistry;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-use function in_array;
 
 class FalDriverService
 {
@@ -49,38 +47,6 @@ class FalDriverService
             $this->rtc[$storage] = $driver;
         }
         return $this->rtc[$storage];
-    }
-
-    /**
-     * @return array<int, DriverInterface>
-     */
-    public function getDrivers(array $storagesUids): array
-    {
-        $query = $this->localDatabase->createQueryBuilder();
-        $query->getRestrictions()->removeAll();
-        $query->select('*')
-              ->from('sys_file_storage')
-              ->where($query->expr()->in('uid', $storagesUids));
-        $result = $query->executeQuery();
-        $storages = $result->fetchAllAssociative();
-
-        $drivers = [];
-        foreach ($storages as $storage) {
-            $storageUid = $storage['uid'];
-            if (!isset($this->rtc[$storageUid])) {
-                $this->rtc[$storageUid] = $this->createFalDriver($storage);
-            }
-            $drivers[$storageUid] = $this->rtc[$storageUid];
-        }
-
-        if (in_array(0, $storagesUids)) {
-            if (!isset($this->rtc[0])) {
-                $this->rtc[0] = $this->createFallbackDriver();
-            }
-            $drivers[0] = $this->rtc[0];
-        }
-
-        return $drivers;
     }
 
     protected function createFalDriver(array $storage): DriverInterface

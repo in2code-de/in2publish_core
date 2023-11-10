@@ -195,7 +195,6 @@ class RecordFactoryTest extends UnitTestCase
         $recordFactory->injectRecordIndex($recordIndex);
 
         $record = $recordFactory->createFolderRecord(
-            'combined_identifier',
             ['field_foo' => 'value_foo'],
             [],
         );

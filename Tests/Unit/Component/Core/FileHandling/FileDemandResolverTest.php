@@ -6,18 +6,23 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
-use In2code\In2publishCore\Component\Core\FileHandling\FileDemandResolver;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\FileDemandResolver;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FileInfo;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FilesystemInformationCollection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\ForeignFileInfoService;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\LocalFileInfoService;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
+use function bin2hex;
 use function hash;
+use function random_bytes;
+use function sha1;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\FileHandling\FileDemandResolver
+ * @coversDefaultClass \In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\FileDemandResolver
  */
 class FileDemandResolverTest extends UnitTestCase
 {
@@ -27,67 +32,70 @@ class FileDemandResolverTest extends UnitTestCase
     public function testResolveDemand(): void
     {
         $fileDemandResolver = new FileDemandResolver();
-        $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);
-        $file2 = new FileRecord(['identifier' => 'file2', 'storage' => 42], []);
 
-        $filesArray = [
-            42 => [
-                'foo/bar' => [$file1],
-                '/file.txt' => [$file2],
-            ],
-        ];
-        $fileInfoArray = $filesArray;
-        $fileInfoArray[42]['foo/bar'] = [
-            'size' => 123,
-            'mimetype' => 'some_mimetype',
-            'name' => 'some_name',
-            'extension' => 'some_extension',
-            'folder_hash' => 'some_folder_hash',
-        ];
-        $fileInfoArray[42]['/file.txt'] = [
-            'size' => 123,
-            'mimetype' => 'some_mimetype',
-            'name' => 'some_name',
-            'extension' => 'some_extension',
-            'folder_hash' => 'some_folder_hash',
-        ];
+        $childFile1Info = new FileInfo(
+            42,
+            'foo/bar',
+            'some_name',
+            sha1(bin2hex(random_bytes(15))),
+            null,
+            123,
+            'some_mimetype',
+            'some_extension',
+            'some_folder_hash',
+            sha1('foo/bar')
+        );
+        $childFile2Info = new FileInfo(
+            42,
+            '/file.txt',
+            'some_name',
+            sha1(bin2hex(random_bytes(15))),
+            null,
+            123,
+            'some_mimetype',
+            'some_extension',
+            'some_folder_hash',
+            sha1('foo/bar')
+        );
+        $fileInfoArray = new FilesystemInformationCollection();
+        $fileInfoArray->addFilesystemInfo($childFile1Info);
+        $fileInfoArray->addFilesystemInfo($childFile2Info);
 
-        $fileSystemInfoService = $this->createMock(FileSystemInfoService::class);
+        $fileSystemInfoService = $this->createMock(LocalFileInfoService::class);
         $fileSystemInfoService->expects($this->once())->method('getFileInfo')->willReturn($fileInfoArray);
 
-        $foreignFileSystemInfoService = $this->createMock(ForeignFileSystemInfoService::class);
+        $foreignFileInfoService = $this->createMock(ForeignFileInfoService::class);
 
+        $fileRecordChild1 = new FileRecord($childFile1Info->toArray(), []);
+        $fileRecordChild2 = new FileRecord($childFile2Info->toArray(), []);
         $recordFactory = $this->createMock(RecordFactory::class);
-        $localProps = $fileInfoArray[42]['foo/bar'];
-        $localProps['storage'] = 42;
-        $localProps['identifier'] = 'foo/bar';
-        $localProps['identifier_hash'] = hash('sha1', 'foo/bar');
-        $fileRecordChild1 = new FileRecord($localProps, []);
-
-        $localProps = $fileInfoArray[42]['/file.txt'];
-        $localProps['storage'] = 42;
-        $localProps['identifier'] = '/file.txt';
-        $localProps['identifier_hash'] = hash('sha1', '/file.txt');
-        $fileRecordChild2 = new FileRecord($localProps, []);
         $recordFactory->method('createFileRecord')->willReturnOnConsecutiveCalls(
             $fileRecordChild1,
             $fileRecordChild2,
         );
 
-        $fileDemandResolver->injectFileSystemInfoService($fileSystemInfoService);
-        $fileDemandResolver->injectForeignFileSystemInfoService($foreignFileSystemInfoService);
+        $fileDemandResolver->injectLocalFileInfoService($fileSystemInfoService);
+        $fileDemandResolver->injectForeignFileInfoService($foreignFileInfoService);
         $fileDemandResolver->injectRecordFactory($recordFactory);
 
         $demands = $this->createMock(DemandsCollection::class);
 
-        $demands->method('getDemandsByType')->with(FileDemand::class)->willReturn($filesArray);
+        $parentFile1 = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);
+        $parentFile2 = new FileRecord(['identifier' => 'file2', 'storage' => 42], []);
+        $fileDemand = [
+            42 => [
+                'foo/bar' => [$parentFile1],
+                '/file.txt' => [$parentFile2],
+            ],
+        ];
+        $demands->method('getDemandsByType')->with(FileDemand::class)->willReturn($fileDemand);
         $recordCollection = new RecordCollection();
         $fileDemandResolver->resolveDemand($demands, $recordCollection);
 
-        $file1Children = $file1->getChildren();
+        $file1Children = $parentFile1->getChildren();
         $this->assertSame($fileRecordChild1, $file1Children['_file']['42:foo/bar']);
 
-        $file2Children = $file2->getChildren();
+        $file2Children = $parentFile2->getChildren();
         $this->assertSame($fileRecordChild2, $file2Children['_file']['42:/file.txt']);
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\Core\FileHandling;
+namespace In2code\In2publishCore\Features\ResolveFilesForIndices\EventListener;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
@@ -17,18 +17,15 @@ class FileRecordListener
     use DemandsFactoryInjection;
     use DemandResolverInjection;
 
-    /**
-     * @var list<Record>
-     */
+    /** @var array<Record> */
     protected array $fileRecords = [];
 
     public function onRecordWasCreated(RecordWasCreated $event): void
     {
         $record = $event->getRecord();
-        if ('sys_file' !== $record->getClassification()) {
-            return;
+        if ('sys_file' === $record->getClassification()) {
+            $this->fileRecords[] = $record;
         }
-        $this->fileRecords[] = $record;
     }
 
     public function onRecordRelationsWereResolved(): void

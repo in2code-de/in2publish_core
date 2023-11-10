@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverServiceInjection;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\MoveFileInstruction;
