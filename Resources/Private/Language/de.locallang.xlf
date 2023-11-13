@@ -1,812 +1,476 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<xliff version="1.0">
-	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2015-01-20T12:00:00Z" product-name="in2publish_core">
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" target-language="de" datatype="plaintext" original="EXT:in2publish_core/Resources/Private/Language/locallang.xlf" date="2023-11-13T09:19:14Z" product-name="in2publish_core">
 		<header/>
 		<body>
-			<trans-unit id="web_In2publishCoreM1">
+			<trans-unit id="web_In2publishCoreM1" resname="web_In2publishCoreM1">
 				<source>Publish Overview</source>
-				<target state="translated">Publisher Übersicht</target>
+				<target>Publisher Übersicht</target>
 			</trans-unit>
-
-			<trans-unit id="module_main_title">
+			<trans-unit id="module_main_title" resname="module_main_title">
 				<source>TYPO3 Content Publisher</source>
-				<target state="translated">TYPO3 Content Publisher</target>
+				<target>TYPO3 Content Publisher</target>
 			</trans-unit>
-			<trans-unit id="module_m1_title">
+			<trans-unit id="module_m1_title" resname="module_m1_title">
 				<source>publish pages and records overview</source>
-				<target state="translated">Übersicht Seiten und Datensätze veröffentlichen</target>
+				<target>Übersicht Seiten und Datensätze veröffentlichen</target>
 			</trans-unit>
-			<trans-unit id="module_m3_title">
+			<trans-unit id="module_m3_title" resname="module_m3_title">
 				<source>Publish files</source>
-				<target state="translated">Dateien veröffentlichen</target>
+				<target>Dateien veröffentlichen</target>
 			</trans-unit>
-			<trans-unit id="module_m4_title">
-				<source>administration tools</source>
-				<target state="translated">Tools für Administratoren</target>
-			</trans-unit>
-			<trans-unit id="module_m5_title">
+			<trans-unit id="module_m5_title" resname="module_m5_title">
 				<source>Publish redirects</source>
-				<target state="translated">Redirects veröffentlichen</target>
+				<target>Redirects veröffentlichen</target>
 			</trans-unit>
-
-			<trans-unit id="m1.page_recursion">
+			<trans-unit id="m1.page_recursion" resname="m1.page_recursion">
 				<source>Depth</source>
-				<target state="translated">Tiefe</target>
+				<target>Tiefe</target>
 			</trans-unit>
-			<trans-unit id="m1.page_recursion.depth">
+			<trans-unit id="m1.page_recursion.depth" resname="m1.page_recursion.depth">
 				<source>%d level</source>
-				<target state="translated">%d Ebene</target>
+				<target>%d Ebene</target>
 			</trans-unit>
-			<trans-unit id="m1.page_recursion.depths">
+			<trans-unit id="m1.page_recursion.depths" resname="m1.page_recursion.depths">
 				<source>%d levels</source>
-				<target state="translated">%d Ebenen</target>
+				<target>%d Ebenen</target>
 			</trans-unit>
-
-			<trans-unit id="label_stage">
+			<trans-unit id="label_stage" resname="label_stage">
 				<source>Stage System</source>
-				<target state="translated">Redaktionssystem</target>
+				<target>Redaktionssystem</target>
 			</trans-unit>
-			<trans-unit id="label_production">
+			<trans-unit id="label_production" resname="label_production">
 				<source>Production System</source>
-				<target state="translated">Produktivsystem</target>
+				<target>Produktivsystem</target>
 			</trans-unit>
-			<trans-unit id="record_published">
+			<trans-unit id="record_published" resname="record_published">
 				<source>The selected record has been published successfully. (Duration: %s)</source>
-				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht. (Dauer: %s)</target>
+				<target>Der ausgewählte Datensatz wurde erfolgreich veröffentlicht. (Dauer: %s)</target>
 			</trans-unit>
-			<trans-unit id="record_publishing_failure">
+			<trans-unit id="record_publishing_failure" resname="record_publishing_failure">
 				<source>One or more errors occurred during publishing. Please check the logs. (Duration: %s)</source>
-				<target state="translated">Ein oder mehrere Fehler traten während des Publizierungsvorgangs auf. Bitte prüfen Sie die Fehlerlogs. (Dauer: %s)</target>
+				<target>Ein oder mehrere Fehler traten während des Publizierungsvorgangs auf. Bitte prüfen Sie die Fehlerlogs. (Dauer: %s)</target>
 			</trans-unit>
-			<trans-unit id="relation_resolving_errors">
+			<trans-unit id="relation_resolving_errors" resname="relation_resolving_errors">
 				<source>One or more errors occurred during relation resolving. Please check the logs.</source>
-				<target state="translated">Ein oder mehrere Fehler traten auf während die Verknüpfungen aufgelöst wurden. Bitte prüfen Sie die Fehlerlogs.</target>
+				<target>Ein oder mehrere Fehler traten auf während die Verknüpfungen aufgelöst wurden. Bitte prüfen Sie die Fehlerlogs.</target>
 			</trans-unit>
-			<trans-unit id="publish_failed">
+			<trans-unit id="publish_failed" resname="publish_failed">
 				<source>The selected record has been published successfully.</source>
-				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht.</target>
+				<target>Der ausgewählte Datensatz wurde erfolgreich veröffentlicht.</target>
 			</trans-unit>
-			<trans-unit id="folder_created">
+			<trans-unit id="folder_created" resname="folder_created">
 				<source>The selected folder has been created successfully.</source>
-				<target state="translated">Der ausgewählte Ordner wurde erfolgreich angelegt.</target>
+				<target>Der ausgewählte Ordner wurde erfolgreich angelegt.</target>
 			</trans-unit>
-			<trans-unit id="folder_creation_failed">
+			<trans-unit id="folder_creation_failed" resname="folder_creation_failed">
 				<source>The selected folder could not be created.</source>
-				<target state="translated">Der ausgewählte Ordner konnte nicht angelegt werden.</target>
+				<target>Der ausgewählte Ordner konnte nicht angelegt werden.</target>
 			</trans-unit>
-			<trans-unit id="folder_removed">
+			<trans-unit id="folder_removed" resname="folder_removed">
 				<source>The selected folder has been removed successfully.</source>
-				<target state="translated">Der ausgewählte Ordner wurde erfolgreich gelöscht.</target>
+				<target>Der ausgewählte Ordner wurde erfolgreich gelöscht.</target>
 			</trans-unit>
-			<trans-unit id="folder_removal_failed">
+			<trans-unit id="folder_removal_failed" resname="folder_removal_failed">
 				<source>The selected folder could not be removed.</source>
-				<target state="translated">Der ausgewählte Ordner konnte nicht gelöscht werden.</target>
+				<target>Der ausgewählte Ordner konnte nicht gelöscht werden.</target>
 			</trans-unit>
-			<trans-unit id="folder_retrieving_failed">
-				<source>in2publish failed to retrieve information about the folder %s or any of it's sub folders. Please verify that is in2publish is working properly by running the tests.</source>
-				<target state="translated">in2publish konnte keine Informationen über den Ordner %s oder einen seiner Unterordner auslesen. Bitte überprüfen Sie ob in2publish korrekt eingerichtet ist, indem Sie die Tests durchführen.</target>
+			<trans-unit id="folder_retrieving_failed" resname="folder_retrieving_failed">
+				<source>in2publish failed to retrieve information about the folder %s or any of it&#039;s sub folders. Please verify that is in2publish is working properly by running the tests.</source>
+				<target>in2publish konnte keine Informationen über den Ordner %s oder einen seiner Unterordner auslesen. Bitte überprüfen Sie ob in2publish korrekt eingerichtet ist, indem Sie die Tests durchführen.</target>
 			</trans-unit>
-			<trans-unit id="label_publish_all_pages">
-				<source>Publish page "%s" and its subpages.</source>
-				<target state="translated">Veröffentlichen der Seite "%s" und ihrer Unterseiten</target>
+			<trans-unit id="label_publish_all_pages" resname="label_publish_all_pages">
+				<source>Publish page &quot;%s&quot; and its subpages.</source>
+				<target>Veröffentlichen der Seite &quot;%s&quot; und ihrer Unterseiten</target>
 			</trans-unit>
-			<trans-unit id="confirm_publish_all_pages">
+			<trans-unit id="confirm_publish_all_pages" resname="confirm_publish_all_pages">
 				<source>Do you really want to publish all pages?</source>
-				<target state="translated">Möchten Sie wirklich alle Seiten veröffentlichen?</target>
+				<target>Möchten Sie wirklich alle Seiten veröffentlichen?</target>
 			</trans-unit>
-			<trans-unit id="confirm_publish_pages">
+			<trans-unit id="confirm_publish_pages" resname="confirm_publish_pages">
 				<source>Do you really want to publish this page?</source>
-				<target state="translated">Möchten Sie diese Seite wirklich veröffentlichen?</target>
+				<target>Möchten Sie diese Seite wirklich veröffentlichen?</target>
 			</trans-unit>
-			<trans-unit id="publish">
+			<trans-unit id="publish" resname="publish">
 				<source>Publish</source>
 				<target>Publizieren</target>
 			</trans-unit>
-			<trans-unit id="publish_pages">
+			<trans-unit id="publish_pages" resname="publish_pages">
 				<source>Publish this page</source>
-				<target state="translated">Diese Seite publizieren</target>
+				<target>Diese Seite publizieren</target>
 			</trans-unit>
-			<trans-unit id="publishing_page">
+			<trans-unit id="publishing_page" resname="publishing_page">
 				<source>This page is currently being published</source>
-				<target state="translated">Diese Seite wird gerade veröffentlicht</target>
+				<target>Diese Seite wird gerade veröffentlicht</target>
 			</trans-unit>
-			<trans-unit id="publishing_file">
+			<trans-unit id="publishing_file" resname="publishing_file">
 				<source>This file is currently being published</source>
-				<target state="translated">Diese Datei wird gerade veröffentlicht</target>
+				<target>Diese Datei wird gerade veröffentlicht</target>
 			</trans-unit>
-			<trans-unit id="label_publish_all_files">
-				<source>Publish all files within folder "%s".</source>
-				<target state="translated">Veröffentlichen aller Dateien innerhalb von "%s"</target>
+			<trans-unit id="label_publish_all_files" resname="label_publish_all_files">
+				<source>Publish all files within folder &quot;%s&quot;.</source>
+				<target>Veröffentlichen aller Dateien innerhalb von &quot;%s&quot;</target>
 			</trans-unit>
-			<trans-unit id="confirm_publish_all_files">
+			<trans-unit id="confirm_publish_all_files" resname="confirm_publish_all_files">
 				<source>Do you really want to publish all files?</source>
-				<target state="translated">Möchten Sie wirklich alle Dateien veröffentlichen?</target>
+				<target>Möchten Sie wirklich alle Dateien veröffentlichen?</target>
 			</trans-unit>
-			<trans-unit id="confirm_publish_file">
+			<trans-unit id="confirm_publish_file" resname="confirm_publish_file">
 				<source>Do you really want to publish this file?</source>
-				<target state="translated">Möchten Sie diese Datei wirklich veröffentlichen?</target>
+				<target>Möchten Sie diese Datei wirklich veröffentlichen?</target>
 			</trans-unit>
-			<trans-unit id="dirty_properties_preview_page">
+			<trans-unit id="dirty_properties_preview_page" resname="dirty_properties_preview_page">
 				<source>Preview</source>
-				<target state="translated">Vorschau</target>
+				<target>Vorschau</target>
 			</trans-unit>
-			<trans-unit id="dirty_properties_preview_compare">
+			<trans-unit id="dirty_properties_preview_compare" resname="dirty_properties_preview_compare">
 				<source>Compare</source>
-				<target state="translated">Vergleichsansicht</target>
+				<target>Vergleichsansicht</target>
 			</trans-unit>
-			<trans-unit id="dirty_properties_history_page">
+			<trans-unit id="dirty_properties_history_page" resname="dirty_properties_history_page">
 				<source>History</source>
-				<target state="translated">Historie</target>
+				<target>Historie</target>
 			</trans-unit>
-			<trans-unit id="dirty_properties_preview_file">
+			<trans-unit id="dirty_properties_preview_file" resname="dirty_properties_preview_file">
 				<source>File preview</source>
-				<target state="translated">Dateivorschau</target>
+				<target>Dateivorschau</target>
 			</trans-unit>
-			<trans-unit id="dirty_properties_edit_main">
+			<trans-unit id="dirty_properties_edit_main" resname="dirty_properties_edit_main">
 				<source>Edit</source>
-				<target state="translated">Bearbeiten</target>
+				<target>Bearbeiten</target>
 			</trans-unit>
-			<trans-unit id="dirty_properties_pageproperties">
+			<trans-unit id="dirty_properties_pageproperties" resname="dirty_properties_pageproperties">
 				<source>%s properties</source>
-				<target state="translated">Eigenschaften von %s</target>
+				<target>Eigenschaften von %s</target>
 			</trans-unit>
-			<trans-unit id="dirty_properties_fileproperties">
+			<trans-unit id="dirty_properties_fileproperties" resname="dirty_properties_fileproperties">
 				<source>Page properties</source>
-				<target state="translated">Seiteneigenschaften</target>
+				<target>Seiteneigenschaften</target>
 			</trans-unit>
-			<trans-unit id="dirty_properties_undo">
+			<trans-unit id="dirty_properties_undo" resname="dirty_properties_undo">
 				<source>Record history</source>
-				<target state="translated">Datensatz Historie</target>
+				<target>Datensatz Historie</target>
 			</trans-unit>
-			<trans-unit id="dirty_properties_edit">
+			<trans-unit id="dirty_properties_edit" resname="dirty_properties_edit">
 				<source>Edit record</source>
-				<target state="translated">Datensatz bearbeiten</target>
+				<target>Datensatz bearbeiten</target>
 			</trans-unit>
-			<trans-unit id="related_records">
+			<trans-unit id="related_records" resname="related_records">
 				<source>Related Records</source>
-				<target state="translated">Verknüpfte Datensätze</target>
+				<target>Verknüpfte Datensätze</target>
 			</trans-unit>
-			<trans-unit id="record_state">
+			<trans-unit id="record_state" resname="record_state">
 				<source>Record State</source>
-				<target state="translated">Datensatz Status</target>
+				<target>Datensatz Status</target>
 			</trans-unit>
-
-			<trans-unit id="moduleselector.index">
-				<source>Introduction</source>
-				<target state="translated">Übersicht</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.index.description">
-				<source>This tool just lists all other tools.</source>
-				<target state="translated">Dieses Tool listet nur alle anderen Tools auf</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.configuration">
-				<source>Show configuration</source>
-				<target state="translated">Konfigurationsübersicht</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.configuration.description">
-				<source>Display the local configuration of in2publish from LocalConfiguration.yaml</source>
-				<target state="translated">Zeige die aktuelle Konfiguration von in2publish von der LocalConfiguration.yaml Datei</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.logs">
-				<source>Show logs</source>
-				<target state="translated">Logs anzeigen</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.logs.description">
-				<source>Show all logs of the Content Publisher with plenty filter options</source>
-				<target state="translated">Zeigt die Logeinträge des Content Publishers mit vielen Filteroptionen an</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.test">
-				<source>Tests</source>
-				<target state="translated">Tests</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.test.description">
-				<source>Run some function test of in2publish</source>
-				<target state="translated">Teste in2publish auf Funktionsfähigkeit</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.tca">
-				<source>Inspect TCA</source>
-				<target state="translated">TCA inspection</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.tca.description">
-				<source>See which parts of the TCA are processed, and the reason why others are not.</source>
-				<target state="translated">Zeige die Teile des TCA die verwendet werden und alle anderen mit der Begründung warum sie nicht verwendet werden.</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.flush_envelopes">
-				<source>Remove superfluous envelopes</source>
-				<target state="translated">Überflüssige Envelopes löschen</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.flush_envelopes.description">
-				<source>Deletes all envelopes (remote procedure call database entries) which were already used (envelopes are one-way records).</source>
-				<target state="translated">Löscht alle Envelopes  ("Remote Procedure Call"-Datenbankeinträge) die bereits genutzt wurden (Diese sind Einweg-Einträge)</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.flush_registry">
-				<source>Remove all Registry entries</source>
-				<target state="translated">Registereinträge löschen</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.flush_registry.description">
-				<source>Removes all registry entries which store information about the local and foreign environment. You must run the test after flushing these.</source>
-				<target state="translated">Löscht alle Registereinträge, welche Informationen über das lokale und entfernte System vorhalten. Danach müssen die Tests erneut ausgeführt werden.</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.system_info">
-				<source>System information</source>
-				<target state="translated">Systeminformationen</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.system_info.description">
-				<source>Use this module to collect information which will be required or useful to solve a bug or problem.</source>
-				<target state="translated">Anzeige von Informationen welche erforderlich oder nützlich sind Probleme zu identifizieren und sie zu beheben.</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.compare">
-				<source>Compare Databases</source>
-				<target state="translated">Datenbankvergleich</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.compare.description">
-				<source>The compare tool scans the whole database for differences. This tool is ought to help administrators clean up UID conflicts.</source>
-				<target state="translated">Zeigt unterschiede zwischen den Datenbanken an. Dieses Tools soll Administratoren dabei helfen UID-Konflikte zu lösen.</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.record_inspector">
-				<source>Inspect a record tree</source>
-				<target state="translated">RecordTree Untersuchen</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.record_inspector.description">
-				<source>You can query for a record tree by classification and identifier and inspect it with all of its properties and children.</source>
-				<target state="translated">Hier kann ein RecordTree mittels Klassifikation und Identifikation aufgebaut und untersucht werden..</target>
-			</trans-unit>
-
-			<trans-unit id="system_info.show">
-				<source>Show the system info</source>
-				<target state="translated">Systeminformationen anzeigen</target>
-			</trans-unit>
-			<trans-unit id="system_info.download">
-				<source>Download the system info</source>
-				<target state="translated">Systeminformationen herunterladen</target>
-			</trans-unit>
-			<trans-unit id="system_info.decode">
-				<source>Decode the system info JSON</source>
-				<target state="translated">JSON dekodieren</target>
-			</trans-unit>
-			<trans-unit id="system_info.decode.json">
-				<source>JSON string</source>
-				<target state="translated">JSON Text</target>
-			</trans-unit>
-			<trans-unit id="system_info.decode.decode">
-				<source>Decode!</source>
-				<target state="translated">Dekodieren</target>
-			</trans-unit>
-			<trans-unit id="system_info.decode.json_error">
-				<source>Error during json decoding</source>
-				<target state="translated">Fehler während des dekodierens</target>
-			</trans-unit>
-			<trans-unit id="system_info.decode.json_error.details">
-				<source>JSON decode error #%d: %s</source>
-				<target state="translated">JSON dekodierfehler #%d: %s</target>
-			</trans-unit>
-			<trans-unit id="system_info.upload.file">
-				<source>SysInfo JSON file</source>
-				<target state="translated">Systeminformationen JSON Datei</target>
-			</trans-unit>
-			<trans-unit id="system_info.upload.upload">
-				<source>Upload!</source>
-				<target state="translated">Hochladen!</target>
-			</trans-unit>
-
-			<trans-unit id="record.filter">
+			<trans-unit id="record.filter" resname="record.filter">
 				<source>Filter by:</source>
 				<target>Filtern nach:</target>
 			</trans-unit>
-
-			<trans-unit id="record.filename">
+			<trans-unit id="record.filename" resname="record.filename">
 				<source>Filename</source>
 				<target>Dateiname</target>
 			</trans-unit>
-
-			<trans-unit id="record.state">
+			<trans-unit id="record.state" resname="record.state">
 				<source>Status</source>
 				<target>Status</target>
 			</trans-unit>
-
-			<trans-unit id="record.state.unchanged">
+			<trans-unit id="record.state.unchanged" resname="record.state.unchanged">
 				<source>Record unchanged</source>
-				<target state="translated">Unverändert</target>
+				<target>Unverändert</target>
 			</trans-unit>
-			<trans-unit id="record.state.changed">
+			<trans-unit id="record.state.changed" resname="record.state.changed">
 				<source>Record changed</source>
-				<target state="translated">Datensatz geändert</target>
+				<target>Datensatz geändert</target>
 			</trans-unit>
-			<trans-unit id="record.state.added">
+			<trans-unit id="record.state.added" resname="record.state.added">
 				<source>New record</source>
-				<target state="translated">Neuer Datensatz</target>
+				<target>Neuer Datensatz</target>
 			</trans-unit>
-			<trans-unit id="record.state.deleted">
+			<trans-unit id="record.state.deleted" resname="record.state.deleted">
 				<source>Record deleted</source>
-				<target state="translated">Gelöschter Datensatz</target>
+				<target>Gelöschter Datensatz</target>
 			</trans-unit>
-			<trans-unit id="record.state.moved">
+			<trans-unit id="record.state.moved" resname="record.state.moved">
 				<source>Record moved</source>
-				<target state="translated">Datensatz verschoben</target>
+				<target>Datensatz verschoben</target>
 			</trans-unit>
-
-
-			<trans-unit id="record.state.unchanged.short">
+			<trans-unit id="record.state.unchanged.short" resname="record.state.unchanged.short">
 				<source>Unchanged</source>
-				<target state="translated">Unverändert</target>
+				<target>Unverändert</target>
 			</trans-unit>
-			<trans-unit id="record.state.changed.short">
+			<trans-unit id="record.state.changed.short" resname="record.state.changed.short">
 				<source>Changed</source>
-				<target state="translated">Verändert</target>
+				<target>Verändert</target>
 			</trans-unit>
-			<trans-unit id="record.state.added.short">
+			<trans-unit id="record.state.added.short" resname="record.state.added.short">
 				<source>New</source>
-				<target state="translated">Neu</target>
+				<target>Neu</target>
 			</trans-unit>
-			<trans-unit id="record.state.deleted.short">
+			<trans-unit id="record.state.deleted.short" resname="record.state.deleted.short">
 				<source>Deleted</source>
-				<target state="translated">Gelöscht</target>
+				<target>Gelöscht</target>
 			</trans-unit>
-			<trans-unit id="record.state.moved.short">
+			<trans-unit id="record.state.moved.short" resname="record.state.moved.short">
 				<source>Moved</source>
-				<target state="translated">Verschoben</target>
+				<target>Verschoben</target>
 			</trans-unit>
-			<trans-unit id="record.state.moved-and-changed.short">
+			<trans-unit id="record.state.moved-and-changed.short" resname="record.state.moved-and-changed.short">
 				<source>Moved/Changed</source>
-				<target state="translated">Verschoben/Verändert</target>
+				<target>Verschoben/Verändert</target>
 			</trans-unit>
 
-			<trans-unit id="module.m4.configuration">
-				<source>Configuration</source>
-				<target state="translated">Konfiguration</target>
-			</trans-unit>
-			<trans-unit id="module.m4.global_config">
-				<source>Global Configuration</source>
-				<target state="translated">Globale Konfiguration</target>
-			</trans-unit>
-			<trans-unit id="module.m4.personal_config">
-				<source>Personal Config</source>
-				<target state="translated">Persönliche Konfiguration</target>
-			</trans-unit>
-			<trans-unit id="module.m4.container_dump">
-				<source>Config Container Dump</source>
-				<target state="translated">Config Container Konfiguration</target>
-			</trans-unit>
-			<trans-unit id="module.m4.emulate_page">
-				<source>Enter Page ID for page specific configuration</source>
-				<target state="translated">Seiten-ID für Seitenspezifische konfiguration angeben</target>
-			</trans-unit>
-			<trans-unit id="module.m4.overview">
-				<source>Overview</source>
-				<target state="translated">Übersicht</target>
-			</trans-unit>
-			<trans-unit id="module.m4.filter">
-				<source>Filter</source>
-				<target state="translated">Filter</target>
-			</trans-unit>
-			<trans-unit id="module.m4.tca">
-				<source>TCA inspection</source>
-				<target state="translated">TCA Inspizieren</target>
-			</trans-unit>
-			<trans-unit id="module.m4.tca.compatible">
-				<source>Compatible TCA</source>
-				<target state="translated">Kompatibles TCA</target>
-			</trans-unit>
-			<trans-unit id="module.m4.tca.incompatible">
-				<source>Incompatible TCA</source>
-				<target state="translated">Inkompatibles TCA</target>
-			</trans-unit>
-			<trans-unit id="module.m4.tca.controls">
-				<source>Controls</source>
-				<target state="translated">Controls</target>
-			</trans-unit>
-			<trans-unit id="module.m4.tca.navigate.to_incompatible">
-				<source>Navigate to incompatible TCA</source>
-				<target state="translated">Zu inkompatiblem TCA springen</target>
-			</trans-unit>
-			<trans-unit id="module.m4.tca.navigate.to_compatible">
-				<source>Navigate to compatible TCA</source>
-				<target state="translated">Zu kompatiblem TCA springen</target>
-			</trans-unit>
-			<trans-unit id="module.m4.tca.navigate.to_controls">
-				<source>Navigate to controls</source>
-				<target state="translated">Zu controls springen</target>
-			</trans-unit>
-			<trans-unit id="module.m4.registry_flushed">
-				<source>Flushed all related registry entries.</source>
-				<target state="translated">Alle zugehörigen Registereinträge wurden gelöscht.</target>
-			</trans-unit>
-			<trans-unit id="module.m4.superfluous_envelopes_flushed">
-				<source>Flushed all superfluous envelopes.</source>
-				<target state="translated">Alle überflüssigen Envelopes wurden gelöscht.</target>
-			</trans-unit>
-			<trans-unit id="module.m4.flush_envelopes">
-				<source>Flush superfluous envelopes.</source>
-				<target state="translated">Überflüssigen Envelopes löschen.</target>
-			</trans-unit>
-			<trans-unit id="module.m4.nothing_to_flush">
-				<source>There are no envelopes to flush.</source>
-				<target state="translated">Es gibt keine Envelopes zum löschen.</target>
-			</trans-unit>
-			<trans-unit id="module.m4.flush_registry">
-				<source>Clear registry entries.</source>
-				<target state="translated">Registry-Einträge löschen.</target>
-			</trans-unit>
-			<trans-unit id="module.m4.flush_registry.description">
-				<source>The Content Publisher stores various information in the registry, like the outcome of the last test run. You can force the removal of these entries here.</source>
-				<target state="translated">Der Content Publisher speichert Informationen wie das Ergebnis des letzten Testlaufs in der Registry. Sie können die Löschung dieser Einträge hier erzwingen.</target>
-			</trans-unit>
-
-			<trans-unit id="test_state_error">
+			<trans-unit id="test_state_error" resname="test_state_error">
 				<source>In2publish might not work as expected.</source>
-				<target state="translated">In2publish könnte vom erwarteten Verhalten abweichen.</target>
+				<target>In2publish könnte vom erwarteten Verhalten abweichen.</target>
 			</trans-unit>
-			<trans-unit id="test_state_error.tests_never_ran">
+			<trans-unit id="test_state_error.tests_never_ran" resname="test_state_error.tests_never_ran">
 				<source>Unknown test state. Please execute the tests in the Publish Tools Module.</source>
-				<target state="translated">Unbekannter Teststatus. Bitte führen sie die Tests im Publish Tools Modul aus.</target>
+				<target>Unbekannter Teststatus. Bitte führen sie die Tests im Publish Tools Modul aus.</target>
 			</trans-unit>
-			<trans-unit id="test_state_error.tests_failing">
+			<trans-unit id="test_state_error.tests_failing" resname="test_state_error.tests_failing">
 				<source>Some In2publish tests are failing.</source>
-				<target state="translated">Einige Tests von in2publish schlagen fehl.</target>
+				<target>Einige Tests von in2publish schlagen fehl.</target>
 			</trans-unit>
-			<trans-unit id="test_state_error.environment_changed">
+			<trans-unit id="test_state_error.environment_changed" resname="test_state_error.environment_changed">
 				<source>Your TYPO3 installation changed.</source>
-				<target state="translated">Ihre TYPO3 Installation hat sich verändert.</target>
+				<target>Ihre TYPO3 Installation hat sich verändert.</target>
 			</trans-unit>
-			<trans-unit id="test_state_error.configuration_changed">
+			<trans-unit id="test_state_error.configuration_changed" resname="test_state_error.configuration_changed">
 				<source>The In2publish configuration has changed.</source>
-				<target state="translated">Die In2publish Konfiguration wurde verändert.</target>
+				<target>Die In2publish Konfiguration wurde verändert.</target>
 			</trans-unit>
-
-			<trans-unit id="frontend.compare.selection.alignment.vertical">
+			<trans-unit id="frontend.compare.selection.alignment.vertical" resname="frontend.compare.selection.alignment.vertical">
 				<source>Vertical</source>
-				<target state="translated">Vertikal</target>
+				<target>Vertikal</target>
 			</trans-unit>
-			<trans-unit id="frontend.compare.selection.alignment.horizontal">
+			<trans-unit id="frontend.compare.selection.alignment.horizontal" resname="frontend.compare.selection.alignment.horizontal">
 				<source>Horizontal</source>
-				<target state="translated">Horizontal</target>
+				<target>Horizontal</target>
 			</trans-unit>
-
-			<trans-unit id="file_publishing.success">
-				<source>Successful published.</source>
-				<target state="translated">Erfolgreich publiziert.</target>
+			<trans-unit id="file_publishing.success" resname="file_publishing.success">
+				<source>Successfully published.</source>
+				<target>Erfolgreich publiziert.</target>
 			</trans-unit>
-			<trans-unit id="file_publishing.failure">
+			<trans-unit id="file_publishing.failure" resname="file_publishing.failure">
 				<source>Something went wrong.</source>
-				<target state="translated">Ein Fehler ist aufgetreten.</target>
+				<target>Ein Fehler ist aufgetreten.</target>
 			</trans-unit>
-			<trans-unit id="file_publishing.folder">
+			<trans-unit id="file_publishing.folder" resname="file_publishing.folder">
 				<source>The selected folder %s has been published to the foreign system.</source>
-				<target state="translated">Das Verzeichnis %s wurde erfolgreich publiziert.</target>
+				<target>Das Verzeichnis %s wurde erfolgreich publiziert.</target>
 			</trans-unit>
-			<trans-unit id="file_publishing.failure.folder">
+			<trans-unit id="file_publishing.failure.folder" resname="file_publishing.failure.folder">
 				<source>The selected folder %s could not be published.</source>
-				<target state="translated">Das Verzeichnis %s konnte nicht publiziert werden.</target>
+				<target>Das Verzeichnis %s konnte nicht publiziert werden.</target>
 			</trans-unit>
-			<trans-unit id="file_publishing.file">
+			<trans-unit id="file_publishing.file" resname="file_publishing.file">
 				<source>The selected file %s has been published to the foreign system.</source>
-				<target state="translated">Die Datei %s wurde erfolgreich publiziert.</target>
+				<target>Die Datei %s wurde erfolgreich publiziert.</target>
 			</trans-unit>
-			<trans-unit id="file_publishing.failure.file">
+			<trans-unit id="file_publishing.failure.file" resname="file_publishing.failure.file">
 				<source>The selected file %s could not be fully published.</source>
-				<target state="translated">Die Datei %s konnte nicht vollständig publiziert werden.</target>
+				<target>Die Datei %s konnte nicht vollständig publiziert werden.</target>
 			</trans-unit>
-
-			<trans-unit id="publishing.tasks_failure">
+			<trans-unit id="publishing.tasks_failure" resname="publishing.tasks_failure">
 				<source>One or more additional tasks which run after the successful publishing process failed. Caches and other non critical aspects might not behave as expected. The logs might contain more information.</source>
-				<target state="translated">Eine oder mehrere Aufgaben, die nach dem erfolgreichen publizieren ausgeführt werden sind fehlgeschlagen. Caches und andere nicht kritische Aspekte könnten sich nicht wie erwartet verhalten. Die Logs können weitere Informationen enthalten.</target>
+				<target>Eine oder mehrere Aufgaben, die nach dem erfolgreichen publizieren ausgeführt werden sind fehlgeschlagen. Caches und andere nicht kritische Aspekte könnten sich nicht wie erwartet verhalten. Die Logs können weitere Informationen enthalten.</target>
 			</trans-unit>
-
-			<trans-unit id="adapter.remote.ssh">
+			<trans-unit id="adapter.remote.ssh" resname="adapter.remote.ssh">
 				<source>Secure, authenticated and encrypted command execution</source>
-				<target state="translated">Sichere, authentifizierte und verschlüsselte Befehlsausführung</target>
+				<target>Sichere, authentifizierte und verschlüsselte Befehlsausführung</target>
 			</trans-unit>
-			<trans-unit id="adapter.transmission.ssh">
+			<trans-unit id="adapter.transmission.ssh" resname="adapter.transmission.ssh">
 				<source>Secure, reliable and encrypted asset transmission</source>
-				<target state="translated">Sichere, zuverlässige und Verschlüsselte Dateiübertragung</target>
+				<target>Sichere, zuverlässige und Verschlüsselte Dateiübertragung</target>
 			</trans-unit>
-
-			<trans-unit id="help.slack_channel">
-				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
-				<target state="translated"><![CDATA[Frag die Community: Wir haben einen Slack Channel #ext-in2publish im offiziellen TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></target>
-			</trans-unit>
-			<trans-unit id="help.github_issues">
-				<source><![CDATA[Official documentation for in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
-				<target state="translated"><![CDATA[Offizielle Dokumentation von in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></target>
-			</trans-unit>
-
-			<trans-unit id="context_menu_publish_entry.forbidden">
+			<trans-unit id="context_menu_publish_entry.forbidden" resname="context_menu_publish_entry.forbidden">
 				<source>You are not allowed to publish this page.</source>
-				<target state="translated">Sie dürfen diese Seite nicht veröffentlichen.</target>
+				<target>Sie dürfen diese Seite nicht veröffentlichen.</target>
 			</trans-unit>
-			<trans-unit id="context_menu_publish_entry.missing_page">
+			<trans-unit id="context_menu_publish_entry.missing_page" resname="context_menu_publish_entry.missing_page">
 				<source>No page parameter was transferred.</source>
-				<target state="translated">Es wurde keine Seiten-ID zum veröffentlichen übertragen.</target>
+				<target>Es wurde keine Seiten-ID zum veröffentlichen übertragen.</target>
 			</trans-unit>
-			<trans-unit id="context_menu_publish_entry.page_published">
-				<source>The page "%s" has been published.</source>
-				<target state="translated">Die Seite "%s" wurde veröffentlicht.</target>
+			<trans-unit id="context_menu_publish_entry.page_published" resname="context_menu_publish_entry.page_published">
+				<source>The page &quot;%s&quot; has been published.</source>
+				<target>Die Seite &quot;%s&quot; wurde veröffentlicht.</target>
 			</trans-unit>
-			<trans-unit id="context_menu_publish_entry.publishing_error">
-				<source>Error during publishing of page "%s". Please check your logs.</source>
-				<target state="translated">Beim veröffentlichen der Seite "%s" ist ein Fehler aufgetreten. Weitere Informationen finden Sie in den Logs.</target>
+			<trans-unit id="context_menu_publish_entry.publishing_error" resname="context_menu_publish_entry.publishing_error">
+				<source>Error during publishing of page &quot;%s&quot;. Please check your logs.</source>
+				<target>Beim veröffentlichen der Seite &quot;%s&quot; ist ein Fehler aufgetreten. Weitere Informationen finden Sie in den Logs.</target>
 			</trans-unit>
-			<trans-unit id="context_menu_publish_entry.not_publishable">
+			<trans-unit id="context_menu_publish_entry.not_publishable" resname="context_menu_publish_entry.not_publishable">
 				<source>This record is not yet publishable.</source>
-				<target state="translated">Diese Seite ist noch nicht veröffentlichbar.</target>
+				<target>Diese Seite ist noch nicht veröffentlichbar.</target>
 			</trans-unit>
-
-			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_page_uid.label">
+			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_page_uid.label" resname="tca.sys_redirect.columns.tx_in2publishcore_page_uid.label">
 				<source>Associated page</source>
-				<target state="translated">Verknüpfte Seite</target>
+				<target>Verknüpfte Seite</target>
 			</trans-unit>
-			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.label">
+			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.label" resname="tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.label">
 				<source>Associated foreign Site</source>
-				<target state="translated">Verknüpfte Site des entfernten Systems</target>
+				<target>Verknüpfte Site des entfernten Systems</target>
 			</trans-unit>
-			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.config.items.null">
+			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.config.items.null" resname="tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.config.items.null">
 				<source>Use site from associated page</source>
-				<target state="translated">Site der verknüpften Seite benutzen</target>
+				<target>Site der verknüpften Seite benutzen</target>
 			</trans-unit>
-			<trans-unit id="tca.sys_redirect.palettes.tx_in2publishcore_association.label">
+			<trans-unit id="tca.sys_redirect.palettes.tx_in2publishcore_association.label" resname="tca.sys_redirect.palettes.tx_in2publishcore_association.label">
 				<source>Page/Site association</source>
-				<target state="translated">Seite/Site Verknüpfung</target>
+				<target>Seite/Site Verknüpfung</target>
 			</trans-unit>
-
-			<trans-unit id="save_and_publish">
+			<trans-unit id="save_and_publish" resname="save_and_publish">
 				<source>Save and publish</source>
-				<target state="translated">Speichern und veröffentlichen</target>
+				<target>Speichern und veröffentlichen</target>
 			</trans-unit>
-			<trans-unit id="publish_all_selected">
+			<trans-unit id="publish_all_selected" resname="publish_all_selected">
 				<source>Publish all selected</source>
-				<target state="translated">Gewählte veröffentlichen</target>
+				<target>Gewählte veröffentlichen</target>
 			</trans-unit>
-			<trans-unit id="redirect.legend.status">
+			<trans-unit id="redirect.legend.status" resname="redirect.legend.status">
 				<source>Status icons explained</source>
-				<target state="translated">Status Legende</target>
+				<target>Status Legende</target>
 			</trans-unit>
-			<trans-unit id="redirect.legend.status.page_or_site_required">
+			<trans-unit id="redirect.legend.status.page_or_site_required" resname="redirect.legend.status.page_or_site_required">
 				<source>The redirect requires an associated page or site to be published</source>
-				<target state="translated">Dieser Redirect benötigt eine verknüpfte Seite oder Site um veröffentlicht werden zu können</target>
+				<target>Dieser Redirect benötigt eine verknüpfte Seite oder Site um veröffentlicht werden zu können</target>
 			</trans-unit>
-			<trans-unit id="redirect.legend.status.page_not_published">
+			<trans-unit id="redirect.legend.status.page_not_published" resname="redirect.legend.status.page_not_published">
 				<source>The associated page is not published</source>
-				<target state="translated">Die verknüpfte Seite ist nicht publiziert.</target>
+				<target>Die verknüpfte Seite ist nicht publiziert.</target>
 			</trans-unit>
-			<trans-unit id="redirect.legend.status.unpublished_changes">
+			<trans-unit id="redirect.legend.status.unpublished_changes" resname="redirect.legend.status.unpublished_changes">
 				<source>This redirect has unpublished changes. Hover over the icon to get more information</source>
-				<target state="translated">Der Redirect hat unveröffentlichte Änderungen. Den Mauszeiger auf das Icon bewegen um mehr zu erfahren</target>
+				<target>Der Redirect hat unveröffentlichte Änderungen. Den Mauszeiger auf das Icon bewegen um mehr zu erfahren</target>
 			</trans-unit>
-			<trans-unit id="redirect.legend.status.published">
+			<trans-unit id="redirect.legend.status.published" resname="redirect.legend.status.published">
 				<source>This redirect is published</source>
-				<target state="translated">Dieser Redirect ist publiziert</target>
+				<target>Dieser Redirect ist publiziert</target>
 			</trans-unit>
-			<trans-unit id="redirect.legend.actions">
+			<trans-unit id="redirect.legend.actions" resname="redirect.legend.actions">
 				<source>Action icons explained</source>
-				<target state="translated">Aktionen Legende</target>
+				<target>Aktionen Legende</target>
 			</trans-unit>
-			<trans-unit id="redirect.legend.actions.publish">
+			<trans-unit id="redirect.legend.actions.publish" resname="redirect.legend.actions.publish">
 				<source>This redirect can be published. Click to publish.</source>
-				<target state="translated">Dieser Redorect kann publiziert werden. Klicken um zu publizieren.</target>
+				<target>Dieser Redorect kann publiziert werden. Klicken um zu publizieren.</target>
 			</trans-unit>
-			<trans-unit id="redirect.legend.actions.associate_site_and_publish">
+			<trans-unit id="redirect.legend.actions.associate_site_and_publish" resname="redirect.legend.actions.associate_site_and_publish">
 				<source>This redirect can be published with a manual site association. Click to assign a Site and publish.</source>
-				<target state="translated">Dieser Redirect kann mit einer manuellen Site-Verknüpfung veröffentlicht werden. Klicken um eine Site zu verknüpfen und zu publizieren.</target>
+				<target>Dieser Redirect kann mit einer manuellen Site-Verknüpfung veröffentlicht werden. Klicken um eine Site zu verknüpfen und zu publizieren.</target>
 			</trans-unit>
-
-			<trans-unit id="redirect.record.property">
+			<trans-unit id="redirect.record.property" resname="redirect.record.property">
 				<source>Property</source>
-				<target state="translated">Eigenschaft</target>
+				<target>Eigenschaft</target>
 			</trans-unit>
-			<trans-unit id="redirect.record.property.old">
+			<trans-unit id="redirect.record.property.old" resname="redirect.record.property.old">
 				<source>Old value</source>
-				<target state="translated">Alt</target>
+				<target>Alt</target>
 			</trans-unit>
-			<trans-unit id="redirect.record.property.new">
+			<trans-unit id="redirect.record.property.new" resname="redirect.record.property.new">
 				<source>New value</source>
-				<target state="translated">Neu</target>
+				<target>Neu</target>
 			</trans-unit>
-			<trans-unit id="redirect.record.id">
+			<trans-unit id="redirect.record.id" resname="redirect.record.id">
 				<source>ID</source>
-				<target state="translated">ID</target>
+				<target>ID</target>
 			</trans-unit>
-			<trans-unit id="redirect.record.domain">
+			<trans-unit id="redirect.record.domain" resname="redirect.record.domain">
 				<source>Domain</source>
-				<target state="translated">Domain</target>
+				<target>Domain</target>
 			</trans-unit>
-			<trans-unit id="redirect.record.source">
+			<trans-unit id="redirect.record.source" resname="redirect.record.source">
 				<source>Source</source>
-				<target state="translated">Quelle</target>
+				<target>Quelle</target>
 			</trans-unit>
-			<trans-unit id="redirect.record.target">
+			<trans-unit id="redirect.record.target" resname="redirect.record.target">
 				<source>Target</source>
-				<target state="translated">Ziel</target>
+				<target>Ziel</target>
 			</trans-unit>
-			<trans-unit id="redirect.record.status">
+			<trans-unit id="redirect.record.status" resname="redirect.record.status">
 				<source>Status</source>
-				<target state="translated">Status</target>
+				<target>Status</target>
 			</trans-unit>
-			<trans-unit id="redirect.record.actions">
+			<trans-unit id="redirect.record.actions" resname="redirect.record.actions">
 				<source>Actions</source>
-				<target state="translated">Aktionen</target>
+				<target>Aktionen</target>
 			</trans-unit>
-
-			<trans-unit id="redirect.status.missing_page_or_site">
+			<trans-unit id="redirect.status.missing_page_or_site" resname="redirect.status.missing_page_or_site">
 				<source>Missing associated page or site</source>
-				<target state="translated">Fehlende Seite oder Seitenkonfiguration</target>
+				<target>Fehlende Seite oder Seitenkonfiguration</target>
 			</trans-unit>
-			<trans-unit id="redirect.status.page_not_published">
-				<source>The associated page [%d] "%s" is not published</source>
-				<target state="translated">Die verknüpfte Seite [%d] "%s" ist nicht publiziert</target>
+			<trans-unit id="redirect.status.page_not_published" resname="redirect.status.page_not_published">
+				<source>The associated page [%d] &quot;%s&quot; is not published</source>
+				<target>Die verknüpfte Seite [%d] &quot;%s&quot; ist nicht publiziert</target>
 			</trans-unit>
-			<trans-unit id="redirect.status.published">
+			<trans-unit id="redirect.status.published" resname="redirect.status.published">
 				<source>This redirect is published</source>
-				<target state="translated">Dieser Redirect ist publiziert</target>
+				<target>Dieser Redirect ist publiziert</target>
 			</trans-unit>
-
-			<trans-unit id="redirect.status.short.publishable">
+			<trans-unit id="redirect.status.short.publishable" resname="redirect.status.short.publishable">
 				<source>Ready for publishing</source>
-				<target state="translated">Bereit zur Veröffentlichung</target>
+				<target>Bereit zur Veröffentlichung</target>
 			</trans-unit>
-			<trans-unit id="redirect.status.short.siteRequired">
+			<trans-unit id="redirect.status.short.siteRequired" resname="redirect.status.short.siteRequired">
 				<source>Missing page or site</source>
-				<target state="translated">Fehlende Seite oder Seitenkonfiguration</target>
+				<target>Fehlende Seite oder Seitenkonfiguration</target>
 			</trans-unit>
-			<trans-unit id="redirect.status.short.requiresPagePublishing">
+			<trans-unit id="redirect.status.short.requiresPagePublishing" resname="redirect.status.short.requiresPagePublishing">
 				<source>Requires page publishing</source>
-				<target state="translated">Fehlende Veröffentlichung der Seite</target>
+				<target>Fehlende Veröffentlichung der Seite</target>
 			</trans-unit>
-			<trans-unit id="redirect.status.short.published">
+			<trans-unit id="redirect.status.short.published" resname="redirect.status.short.published">
 				<source>Published</source>
-				<target state="translated">Veröffentlicht</target>
+				<target>Veröffentlicht</target>
 			</trans-unit>
-
-			<trans-unit id="filter.form.submit">
+			<trans-unit id="filter.form.submit" resname="filter.form.submit">
 				<source>Filter</source>
-				<target state="translated">Filtern</target>
+				<target>Filtern</target>
 			</trans-unit>
-			<trans-unit id="filter.field.has_association">
+			<trans-unit id="filter.field.has_association" resname="filter.field.has_association">
 				<source>Association</source>
-				<target state="translated">Verknüpfung</target>
+				<target>Verknüpfung</target>
 			</trans-unit>
-			<trans-unit id="filter.field.has_association.present">
+			<trans-unit id="filter.field.has_association.present" resname="filter.field.has_association.present">
 				<source>Association present</source>
-				<target state="translated">Verknüpft</target>
+				<target>Verknüpft</target>
 			</trans-unit>
-			<trans-unit id="filter.field.has_association.missing">
+			<trans-unit id="filter.field.has_association.missing" resname="filter.field.has_association.missing">
 				<source>Association missing</source>
-				<target state="translated">Verknüpfung fehlend</target>
+				<target>Verknüpfung fehlend</target>
 			</trans-unit>
-
-			<trans-unit id="refresh_page">
+			<trans-unit id="refresh_page" resname="refresh_page">
 				<source>Refresh page</source>
-				<target state="translated">Seite neu laden</target>
+				<target>Seite neu laden</target>
 			</trans-unit>
-
-			<trans-unit id="compare_database.only_local">
-				<source>New</source>
-				<target state="translated">Neu</target>
-			</trans-unit>
-			<trans-unit id="compare_database.only_foreign">
-				<source>Deleted</source>
-				<target state="translated">Gelöscht</target>
-			</trans-unit>
-			<trans-unit id="compare_database.diff">
-				<source>Differences</source>
-				<target state="translated">Unterschiede</target>
-			</trans-unit>
-			<trans-unit id="compare_database.general">
-				<source>Generally</source>
-				<target state="translated">Generell</target>
-			</trans-unit>
-			<trans-unit id="compare_database.general.local_empty">
-				<source>The table is empty on Local</source>
-				<target state="translated">Die Tabelle is auf Local leer.</target>
-			</trans-unit>
-			<trans-unit id="compare_database.general.foreign_empty">
-				<source>The table is empty on Foreign</source>
-				<target state="translated">Die Tabelle is auf Foreign leer.</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer">
-				<source>Transfer these changes to the foreign system</source>
-				<target state="translated">Übertrage diese Änderungen auf das entfernte System</target>
-			</trans-unit>
-			<trans-unit id="compare_database.no_differences">
-				<source>No differences were found in the data of the selected tables.</source>
-				<target state="translated">Es wurden keine Unterschiede in den Daten der gewählten Tabellen entdeckt.</target>
-			</trans-unit>
-			<trans-unit id="compare_database.select_tables">
-				<source>Select the tables to compare</source>
-				<target state="translated">Tabellen für den Vergleich auswählen</target>
-			</trans-unit>
-			<trans-unit id="compare_database.tables">
-				<source>Tables</source>
-				<target state="translated">Tabellen</target>
-			</trans-unit>
-			<trans-unit id="compare_database.compare">
-				<source>Compare</source>
-				<target state="translated">Vergleichen</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer_notice.header">
-				<source>This is not publishing</source>
-				<target state="translated">Dies ist kein Publishing</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer_notice">
-				<source>A transfer is not a publishing. Only the exact record that is selected is transferred. No relations to other records are resolved and no MM-records are displayed nor transferred. You should always prefer normal publishing to this feature. Use this feature only in an emergency and only if you are aware of all the consequences.</source>
-				<target state="translated">Ein Transfer ist kein Publishing. Es wird dabei nur exakt der Datensatz übertragen, der ausgewählt wird. Es werden keine Verknüpfungen zu anderen Datensätzen aufgelöst und es werden auch keine MM-Datensätze angezeigt oder übertragen. Sie sollten ein normales Publishing immer diesem Feature vorziehen. Nutzen Sie dieses Feature nur im Notfall und nur, wenn Sie sich aller Konsequenzen bewusst sind.</target>
-			</trans-unit>
-			<trans-unit id="compare_database.label">
-				<source>Record label</source>
-				<target state="translated">Datensatztitle</target>
-			</trans-unit>
-			<trans-unit id="compare_database.actions">
-				<source>Actions</source>
-				<target state="translated">Aktionen</target>
-			</trans-unit>
-			<trans-unit id="compare_database.diff">
-				<source>Differences</source>
-				<target state="translated">Unterschiede</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer.error">
-				<source>Error</source>
-				<target state="translated">Fehler</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer.success">
-				<source>Success</source>
-				<target state="translated">Erfolg</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer.record_missing">
-				<source>The record which should be transferred does not exist anymore.</source>
-				<target state="translated">Der Datensatz der übertragen werden sollte existiert nicht mehr.</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer.exists_on_foreign">
-				<source>The record which should be transferred should not exists on Foreign but it does. It was probably published in the meantime.</source>
-				<target state="translated">Der Datensatz der übertragen werden sollte sollte nicht auf Foreign existieren, jedoch ist er vorhanden. Möglicherweise wurde er in der Zwischenzeit veröffentlicht.</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer.exists_on_local">
-				<source>The record which should be transferred should not exists on Local but it does. It was probably created in the meantime.</source>
-				<target state="translated">Der Datensatz der übertragen werden sollte sollte nicht auf Local existieren, jedoch ist er vorhanden. Möglicherweise wurde er in der Zwischenzeit erstellt.</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer.does_not_exists_on_both">
-				<source>The record which should be transferred should exists on both Local and Foreign but it does not. Please reload the comparison view and try again.</source>
-				<target state="translated">Der Datensatz der übertragen werden sollte sollte auf Local und Foreign existieren, er fehlt jedoch auf mindestens einem System. Bitte versuchen Sie es noch einmal, nachdem Sie die Vergleichsansicht neu geladen haben.</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer.deleted_from_foreign">
-				<source>The record %s[%d] was deleted from foreign.</source>
-				<target state="translated">Der Datensatz %s[%d] wurde auf Foreign gelöscht.</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer.transferred_to_foreign">
-				<source>The record %s[%d] was created on foreign.</source>
-				<target state="translated">Der Datensatz %s[%d] wurde auf Foreign erstellt.</target>
-			</trans-unit>
-			<trans-unit id="compare_database.transfer.updated_on_foreign">
-				<source>The record %s[%d] was updated on foreign.</source>
-				<target state="translated">Der Datensatz %s[%d] wurde auf Foreign aktualisiert.</target>
-			</trans-unit>
-
-			<trans-unit id="module_m3_index_content">
+			<trans-unit id="module_m3_index_content" resname="module_m3_index_content">
 				<source>Admin tools</source>
-				<target state="translated">Administrationswerkzeuge</target>
+				<target>Administrationswerkzeuge</target>
 			</trans-unit>
-
-			<trans-unit id="record.reason.requires_translation_parent.existing">
-				<source>"%s" requires that the record "%s" (which is the default language version) is published first.</source>
-				<target state="translated">"%s" erfordert, dass der Datensatz "%s" (das ist die Standardsprachversion) zuerst veröffentlicht wird.</target>
+			<trans-unit id="record.reason.requires_translation_parent.existing" resname="record.reason.requires_translation_parent.existing">
+				<source>&quot;%s&quot; requires that the record &quot;%s&quot; (which is the default language version) is published first.</source>
+				<target>&quot;%s&quot; erfordert, dass der Datensatz &quot;%s&quot; (das ist die Standardsprachversion) zuerst veröffentlicht wird.</target>
 			</trans-unit>
-			<trans-unit id="record.reason.requires_translation_parent.enablecolumns">
-				<source>The record "%s" cannot be published until all visibility settings (%s) of the default language "%s" have been published.</source>
-				<target state="translated">Der Datensatz "%s" kann nicht veröffentlicht werden, bevor nicht alle Sichtbarkeitseinstellung (%s) der Standardsprache "%s" veröffentlicht wurden.</target>
+			<trans-unit id="record.reason.requires_translation_parent.enablecolumns" resname="record.reason.requires_translation_parent.enablecolumns">
+				<source>The record &quot;%s&quot; cannot be published until all visibility settings (%s) of the default language &quot;%s&quot; have been published.</source>
+				<target>Der Datensatz &quot;%s&quot; kann nicht veröffentlicht werden, bevor nicht alle Sichtbarkeitseinstellung (%s) der Standardsprache &quot;%s&quot; veröffentlicht wurden.</target>
 			</trans-unit>
-			<trans-unit id="record.reason.requires_published_page.existing">
-				<source>"%s" requires that the page "%s" is published first.</source>
-				<target state="translated">"%s" erfordert, dass die Seite "%s" zuerst veröffentlicht wird.</target>
+			<trans-unit id="record.reason.requires_published_page.existing" resname="record.reason.requires_published_page.existing">
+				<source>&quot;%s&quot; requires that the page &quot;%s&quot; is published first.</source>
+				<target>&quot;%s&quot; erfordert, dass die Seite &quot;%s&quot; zuerst veröffentlicht wird.</target>
 			</trans-unit>
-			<trans-unit id="record.reason.requires_published_page.enablecolumns">
-				<source>"%s" requires that the page "%s" has all of its properties published (%s) which determine if the record is visible.</source>
-				<target state="translated">"%s" setzt voraus, dass die Seite "%s" alle seine Eigenschaften veröffentlicht hat (%s), die bestimmen, ob der Datensatz sichtbar ist.</target>
+			<trans-unit id="record.reason.requires_published_page.enablecolumns" resname="record.reason.requires_published_page.enablecolumns">
+				<source>&quot;%s&quot; requires that the page &quot;%s&quot; has all of its properties published (%s) which determine if the record is visible.</source>
+				<target>&quot;%s&quot; setzt voraus, dass die Seite &quot;%s&quot; alle seine Eigenschaften veröffentlicht hat (%s), die bestimmen, ob der Datensatz sichtbar ist.</target>
 			</trans-unit>
-			<trans-unit id="record.reason.missing_dependency">
-				<source>The record with classification "%s" and properties "%s" does not exist.</source>
-				<target state="translated">Der Datensatz mit der klassifizierung "%s" und Eigenschaften "%s" existiert nicht.</target>
+			<trans-unit id="record.reason.missing_dependency" resname="record.reason.missing_dependency">
+				<source>The record with classification &quot;%s&quot; and properties &quot;%s&quot; does not exist.</source>
+				<target>Der Datensatz mit der klassifizierung &quot;%s&quot; und Eigenschaften &quot;%s&quot; existiert nicht.</target>
 			</trans-unit>
-			<trans-unit id="record.reason.shortcut_record">
-				<source>The record "%s" is a target of the shortcut record "%s". The target must be published before the shortcut record can be published.</source>
-				<target state="translated">Der Datensatz "%s" ist ein Ziel des Verknüpfungsdatensatzes "%s". Das Ziel muss veröffentlicht werden, bevor der Verknüpfungsdatensatz veröffentlicht werden kann.</target>
+			<trans-unit id="record.reason.shortcut_record" resname="record.reason.shortcut_record">
+				<source>The record &quot;%s&quot; is a target of the shortcut record &quot;%s&quot;. The target must be published before the shortcut record can be published.</source>
+				<target>Der Datensatz &quot;%s&quot; ist ein Ziel des Verknüpfungsdatensatzes &quot;%s&quot;. Das Ziel muss veröffentlicht werden, bevor der Verknüpfungsdatensatz veröffentlicht werden kann.</target>
 			</trans-unit>
 		</body>
 	</file>

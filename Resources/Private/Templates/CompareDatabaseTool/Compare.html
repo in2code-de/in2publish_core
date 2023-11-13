@@ -2,7 +2,7 @@
 	<f:layout name="Submodule" />
 
 	<f:section name="Header">
-		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'module.m4.compare_database\')}'}" />
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.compare\')}'}" />
 	</f:section>
 
 	<f:section name="Main">
@@ -12,7 +12,7 @@
 				<f:render partial="Tools/CompareDatabaseTool/Details" arguments="{_all}" />
 			</f:then>
 			<f:else>
-				<h3><f:translate key="compare_database.no_differences" /></h3>
+				<h3><f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.no_differences" /></h3>
 			</f:else>
 		</f:if>
 	</f:section>

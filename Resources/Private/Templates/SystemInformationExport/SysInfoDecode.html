@@ -2,7 +2,7 @@
 	<f:layout name="Submodule" />
 
 	<f:section name="Header">
-		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'module.m4.system_information\')}'}" />
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.system_info\')}'}" />
 	</f:section>
 
 	<f:section name="Main">
@@ -12,14 +12,14 @@
 					<div class="row mb-3">
 						<div class="col">
 							<label for="json_input" class="form-label">
-								<f:translate id="system_info.decode.json">system_info.decode.json</f:translate>
+								<f:translate id="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.decode.json" default="system_info.decode.json" />
 							</label>
 							<f:form.textarea class="form-control" rows="10" id="json_input" name="json" value="{infoJson}" />
 						</div>
 					</div>
 					<div class="row">
 						<div class="col">
-							<f:form.submit class="btn btn-primary" value="{system_info.decode.decode -> f:translate(id:'system_info.decode.decode')}" />
+							<f:form.submit class="btn btn-primary" value="{f:translate(id:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.decode.decode')}" />
 						</div>
 					</div>
 				</f:form>

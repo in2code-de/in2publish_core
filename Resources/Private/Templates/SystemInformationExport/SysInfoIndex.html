@@ -5,7 +5,7 @@
 	<f:layout name="Submodule" />
 
 	<f:section name="Header">
-		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'module.m4.system_information\')}'}" />
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.system_info\')}'}" />
 	</f:section>
 
 	<f:section name="Main">
@@ -15,19 +15,19 @@
 					<p class="card-body-text">
 						<f:link.action class="btn btn-dark btn-block" action="sysInfoShow">
 							<core:icon identifier="apps-toolbar-menu-systeminformation" />
-							<f:translate id="system_info.show">system_info.show</f:translate>
+							<f:translate id="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.show" default="system_info.show" />
 						</f:link.action>
 					</p>
 					<p class="card-body-text">
 						<f:link.action class="btn btn-dark btn-block" action="sysInfoDownload">
 							<core:icon identifier="actions-download" />
-							<f:translate id="system_info.download">system_info.download</f:translate>
+							<f:translate id="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.download" default="system_info.download" />
 						</f:link.action>
 					</p>
 					<p class="card-body-text">
 						<f:link.action class="btn btn-dark btn-block" action="sysInfoDecode">
 							<core:icon identifier="actions-search" />
-							<f:translate id="system_info.decode">system_info.decode</f:translate>
+							<f:translate id="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.decode" default="system_info.decode" />
 						</f:link.action>
 					</p>
 				</div>
@@ -38,13 +38,13 @@
 						<div class="row row-cols-auto align-items-end g-3">
 							<div class="col">
 								<label for="json_file" class="form-label">
-									<f:translate id="system_info.upload.file">system_info.upload.file</f:translate>
+									<f:translate id="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.upload.file">system_info.upload.file</f:translate>
 								</label>
 								<f:form.upload id="json_file" class="form-control" name="jsonFile" />
 							</div>
 							<div class="col">
 								<f:form.submit class="btn btn-primary"
-											   value="{system_info.upload.upload -> f:translate(id:'system_info.upload.upload')}" />
+											   value="{f:translate(id:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.upload.upload')}" />
 							</div>
 						</div>
 					</f:form>

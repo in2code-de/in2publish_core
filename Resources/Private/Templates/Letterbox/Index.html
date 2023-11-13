@@ -2,7 +2,7 @@
 	<f:layout name="Submodule" />
 
 	<f:section name="Header">
-		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'module.m4.superfluous_envelopes\')}'}" />
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.flush_envelopes\')}'}" />
 	</f:section>
 
 	<f:section name="Main">
@@ -12,18 +12,18 @@
 					<f:if condition="{canFlush}">
 						<f:then>
 							<p class="card-text">
-								<f:translate key="module.m4.flush_envelopes.description" />
+								<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:flush_envelopes.description" />
 							</p>
 						</f:then>
 						<f:else>
-							<p><f:translate key="module.m4.nothing_to_flush" /></p>
+							<p><f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:flush_envelopes.nothing_to_flush" /></p>
 						</f:else>
 					</f:if>
 				</div>
 				<div class="card-footer">
 					<f:if condition="{canFlush}">
 						<f:link.action action="flushEnvelopes" class="btn btn-danger">
-							<f:translate key="module.m4.flush_envelopes" />
+							<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:flush_envelopes.action" />
 						</f:link.action>
 					</f:if>
 				</div>

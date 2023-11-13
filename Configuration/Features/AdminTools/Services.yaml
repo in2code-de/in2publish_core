@@ -10,42 +10,42 @@ services:
   In2code\In2publishCore\Features\AdminTools\Controller\LetterboxController:
     tags:
       - name: 'in2publish_core.admin_tool'
-        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes'
-        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes.description'
+        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.flush_envelopes'
+        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.flush_envelopes.description'
         actions: 'index,flushEnvelopes'
 
   In2code\In2publishCore\Features\AdminTools\Controller\RegistryController:
     tags:
       - name: 'in2publish_core.admin_tool'
-        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry'
-        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry.description'
+        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.flush_registry'
+        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.flush_registry.description'
         actions: 'index,flushRegistry'
 
   In2code\In2publishCore\Features\AdminTools\Controller\TcaController:
     tags:
       - name: 'in2publish_core.admin_tool'
-        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca'
-        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca.description'
+        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.tca'
+        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.tca.description'
         actions: 'index'
 
   In2code\In2publishCore\Features\AdminTools\Controller\ShowConfigurationController:
     tags:
       - name: 'in2publish_core.admin_tool'
-        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration'
-        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration.description'
+        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.configuration'
+        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.configuration.description'
         actions: 'index'
 
   In2code\In2publishCore\Features\AdminTools\Controller\TestController:
     tags:
       - name: 'in2publish_core.admin_tool'
-        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test'
-        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test.description'
+        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.test'
+        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.test.description'
         actions: 'index'
 
   In2code\In2publishCore\Features\AdminTools\Controller\ToolsController:
     tags:
       - name: 'in2publish_core.admin_tool'
-        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.index'
-        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.index.description'
+        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.index'
+        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.index.description'
         actions: 'index'
         before: '*'

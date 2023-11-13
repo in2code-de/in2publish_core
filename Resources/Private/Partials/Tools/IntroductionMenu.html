@@ -3,7 +3,7 @@
 		<div class="card-header">
 			<div class="card-header-body">
 				<h2 class="card-title">
-					<f:translate key="module.m4.introduction.title">Introduction</f:translate>
+					<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:introduction.overview.title" default="Overview" />
 				</h2>
 			</div>
 		</div>
@@ -12,8 +12,8 @@
 				<f:for each="{tools}" as="entry">
 					<li>
 						<f:link.action action="{entry.initialAction}" controller="{entry.alias}">
-							<f:translate key="{entry.name}">{entry.name}</f:translate>
-							<f:if condition="{entry.description}">:<f:translate key="{entry.description}">{entry.description}</f:translate></f:if>
+							<f:translate key="{entry.name}" default="{entry.name}" />
+							<f:if condition="{entry.description}">:<f:translate key="{entry.description}" default="{entry.description}" /></f:if>
 						</f:link.action>
 					</li>
 				</f:for>

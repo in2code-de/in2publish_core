@@ -10,6 +10,6 @@ services:
   In2code\In2publishCore\Features\RecordInspector\Controller\RecordInspectorController:
     tags:
       - name: 'in2publish_core.admin_tool'
-        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.record_inspector'
-        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.record_inspector.description'
+        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.record_inspector'
+        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.record_inspector.description'
         actions: 'index,inspect'

@@ -2,7 +2,7 @@
 	<f:layout name="Submodule" />
 
 	<f:section name="Header">
-		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'module.m4.tca\')}'}" />
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.tca\')}'}" />
 	</f:section>
 
 	<f:section name="Main">
@@ -12,12 +12,12 @@
 			<div class="card-header">
 				<div class="card-header-body">
 					<h2 class="card-title">
-						<f:translate key="module.m4.tca.compatible">Compatible TCA</f:translate>
+						<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:tca.compatible_tca" default="Compatible TCA" />
 					</h2>
 				</div>
 			</div>
 			<div class="card-body">
-				<f:debug title="{f:translate(key:'module.m4.tca.compatible')}" inline="true">{compatibleTca}</f:debug>
+				<f:debug title="{f:translate(key:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:tca.compatible_tca')}" inline="true">{compatibleTca}</f:debug>
 			</div>
 		</div>
 
@@ -27,12 +27,12 @@
 			<div class="card-header">
 				<div class="card-header-body">
 					<h2 class="card-title">
-						<f:translate key="module.m4.tca.incompatible">Inompatible TCA</f:translate>
+						<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:tca.incompatible_tca" default="Incompatible TCA" />
 					</h2>
 				</div>
 			</div>
 			<div class="card-body">
-				<f:debug title="{f:translate(key:'module.m4.tca.incompatible')}" inline="true">{incompatibleTca}</f:debug>
+				<f:debug title="{f:translate(key:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:tca.incompatible_tca')}" inline="true">{incompatibleTca}</f:debug>
 			</div>
 		</div>
 	</f:section>
@@ -41,12 +41,12 @@
 		<ul>
 			<li>
 				<a href="#in2publish--compatible-tca">
-					<f:translate key="module.m4.tca.navigate.to_compatible">To compatbile TCA</f:translate>
+					<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:tca.navigate.to_compatible" default="To compatbile TCA" />
 				</a>
 			</li>
 			<li>
 				<a href="#in2publish--incompatible-tca">
-					<f:translate key="module.m4.tca.navigate.to_incompatible">To incompatbile TCA</f:translate>
+					<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:tca.navigate.to_incompatible" default="To incompatbile TCA" />
 				</a>
 			</li>
 		</ul>

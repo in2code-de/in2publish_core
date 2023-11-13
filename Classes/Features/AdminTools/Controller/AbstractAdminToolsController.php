@@ -48,6 +48,9 @@ abstract class AbstractAdminToolsController extends ActionController
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
         $this->actualInjectPageRenderer($pageRenderer);
+        $this->pageRenderer->addInlineLanguageLabelFile(
+            'EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
+        );
         $this->pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
             'stylesheet',

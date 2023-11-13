@@ -60,8 +60,12 @@ class ToolsController extends AbstractAdminToolsController
         }
 
         $supports = [
-            LocalizationUtility::translate('help.github_issues', 'in2publish_core'),
-            LocalizationUtility::translate('help.slack_channel', 'in2publish_core'),
+            LocalizationUtility::translate(
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:help.github_issues'
+            ),
+            LocalizationUtility::translate(
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:help.slack_channel'
+            ),
         ];
 
         $event = new CreatedDefaultHelpLabels($supports);

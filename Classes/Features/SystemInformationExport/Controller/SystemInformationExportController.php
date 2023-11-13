@@ -90,8 +90,14 @@ class SystemInformationExportController extends AbstractAdminToolsController
             } else {
                 $args = [json_last_error(), json_last_error_msg()];
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('system_info.decode.json_error.details', 'in2publish_core', $args),
-                    LocalizationUtility::translate('system_info.decode.json_error', 'in2publish_core'),
+                    LocalizationUtility::translate(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.decode.json_error.details',
+                        null,
+                        $args
+                    ),
+                    LocalizationUtility::translate(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.decode.json_error',
+                    ),
                     AbstractMessage::ERROR,
                 );
             }

@@ -1,16 +1,244 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2015-01-20T12:00:00Z" product-name="in2publish_core">
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" datatype="plaintext" original="EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf" date="2023-11-13T12:52:01Z" product-name="in2publish_core">
 		<header/>
 		<body>
-			<trans-unit id="mlang_tabs_tab">
-				<source>Publish Tools</source>
+			<trans-unit id="mlang_tabs_tab" resname="mlang_tabs_tab">
+				<source>Publisher Tools</source>
 			</trans-unit>
-			<trans-unit id="mlang_labels_tabdescr">
+			<trans-unit id="mlang_labels_tabdescr" resname="mlang_labels_tabdescr">
 				<source>This Module offers some admin tools to the TYPO3 Content Publisher.</source>
 			</trans-unit>
-			<trans-unit id="mlang_labels_tablabel">
+			<trans-unit id="mlang_labels_tablabel" resname="mlang_labels_tablabel">
 				<source>TYPO3 Content Publisher</source>
+			</trans-unit>
+			<trans-unit id="system_info.show" resname="system_info.show">
+				<source>Show the system info</source>
+			</trans-unit>
+			<trans-unit id="system_info.download" resname="system_info.download">
+				<source>Download the system info</source>
+			</trans-unit>
+			<trans-unit id="system_info.decode" resname="system_info.decode">
+				<source>Decode the system info JSON</source>
+			</trans-unit>
+			<trans-unit id="system_info.decode.json" resname="system_info.decode.json">
+				<source>JSON string</source>
+			</trans-unit>
+			<trans-unit id="system_info.decode.decode" resname="system_info.decode.decode">
+				<source>Decode!</source>
+			</trans-unit>
+			<trans-unit id="system_info.decode.json_error.details" resname="system_info.decode.json_error.details">
+				<source>JSON decode error #%d: %s</source>
+			</trans-unit>
+			<trans-unit id="system_info.upload.file" resname="system_info.upload.file">
+				<source>SysInfo JSON file</source>
+			</trans-unit>
+			<trans-unit id="system_info.upload.upload" resname="system_info.upload.upload">
+				<source>Upload!</source>
+			</trans-unit>
+			<trans-unit id="recordinspector.inspection_hint" resname="recordinspector.inspection_hint">
+				<source>Select Classification and Identifier for inspection</source>
+			</trans-unit>
+			<trans-unit id="recordinspector.toggle_all_relations" resname="recordinspector.toggle_all_relations">
+				<source>Toggle all relations</source>
+			</trans-unit>
+			<trans-unit id="compare_database.only_local" resname="compare_database.only_local">
+				<source>New</source>
+			</trans-unit>
+			<trans-unit id="compare_database.only_foreign" resname="compare_database.only_foreign">
+				<source>Deleted</source>
+			</trans-unit>
+			<trans-unit id="compare_database.diff" resname="compare_database.diff">
+				<source>Differences</source>
+			</trans-unit>
+			<trans-unit id="compare_database.general" resname="compare_database.general">
+				<source>Generally</source>
+			</trans-unit>
+			<trans-unit id="compare_database.general.local_empty" resname="compare_database.general.local_empty">
+				<source>The table is empty on Local</source>
+			</trans-unit>
+			<trans-unit id="compare_database.general.foreign_empty" resname="compare_database.general.foreign_empty">
+				<source>The table is empty on Foreign</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer" resname="compare_database.transfer">
+				<source>Transfer these changes to the foreign system</source>
+			</trans-unit>
+			<trans-unit id="compare_database.no_differences" resname="compare_database.no_differences">
+				<source>No differences were found in the data of the selected tables.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.select_tables" resname="compare_database.select_tables">
+				<source>Select the tables to compare</source>
+			</trans-unit>
+			<trans-unit id="compare_database.tables" resname="compare_database.tables">
+				<source>Tables</source>
+			</trans-unit>
+			<trans-unit id="compare_database.compare" resname="compare_database.compare">
+				<source>Compare</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer_notice.header" resname="compare_database.transfer_notice.header">
+				<source>This is not publishing</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer_notice" resname="compare_database.transfer_notice">
+				<source>A transfer is not a publishing. Only the exact record that is selected is transferred. No relations to other records are resolved and no MM-records are displayed nor transferred. You should always prefer normal publishing to this feature. Use this feature only in an emergency and only if you are aware of all the consequences.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.label" resname="compare_database.label">
+				<source>Record label</source>
+			</trans-unit>
+			<trans-unit id="compare_database.actions" resname="compare_database.actions">
+				<source>Actions</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.error" resname="compare_database.transfer.error">
+				<source>Error</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.success" resname="compare_database.transfer.success">
+				<source>Success</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.record_missing" resname="compare_database.transfer.record_missing">
+				<source>The record which should be transferred does not exist anymore.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.exists_on_foreign" resname="compare_database.transfer.exists_on_foreign">
+				<source>The record which should be transferred should not exists on Foreign but it does. It was probably published in the meantime.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.exists_on_local" resname="compare_database.transfer.exists_on_local">
+				<source>The record which should be transferred should not exists on Local but it does. It was probably created in the meantime.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.does_not_exists_on_both" resname="compare_database.transfer.does_not_exists_on_both">
+				<source>The record which should be transferred should exists on both Local and Foreign but it does not. Please reload the comparison view and try again.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.deleted_from_foreign" resname="compare_database.transfer.deleted_from_foreign">
+				<source>The record %s[%d] was deleted from foreign.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.transferred_to_foreign" resname="compare_database.transfer.transferred_to_foreign">
+				<source>The record %s[%d] was created on foreign.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.updated_on_foreign" resname="compare_database.transfer.updated_on_foreign">
+				<source>The record %s[%d] was updated on foreign.</source>
+			</trans-unit>
+			<trans-unit id="introduction.overview.title" resname="introduction.overview.title">
+				<source>Overview</source>
+			</trans-unit>
+			<trans-unit id="introduction.get_help.title" resname="introduction.get_help.title">
+				<source>Getting Help</source>
+			</trans-unit>
+			<trans-unit id="tca.navigate.to_incompatible" resname="tca.navigate.to_incompatible">
+				<source>Navigate to incompatible TCA</source>
+			</trans-unit>
+			<trans-unit id="tca.navigate.to_compatible" resname="tca.navigate.to_compatible">
+				<source>Navigate to compatible TCA</source>
+			</trans-unit>
+			<trans-unit id="tca.incompatible_tca" resname="tca.incompatible_tca">
+				<source>Incompatible TCA</source>
+			</trans-unit>
+			<trans-unit id="tca.compatible_tca" resname="tca.compatible_tca">
+				<source>Compatible TCA</source>
+			</trans-unit>
+			<trans-unit id="configuration.navigate.to_personal_configuration" resname="configuration.navigate.to_personal_configuration">
+				<source>Navigate to Personal Configuration</source>
+			</trans-unit>
+			<trans-unit id="configuration.navigate.to_global_configuration" resname="configuration.navigate.to_global_configuration">
+				<source>Navigate to Global Configuration</source>
+			</trans-unit>
+			<trans-unit id="configuration.navigate.config_container_dump" resname="configuration.navigate.config_container_dump">
+				<source>Navigate to Config Container Dump</source>
+			</trans-unit>
+			<trans-unit id="configuration.emulate_page" resname="configuration.emulate_page">
+				<source>Enter Page ID for page specific configuration</source>
+			</trans-unit>
+			<trans-unit id="configuration.container_dump" resname="configuration.container_dump">
+				<source>Config Container Dump</source>
+			</trans-unit>
+			<trans-unit id="configuration.global_config" resname="configuration.global_config">
+				<source>Global Configuration</source>
+			</trans-unit>
+			<trans-unit id="configuration.personal_config" resname="configuration.personal_config">
+				<source>Personal Configuration</source>
+			</trans-unit>
+			<trans-unit id="flush_registry.registry_flushed" resname="flush_registry.registry_flushed">
+				<source>Flushed all related registry entries.</source>
+			</trans-unit>
+			<trans-unit id="flush_registry.description" resname="flush_registry.description">
+				<source>The Content Publisher stores various information in the registry, like the outcome of the last test run. You can force the removal of these entries here.</source>
+			</trans-unit>
+			<trans-unit id="flush_registry.action" resname="flush_registry.action">
+				<source>Remove registry entries</source>
+			</trans-unit>
+			<trans-unit id="flush_envelopes.flushed" resname="flush_envelopes.flushed">
+				<source>Flushed all superfluous envelopes.</source>
+			</trans-unit>
+			<trans-unit id="flush_envelopes.description" resname="flush_envelopes.description">
+				<source>There are superfluous envelopes in the foreign database.</source>
+			</trans-unit>
+			<trans-unit id="flush_envelopes.nothing_to_flush" resname="flush_envelopes.nothing_to_flush">
+				<source>There are no envelopes to flush.</source>
+			</trans-unit>
+			<trans-unit id="flush_envelopes.action" resname="flush_envelopes.action">
+				<source>Remove superfluous envelopes</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.index" resname="moduleselector.index">
+				<source>Introduction</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.index.description" resname="moduleselector.index.description">
+				<source>This tool just lists all other tools.</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.configuration" resname="moduleselector.configuration">
+				<source>Show configuration</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.configuration.description" resname="moduleselector.configuration.description">
+				<source>Display the local configuration of in2publish from LocalConfiguration.yaml</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.logs" resname="moduleselector.logs">
+				<source>Show logs</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.logs.description" resname="moduleselector.logs.description">
+				<source>Show all logs of the Content Publisher with plenty filter options</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.test" resname="moduleselector.test">
+				<source>Tests</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.test.description" resname="moduleselector.test.description">
+				<source>Run some function test of in2publish</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.tca" resname="moduleselector.tca">
+				<source>Inspect TCA</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.tca.description" resname="moduleselector.tca.description">
+				<source>See which parts of the TCA are processed, and the reason why others are not.</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.flush_envelopes" resname="moduleselector.flush_envelopes">
+				<source>Remove superfluous envelopes</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.flush_envelopes.description" resname="moduleselector.flush_envelopes.description">
+				<source>Deletes all envelopes (remote procedure call database entries) which were already used (envelopes are one-way records).</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.flush_registry" resname="moduleselector.flush_registry">
+				<source>Remove all Registry entries</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.flush_registry.description" resname="moduleselector.flush_registry.description">
+				<source>Removes all registry entries which store information about the local and foreign environment. You must run the test after flushing these.</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.system_info" resname="moduleselector.system_info">
+				<source>System information</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.system_info.description" resname="moduleselector.system_info.description">
+				<source>Use this module to collect information which will be required or useful to solve a bug or problem.</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.compare" resname="moduleselector.compare">
+				<source>Compare Databases</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.compare.description" resname="moduleselector.compare.description">
+				<source>The compare tool scans the whole database for differences. This tool is ought to help administrators clean up UID conflicts.</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.record_inspector" resname="moduleselector.record_inspector">
+				<source>Inspect a record tree</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.record_inspector.description" resname="moduleselector.record_inspector.description">
+				<source>You can query for a record tree by classification and identifier and inspect it with all of its properties and children.</source>
+			</trans-unit>
+			<trans-unit id="help.slack_channel" resname="help.slack_channel">
+				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
+			</trans-unit>
+			<trans-unit id="help.github_issues" resname="help.github_issues">
+				<source><![CDATA[Official documentation for in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
 			</trans-unit>
 		</body>
 	</file>

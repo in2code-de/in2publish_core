@@ -2,7 +2,7 @@
 	<f:layout name="Submodule" />
 
 	<f:section name="Header">
-		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'module.m4.configuration\')}'}" />
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.configuration\')}'}" />
 	</f:section>
 
 	<f:section name="Main">
@@ -12,12 +12,12 @@
 			<div class="card-header">
 				<div class="card-header-body">
 					<h2 class="card-title">
-						<f:translate key="module.m4.global_config">global config</f:translate>
+						<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:configuration.global_config" default="Global configuration" />
 					</h2>
 				</div>
 			</div>
 			<div class="card-body">
-				<f:debug title="{f:translate(key:'module.m4.global_config')}" inline="true">{globalConfig}</f:debug>
+				<f:debug title="{f:translate(key:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:configuration.global_config')}" inline="true">{globalConfig}</f:debug>
 			</div>
 		</div>
 
@@ -27,12 +27,12 @@
 			<div class="card-header">
 				<div class="card-header-body">
 					<h2 class="card-title">
-						<f:translate key="module.m4.personal_config">personal config</f:translate>
+						<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:configuration.personal_config" default="Personal configuration" />
 					</h2>
 				</div>
 			</div>
 			<div class="card-body">
-				<f:debug title="{f:translate(key:'module.m4.personal_config')}" inline="true">{fullConfig}</f:debug>
+				<f:debug title="{f:translate(key:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:configuration.personal_config')}" inline="true">{fullConfig}</f:debug>
 			</div>
 		</div>
 
@@ -42,7 +42,7 @@
 			<div class="card-header">
 				<div class="card-header-body">
 					<h2 class="card-title">
-						<f:translate key="module.m4.container_dump">module.m4.container_dump</f:translate>
+						<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:configuration.container_dump" default="Config Container Dump" />
 					</h2>
 				</div>
 			</div>
@@ -53,7 +53,7 @@
 							<div class="row row-cols-auto align-items-end g-3">
 								<div class="col">
 									<label for="emulatePage" class="form-label">
-										<f:translate key="module.m4.emulate_page">module.m4.emulate_page</f:translate>
+										<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:configuration.emulate_page" default="Enter Page ID for page specific configuration" />
 									</label>
 									<f:form.textfield id="emulatePage" class="form-control" name="emulatePage" value="{emulatePage}" />
 								</div>
@@ -64,7 +64,7 @@
 						</f:form>
 					</div>
 					<div class="col-lg-8">
-						<f:debug title="{f:translate(key:'module.m4.container_dump')}" inline="true">{containerDump}</f:debug>
+						<f:debug title="{f:translate(key:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:configuration.container_dump')}" inline="true">{containerDump}</f:debug>
 					</div>
 				</div>
 			</div>
@@ -75,17 +75,17 @@
 		<ul>
 			<li>
 				<a href="#global-configuration">
-					<f:translate key="module.m4.configuration.navigate.to_global_configuration" />
+					<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:configuration.navigate.to_global_configuration" />
 				</a>
 			</li>
 			<li>
 				<a href="#personal-configuration">
-					<f:translate key="module.m4.configuration.navigate.to_personal_configuration" />
+					<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:configuration.navigate.to_personal_configuration" />
 				</a>
 			</li>
 			<li>
 				<a href="#config-container-dump">
-					<f:translate key="module.m4.configuration.navigate.config_container_dump" />
+					<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:configuration.navigate.config_container_dump" />
 				</a>
 			</li>
 		</ul>

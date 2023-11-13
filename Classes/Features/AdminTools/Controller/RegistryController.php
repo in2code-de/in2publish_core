@@ -47,7 +47,11 @@ class RegistryController extends AbstractAdminToolsController
     public function flushRegistryAction(): ResponseInterface
     {
         $this->registry->removeAllByNamespace('tx_in2publishcore');
-        $this->addFlashMessage(LocalizationUtility::translate('module.m4.registry_flushed', 'in2publish_core'));
+        $this->addFlashMessage(
+            LocalizationUtility::translate(
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:flush_registry.registry_flushed'
+            )
+        );
         return $this->redirect('index');
     }
 }

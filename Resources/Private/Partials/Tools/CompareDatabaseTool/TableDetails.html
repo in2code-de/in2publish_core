@@ -10,15 +10,15 @@
 				<th>UID</th>
 				<th>PID</th>
 				<th>
-					<f:translate key="compare_database.label" />
+					<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.label" />
 				</th>
 				<f:if condition="{reason} == 'diff'">
 					<th>
-						<f:translate key="compare_database.diff" />
+						<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.diff" />
 					</th>
 				</f:if>
 				<th>
-					<f:translate key="compare_database.actions" />
+					<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.actions" />
 				</th>
 			</tr>
 			</thead>
@@ -49,7 +49,7 @@
 							</td>
 							<td>
 								<f:link.action class="btn btn-default"
-											   title="{f:translate(key:'compare_database.transfer')}"
+											   title="{f:translate(key:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer')}"
 											   action="transfer"
 											   arguments="{table: table, uid: value.local.uid, expected: reason}">
 									<core:icon identifier="actions-caret-right" />
@@ -66,7 +66,7 @@
 							</td>
 							<td>
 								<f:link.action class="btn btn-default"
-											   title="{f:translate(key:'compare_database.transfer')}"
+											   title="{f:translate(key:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer')}"
 											   action="transfer"
 											   arguments="{table: table, uid: value.uid, expected: reason}">
 									<core:icon identifier="actions-caret-right" />

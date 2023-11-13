@@ -48,8 +48,7 @@ class LetterboxController extends AbstractAdminToolsController
         $this->letterbox->removeAnsweredEnvelopes();
         $this->addFlashMessage(
             LocalizationUtility::translate(
-                'module.m4.superfluous_envelopes_flushed',
-                'in2publish_core',
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:flush_envelopes.flushed',
             ),
         );
         return $this->redirect('index');
