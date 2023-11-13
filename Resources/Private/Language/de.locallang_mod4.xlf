@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-	<file source-language="en" target-language="de" datatype="plaintext" original="EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf" date="2023-11-13T13:17:26Z" product-name="in2publish_core">
+	<file source-language="en" target-language="de" datatype="plaintext" original="EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf" date="2023-11-13T13:49:51Z" product-name="in2publish_core">
 		<header/>
 		<body>
 			<trans-unit id="mlang_tabs_tab" resname="mlang_tabs_tab">
@@ -254,14 +254,6 @@
 			<trans-unit id="moduleselector.configuration.description" resname="moduleselector.configuration.description">
 				<source>Display the local configuration of in2publish from LocalConfiguration.yaml</source>
 				<target>Zeige die aktuelle Konfiguration von in2publish von der LocalConfiguration.yaml Datei</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.logs" resname="moduleselector.logs">
-				<source>Show logs</source>
-				<target>Logs anzeigen</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.logs.description" resname="moduleselector.logs.description">
-				<source>Show all logs of the Content Publisher with plenty filter options</source>
-				<target>Zeigt die Logeinträge des Content Publishers mit vielen Filteroptionen an</target>
 			</trans-unit>
 			<trans-unit id="moduleselector.test" resname="moduleselector.test">
 				<source>Tests</source>
