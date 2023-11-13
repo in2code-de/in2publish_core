@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-	<file source-language="en" target-language="de" datatype="plaintext" original="EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf" date="2023-11-13T12:52:01Z" product-name="in2publish_core">
+	<file source-language="en" target-language="de" datatype="plaintext" original="EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf" date="2023-11-13T13:17:26Z" product-name="in2publish_core">
 		<header/>
 		<body>
 			<trans-unit id="mlang_tabs_tab" resname="mlang_tabs_tab">
@@ -40,7 +40,7 @@
 				<target>JSON dekodierfehler #%d: %s</target>
 			</trans-unit>
 			<trans-unit id="system_info.upload.file" resname="system_info.upload.file">
-				<source>SysInfo JSON file</source>
+				<source>Systeminformation JSON file</source>
 				<target>Systeminformationen JSON Datei</target>
 			</trans-unit>
 			<trans-unit id="system_info.upload.upload" resname="system_info.upload.upload">
@@ -48,7 +48,7 @@
 				<target>Hochladen!</target>
 			</trans-unit>
 			<trans-unit id="recordinspector.inspection_hint" resname="recordinspector.inspection_hint">
-				<source>Select Classification and Identifier for inspection</source>
+				<source>Select classification and identifier for inspection</source>
 				<target>Bitte Klassifizierung und Identität auswählen</target>
 			</trans-unit>
 			<trans-unit id="recordinspector.toggle_all_relations" resname="recordinspector.toggle_all_relations">
@@ -76,7 +76,7 @@
 				<target>Die Tabelle is auf Local leer.</target>
 			</trans-unit>
 			<trans-unit id="compare_database.general.foreign_empty" resname="compare_database.general.foreign_empty">
-				<source>The table is empty on Foreign</source>
+				<source>The table is empty on foreign</source>
 				<target>Die Tabelle is auf Foreign leer.</target>
 			</trans-unit>
 			<trans-unit id="compare_database.transfer" resname="compare_database.transfer">
@@ -156,8 +156,16 @@
 				<target>Übersicht</target>
 			</trans-unit>
 			<trans-unit id="introduction.get_help.title" resname="introduction.get_help.title">
-				<source>Getting Help</source>
+				<source>Getting help</source>
 				<target>Hilfe</target>
+			</trans-unit>
+			<trans-unit id="introduction.help.slack_channel" resname="introduction.help.slack_channel">
+				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
+				<target><![CDATA[Frag die Community: Wir haben einen Slack Channel #ext-in2publish im offiziellen TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></target>
+			</trans-unit>
+			<trans-unit id="introduction.help.github_issues" resname="introduction.help.github_issues">
+				<source><![CDATA[Official documentation for in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
+				<target><![CDATA[Offizielle Dokumentation von in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></target>
 			</trans-unit>
 			<trans-unit id="tca.navigate.to_incompatible" resname="tca.navigate.to_incompatible">
 				<source>Navigate to incompatible TCA</source>
@@ -176,31 +184,31 @@
 				<target>Kompatibles TCA</target>
 			</trans-unit>
 			<trans-unit id="configuration.navigate.to_personal_configuration" resname="configuration.navigate.to_personal_configuration">
-				<source>Navigate to Personal Configuration</source>
+				<source>Navigate to personal configuration</source>
 				<target>zur persönlichen Konfiguration springen</target>
 			</trans-unit>
 			<trans-unit id="configuration.navigate.to_global_configuration" resname="configuration.navigate.to_global_configuration">
-				<source>Navigate to Global Configuration</source>
+				<source>Navigate to global configuration</source>
 				<target>zur globalen Konfiguration springen</target>
 			</trans-unit>
 			<trans-unit id="configuration.navigate.config_container_dump" resname="configuration.navigate.config_container_dump">
-				<source>Navigate to Config Container Dump</source>
+				<source>Navigate to config container dump</source>
 				<target>zum Dump des Config Containers springen</target>
 			</trans-unit>
 			<trans-unit id="configuration.emulate_page" resname="configuration.emulate_page">
-				<source>Enter Page ID for page specific configuration</source>
+				<source>Enter page ID for page specific configuration</source>
 				<target>Seiten-ID für Seitenspezifische konfiguration angeben</target>
 			</trans-unit>
 			<trans-unit id="configuration.container_dump" resname="configuration.container_dump">
-				<source>Config Container Dump</source>
+				<source>Config container dump</source>
 				<target>Config Container Konfiguration</target>
 			</trans-unit>
 			<trans-unit id="configuration.global_config" resname="configuration.global_config">
-				<source>Global Configuration</source>
+				<source>Global configuration</source>
 				<target>Globale Konfiguration</target>
 			</trans-unit>
 			<trans-unit id="configuration.personal_config" resname="configuration.personal_config">
-				<source>Personal Configuration</source>
+				<source>Personal configuration</source>
 				<target>Persönliche Konfiguration</target>
 			</trans-unit>
 			<trans-unit id="flush_registry.registry_flushed" resname="flush_registry.registry_flushed">
@@ -280,7 +288,7 @@
 				<target>Löscht alle Envelopes  (&quot;Remote Procedure Call&quot;-Datenbankeinträge) die bereits genutzt wurden (Diese sind Einweg-Einträge)</target>
 			</trans-unit>
 			<trans-unit id="moduleselector.flush_registry" resname="moduleselector.flush_registry">
-				<source>Remove all Registry entries</source>
+				<source>Remove all registry entries</source>
 				<target>Registereinträge löschen</target>
 			</trans-unit>
 			<trans-unit id="moduleselector.flush_registry.description" resname="moduleselector.flush_registry.description">
@@ -288,7 +296,7 @@
 				<target>Löscht alle Registereinträge, welche Informationen über das lokale und entfernte System vorhalten. Danach müssen die Tests erneut ausgeführt werden.</target>
 			</trans-unit>
 			<trans-unit id="moduleselector.system_info" resname="moduleselector.system_info">
-				<source>System information</source>
+				<source>Systeminformation</source>
 				<target>Systeminformationen</target>
 			</trans-unit>
 			<trans-unit id="moduleselector.system_info.description" resname="moduleselector.system_info.description">
@@ -296,7 +304,7 @@
 				<target>Anzeige von Informationen welche erforderlich oder nützlich sind Probleme zu identifizieren und sie zu beheben.</target>
 			</trans-unit>
 			<trans-unit id="moduleselector.compare" resname="moduleselector.compare">
-				<source>Compare Databases</source>
+				<source>Compare databases</source>
 				<target>Datenbankvergleich</target>
 			</trans-unit>
 			<trans-unit id="moduleselector.compare.description" resname="moduleselector.compare.description">
@@ -310,14 +318,6 @@
 			<trans-unit id="moduleselector.record_inspector.description" resname="moduleselector.record_inspector.description">
 				<source>You can query for a record tree by classification and identifier and inspect it with all of its properties and children.</source>
 				<target>Hier kann ein RecordTree mittels Klassifikation und Identifikation aufgebaut und untersucht werden..</target>
-			</trans-unit>
-			<trans-unit id="help.slack_channel" resname="help.slack_channel">
-				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
-				<target><![CDATA[Frag die Community: Wir haben einen Slack Channel #ext-in2publish im offiziellen TYPO3 Slack: <a target="_blank" href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></target>
-			</trans-unit>
-			<trans-unit id="help.github_issues" resname="help.github_issues">
-				<source><![CDATA[Official documentation for in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
-				<target><![CDATA[Offizielle Dokumentation von in2publish_core: <a target="_blank" href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></target>
 			</trans-unit>
 		</body>
 	</file>

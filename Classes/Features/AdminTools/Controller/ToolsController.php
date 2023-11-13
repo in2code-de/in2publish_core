@@ -61,10 +61,10 @@ class ToolsController extends AbstractAdminToolsController
 
         $supports = [
             LocalizationUtility::translate(
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:help.github_issues'
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:introduction.help.github_issues'
             ),
             LocalizationUtility::translate(
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:help.slack_channel'
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:introduction.help.slack_channel'
             ),
         ];
 
