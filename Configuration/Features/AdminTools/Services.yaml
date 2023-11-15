@@ -41,6 +41,7 @@ services:
         title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.test'
         description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.test.description'
         actions: 'index'
+        after: 'In2code\In2publishCore\Features\AdminTools\Controller\ToolsController'
 
   In2code\In2publishCore\Features\AdminTools\Controller\ToolsController:
     tags:
