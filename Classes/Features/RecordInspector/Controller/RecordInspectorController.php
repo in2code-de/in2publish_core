@@ -9,17 +9,15 @@ use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
-use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
+use In2code\In2publishCore\Features\AdminTools\Controller\AbstractAdminToolsController;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 use function array_combine;
 use function array_keys;
 use function array_merge;
 
-class RecordInspectorController extends ActionController
+class RecordInspectorController extends AbstractAdminToolsController
 {
-    use AdminToolsModuleTemplate;
     use RecordTreeBuilderInjection;
     use DefaultFalFinderInjection;
 

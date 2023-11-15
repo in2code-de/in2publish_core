@@ -30,20 +30,17 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
-use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Service\Environment\EnvironmentServiceInjection;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function implode;
 
 use const PHP_EOL;
 
-class ToolsController extends ActionController
+class ToolsController extends AbstractAdminToolsController
 {
-    use AdminToolsModuleTemplate;
     use EnvironmentServiceInjection;
 
     public function indexAction(): ResponseInterface
@@ -63,8 +60,12 @@ class ToolsController extends ActionController
         }
 
         $supports = [
-            LocalizationUtility::translate('help.github_issues', 'in2publish_core'),
-            LocalizationUtility::translate('help.slack_channel', 'in2publish_core'),
+            LocalizationUtility::translate(
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:introduction.help.github_issues'
+            ),
+            LocalizationUtility::translate(
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:introduction.help.slack_channel'
+            ),
         ];
 
         $event = new CreatedDefaultHelpLabels($supports);

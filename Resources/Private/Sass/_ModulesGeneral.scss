@@ -662,11 +662,23 @@ div#typo3-docbody.stopScrolling {
   border-bottom-right-radius: 2px
 }
 
-// Fix buttons in admin tools module
-
-.tx_in2publishcore_admintools .module-docheader-bar-buttons .btn-toolbar .btn-group {
-  flex-wrap: wrap;
+.tx_in2publishcore_admintools {
+  .card-body {
+    .extbase-debugger {
+      margin: 0;
+    }
+  }
+  // Fix buttons in admin tools module
+  .module-docheader-bar-buttons {
+    .btn-toolbar {
+      .btn-group {
+        flex-wrap: wrap;
+      }
+    }
+  }
 }
+
+
 
 
 .in2publish-state-icon {

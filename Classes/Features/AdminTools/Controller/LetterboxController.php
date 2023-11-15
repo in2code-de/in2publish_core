@@ -30,14 +30,11 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Component\RemoteProcedureCall\LetterboxInjection;
-use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-class LetterboxController extends ActionController
+class LetterboxController extends AbstractAdminToolsController
 {
-    use AdminToolsModuleTemplate;
     use LetterboxInjection;
 
     public function indexAction(): ResponseInterface
@@ -51,8 +48,7 @@ class LetterboxController extends ActionController
         $this->letterbox->removeAnsweredEnvelopes();
         $this->addFlashMessage(
             LocalizationUtility::translate(
-                'module.m4.superfluous_envelopes_flushed',
-                'in2publish_core',
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:flush_envelopes.flushed',
             ),
         );
         return $this->redirect('index');

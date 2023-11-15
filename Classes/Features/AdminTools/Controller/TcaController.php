@@ -30,13 +30,10 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Component\Core\PreProcessing\CachedTcaPreProcessingServiceInjection;
-use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
-class TcaController extends ActionController
+class TcaController extends AbstractAdminToolsController
 {
-    use AdminToolsModuleTemplate;
     use CachedTcaPreProcessingServiceInjection;
 
     public function indexAction(): ResponseInterface
