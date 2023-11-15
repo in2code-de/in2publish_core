@@ -32,9 +32,10 @@ namespace In2code\In2publishCore\Features\AdminTools\Service;
 use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Service\Exception\ClassNotFoundException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 use function class_exists;
@@ -63,16 +64,14 @@ class ToolsRegistry implements SingletonInterface
         ];
     }
 
+    /**
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     */
     public function getEntries(): array
     {
-        // Do not inject the ConfigurationManager, because it will not contain the configured tools.
-        $configurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
-        $configuration = $configurationManager->getConfiguration(
-            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-        );
         $processedTools = [];
 
-        $controllerConfig = $configuration['controllerConfiguration'];
         foreach ($this->entries as $key => $config) {
             if ($this->evaluateCondition($config)) {
                 $controller = $config['controller'];
@@ -88,6 +87,8 @@ class ToolsRegistry implements SingletonInterface
 
     /**
      * @throws ClassNotFoundException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      */
     public function processData(): array
     {
@@ -112,6 +113,8 @@ class ToolsRegistry implements SingletonInterface
 
     /**
      * @throws ClassNotFoundException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      * @deprecated Will be removed in TYPO3 v13
      */
     public function processDataForTypo3V11(): array
@@ -123,6 +126,10 @@ class ToolsRegistry implements SingletonInterface
         return $controllerActions;
     }
 
+    /**
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     */
     protected function evaluateCondition(array $config): bool
     {
         if (null === $config['condition']) {
