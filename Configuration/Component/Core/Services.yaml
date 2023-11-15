@@ -41,3 +41,7 @@ services:
 
   In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver:
     factory: [ '@In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverFactory', 'createDemandResolver' ]
+
+  In2code\In2publishCore\Component\Core\Publisher\PublisherService:
+    public: true
+    shared: true

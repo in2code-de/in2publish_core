@@ -8,6 +8,7 @@ use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionServiceInjection;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecordWasPublished;
@@ -19,9 +20,11 @@ use Throwable;
 class PublisherService
 {
     use EventDispatcherInjection;
+    use TaskExecutionServiceInjection;
 
     protected PublisherCollection $publisherCollection;
-    protected TaskExecutionService $taskExecutionService;
+    /** @var array<string, array<int, true>> */
+    protected array $visitedRecords = [];
 
     public function __construct()
     {
@@ -29,14 +32,8 @@ class PublisherService
     }
 
     /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
+     * Called by the DI container when constructing this service
      */
-    public function injectTaskExecutionService(TaskExecutionService $taskExecutionService): void
-    {
-        $this->taskExecutionService = $taskExecutionService;
-    }
-
     public function addPublisher(Publisher $publisher): void
     {
         $this->publisherCollection->addPublisher($publisher);
@@ -55,10 +52,9 @@ class PublisherService
         $this->publisherCollection->start();
 
         try {
-            $visitedRecords = [];
             foreach ($recordTree->getChildren() as $records) {
                 foreach ($records as $record) {
-                    $this->publishRecord($record, $visitedRecords, $includeChildPages);
+                    $this->publishRecord($record, $includeChildPages);
                 }
             }
         } catch (Throwable $exception) {
@@ -79,15 +75,15 @@ class PublisherService
         $this->taskExecutionService->runTasks();
     }
 
-    protected function publishRecord(Record $record, array &$visitedRecords = [], bool $includeChildPages = false): void
+    protected function publishRecord(Record $record, bool $includeChildPages = false): void
     {
         $classification = $record->getClassification();
         $id = $record->getId();
 
-        if (isset($visitedRecords[$classification][$id])) {
+        if (isset($this->visitedRecords[$classification][$id])) {
             return;
         }
-        $visitedRecords[$classification][$id] = true;
+        $this->visitedRecords[$classification][$id] = true;
 
         $this->eventDispatcher->dispatch(new RecordWasSelectedForPublishing($record));
 
@@ -106,16 +102,11 @@ class PublisherService
         }
 
         foreach ($record->getChildren() as $table => $children) {
-            if ('pages' !== $table) {
-                foreach ($children as $child) {
-                    $this->publishRecord($child, $visitedRecords, true);
-                }
-            } else {
-                if ($includeChildPages === true) {
-                    foreach ($children as $child) {
-                        $this->publishRecord($child, $visitedRecords, true);
-                    }
-                }
+            if ('pages' === $table && !$includeChildPages) {
+                continue;
+            }
+            foreach ($children as $child) {
+                $this->publishRecord($child, true);
             }
         }
     }

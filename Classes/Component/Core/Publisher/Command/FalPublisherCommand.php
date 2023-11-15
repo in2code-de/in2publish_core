@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher\Command;
 
+use Doctrine\DBAL\ArrayParameterType;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverServiceInjection;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\PublishInstruction;
@@ -13,6 +14,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function explode;
 use function json_decode;
 
 class FalPublisherCommand extends Command
@@ -28,17 +30,23 @@ class FalPublisherCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('requestToken', InputArgument::REQUIRED);
+        $this->addArgument('requestTokens', InputArgument::REQUIRED);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $requestToken = $input->getArgument('requestToken');
+        $requestTokens = $input->getArgument('requestTokens');
+        $requestTokens = explode(',', $requestTokens);
 
         $query = $this->localDatabase->createQueryBuilder();
         $query->select('*')
               ->from('tx_in2publishcore_filepublisher_instruction')
-              ->where($query->expr()->eq('request_token', $query->createNamedParameter($requestToken)));
+              ->where(
+                  $query->expr()->in(
+                      'request_token',
+                      $query->createNamedParameter($requestTokens, ArrayParameterType::STRING)
+                  )
+              );
         $result = $query->executeQuery();
         $rows = $result->fetchAllAssociative();
 
