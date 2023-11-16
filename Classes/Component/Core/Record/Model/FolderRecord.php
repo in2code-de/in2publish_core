@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Record\Model;
 
+use In2code\In2publishCore\Component\Core\Record\Iterator\IterationControls\SkipChildren;
 use In2code\In2publishCore\Component\Core\Record\Iterator\IterationControls\StopIteration;
 use In2code\In2publishCore\Component\Core\Record\Iterator\RecordIterator;
 use LogicException;
@@ -42,17 +43,24 @@ class FolderRecord extends AbstractRecord
         if ($state !== Record::S_UNCHANGED) {
             return $state;
         }
+        $children = $this->getChildren();
+        unset($children[FolderRecord::CLASSIFICATION], $children[FileRecord::CLASSIFICATION]);
+
         $stateRecursive = Record::S_UNCHANGED;
         $recordIterator = new RecordIterator();
-        $recordIterator->recurse($this, function (Record $record) use (&$stateRecursive) {
-            if ($record instanceof FolderRecord || $record instanceof FileRecord) {
-                return;
+        foreach ($children as $childRecords) {
+            foreach ($childRecords as $childRecord) {
+                $recordIterator->recurse($childRecord, function (Record $record) use (&$stateRecursive) {
+                    if ($record instanceof FolderRecord || $record instanceof FileRecord) {
+                        throw new SkipChildren();
+                    }
+                    if ($record->getState() !== Record::S_UNCHANGED) {
+                        $stateRecursive = Record::S_CHANGED;
+                        throw new StopIteration();
+                    }
+                });
             }
-            if ($record->getState() !== Record::S_UNCHANGED) {
-                $stateRecursive = Record::S_CHANGED;
-                throw new StopIteration();
-            }
-        });
+        }
         return $stateRecursive;
     }
 }
