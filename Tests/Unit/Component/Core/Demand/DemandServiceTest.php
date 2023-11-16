@@ -47,7 +47,7 @@ class DemandServiceTest extends UnitTestCase
         ];
 
         $resolverService = $this->createMock(ResolverService::class);
-        $resolverService->method('getResolversForTable')->willReturn($resolversForTable);
+        $resolverService->method('getResolversForClassification')->willReturn($resolversForTable);
         $demandBuilder->injectResolverService($resolverService);
 
         $demand = $demandBuilder->buildDemandForRecords(new RecordCollection([$record]));
@@ -97,7 +97,7 @@ class DemandServiceTest extends UnitTestCase
         ];
 
         $resolverService = $this->createMock(ResolverService::class);
-        $resolverService->method('getResolversForTable')->willReturnOnConsecutiveCalls(
+        $resolverService->method('getResolversForClassification')->willReturnOnConsecutiveCalls(
             $resolversForTableFoo,
             $resolversForTableBar,
         );

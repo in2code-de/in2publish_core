@@ -20,14 +20,14 @@ class ResolverService
     public function initializeObject(): void
     {
         $compatibleTcaParts = $this->cachedTcaPreProcessingService->getCompatibleTcaParts();
-        foreach ($compatibleTcaParts as $table => $properties) {
+        foreach ($compatibleTcaParts as $classification => $properties) {
             foreach ($properties as $property => $array) {
                 /** @var Resolver $resolver */
                 $resolver = $array['resolver'];
                 $targetTables = $resolver->getTargetTables();
                 $relevantTables = $this->relevantTablesService->removeExcludedAndEmptyTables($targetTables);
                 if (!empty($relevantTables)) {
-                    $this->resolvers[$table][$property] = $resolver;
+                    $this->resolvers[$classification][$property] = $resolver;
                 }
             }
         }
@@ -36,8 +36,8 @@ class ResolverService
     /**
      * @return array<string, Resolver>
      */
-    public function getResolversForTable(string $table): array
+    public function getResolversForClassification(string $classification): array
     {
-        return $this->resolvers[$table] ?? [];
+        return $this->resolvers[$classification] ?? [];
     }
 }

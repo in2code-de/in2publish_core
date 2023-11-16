@@ -92,7 +92,7 @@ class FlexResolver extends AbstractResolver
         $flexFormTableName = $this->table . '/' . $this->column . '/' . $dataStructureKey;
         $virtualRecord = new VirtualFlexFormRecord($record, $flexFormTableName, $localValues, $foreignValues);
 
-        $resolvers = $this->resolverService->getResolversForTable($flexFormTableName);
+        $resolvers = $this->resolverService->getResolversForClassification($flexFormTableName);
 
         $expressions = [];
         foreach ($resolvers as $field => $resolver) {
