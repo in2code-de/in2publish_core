@@ -348,7 +348,11 @@ define([
 					name: 'abort',
 					active: true,
 					trigger: function () {
-						Modal.currentModal.trigger('modal-dismiss');
+						if (typeof Modal.currentModal.hideModal === "function") {
+							Modal.currentModal.hideModal();
+						} else {
+							Modal.currentModal.trigger('modal-dismiss');
+						}
 						In2publishCoreModule.hidePreLoader();
 					}
 				},
@@ -357,7 +361,11 @@ define([
 					btnClass: 'btn ' + actionButtonClass,
 					name: 'publish',
 					trigger: () => {
-						Modal.currentModal.trigger('modal-dismiss');
+						if (typeof Modal.currentModal.hideModal === "function") {
+							Modal.currentModal.hideModal();
+						} else {
+							Modal.currentModal.trigger('modal-dismiss');
+						}
 						if (target.classList.contains('js-publish-overlay')) {
 							In2publishCoreModule.showPreloader();
 						}
