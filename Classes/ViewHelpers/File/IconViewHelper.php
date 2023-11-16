@@ -28,7 +28,9 @@ namespace In2code\In2publishCore\ViewHelpers\File;
  */
 
 use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
+use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Component\Core\Record\Model\StorageRootFolderRecord;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -70,6 +72,12 @@ class IconViewHelper extends AbstractViewHelper
 
     protected function getIconIdentifier(Record $record): ?string
     {
+        if ($record instanceof StorageRootFolderRecord) {
+            return 'apps-filetree-mount';
+        }
+        if ($record instanceof FolderRecord) {
+            return 'files-folder';
+        }
         $mimeType = $record->getProp('mime_type');
         if ($mimeType === null) {
             return $this->getIconIdentifierForFileExtension($record);

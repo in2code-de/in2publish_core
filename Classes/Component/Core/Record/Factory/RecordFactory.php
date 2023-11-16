@@ -36,6 +36,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\MmDatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\PageTreeRootRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Component\Core\Record\Model\StorageRootFolderRecord;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\RecordWasCreated;
@@ -107,7 +108,11 @@ class RecordFactory
 
     public function createFolderRecord(array $localProps, array $foreignProps): ?FolderRecord
     {
-        $record = new FolderRecord($localProps, $foreignProps);
+        if ('/' === ($localProps['identifier'] ?? null) || '/' === ($foreignProps['identifier'] ?? null)) {
+            $record = new StorageRootFolderRecord($localProps, $foreignProps);
+        } else {
+            $record = new FolderRecord($localProps, $foreignProps);
+        }
         if ($this->shouldIgnoreRecord($record)) {
             return null;
         }

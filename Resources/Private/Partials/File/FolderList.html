@@ -16,7 +16,7 @@
 			</td>
 			<f:comment>Left</f:comment>
 			<td class="col-icon">
-				<core:icon identifier="files-folder" />
+				<publish:file.icon record="{record}" />
 			</td>
 			<td class="col-filename col-filename--local col-responsive nowrap" colspan="2">
 				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" fallbackProperty="combinedIdentifier" />
@@ -37,7 +37,7 @@
 
 			<f:comment>Right</f:comment>
 			<td class="col-icon">
-				<core:icon identifier="files-folder" />
+				<publish:file.icon record="{record}" />
 			</td>
 			<td class="col-filename col-filename--foreign col-responsive nowrap" colspan="2">
 				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" fallbackProperty="combinedIdentifier" />
