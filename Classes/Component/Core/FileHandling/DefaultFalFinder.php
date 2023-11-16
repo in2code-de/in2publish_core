@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Component\Core\FileHandling;
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
+use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\Demand\Type\FilesInFolderDemand;
 use In2code\In2publishCore\Component\Core\Demand\Type\FolderDemand;
@@ -65,6 +66,7 @@ class DefaultFalFinder
     use EventDispatcherInjection;
     use LocalFileInfoServiceInjection;
     use ForeignFileInfoServiceInjection;
+    use DemandBuilderInjection;
 
     /**
      * Creates a Record instance representing the current chosen folder in the
@@ -118,6 +120,10 @@ class DefaultFalFinder
         $demands = $this->demandsFactory->createDemand();
         $demands->addDemand(new FolderDemand($storage, $identifier, $recordTree));
 
+        $recordCollection = new RecordCollection();
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
+
+        $demands = $this->demandBuilder->buildDemandForRecords($recordCollection);
         $recordCollection = new RecordCollection();
         $this->demandResolver->resolveDemand($demands, $recordCollection);
 

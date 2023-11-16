@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Component\Core\Service;
 
 use In2code\In2publishCore\Component\Core\PreProcessing\CachedTcaPreProcessingServiceInjection;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
+use In2code\In2publishCore\Component\Core\Resolver\StaticResolver;
 
 class ResolverService
 {
@@ -15,7 +16,20 @@ class ResolverService
     /**
      * @var array<string, array<string, Resolver>>
      */
-    protected array $resolvers;
+    protected array $resolvers = [];
+
+    /**
+     * @noinspection PhpUnused Called via DI
+     * @see \In2code\In2publishCore\Component\Core\DependencyInjection\StaticResolverPass
+     */
+    public function addStaticResolver(StaticResolver $staticResolver): void
+    {
+        foreach ($staticResolver->getTargetClassification() as $classification) {
+            foreach ($staticResolver->getTargetProperties() as $property) {
+                $this->resolvers[$classification][$property] = $staticResolver;
+            }
+        }
+    }
 
     public function initializeObject(): void
     {
