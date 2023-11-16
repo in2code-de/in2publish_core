@@ -50,15 +50,10 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
-use function explode;
 use function http_build_query;
 use function implode;
-use function is_string;
 use function json_encode;
 use function parse_str;
-use function strlen;
-use function strpos;
-use function trim;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -127,6 +122,7 @@ class FileController extends ActionController
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
         $moduleTemplate->setContent($this->view->render());
+        /** @see packages/in2publish_core/Resources/Private/Templates/File/Index.html */
         return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
