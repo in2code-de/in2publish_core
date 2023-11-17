@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher\Command;
 
-use Doctrine\DBAL\ArrayParameterType;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverServiceInjection;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\PublishInstruction;
@@ -13,6 +12,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use TYPO3\CMS\Core\Database\Connection;
 
 use function explode;
 use function json_decode;
@@ -44,7 +45,7 @@ class FalPublisherCommand extends Command
               ->where(
                   $query->expr()->in(
                       'request_token',
-                      $query->createNamedParameter($requestTokens, ArrayParameterType::STRING)
+                      $query->createNamedParameter($requestTokens, Connection::PARAM_STR_ARRAY)
                   )
               );
         $result = $query->executeQuery();
