@@ -83,10 +83,6 @@
 				<source>Publish page &quot;%s&quot; and its subpages.</source>
 				<target>Veröffentlichen der Seite &quot;%s&quot; und ihrer Unterseiten</target>
 			</trans-unit>
-			<trans-unit id="confirm_publish_all_pages" resname="confirm_publish_all_pages">
-				<source>Do you really want to publish all pages?</source>
-				<target>Möchten Sie wirklich alle Seiten veröffentlichen?</target>
-			</trans-unit>
 			<trans-unit id="confirm_publish_pages" resname="confirm_publish_pages">
 				<source>Do you really want to publish this page?</source>
 				<target>Möchten Sie diese Seite wirklich veröffentlichen?</target>
@@ -471,6 +467,24 @@
 			<trans-unit id="record.reason.shortcut_record" resname="record.reason.shortcut_record">
 				<source>The record &quot;%s&quot; is a target of the shortcut record &quot;%s&quot;. The target must be published before the shortcut record can be published.</source>
 				<target>Der Datensatz &quot;%s&quot; ist ein Ziel des Verknüpfungsdatensatzes &quot;%s&quot;. Das Ziel muss veröffentlicht werden, bevor der Verknüpfungsdatensatz veröffentlicht werden kann.</target>
+			</trans-unit>
+			<trans-unit id="tx_in2publishcore.modal.publish.page_with_dependencies.text">
+				<source>This page has unmet dependencies. Since you cannot access the dependencies, it is possible to publish this page anyway. However, there is no guarantee that the page will look exactly the same as on Local.
+					You can see the dependencies in the details of the page.</source>
+				<target state="translated">Diese Seite hat unerfüllte Abhängigkeiten. Da Sie auf die Abhängigkeiten nicht zugreifen können ist es möglich, diese Seite trotzdem zu veröffentlichen. Allerdings ohne Garantie, dass die Seite exakt so aussieht wie auf Local.
+					Sie können die Abhängigkeiten in den Details der Seite einsehen.</target>
+			</trans-unit>
+			<trans-unit id="tx_in2publishcore.actions.publish">
+				<source>Publish</source>
+				<target state="translated">Veröffentlichen</target>
+			</trans-unit>
+			<trans-unit id="tx_in2publishcore.action.abort">
+				<source>Abort</source>
+				<target state="translated">Abbrechen</target>
+			</trans-unit>
+			<trans-unit id="tx_in2publishcore.modal.publish.title">
+				<source>Confirm publish</source>
+				<target state="translated">Veröffentlichung bestätigen</target>
 			</trans-unit>
 		</body>
 	</file>

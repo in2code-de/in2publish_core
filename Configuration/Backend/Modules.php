@@ -43,7 +43,7 @@ if ($configContainer->get('module.m1')) {
     $backendModulesToRegister['in2publish_core_m1'] = [
         'parent' => 'web',
         'position' => [],
-        'access' => 'user,group',
+        'access' => 'user',
         'workspaces' => 'live',
         'path' => '/module/in2publish_core/m1',
         'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod1.xlf',
@@ -59,7 +59,7 @@ if ($configContainer->get('module.m3')) {
     $backendModulesToRegister['in2publish_core_m3'] = [
         'parent' => 'file',
         'position' => [],
-        'access' => 'user,group',
+        'access' => 'user',
         'workspaces' => 'live',
         'path' => '/module/in2publish_core/m3',
         'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod3.xlf',
@@ -93,7 +93,7 @@ if ($configContainer->get('features.redirectsSupport.enable')) {
     $backendModulesToRegister['in2publish_core_m5'] = [
         'parent' => 'site',
         'position' => ['after' => 'redirects'],
-        'access' => 'user,group',
+        'access' => 'user',
         'workspaces' => 'live',
         'path' => '/module/in2publish_core/m5',
         'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod5.xlf',

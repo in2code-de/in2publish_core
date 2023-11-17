@@ -18,10 +18,6 @@
 			<trans-unit id="tx_in2publishcore.modal.publish.folder.text">
 				<source>Are you sure you want to publish the folder $name$? This cannot be reversed.</source>
 			</trans-unit>
-			<trans-unit id="tx_in2publishcore.modal.publish.page_with_dependencies.text">
-				<source>This page has unmet dependencies. Since you cannot access the dependencies, it is possible to publish this page anyway. However, there is no guarantee that the page will look exactly the same as on Local.
-					You can see the dependencies in the details of the page.</source>
-			</trans-unit>
 		</body>
 	</file>
 </xliff>
