@@ -35,6 +35,7 @@ use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinderInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
+use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
@@ -135,9 +136,10 @@ class FileController extends ActionController
     public function publishFolderAction(string $combinedIdentifier, bool $skipNotification = false): ResponseInterface
     {
         $recordTree = $this->defaultFalFinder->findFolderRecord($combinedIdentifier, true);
+        $publishingContext = new PublishingContext($recordTree);
 
         try {
-            $this->publisherService->publishRecordTree($recordTree);
+            $this->publisherService->publish($publishingContext);
             if (!$skipNotification) {
                 $this->addFlashMessage(
                     LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$combinedIdentifier]),
@@ -168,9 +170,10 @@ class FileController extends ActionController
     public function publishFileAction(string $combinedIdentifier, bool $skipNotification = false): ResponseInterface
     {
         $recordTree = $this->defaultFalFinder->findFileRecord($combinedIdentifier);
+        $publishingContext = new PublishingContext($recordTree);
 
         try {
-            $this->publisherService->publishRecordTree($recordTree);
+            $this->publisherService->publish($publishingContext);
             if (!$skipNotification) {
                 $this->addFlashMessage(
                     LocalizationUtility::translate(

@@ -7,7 +7,6 @@ namespace In2code\In2publishCore\Component\Core\Publisher;
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionServiceInjection;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
@@ -17,11 +16,18 @@ use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use Throwable;
 
+use function debug_backtrace;
+use function user_error;
+
+use const DEBUG_BACKTRACE_IGNORE_ARGS;
+use const E_USER_DEPRECATED;
+
 class PublisherService
 {
     use EventDispatcherInjection;
     use TaskExecutionServiceInjection;
 
+    protected const DEPRECATION_DIRECTLY_INVOKED = '%s%s%s directly invoked \In2code\In2publishCore\Component\Core\Publisher\PublisherService::publishRecordTree. This will not work in in2publish_core v13 anymore. Please use \In2code\In2publishCore\Component\Core\Publisher\PublisherService::publish instead.';
     protected PublisherCollection $publisherCollection;
     /** @var array<string, array<int, true>> */
     protected array $visitedRecords = [];
@@ -39,14 +45,31 @@ class PublisherService
         $this->publisherCollection->addPublisher($publisher);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function publish(PublishingContext $publishingContext): void
     {
         $recordTree = $publishingContext->getRecordTree();
-        $this->publishRecordTree($recordTree);
+        $this->publishRecordTree($recordTree, $publishingContext->publishChildPages);
     }
 
+    /**
+     * @throws Throwable
+     * @internal This method will be made non-public in in2publish_core v13. Use publish() with PublishingContext
+     *     instead.
+     */
     public function publishRecordTree(RecordTree $recordTree, bool $includeChildPages = false): void
     {
+        // Check if method was called by something else than self::publish and trigger a deprecation.
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $frame = $backtrace[1];
+        if ($frame['function'] !== 'publish' || $frame['class'] !== self::class) {
+            $message = sprintf(self::DEPRECATION_DIRECTLY_INVOKED, $frame['class'], $frame['type'], $frame['function']);
+            user_error($message, E_USER_DEPRECATED);
+        }
+        unset($backtrace, $frame, $message);
+
         $this->eventDispatcher->dispatch(new RecursiveRecordPublishingBegan($recordTree));
 
         $this->publisherCollection->start();

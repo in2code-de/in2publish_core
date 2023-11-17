@@ -37,6 +37,7 @@ use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Demand\Type\SysRedirectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
+use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
@@ -183,7 +184,9 @@ class RedirectController extends ActionController
         $recordCollection = new RecordCollection();
         $this->demandResolver->resolveDemand($demands, $recordCollection);
 
-        $this->publisherService->publishRecordTree($recordTree);
+        $publishingContext = new PublishingContext($recordTree);
+
+        $this->publisherService->publish($publishingContext);
 
         if (count($redirects) === 1) {
             $this->addFlashMessage(sprintf('Redirect %s published', reset($redirects)));

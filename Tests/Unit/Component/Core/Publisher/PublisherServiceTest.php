@@ -9,6 +9,7 @@ use In2code\In2publishCore\Component\Core\Publisher\DatabaseRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\Publisher;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
+use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\Publisher\ReversiblePublisher;
 use In2code\In2publishCore\Component\Core\Publisher\TransactionalPublisher;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
@@ -25,6 +26,7 @@ use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 class PublisherServiceTest extends UnitTestCase
 {
     /**
+     * @covers ::publish
      * @covers ::publishRecordTree
      * @covers ::publishRecord
      */
@@ -41,11 +43,13 @@ class PublisherServiceTest extends UnitTestCase
         $publisherService->addPublisher($databaseRecordPublisher);
 
         $recordTree = $this->getRecordTree1();
+        $publishingContext = new PublishingContext($recordTree);
 
-        $publisherService->publishRecordTree($recordTree);
+        $publisherService->publish($publishingContext);
     }
 
     /**
+     * @covers ::publish
      * @covers ::publishRecordTree
      * @covers ::publishRecord
      */
@@ -62,11 +66,13 @@ class PublisherServiceTest extends UnitTestCase
         $publisherService->addPublisher($databaseRecordPublisher);
 
         $recordTree = $this->getRecordTree2();
+        $publishingContext = new PublishingContext($recordTree);
 
-        $publisherService->publishRecordTree($recordTree);
+        $publisherService->publish($publishingContext);
     }
 
     /**
+     * @covers ::publish
      * @covers ::publishRecordTree
      */
     public function testCancelIsCalledWhenExceptionIsThrownDuringPublishing(): void
@@ -81,12 +87,14 @@ class PublisherServiceTest extends UnitTestCase
         $publisherService->addPublisher($databaseRecordPublisher);
 
         $recordTree = $this->getRecordTree1();
+        $publishingContext = new PublishingContext($recordTree);
 
         $this->expectException(Exception::class);
-        $publisherService->publishRecordTree($recordTree);
+        $publisherService->publish($publishingContext);
     }
 
     /**
+     * @covers ::publish
      * @covers ::addPublisher
      * @covers ::publishRecordTree
      */
@@ -107,11 +115,13 @@ class PublisherServiceTest extends UnitTestCase
         $reversibleTransactionalPublisher = $this->getReversibleTransactionalPublisher();
         $publisherService->addPublisher($reversibleTransactionalPublisher);
 
+        $publishingContext = new PublishingContext($recordTree);
+
         $GLOBALS['number_of_calls_reverse'] = 0;
         $GLOBALS['number_of_calls_cancel'] = 0;
         try {
             $this->expectException(Exception::class);
-            $publisherService->publishRecordTree($recordTree);
+            $publisherService->publish($publishingContext);
         } finally {
             $this->assertEquals(1, $GLOBALS['number_of_calls_reverse']);
             $this->assertEquals(1, $GLOBALS['number_of_calls_cancel']);

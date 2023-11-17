@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
  */
 
 use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
+use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
@@ -77,9 +78,10 @@ class PublishPageAjaxController
                 $recordTreeBuildRequest = new RecordTreeBuildRequest('pages', (int)$page, 0);
                 $recordTree = $this->recordTreeBuilder->buildRecordTree($recordTreeBuildRequest);
                 $record = $recordTree->getChild('pages', (int)$page, 0);
+                $publishingContext = new PublishingContext($recordTree);
                 if (null !== $record && $record->isPublishable()) {
                     try {
-                        $this->publisherService->publishRecordTree($recordTree);
+                        $this->publisherService->publish($publishingContext);
                         $content['success'] = true;
                         $content['error'] = false;
                         $content['label'] = 'context_menu_publish_entry.page_published';
