@@ -109,13 +109,12 @@ class RecordController extends ActionController
 
     public function initializeIndexAction(): void
     {
-        /** @var BackendUserAuthentication $BE_USER */
-        $BE_USER = $GLOBALS['BE_USER'];
-        $data = $BE_USER->getModuleData('tx_in2publishcore_m1') ?? ['pageRecursionLimit' => 1];
+        $backendUser = $this->getBackendUser();
+        $data = $backendUser->getModuleData('tx_in2publishcore_m1') ?? ['pageRecursionLimit' => 1];
         if ($this->request->hasArgument('pageRecursionLimit')) {
             $pageRecursionLimit = (int)$this->request->getArgument('pageRecursionLimit');
             $data['pageRecursionLimit'] = $pageRecursionLimit;
-            $BE_USER->pushModuleData('tx_in2publishcore_m1', $data);
+            $backendUser->pushModuleData('tx_in2publishcore_m1', $data);
         } else {
             $this->request = $this->request->withArgument('pageRecursionLimit', $data['pageRecursionLimit'] ?? 1);
         }
@@ -234,5 +233,10 @@ class RecordController extends ActionController
         $this->addFlashMessage($message, $title, $severity);
 
         return $this->redirect('index', 'Record');
+    }
+
+    public function getBackendUser(): BackendUserAuthentication
+    {
+        return $GLOBALS['BE_USER'];
     }
 }
