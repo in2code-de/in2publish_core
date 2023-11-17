@@ -147,8 +147,11 @@ define([
 		});
 	};
 
-	In2publishCoreModule.overlayListener = function () {
-		document.querySelectorAll('[data-in2publish-confirm]').forEach(element => {
+	In2publishCoreModule.overlayListener = function (nodes = null) {
+		if (nodes === null) {
+			nodes = document.querySelectorAll('[data-in2publish-confirm]');
+		}
+		nodes.forEach(element => {
 			element.addEventListener('click', In2publishCoreModule.overlayHandler, true)
 		})
 	};
@@ -284,8 +287,11 @@ define([
 		}
 	}
 
-	In2publishCoreModule.setupPublishListeners = function () {
-		document.querySelectorAll('.js-publish-trigger').forEach(
+	In2publishCoreModule.setupPublishListeners = function (nodes = null) {
+		if (nodes === null) {
+			nodes = document.querySelectorAll('.js-publish-trigger');
+		}
+		nodes.forEach(
 			element => element.addEventListener(
 				'click',
 				In2publishCoreModule.publishFileEventListener,
