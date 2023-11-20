@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\PreProcessing;
 
+use __PHP_Incomplete_Class;
 use In2code\In2publishCore\CommonInjection\CacheInjection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+use function array_column;
 
 class CachedTcaPreprocessingService
 {
@@ -44,9 +47,11 @@ class CachedTcaPreprocessingService
 
         if ($this->cache->has('tca_preprocessing_results')) {
             $cacheEntry = $this->cache->get('tca_preprocessing_results');
-            $this->compatibleTca = $cacheEntry['compatibleTca'];
-            $this->incompatibleTca = $cacheEntry['incompatibleTca'];
-            return;
+            if ($this->isCacheValid($cacheEntry['compatibleTca'])) {
+                $this->compatibleTca = $cacheEntry['compatibleTca'];
+                $this->incompatibleTca = $cacheEntry['incompatibleTca'];
+                return;
+            }
         }
 
         $tcaPreProcessingService = GeneralUtility::makeInstance(TcaPreProcessingService::class);
@@ -58,5 +63,18 @@ class CachedTcaPreprocessingService
             'incompatibleTca' => $this->incompatibleTca,
         ];
         $this->cache->set('tca_preprocessing_results', $cacheEntry);
+    }
+
+    protected function isCacheValid(array $compatibleTca): bool
+    {
+        foreach ($compatibleTca as $properties) {
+            foreach (array_column($properties, 'resolver') as $resolver) {
+                if ($resolver instanceof __PHP_Incomplete_Class) {
+                    $this->cache->remove('tca_preprocessing_results');
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
