@@ -37,6 +37,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_key_exists;
 use function in_array;
 
+use const In2code\In2publishCore\TYPO3_V11;
+
 class FileEdgeCacheInvalidationService
 {
     use LocalDatabaseInjection;
@@ -96,12 +98,10 @@ class FileEdgeCacheInvalidationService
         $query->getRestrictions()->removeAll();
         $query->select('tablenames as table', 'uid_foreign as uid')
               ->from('sys_file_reference')
-              ->where(
-                  $query->expr()->and(
-                      $query->expr()->eq('table_local', '"sys_file"'),
-                      $query->expr()->in('uid_local', $uidList),
-                  ),
-              );
+              ->where($query->expr()->in('uid_local', $uidList));
+        if (TYPO3_V11) {
+            $query->andWhere($query->expr()->eq('table_local', '"sys_file"'));
+        }
         return $query->executeQuery();
     }
 
