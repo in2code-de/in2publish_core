@@ -56,7 +56,7 @@ class PublishPageAjaxController
     {
         $response = new Response();
 
-        $page = $request->getQueryParams()['page'] ?? null;
+        $page = $request->getQueryParams()['id'] ?? null;
 
         $content = [
             'success' => false,

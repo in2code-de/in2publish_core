@@ -54,9 +54,7 @@ class PublishItemProvider extends AbstractProvider
 
     public function __construct()
     {
-        if (TYPO3_V11) {
-            parent::__construct(...func_get_args());
-        }
+        parent::__construct(...func_get_args());
 
         // Sorry, no DI available for Context Menu Item Provider
         $this->permissionService = GeneralUtility::makeInstance(PermissionService::class);
@@ -95,10 +93,12 @@ class PublishItemProvider extends AbstractProvider
                 'ajax_in2publishcore_contextmenupublishentry_publish',
                 ['id' => $this->identifier],
             );
-            $attributes += [
-                'data-publish-url' => $publishUrl,
-                'data-callback-module' => 'TYPO3/CMS/In2publishCore/ContextMenuPublishEntry',
-            ];
+            $attributes['data-publish-url'] = $publishUrl;
+            if (TYPO3_V11) {
+                $attributes['data-callback-module'] = 'TYPO3/CMS/In2publishCore/ContextMenuPublishEntry';
+            } else {
+                $attributes['data-callback-module'] = '@in2code/in2publish_core/context-menu-actions';
+            }
         }
         return $attributes;
     }
