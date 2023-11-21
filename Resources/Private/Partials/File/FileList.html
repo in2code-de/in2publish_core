@@ -52,7 +52,7 @@
 							   class="btn btn-default"
 							   data-bs-toggle="tooltip"
 							   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:view')}"
-							   href="{publish:File.BuildResourcePath(stagingLevel: 'local', publicUrl: record.localProps.publicUrl)}"
+							   href="{record.localProps.publicUrl}"
 							>
 								<core:icon identifier="actions-eye" />
 							</a>
@@ -152,7 +152,7 @@
 						   class="btn btn-default"
 						   data-bs-toggle="tooltip"
 						   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:view')}"
-						   href="{publish:File.BuildResourcePath(stagingLevel: 'foreign', publicUrl: record.foreignProps.publicUrl)}"
+						   href="{record.foreignProps.publicUrl}"
 						>
 							<core:icon identifier="actions-eye" />
 						</a>
