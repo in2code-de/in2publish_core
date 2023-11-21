@@ -117,6 +117,11 @@ class In2publishCoreDefiner implements DefinerServiceInterface
                                       'transOrigDiffSourceField',
                                   ],
                               ],
+                              '_file' => [
+                                  'fields' => [
+                                      'publicUrl',
+                                  ],
+                              ],
                               'pages' => [
                                   'fields' => [
                                       'perms_userid',

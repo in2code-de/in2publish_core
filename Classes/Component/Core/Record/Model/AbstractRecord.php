@@ -17,6 +17,8 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_diff_assoc;
+use function array_diff_key;
+use function array_flip;
 use function array_keys;
 use function array_pop;
 use function count;
@@ -48,6 +50,8 @@ abstract class AbstractRecord implements Record
      */
     protected array $translations = [];
     protected ?Record $translationParent = null;
+    /** @var array<string> */
+    protected array $ignoredProps = [];
     /** @var array{reasons: Reasons} */
     protected array $rtc = [];
 
@@ -163,6 +167,14 @@ abstract class AbstractRecord implements Record
         return $this->localProps !== $this->foreignProps;
     }
 
+    protected function calculateChangedProps(): array
+    {
+        $ignoredProps = array_flip($this->ignoredProps);
+        $relevantLocalProps = array_diff_key($this->localProps, $ignoredProps);
+        $relevantForeignProps = array_diff_key($this->foreignProps, $ignoredProps);
+        return array_keys(array_diff_assoc($relevantLocalProps, $relevantForeignProps));
+    }
+
     protected function calculateState(): string
     {
         $localRecordExists = [] !== $this->localProps;
@@ -255,7 +267,7 @@ abstract class AbstractRecord implements Record
 
     public function getChangedProps(): array
     {
-        return array_keys(array_diff_assoc($this->localProps, $this->foreignProps));
+        return $this->calculateChangedProps();
     }
 
     public function getDependencies(): array

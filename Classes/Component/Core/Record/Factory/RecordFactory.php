@@ -98,7 +98,8 @@ class RecordFactory
 
     public function createFileRecord(array $localProps, array $foreignProps): ?FileRecord
     {
-        $record = new FileRecord($localProps, $foreignProps);
+        $ignoredFields = $this->ignoredFieldsService->getIgnoredFields(FileRecord::CLASSIFICATION);
+        $record = new FileRecord($localProps, $foreignProps, $ignoredFields);
         if ($this->shouldIgnoreRecord($record)) {
             return null;
         }

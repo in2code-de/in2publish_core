@@ -12,10 +12,15 @@ class FileRecord extends AbstractRecord
 {
     public const CLASSIFICATION = '_file';
 
-    public function __construct(array $localProps, array $foreignProps)
+    /** @var array<string> */
+    protected array $changedProps;
+
+    public function __construct(array $localProps, array $foreignProps, array $ignoredProps = [])
     {
         $this->localProps = $localProps;
         $this->foreignProps = $foreignProps;
+        $this->ignoredProps = $ignoredProps;
+        $this->changedProps = $this->calculateChangedProps();
 
         $this->state = $this->calculateState();
     }
@@ -63,5 +68,10 @@ class FileRecord extends AbstractRecord
         }
         return PathUtility::dirname($this->localProps['identifier'])
             !== PathUtility::dirname($this->foreignProps['identifier']);
+    }
+
+    public function getChangedProps(): array
+    {
+        return $this->changedProps;
     }
 }
