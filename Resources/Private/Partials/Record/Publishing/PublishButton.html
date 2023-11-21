@@ -2,7 +2,8 @@
 	<f:link.action
 		action="publishRecord"
 		class="in2publish-link-publish js-in2publish-loading-overlay"
-		arguments="{id:record.id}"
+		arguments="{recordId: record.id}"
+		addQueryString="1"
 		title="{f:translate(key:'publish_pages', default:'Publish this page')}"
 	>
 		<i class="in2publish-icon-publish"></i>

@@ -180,12 +180,12 @@ class RecordController extends ActionController
         }
     }
 
-    public function publishRecordAction(int $id): ResponseInterface
+    public function publishRecordAction(int $recordId): ResponseInterface
     {
-        $request = new RecordTreeBuildRequest('pages', $id, 0);
+        $request = new RecordTreeBuildRequest('pages', $recordId, 0);
         $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
 
-        $actualRecord = $recordTree->getChild('pages', $id);
+        $actualRecord = $recordTree->getChild('pages', $recordId);
         if (null === $actualRecord) {
             return $this->addFlashMessagesAndRedirectToIndex();
         }
@@ -232,7 +232,13 @@ class RecordController extends ActionController
         }
         $this->addFlashMessage($message, $title, $severity);
 
-        return $this->redirect('index', 'Record');
+        $arguments = [];
+        $queryParams = $this->request->getQueryParams();
+        if (isset($queryParams['id'])) {
+            $arguments['id'] = (int)$queryParams['id'];
+        }
+
+        return $this->redirect('index', 'Record', null, $arguments);
     }
 
     public function getBackendUser(): BackendUserAuthentication
