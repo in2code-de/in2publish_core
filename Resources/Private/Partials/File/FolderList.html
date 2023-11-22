@@ -23,11 +23,18 @@
 			</td>
 			<td class="col-control col-publish">
 				<f:if condition="{record.stateRecursive} != 'unchanged'">
+					<f:variable name="easy-modal-title"><f:translate key="tx_in2publishcore.modal.publish.title" /></f:variable>
+					<f:variable name="identifier"><publish:record.getMergedProperty propertyName="identifier" record="{record}" /></f:variable>
+					<f:variable name="easy-modal-content"><f:translate key="tx_in2publishcore.modal.publish.folder.text" arguments="{0: identifier}" /></f:variable>
 					<f:link.action
-						class="js-publish-trigger js-publish-overlay btn btn-default"
+						class="btn btn-default js-in2publish-confirmation-modal"
 						action="publishFolder"
 						arguments="{combinedIdentifier: record.id}"
-						data="{type: 'folder', name: '{publish:record.getMergedProperty(record: record, propertyName: \'identifier\')}'}"
+						data="{
+							easy-modal-severity: -1,
+							easy-modal-title: easy-modal-title,
+							easy-modal-content: easy-modal-content,
+						}"
 					>
 						<f:translate key="publish"/>
 						<core:icon identifier="actions-arrow-right" />
