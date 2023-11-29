@@ -36,6 +36,7 @@ HTML;
         '/typo3/module/site/in2publish',
         '/typo3/module/tools/in2publish',
         '/typo3/module/in2publish',
+        '/module/web/In2publishM2',
     ];
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -80,7 +81,7 @@ HTML;
     {
         $requestPath = strtolower($request->getUri()->getPath());
         foreach (self::SUPPORTED_PATHS as $path) {
-            if (str_starts_with($requestPath, $path)) {
+            if (str_starts_with($requestPath, $path) || str_starts_with($_GET['route'] ?? '', $path)) {
                 return true;
             }
         }
