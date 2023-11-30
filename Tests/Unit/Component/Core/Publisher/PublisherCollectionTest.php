@@ -48,7 +48,7 @@ class PublisherCollectionTest extends UnitTestCase
     /**
      * @covers ::addPublisher
      */
-    public function testAddPublisherSortsPublishersCorrectly()
+    public function testAddPublisherSortsPublishersCorrectly(): void
     {
         $publisherCollection = new PublisherCollection();
         $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
@@ -56,7 +56,7 @@ class PublisherCollectionTest extends UnitTestCase
 
         $standardPublisher = $this->createMock(Publisher::class);
         $transactionalPublisher = $this->createMock(DatabaseRecordPublisher::class);
-        $finishablePublisher = $this->createMock(FileRecordPublisher::class);
+        $finishablePublisher = $this->createMock(FinishablePublisher::class);
 
         $publisherCollection->addPublisher($standardPublisher);
         $publisherCollection->addPublisher($transactionalPublisher);

@@ -13,6 +13,8 @@ use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
+use In2code\In2publishCore\Tests\Unit\Component\Core\Publisher\Constraint\IsEqualIgnoringRequestToken;
+use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function json_encode;
@@ -20,7 +22,7 @@ use function json_encode;
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\FolderRecordPublisher
  */
-class FolderRecordPublisherTest extends AbstractFilesystemPublisherTest
+class FolderRecordPublisherTest extends UnitTestCase
 {
     /**
      * @covers ::__construct
@@ -55,9 +57,8 @@ class FolderRecordPublisherTest extends AbstractFilesystemPublisherTest
         $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
-            [
+            new IsEqualIgnoringRequestToken([
                 [
-                    'request_token' => $this->getRequestTokenFromPublisher($folderRecordPublisher),
                     'crdate' => $GLOBALS['EXEC_TIME'],
                     'tstamp' => $GLOBALS['EXEC_TIME'],
                     'instruction' => DeleteFolderInstruction::class,
@@ -66,7 +67,7 @@ class FolderRecordPublisherTest extends AbstractFilesystemPublisherTest
                         'folderIdentifier' => '/foo/bar',
                     ]),
                 ],
-            ],
+            ]),
         );
         $folderRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -89,9 +90,8 @@ class FolderRecordPublisherTest extends AbstractFilesystemPublisherTest
         $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
-            [
+            new IsEqualIgnoringRequestToken([
                 [
-                    'request_token' => $this->getRequestTokenFromPublisher($folderRecordPublisher),
                     'crdate' => $GLOBALS['EXEC_TIME'],
                     'tstamp' => $GLOBALS['EXEC_TIME'],
                     'instruction' => AddFolderInstruction::class,
@@ -100,7 +100,7 @@ class FolderRecordPublisherTest extends AbstractFilesystemPublisherTest
                         'folderIdentifier' => '/foo/bar',
                     ]),
                 ],
-            ],
+            ]),
         );
         $folderRecordPublisher->injectForeignDatabase($foreignDatabase);
 

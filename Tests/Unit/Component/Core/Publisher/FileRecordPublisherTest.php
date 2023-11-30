@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Publisher;
 use In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFileInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFolderInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\MoveFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceAndRenameFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceFileInstruction;
@@ -16,6 +17,8 @@ use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
+use In2code\In2publishCore\Tests\Unit\Component\Core\Publisher\Constraint\IsEqualIgnoringRequestToken;
+use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function json_encode;
@@ -28,7 +31,7 @@ use function trim;
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher
  */
-class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
+class FileRecordPublisherTest extends UnitTestCase
 {
     /**
      * @covers ::__construct
@@ -58,9 +61,8 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
         $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
-            [
+            new IsEqualIgnoringRequestToken([
                 [
-                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
                     'crdate' => $GLOBALS['EXEC_TIME'],
                     'tstamp' => $GLOBALS['EXEC_TIME'],
                     'instruction' => DeleteFileInstruction::class,
@@ -69,7 +71,7 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
                         'fileIdentifier' => '/foo/bar',
                     ]),
                 ],
-            ],
+            ]),
         );
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -92,9 +94,8 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
         $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
-            [
+            new IsEqualIgnoringRequestToken([
                 [
-                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
                     'crdate' => $GLOBALS['EXEC_TIME'],
                     'tstamp' => $GLOBALS['EXEC_TIME'],
                     'instruction' => AddFileInstruction::class,
@@ -104,7 +105,7 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
                         'foreignTargetFileIdentifier' => '/foo/bar',
                     ]),
                 ],
-            ],
+            ]),
         );
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -135,9 +136,8 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
         $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
-            [
+            new IsEqualIgnoringRequestToken([
                 [
-                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
                     'crdate' => $GLOBALS['EXEC_TIME'],
                     'tstamp' => $GLOBALS['EXEC_TIME'],
                     'instruction' => MoveFileInstruction::class,
@@ -147,7 +147,7 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
                         'newFileIdentifier' => '/foo/bar2',
                     ]),
                 ],
-            ],
+            ]),
         );
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -170,9 +170,8 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
         $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
-            [
+            new IsEqualIgnoringRequestToken([
                 [
-                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
                     'crdate' => $GLOBALS['EXEC_TIME'],
                     'tstamp' => $GLOBALS['EXEC_TIME'],
                     'instruction' => MoveFileInstruction::class,
@@ -182,7 +181,7 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
                         'newFileIdentifier' => '/foo/foo',
                     ]),
                 ],
-            ],
+            ]),
         );
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -205,9 +204,8 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
         $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
-            [
+            new IsEqualIgnoringRequestToken([
                 [
-                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
                     'crdate' => $GLOBALS['EXEC_TIME'],
                     'tstamp' => $GLOBALS['EXEC_TIME'],
                     'instruction' => ReplaceAndRenameFileInstruction::class,
@@ -218,7 +216,7 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
                         'foreignTemporaryFileIdentifier' => '/var/tmp/transient/sadsdas.tmp',
                     ]),
                 ],
-            ],
+            ]),
         );
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -241,9 +239,8 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
         $foreignDatabase = $this->createMock(Connection::class);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
-            [
+            new IsEqualIgnoringRequestToken([
                 [
-                    'request_token' => $this->getRequestTokenFromPublisher($fileRecordPublisher),
                     'crdate' => $GLOBALS['EXEC_TIME'],
                     'tstamp' => $GLOBALS['EXEC_TIME'],
                     'instruction' => ReplaceFileInstruction::class,
@@ -253,7 +250,7 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
                         'foreignTemporaryFileIdentifier' => '/var/tmp/transient/sadsdas.tmp',
                     ]),
                 ],
-            ],
+            ]),
         );
         $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
@@ -285,7 +282,6 @@ class FileRecordPublisherTest extends AbstractFilesystemPublisherTest
     protected function createFileRecordPublisher(string $temporaryFileIdentifier = '_undefined_'): FileRecordPublisher
     {
         $fileRecordPublisher = $this->createPartialMock(FileRecordPublisher::class, ['transmitTemporaryFile']);
-        $fileRecordPublisher->__construct();
         $remoteCommandResponse = $this->createMock(RemoteCommandResponse::class);
         $remoteCommandResponse->method('isSuccessful')->willReturn(true);
         $remoteCommandDispatcher = $this->createMock(RemoteCommandDispatcher::class);
