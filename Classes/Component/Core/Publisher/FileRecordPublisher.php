@@ -12,13 +12,10 @@ use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceAndRename
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceFileInstruction;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitterInjection;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FileRecordPublisher extends AbstractFilesystemPublisher implements LoggerAwareInterface
 {
@@ -114,25 +111,5 @@ class FileRecordPublisher extends AbstractFilesystemPublisher implements LoggerA
         $driver = $this->falDriverService->getDriver($storage);
         $localFile = $driver->getFileForLocalProcessing($identifier);
         return $this->assetTransmitter->transmitTemporaryFile($localFile);
-    }
-
-    /**
-     * Only a partial reverse. Will not un-publish files that have already been processed on foreign.
-     */
-    public function reverse(): void
-    {
-        $options = [];
-        $options[] = '-f';
-        foreach ($this->transmittedFiles as $transmittedFile) {
-            $options[] = $transmittedFile;
-        }
-        $request = new RemoteCommandRequest('rm', [], $options);
-        $response = $this->remoteCommandDispatcher->dispatch($request);
-        if ($response->isSuccessful()) {
-            $this->logger->alert(
-                'Removing temporary files during rollback failed',
-                ['output' => $response->getOutput(), 'error' => $response->getErrors()],
-            );
-        }
     }
 }

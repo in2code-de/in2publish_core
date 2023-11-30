@@ -17,7 +17,7 @@ use function random_bytes;
 
 use const JSON_THROW_ON_ERROR;
 
-abstract class AbstractFilesystemPublisher implements Publisher, TransactionalPublisher, ReversiblePublisher
+abstract class AbstractFilesystemPublisher implements Publisher, TransactionalPublisher
 {
     use ForeignDatabaseReconnectedInjection;
     use RemoteCommandDispatcherInjection;
@@ -32,13 +32,6 @@ abstract class AbstractFilesystemPublisher implements Publisher, TransactionalPu
     }
 
     public function cancel(): void
-    {
-        if ($this->foreignDatabase->isTransactionActive()) {
-            $this->foreignDatabase->rollBack();
-        }
-    }
-
-    public function reverse(): void
     {
         if ($this->foreignDatabase->isTransactionActive()) {
             $this->foreignDatabase->rollBack();
