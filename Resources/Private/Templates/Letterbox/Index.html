@@ -1,16 +1,33 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-	<f:layout name="Default" />
+	<f:layout name="Submodule" />
+
+	<f:section name="Header">
+		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.flush_envelopes\')}'}" />
+	</f:section>
 
 	<f:section name="Main">
-		<f:if condition="{canFlush}">
-			<f:then>
-				<f:link.action action="flushEnvelopes" class="btn btn-default">
-					<f:translate key="module.m4.flush_envelopes" />
-				</f:link.action>
-			</f:then>
-			<f:else>
-				<h3><f:translate key="module.m4.nothing_to_flush" /></h3>
-			</f:else>
-		</f:if>
+		<div class="card-container">
+			<div class="card card-default card-size-small">
+				<div class="card-body">
+					<f:if condition="{canFlush}">
+						<f:then>
+							<p class="card-text">
+								<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:flush_envelopes.description" />
+							</p>
+						</f:then>
+						<f:else>
+							<p><f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:flush_envelopes.nothing_to_flush" /></p>
+						</f:else>
+					</f:if>
+				</div>
+				<div class="card-footer">
+					<f:if condition="{canFlush}">
+						<f:link.action action="flushEnvelopes" class="btn btn-danger">
+							<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:flush_envelopes.action" />
+						</f:link.action>
+					</f:if>
+				</div>
+			</div>
+		</div>
 	</f:section>
 </html>

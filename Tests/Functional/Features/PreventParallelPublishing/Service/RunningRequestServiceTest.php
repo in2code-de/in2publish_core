@@ -52,18 +52,18 @@ class RunningRequestServiceTest extends FunctionalTestCase
         $query->select('*')
               ->from('tx_in2publishcore_running_request')
               ->where(
-                  $query->expr()->orX(
-                      $query->expr()->andX(
+                  $query->expr()->or(
+                      $query->expr()->and(
                           $query->expr()->eq('record_id', 1),
                           $query->expr()->eq('table_name', $query->createNamedParameter('foo')),
                       ),
-                      $query->expr()->andX(
+                      $query->expr()->and(
                           $query->expr()->eq('record_id', $query->createNamedParameter($mmId)),
                           $query->expr()->eq('table_name', $query->createNamedParameter('foo_bar_mm')),
                       ),
                   ),
               );
-        $result = $query->execute();
+        $result = $query->executeQuery();
         $rows = $result->fetchAllAssociative();
         $this->assertCount(2, $rows);
     }

@@ -37,6 +37,10 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function func_get_args;
+
+use const In2code\In2publishCore\TYPO3_V11;
+
 class PublishItemProvider extends AbstractProvider
 {
     protected $itemsConfiguration = [
@@ -48,9 +52,10 @@ class PublishItemProvider extends AbstractProvider
     ];
     protected PermissionService $permissionService;
 
-    public function __construct(string $table, string $identifier, string $context = '')
+    public function __construct()
     {
-        parent::__construct($table, $identifier, $context);
+        parent::__construct(...func_get_args());
+
         // Sorry, no DI available for Context Menu Item Provider
         $this->permissionService = GeneralUtility::makeInstance(PermissionService::class);
     }
@@ -88,10 +93,12 @@ class PublishItemProvider extends AbstractProvider
                 'ajax_in2publishcore_contextmenupublishentry_publish',
                 ['id' => $this->identifier],
             );
-            $attributes += [
-                'data-publish-url' => $publishUrl,
-                'data-callback-module' => 'TYPO3/CMS/In2publishCore/ContextMenuPublishEntry',
-            ];
+            $attributes['data-publish-url'] = $publishUrl;
+            if (TYPO3_V11) {
+                $attributes['data-callback-module'] = 'TYPO3/CMS/In2publishCore/ContextMenuPublishEntry';
+            } else {
+                $attributes['data-callback-module'] = '@in2code/in2publish_core/context-menu-actions';
+            }
         }
         return $attributes;
     }

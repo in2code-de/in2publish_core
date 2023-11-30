@@ -93,7 +93,7 @@ class FlexResolverTest extends UnitTestCase
         $flexFormTools->method('getDataStructureIdentifier')->willReturn($dataStructure);
         $flexFormService = $this->createMock(FlexFormService::class);
         $flexFormService->method('convertFlexFormContentToArray')->willReturn([]);
-        $resolversService->expects($this->never())->method('getResolversForTable');
+        $resolversService->expects($this->never())->method('getResolversForClassification');
 
         $flexResolver->injectFlexFormTools($flexFormTools);
         $flexResolver->injectFlexFormService($flexFormService);
@@ -132,7 +132,7 @@ class FlexResolverTest extends UnitTestCase
         $selectResolver = $this->createMock(SelectResolver::class);
         $selectResolver->expects($this->once())->method('resolve');
         $resolvers = ['column_foo' => $selectResolver,];
-        $resolversService->expects($this->once())->method('getResolversForTable')->willReturn($resolvers);
+        $resolversService->expects($this->once())->method('getResolversForClassification')->willReturn($resolvers);
 
         $flexResolver->injectFlexFormTools($flexFormTools);
         $flexResolver->injectFlexFormService($flexFormService);

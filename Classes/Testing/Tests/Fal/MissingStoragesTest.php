@@ -71,8 +71,8 @@ class MissingStoragesTest implements TestCaseInterface
         if (!empty($missingOnSide)) {
             // fal.missing_on_local | fal.missing_on_foreign
             $messages[] = 'fal.missing_on_' . $side;
-            foreach ($missingOnSide as $storageUid) {
-                $messages[] = sprintf('[%d] %s', $storageUid, $storages[$opposite][$storageUid]['name']);
+            foreach ($missingOnSide as $storage) {
+                $messages[] = sprintf('[%d] %s', $storage, $storages[$opposite][$storage]['name']);
             }
         }
         return $messages;

@@ -58,9 +58,12 @@ class RecordTree implements Node
         return -1;
     }
 
-    public function getChild(string $table, int $id): ?Record
+    /**
+     * @param int|string $id
+     */
+    public function getChild(string $classification, $id): ?Record
     {
-        return $this->children[$table][$id] ?? null;
+        return $this->children[$classification][$id] ?? null;
     }
 
     public function getCurrentPage(): ?Record

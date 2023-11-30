@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Publisher\Command;
 
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverServiceInjection;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\PublishInstruction;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Symfony\Component\Console\Command\Command;
@@ -13,6 +13,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use TYPO3\CMS\Core\Database\Connection;
+
+use function explode;
 use function json_decode;
 
 class FalPublisherCommand extends Command
@@ -28,18 +31,24 @@ class FalPublisherCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('requestToken', InputArgument::REQUIRED);
+        $this->addArgument('requestTokens', InputArgument::REQUIRED);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $requestToken = $input->getArgument('requestToken');
+        $requestTokens = $input->getArgument('requestTokens');
+        $requestTokens = explode(',', $requestTokens);
 
         $query = $this->localDatabase->createQueryBuilder();
         $query->select('*')
               ->from('tx_in2publishcore_filepublisher_instruction')
-              ->where($query->expr()->eq('request_token', $query->createNamedParameter($requestToken)));
-        $result = $query->execute();
+              ->where(
+                  $query->expr()->in(
+                      'request_token',
+                      $query->createNamedParameter($requestTokens, Connection::PARAM_STR_ARRAY)
+                  )
+              );
+        $result = $query->executeQuery();
         $rows = $result->fetchAllAssociative();
 
         /** @var array<PublishInstruction> $instructions */

@@ -90,6 +90,21 @@ class TestResult
         }
     }
 
+    public function getSeverityState(): int
+    {
+        switch ($this->severity) {
+            case self::OK:
+                return 0;
+            case self::WARNING:
+                return 1;
+            case self::SKIPPED:
+                return -2;
+            case self::ERROR:
+            default:
+                return 2;
+        }
+    }
+
     public function getTranslatedLabel(): string
     {
         return TestLabelLocalizer::translate($this->label, $this->labelArguments);

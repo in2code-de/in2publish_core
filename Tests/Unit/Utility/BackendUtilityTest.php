@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Tests\Unit\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Driver\Mysqli\MysqliStatement;
-use Doctrine\DBAL\Schema\MySqlSchemaManager;
+use Doctrine\DBAL\Result;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use In2code\In2publishCore\Utility\BackendUtility;
 use ReflectionProperty;
@@ -50,30 +50,30 @@ class BackendUtilityTest extends UnitTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $connection = $this->createMock(Connection::class);
 
-        $schemaManager = $this->createMock(MySqlSchemaManager::class);
+        $schemaManager = $this->createMock(AbstractSchemaManager::class);
         $schemaManager->method('listTableNames')->willReturn(
             [
                 'tt_content',
             ],
         );
-        $connection->method('getSchemaManager')->willReturn($schemaManager);
 
-        $result = $this->createMock(MysqliStatement::class);
+        $result = $this->createMock(Result::class);
         $result->method('fetchAssociative')->willReturnCallback(
             function () {
                 return $this->rows;
             },
         );
-        $restrictionContainer = $this->createMock(DefaultRestrictionContainer::class);
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $queryBuilder->method('select')->willReturn($queryBuilder);
         $queryBuilder->method('from')->willReturn($queryBuilder);
         $queryBuilder->method('where')->willReturn($queryBuilder);
         $queryBuilder->method('setMaxResults')->willReturn($queryBuilder);
-        $queryBuilder->method('execute')->willReturn($result);
-        $queryBuilder->method('getRestrictions')->willReturn($restrictionContainer);
+        $queryBuilder->method('executeQuery')->willReturn($result);
+        $queryBuilder->method('getRestrictions')->willReturn($this->createMock(DefaultRestrictionContainer::class));
+
+        $connection = $this->createMock(Connection::class);
+        $connection->method('createSchemaManager')->willReturn($schemaManager);
         $connection->method('createQueryBuilder')->willReturn($queryBuilder);
 
         $reflection = new ReflectionProperty(ConnectionPool::class, 'connections');

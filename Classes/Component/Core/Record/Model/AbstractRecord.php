@@ -6,6 +6,8 @@ namespace In2code\In2publishCore\Component\Core\Record\Model;
 
 use Generator;
 use In2code\In2publishCore\Component\Core\Reason\Reasons;
+use In2code\In2publishCore\Component\Core\Record\Iterator\IterationControls\StopIteration;
+use In2code\In2publishCore\Component\Core\Record\Iterator\RecordIterator;
 use In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtensionTrait;
 use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use LogicException;
@@ -15,6 +17,8 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_diff_assoc;
+use function array_diff_key;
+use function array_flip;
 use function array_keys;
 use function array_pop;
 use function count;
@@ -33,7 +37,6 @@ abstract class AbstractRecord implements Record
      * @var array<Dependency>
      */
     protected array $dependencies = [];
-    protected bool $hasBeenAskedForRecursiveState = false;
     /**
      * @var array<string, array<Record>>
      */
@@ -47,6 +50,8 @@ abstract class AbstractRecord implements Record
      */
     protected array $translations = [];
     protected ?Record $translationParent = null;
+    /** @var array<string> */
+    protected array $ignoredProps = [];
     /** @var array{reasons: Reasons} */
     protected array $rtc = [];
 
@@ -162,6 +167,14 @@ abstract class AbstractRecord implements Record
         return $this->localProps !== $this->foreignProps;
     }
 
+    protected function calculateChangedProps(): array
+    {
+        $ignoredProps = array_flip($this->ignoredProps);
+        $relevantLocalProps = array_diff_key($this->localProps, $ignoredProps);
+        $relevantForeignProps = array_diff_key($this->foreignProps, $ignoredProps);
+        return array_keys(array_diff_assoc($relevantLocalProps, $relevantForeignProps));
+    }
+
     protected function calculateState(): string
     {
         $localRecordExists = [] !== $this->localProps;
@@ -220,24 +233,21 @@ abstract class AbstractRecord implements Record
     public function getStateRecursive(): string
     {
         $state = $this->getState();
-        if ($state !== Record::S_UNCHANGED || $this->hasBeenAskedForRecursiveState) {
+        if ($state !== Record::S_UNCHANGED) {
             return $state;
         }
-        $this->hasBeenAskedForRecursiveState = true;
-        foreach ($this->children as $table => $records) {
-            if ('pages' === $table) {
-                continue;
+        $recordState = Record::S_UNCHANGED;
+        $recordIterator = new RecordIterator();
+        $recordIterator->recurse($this, function (Record $record) use (&$recordState) {
+            if ($record->getClassification() === 'pages') {
+                return;
             }
-            foreach ($records as $record) {
-                $state = $record->getStateRecursive();
-                if ($state !== Record::S_UNCHANGED) {
-                    $this->hasBeenAskedForRecursiveState = false;
-                    return Record::S_CHANGED;
-                }
+            if ($record->getState() !== Record::S_UNCHANGED) {
+                $recordState = Record::S_CHANGED;
+                throw new StopIteration();
             }
-        }
-        $this->hasBeenAskedForRecursiveState = false;
-        return Record::S_UNCHANGED;
+        });
+        return $recordState;
     }
 
     public function calculateDependencies(): array
@@ -257,7 +267,7 @@ abstract class AbstractRecord implements Record
 
     public function getChangedProps(): array
     {
-        return array_keys(array_diff_assoc($this->localProps, $this->foreignProps));
+        return $this->calculateChangedProps();
     }
 
     public function getDependencies(): array

@@ -29,10 +29,9 @@ namespace In2code\In2publishCore\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Closure;
+use In2code\In2publishCore\Cache\CachedRuntimeCacheInjection;
 use In2code\In2publishCore\Command\Foreign\Status\AllSitesCommand;
 use In2code\In2publishCore\Command\Foreign\Status\SiteConfigurationCommand;
-use In2code\In2publishCore\CommonInjection\CacheInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
@@ -43,8 +42,10 @@ use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Core\Localization\Locale;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Site\Entity\SiteSettings;
 
 use function array_key_exists;
 use function base64_decode;
@@ -55,9 +56,15 @@ class ForeignSiteFinder implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use RemoteCommandDispatcherInjection;
-    use CacheInjection;
+    use CachedRuntimeCacheInjection;
 
-    private const UNSERIALIZE_ALLOWED_CLASS = [Site::class, Uri::class, SiteLanguage::class];
+    private const UNSERIALIZE_ALLOWED_CLASS = [
+        Site::class,
+        Uri::class,
+        SiteLanguage::class,
+        Locale::class,
+        SiteSettings::class,
+    ];
 
     public function getSiteByPageId(int $pageId): Site
     {
@@ -87,7 +94,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
             );
             throw new In2publishCoreException('An error occurred while fetching a remote site config', 1620723511);
         };
-        return $this->executeCached('site_page_' . $pageId, $closure);
+        return $this->cachedRuntimeCache->get('site_page_' . $pageId, $closure);
     }
 
     /** @return Site[] */
@@ -110,7 +117,8 @@ class ForeignSiteFinder implements LoggerAwareInterface
             );
             throw new AllSitesCommandException($exitStatus, $errors, $output);
         };
-        return $this->executeCached('sites', $closure);
+
+        return $this->cachedRuntimeCache->get('sites', $closure);
     }
 
     public function getSiteByIdentifier(string $identifier): ?Site
@@ -132,15 +140,5 @@ class ForeignSiteFinder implements LoggerAwareInterface
             throw new SiteNotFoundException();
         }
         return $result;
-    }
-
-    protected function executeCached(string $cacheKey, Closure $closure)
-    {
-        if (!$this->cache->has($cacheKey)) {
-            $result = $closure();
-            $this->cache->set($cacheKey, $result);
-            return $result;
-        }
-        return $this->cache->get($cacheKey);
     }
 }

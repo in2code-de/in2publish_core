@@ -31,7 +31,8 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
 
 use Doctrine\DBAL\Driver\Exception as DriverException;
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FileInfo;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\ForeignFileInfoServiceInjection;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProviderInjection;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
@@ -57,7 +58,7 @@ use function uniqid;
 class UniqueStorageTargetTest implements TestCaseInterface
 {
     use ResourceFactoryInjection;
-    use ForeignFileSystemInfoServiceInjection;
+    use ForeignFileInfoServiceInjection;
     use FalStorageTestSubjectsProviderInjection;
 
     /**
@@ -91,12 +92,14 @@ class UniqueStorageTargetTest implements TestCaseInterface
             /** @var DriverInterface $localDriver */
             $localDriver = $driverProperty->getValue($storageObject);
 
+            $storageUid = (int)$storages['foreign'][$key]['uid'];
             try {
                 do {
                     $uniqueFile = uniqid('tx_in2publish_testfile');
                 } while (
                     $localDriver->fileExists($uniqueFile)
-                    || $this->foreignFileSystemInfoService->fileExists($storages['foreign'][$key]['uid'], $uniqueFile)
+                    || $this->foreignFileInfoService->getFileInfo([$storageUid => [$uniqueFile]])
+                                                    ->getInfo($storageUid, $uniqueFile) instanceof FileInfo
                 );
             } catch (RuntimeException $e) {
                 if (preg_match('/The storage \d+ is offline/', $e->getMessage())) {
@@ -109,7 +112,8 @@ class UniqueStorageTargetTest implements TestCaseInterface
 
             $addedFile = $localDriver->addFile($sourceFile, $localDriver->getRootLevelFolder(), $uniqueFile);
             if ($uniqueFile === ltrim($addedFile, '/')) {
-                if ($this->foreignFileSystemInfoService->fileExists($storages['foreign'][$key]['uid'], $uniqueFile)) {
+                $fileInfoCollection = $this->foreignFileInfoService->getFileInfo([$storageUid => [$uniqueFile]]);
+                if ($fileInfoCollection->getInfo($storageUid, $uniqueFile) instanceof FileInfo) {
                     $affectedStorages[] = '[' . $key . '] ' . $storages['local'][$key]['name'];
                 }
             } else {

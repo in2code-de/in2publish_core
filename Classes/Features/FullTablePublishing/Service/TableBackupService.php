@@ -116,7 +116,7 @@ SQL,
     {
         $query = $connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
-        $resultSet = $query->select('*')->from($table)->execute();
+        $resultSet = $query->select('*')->from($table)->executeQuery();
 
         $escapedTableName = $connection->quoteIdentifier($table);
 

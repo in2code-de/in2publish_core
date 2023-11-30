@@ -46,6 +46,16 @@ class PublisherCollection implements ReversiblePublisher, TransactionalPublisher
         krsort($this->publishers);
     }
 
+    public function canPublish(Record $record): bool
+    {
+        foreach ($this->publishers as $publisher) {
+            if ($publisher->canPublish($record)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function publish(Record $record): void
     {
         foreach ($this->publishers as $publisher) {

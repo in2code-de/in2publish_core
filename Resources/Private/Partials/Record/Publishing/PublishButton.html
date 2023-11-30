@@ -1,8 +1,9 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
 	<f:link.action
 		action="publishRecord"
-		class="in2publish-link-publish"
-		arguments="{id:record.id}"
+		class="in2publish-link-publish js-in2publish-loading-overlay"
+		arguments="{recordId: record.id}"
+		addQueryString="1"
 		title="{f:translate(key:'publish_pages', default:'Publish this page')}"
 	>
 		<i class="in2publish-icon-publish"></i>

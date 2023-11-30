@@ -1,9 +1,0 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-	<f:form action="sysInfoDecode" method="post">
-		<div class="form-group">
-			<label for="json_input"><f:translate id="system_info.decode.json">system_info.decode.json</f:translate></label>
-			<f:form.textarea class="form-control" id="json_input" name="json" value="{infoJson}" />
-		</div>
-		<f:form.submit class="btn btn-default" value="{system_info.decode.decode -> f:translate(id:'system_info.decode.decode')}" />
-	</f:form>
-</html>

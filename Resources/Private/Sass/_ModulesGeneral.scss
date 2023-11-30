@@ -53,6 +53,7 @@ div.typo3-fullDoc {
 .in2publish-backend {
   font-size: 15px;
   color: $white;
+  padding-top: 1em;
 
   h1,
   h2,
@@ -465,63 +466,6 @@ a.in2publish-notextdecoration {
   }
 }
 
-.in2publish-preloader {
-  background-color: $scorpion;
-  height: 100%;
-  position: fixed;
-  z-index: 100000;
-  text-align: center;
-  opacity: 0.9;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.in2publish-preloader--hidden {
-  display: none;
-}
-
-.in2publish-preloader--spinner {
-  position: relative;
-  top: 30%;
-  margin: 100px auto;
-  width: 50px;
-  height: 30px;
-  text-align: center;
-  font-size: 10px;
-
-  > div {
-    background-color: $white;
-    height: 100%;
-    width: 6px;
-    display: inline-block;
-
-    -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
-    animation: stretchdelay 1.2s infinite ease-in-out;
-  }
-
-  .rect2 {
-    -webkit-animation-delay: -1.1s;
-    animation-delay: -1.1s;
-  }
-
-  .rect3 {
-    -webkit-animation-delay: -1.0s;
-    animation-delay: -1.0s;
-  }
-
-  .rect4 {
-    -webkit-animation-delay: -0.9s;
-    animation-delay: -0.9s;
-  }
-
-  .rect5 {
-    -webkit-animation-delay: -0.8s;
-    animation-delay: -0.8s;
-  }
-}
-
 div#typo3-docbody.stopScrolling {
   transform: none;
 }
@@ -661,11 +605,23 @@ div#typo3-docbody.stopScrolling {
   border-bottom-right-radius: 2px
 }
 
-// Fix buttons in admin tools module
-
-.tx_in2publishcore_admintools .module-docheader-bar-buttons .btn-toolbar .btn-group {
-  flex-wrap: wrap;
+.tx_in2publishcore_admintools {
+  .card-body {
+    .extbase-debugger {
+      margin: 0;
+    }
+  }
+  // Fix buttons in admin tools module
+  .module-docheader-bar-buttons {
+    .btn-toolbar {
+      .btn-group {
+        flex-wrap: wrap;
+      }
+    }
+  }
 }
+
+
 
 
 .in2publish-state-icon {
@@ -705,26 +661,31 @@ div#typo3-docbody.stopScrolling {
   }
 }
 
-.in2publish-badge {
+.badge.in2publish-badge {
   &--unchanged {
-    color: #000!important;
-    background-color: $nobel!important;
+    color: #000;
+    background-color: $nobel;
+    color: white;
   }
 
   &--changed {
     background-color: $goldentainoi;
+    color: black;
   }
 
   &--moved-and-changed {
     background-color: $goldentainoi;
+    color: black;
   }
 
   &--added {
     background-color: $apple;
+    color: white;
   }
 
   &--deleted {
     background-color: $appleblossom;
+    color: white;
   }
 
   &--moved {
@@ -766,5 +727,16 @@ div#typo3-docbody.stopScrolling {
 .in2publish-table {
   .col-filename {
     width: 50%;
+  }
+}
+
+.in2publish_core_m1 {
+  .module-docheader-bar-column-left {
+    .form-group {
+      display: flex;
+      .form-select {
+        margin-left: 1em;
+      }
+    }
   }
 }

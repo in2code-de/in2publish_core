@@ -50,7 +50,7 @@ class LocalInstanceTest implements TestCaseInterface
         }
 
         $excludedTables = $this->configContainer->get('excludeRelatedTables');
-        $localTables = array_flip($this->localDatabase->getSchemaManager()->listTableNames());
+        $localTables = array_flip($this->localDatabase->createSchemaManager()->listTableNames());
 
         $missingTables = [];
 

@@ -29,20 +29,17 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingServiceInjection;
-use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
+use In2code\In2publishCore\Component\Core\PreProcessing\CachedTcaPreProcessingServiceInjection;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
-class TcaController extends ActionController
+class TcaController extends AbstractAdminToolsController
 {
-    use AdminToolsModuleTemplate;
-    use TcaPreProcessingServiceInjection;
+    use CachedTcaPreProcessingServiceInjection;
 
     public function indexAction(): ResponseInterface
     {
-        $this->view->assign('incompatibleTca', $this->tcaPreProcessingService->getIncompatibleTcaParts());
-        $this->view->assign('compatibleTca', $this->tcaPreProcessingService->getCompatibleTcaParts());
+        $this->view->assign('incompatibleTca', $this->cachedTcaPreProcessingService->getIncompatibleTcaParts());
+        $this->view->assign('compatibleTca', $this->cachedTcaPreProcessingService->getCompatibleTcaParts());
 
         return $this->htmlResponse();
     }

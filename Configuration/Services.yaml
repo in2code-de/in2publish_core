@@ -21,10 +21,6 @@ services:
       - '../Classes/Component/*'
       - '../Classes/Features/*'
 
-  TYPO3\CMS\Backend\Middleware\BackendRouteInitialization:
-    alias: In2code\In2publishCore\Middleware\BackendRouteInitialization
-    public: true
-
   # Services
 
   In2code.In2publishCore.Database.Local:
@@ -60,7 +56,6 @@ services:
   In2code\In2publishCore\Domain\Service\ForeignSiteFinder:
     arguments: [ '@cache.in2publish_core' ]
 
-
   In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest:
     tags:
       - name: 'in2publish_core.adapter.ssh.remote_adapter_test'
@@ -74,3 +69,6 @@ services:
   In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest:
     tags:
       - name: 'in2publish_core.adapter.ssh.transmission_adapter_test'
+
+  In2code\In2publishCore\Service\ReplaceMarkersService:
+    public: true

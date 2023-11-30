@@ -3,78 +3,83 @@
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<table class="table">
-		<thead>
-			<tr>
-				<th>UID</th>
-				<th>PID</th>
-				<th>
-					<f:translate key="compare_database.label" />
-				</th>
-				<f:if condition="{reason} == 'diff'">
+	<div class="panel panel-default">
+		<f:spaceless>
+			<table class="table table-striped table-hover">
+				<thead>
+				<tr>
+					<th>UID</th>
+					<th>PID</th>
 					<th>
-						<f:translate key="compare_database.diff" />
+						<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.label" />
 					</th>
-				</f:if>
-				<th>
-					<f:translate key="compare_database.actions" />
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			<f:for each="{line}" as="value">
-				<f:if condition="{reason} == 'diff'">
-					<f:then>
-						<tr>
-							<td>{value.local.uid}</td>
-							<td>{value.local.pid}</td>
-							<td>
-								<publish:tca.tableRowLabel table="{table}"
-														   row="{value.local}" />
-							</td>
-							<td>
-								<table class="table">
-									<f:for each="{value.diff}" key="field" as="diff">
-										<tr>
-											<th class="diff-item-title">{field}</th>
-											<td class="diff-item-result diff-item-result-inline"
-												style="width: auto">
-												<publish:format.diff new="{value.local.{field}}"
-																	 old="{value.foreign.{field}}" />
-											</td>
-										</tr>
-									</f:for>
-								</table>
-							</td>
-							<td>
-								<f:link.action class="btn btn-default"
-											   title="{f:translate(key:'compare_database.transfer')}"
-											   action="transfer"
-											   arguments="{table: table, uid: value.local.uid, expected: reason}">
-									<core:icon identifier="actions-caret-right" />
-								</f:link.action>
-							</td>
-						</tr>
-					</f:then>
-					<f:else>
-						<tr>
-							<td>{value.uid}</td>
-							<td>{value.pid}</td>
-							<td>
-								<publish:tca.tableRowLabel table="{table}" row="{value}" />
-							</td>
-							<td>
-								<f:link.action class="btn btn-default"
-											   title="{f:translate(key:'compare_database.transfer')}"
-											   action="transfer"
-											   arguments="{table: table, uid: value.uid, expected: reason}">
-									<core:icon identifier="actions-caret-right" />
-								</f:link.action>
-							</td>
-						</tr>
-					</f:else>
-				</f:if>
-			</f:for>
-		</tbody>
-	</table>
+					<f:if condition="{reason} == 'diff'">
+						<th>
+							<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.diff" />
+						</th>
+					</f:if>
+					<th>
+						<f:translate key="LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.actions" />
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				<f:for each="{line}" as="value">
+					<f:if condition="{reason} == 'diff'">
+						<f:then>
+							<tr>
+								<td>{value.local.uid}</td>
+								<td>{value.local.pid}</td>
+								<td>
+									<publish:tca.tableRowLabel table="{table}"
+															   row="{value.local}" />
+								</td>
+								<td>
+									<table class="table table-sm table-bordered">
+										<f:for each="{value.diff}" key="field" as="diff">
+											<tr>
+												<th class="diff-item-title">{field}</th>
+												<td class="diff-item-result diff-item-result-inline"
+													style="width: auto"
+												><publish:format.diff
+													new="{value.local.{field}}"
+													old="{value.foreign.{field}}"
+												/></td>
+											</tr>
+										</f:for>
+									</table>
+								</td>
+								<td>
+									<f:link.action class="btn btn-default"
+												   title="{f:translate(key:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer')}"
+												   action="transfer"
+												   arguments="{table: table, uid: value.local.uid, expected: reason}">
+										<core:icon identifier="actions-caret-right" />
+									</f:link.action>
+								</td>
+							</tr>
+						</f:then>
+						<f:else>
+							<tr>
+								<td>{value.uid}</td>
+								<td>{value.pid}</td>
+								<td>
+									<publish:tca.tableRowLabel table="{table}" row="{value}" />
+								</td>
+								<td>
+									<f:link.action class="btn btn-default"
+												   title="{f:translate(key:'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer')}"
+												   action="transfer"
+												   arguments="{table: table, uid: value.uid, expected: reason}">
+										<core:icon identifier="actions-caret-right" />
+									</f:link.action>
+								</td>
+							</tr>
+						</f:else>
+					</f:if>
+				</f:for>
+				</tbody>
+			</table>
+		</f:spaceless>
+	</div>
 </html>

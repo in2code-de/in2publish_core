@@ -95,7 +95,7 @@ class DatabaseUtility
 
                 try {
                     $foreignConnection = $connectionPool->getConnectionByName('in2publish_foreign');
-                    foreach ($foreignConnection->getEventManager()->getListeners() as $event => $listeners) {
+                    foreach ($foreignConnection->getEventManager()->getAllListeners() as $event => $listeners) {
                         foreach ($listeners as $listener) {
                             $foreignConnection->getEventManager()->removeEventListener($event, $listener);
                         }
@@ -201,7 +201,7 @@ class DatabaseUtility
             if ($permClause !== '') {
                 $queryBuilder->andWhere(self::stripLogicalOperatorPrefix($permClause));
             }
-            $statement = $queryBuilder->execute();
+            $statement = $queryBuilder->executeQuery();
             while ($row = $statement->fetchAssociative()) {
                 if ($begin <= 0) {
                     $theList .= ',' . $row['uid'];

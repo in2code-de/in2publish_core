@@ -93,9 +93,6 @@ class RecordController extends ActionController
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
         $this->actualInjectPageRenderer($pageRenderer);
-        $this->pageRenderer->addInlineLanguageLabelFile(
-            'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf',
-        );
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendEnhancements');
         $this->pageRenderer->addCssFile(
@@ -109,16 +106,17 @@ class RecordController extends ActionController
 
     public function initializeIndexAction(): void
     {
-        /** @var BackendUserAuthentication $BE_USER */
-        $BE_USER = $GLOBALS['BE_USER'];
-        $data = $BE_USER->getModuleData('tx_in2publishcore_m1') ?? ['pageRecursionLimit' => 1];
+        $backendUser = $this->getBackendUser();
+        $data = $backendUser->getModuleData('tx_in2publishcore_m1') ?? ['pageRecursionLimit' => 1];
         if ($this->request->hasArgument('pageRecursionLimit')) {
             $pageRecursionLimit = (int)$this->request->getArgument('pageRecursionLimit');
             $data['pageRecursionLimit'] = $pageRecursionLimit;
-            $BE_USER->pushModuleData('tx_in2publishcore_m1', $data);
+            $backendUser->pushModuleData('tx_in2publishcore_m1', $data);
         } else {
-            $this->request->setArgument('pageRecursionLimit', $data['pageRecursionLimit'] ?? 1);
+            $this->request = $this->request->withArgument('pageRecursionLimit', $data['pageRecursionLimit'] ?? 1);
         }
+
+        $this->moduleTemplate->setModuleClass('in2publish_core_m1');
 
         $menuRegistry = $this->moduleTemplate->getDocHeaderComponent()->getMenuRegistry();
         $menu = $menuRegistry->makeMenu();
@@ -179,20 +177,20 @@ class RecordController extends ActionController
         }
     }
 
-    public function publishRecordAction(int $id): void
+    public function publishRecordAction(int $recordId): ResponseInterface
     {
-        $request = new RecordTreeBuildRequest('pages', $id, 0);
+        $request = new RecordTreeBuildRequest('pages', $recordId, 0);
         $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
 
-        $actualRecord = $recordTree->getChild('pages', $id);
+        $actualRecord = $recordTree->getChild('pages', $recordId);
         if (null === $actualRecord) {
-            $this->addFlashMessagesAndRedirectToIndex();
+            return $this->addFlashMessagesAndRedirectToIndex();
         }
         $subRecordTree = new RecordTree([$actualRecord], $request);
         $publishingContext = new PublishingContext($subRecordTree);
         $this->publisherService->publish($publishingContext);
 
-        $this->addFlashMessagesAndRedirectToIndex();
+        return $this->addFlashMessagesAndRedirectToIndex();
     }
 
     /**
@@ -209,10 +207,8 @@ class RecordController extends ActionController
 
     /**
      * Add success message and redirect to indexAction
-     *
-     * @throws StopActionException
      */
-    protected function addFlashMessagesAndRedirectToIndex(): void
+    protected function addFlashMessagesAndRedirectToIndex(): ResponseInterface
     {
         $failures = $this->failureCollector->getFailures();
 
@@ -233,6 +229,17 @@ class RecordController extends ActionController
         }
         $this->addFlashMessage($message, $title, $severity);
 
-        $this->redirect('index', 'Record');
+        $arguments = [];
+        $queryParams = $this->request->getQueryParams();
+        if (isset($queryParams['id'])) {
+            $arguments['id'] = (int)$queryParams['id'];
+        }
+
+        return $this->redirect('index', 'Record', null, $arguments);
+    }
+
+    public function getBackendUser(): BackendUserAuthentication
+    {
+        return $GLOBALS['BE_USER'];
     }
 }

@@ -32,9 +32,10 @@ namespace In2code\In2publishCore\Features\AdminTools\Service;
 use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Service\Exception\ClassNotFoundException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 use function class_exists;
@@ -63,25 +64,21 @@ class ToolsRegistry implements SingletonInterface
         ];
     }
 
+    /**
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     */
     public function getEntries(): array
     {
-        // Do not inject the ConfigurationManager, because it will not contain the configured tools.
-        $configurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
-        $configuration = $configurationManager->getConfiguration(
-            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-        );
         $processedTools = [];
 
-        $controllerConfig = $configuration['controllerConfiguration'];
         foreach ($this->entries as $key => $config) {
             if ($this->evaluateCondition($config)) {
                 $controller = $config['controller'];
                 $processedTools[$key] = $config;
                 $actions = GeneralUtility::trimExplode(',', $processedTools[$key]['action']);
                 $processedTools[$key]['initialAction'] = $actions[0];
-                if (isset($controllerConfig[$controller]['alias'])) {
-                    $processedTools[$key]['alias'] = $controllerConfig[$controller]['alias'];
-                }
+                $processedTools[$key]['alias'] = ExtensionUtility::resolveControllerAliasFromControllerClassName($controller);
             }
         }
 
@@ -90,13 +87,11 @@ class ToolsRegistry implements SingletonInterface
 
     /**
      * @throws ClassNotFoundException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      */
-    public function processData(): void
+    public function processData(): array
     {
-        if (!$this->configContainer->get('module.m4')) {
-            return;
-        }
-
         $controllerActions = [];
         foreach ($this->entries as $entry) {
             if ($this->evaluateCondition($entry)) {
@@ -113,24 +108,28 @@ class ToolsRegistry implements SingletonInterface
             }
         }
 
+        return $controllerActions;
+    }
+
+    /**
+     * @throws ClassNotFoundException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @deprecated Will be removed in TYPO3 v13
+     */
+    public function processDataForTypo3V11(): array
+    {
+        $controllerActions = $this->processData();
         foreach ($controllerActions as $controllerName => $actions) {
             $controllerActions[$controllerName] = implode(',', $actions);
         }
-
-        ExtensionUtility::registerModule(
-            'in2publish_core',
-            'tools',
-            'm4',
-            '',
-            $controllerActions,
-            [
-                'access' => 'admin',
-                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Tools.svg',
-                'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
-            ],
-        );
+        return $controllerActions;
     }
 
+    /**
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     */
     protected function evaluateCondition(array $config): bool
     {
         if (null === $config['condition']) {

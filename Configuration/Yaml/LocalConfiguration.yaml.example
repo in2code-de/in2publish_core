@@ -4,8 +4,6 @@
 #    Fields annotated with "@user" can be overridden using PageTS or UserTS
 #
 
----
-
 # PHP & Database settings on foreign server (for SSH access see "sshConnection")
 foreign:
 
@@ -61,9 +59,9 @@ excludeRelatedTables:
   - tx_in2code_in2publish_task
   - tx_in2code_rpc_data
   - tx_in2code_rpc_request
-  - tx_in2publishcore_filepublisher_task
   - tx_in2publishcore_log
   - tx_in2publishcore_running_request
+  - tx_in2publishcore_filepublisher_instruction
 
 
 # Ignore these fields for difference view (Publish Overview, Record Comparison).

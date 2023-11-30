@@ -9,6 +9,8 @@ use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Event\DemandsForTextWereCollected;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function htmlspecialchars_decode;
 use function parse_str;
@@ -68,5 +70,21 @@ class TextResolver extends AbstractResolver
         }
 
         $this->eventDispatcher->dispatch(new DemandsForTextWereCollected($demands, $record, $text));
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'metaInfo' => $this->metaInfo,
+            'column' => $this->column,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->metaInfo = $data['metaInfo'];
+        unset($data['metaInfo']);
+        $this->configure(...$data);
+        $this->injectEventDispatcher(GeneralUtility::makeInstance(EventDispatcher::class));
     }
 }

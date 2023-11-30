@@ -145,12 +145,12 @@ abstract class AbstractDomainTest
         $query->select('uid')
               ->from('pages')
               ->where(
-                  $query->expr()->andX(
+                  $query->expr()->and(
                       $query->expr()->eq('is_siteroot', $query->createNamedParameter(1)),
                       $query->expr()->eq('sys_language_uid', $query->createNamedParameter(0)),
                   ),
               );
-        return $query->execute();
+        return $query->executeQuery();
     }
 
     protected function determineDomainTypes(array $pageIds): array

@@ -31,13 +31,10 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\ConfigContainer\Dumper\ConfigContainerDumper;
-use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
-class ShowConfigurationController extends ActionController
+class ShowConfigurationController extends AbstractAdminToolsController
 {
-    use AdminToolsModuleTemplate;
     use ConfigContainerInjection;
 
     private ConfigContainerDumper $configContainerDumper;

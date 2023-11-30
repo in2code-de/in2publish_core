@@ -11,24 +11,6 @@
 				<source>Abort</source>
 				<target state="translated">Abbrechen</target>
 			</trans-unit>
-			<trans-unit id="tx_in2publishcore.modal.publish.title">
-				<source>Confirm publish</source>
-				<target state="translated">Veröffentlichung bestätigen</target>
-			</trans-unit>
-			<trans-unit id="tx_in2publishcore.modal.publish.file.text">
-				<source>Are you sure you want to publish the file $name$? This cannot be reversed.</source>
-				<target state="translated">Möchten Sie die Datei $1 wirklich veröffentlichen? Dies kann nicht rückgängig gemacht werden.</target>
-			</trans-unit>
-			<trans-unit id="tx_in2publishcore.modal.publish.folder.text">
-				<source>Are you sure you want to publish the folder $name$? This cannot be reversed.</source>
-				<target state="translated">Möchten Sie den Ordner $name$ wirklich veröffentlichen? Dies kann nicht rückgängig gemacht werden.</target>
-			</trans-unit>
-			<trans-unit id="tx_in2publishcore.modal.publish.page_with_dependencies.text">
-				<source>This page has unmet dependencies. Since you cannot access the dependencies, it is possible to publish this page anyway. However, there is no guarantee that the page will look exactly the same as on Local.
-					You can see the dependencies in the details of the page.</source>
-				<target state="translated">Diese Seite hat unerfüllte Abhängigkeiten. Da Sie auf die Abhängigkeiten nicht zugreifen können ist es möglich, diese Seite trotzdem zu veröffentlichen. Allerdings ohne Garantie, dass die Seite exakt so aussieht wie auf Local.
-					Sie können die Abhängigkeiten in den Details der Seite einsehen.</target>
-			</trans-unit>
 		</body>
 	</file>
 </xliff>

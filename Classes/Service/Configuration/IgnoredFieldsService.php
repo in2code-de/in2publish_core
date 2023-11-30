@@ -34,6 +34,7 @@ use function array_unique;
 use function explode;
 use function implode;
 use function is_array;
+use function is_bool;
 use function is_string;
 use function preg_match;
 
@@ -69,7 +70,7 @@ class IgnoredFieldsService
                         if (null === $ignoredCtrlFieldNames) {
                             continue;
                         }
-                        if ($ignoredCtrl === 'versioningWS') {
+                        if ($ignoredCtrl === 'versioningWS' && $ignoredCtrlFieldNames) {
                             $ignoredCtrlFieldNames = 't3ver_oid,t3ver_wsid,t3ver_state,t3ver_stage';
                         }
                         $ignoredCtrlFields = GeneralUtility::trimExplode(',', $ignoredCtrlFieldNames);
@@ -86,7 +87,10 @@ class IgnoredFieldsService
         return $this->rtc[$table];
     }
 
-    protected function getValueByPath(array $array, string $path): ?string
+    /**
+     * @return string|bool|null
+     */
+    protected function getValueByPath(array $array, string $path)
     {
         /** @var array|scalar $value */
         $value = $array;
@@ -101,7 +105,7 @@ class IgnoredFieldsService
         if (is_array($value)) {
             return implode(',', $value);
         }
-        if (!is_string($value)) {
+        if (!is_string($value) && !is_bool($value)) {
             return null;
         }
         return $value;

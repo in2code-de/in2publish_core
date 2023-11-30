@@ -1,8 +1,13 @@
 'use strict';
 
 define([
-	'jquery', 'TYPO3/CMS/Core/Event/DebounceEvent', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Input/Clearable'
-], function ($, DebounceEvent, Modal) {
+	'jquery',
+	'TYPO3/CMS/Core/Event/DebounceEvent',
+	'TYPO3/CMS/Backend/Modal',
+	'TYPO3/CMS/Backend/Input/Clearable',
+	'TYPO3/CMS/In2publishCore/LoadingOverlay',
+	'TYPO3/CMS/In2publishCore/ConfirmationModal',
+], function ($, DebounceEvent, Modal, LoadingOverlay, ConfirmationModal) {
 	var In2publishCoreModule = {
 		isPublishFilesModule: (document.querySelector('.module[data-module-name="file_In2publishCoreM3"]') !== null),
 		unchangedFilter: false,
@@ -10,12 +15,6 @@ define([
 		addedFilter: false,
 		deletedFilter: false,
 		movedFilter: false,
-		publisherBag: [],
-		objects: {
-			body: undefined,
-			preLoader: undefined,
-			typo3DocBody: undefined
-		},
 	};
 
 	In2publishCoreModule.initialize = function () {
@@ -24,14 +23,10 @@ define([
 			In2publishCoreModule.filterItemsByStatus();
 			In2publishCoreModule.setupFilterListeners();
 			In2publishCoreModule.setupClearableInputs();
-			In2publishCoreModule.setupPublishListeners();
 		} else {
 			In2publishCoreModule.setFilterForPageView();
 			In2publishCoreModule.filterButtonsListener();
-			In2publishCoreModule.setupPublishListeners();
 		}
-		In2publishCoreModule.overlayListener();
-		In2publishCoreModule.ajaxUriListener();
 	};
 
 	In2publishCoreModule.filterItemsByStatus = function () {
@@ -147,86 +142,6 @@ define([
 		});
 	};
 
-	In2publishCoreModule.overlayListener = function () {
-		document.querySelectorAll('[data-in2publish-confirm]').forEach(element => {
-			element.addEventListener('click', In2publishCoreModule.overlayHandler, true)
-		})
-	};
-
-	/**
-	 * @param {Event} event
-	 */
-	In2publishCoreModule.overlayHandler = function (event) {
-		/**
-		 * @type {HTMLAnchorElement}
-		 */
-		const target = event.currentTarget
-		if (
-			target.dataset['in2publishConfirm']
-			&& (
-				target.classList.contains('in2publish-stagelisting__item__publish--blocked')
-				|| !confirm(target.dataset['in2publishConfirm'])
-			)
-		) {
-			event.preventDefault();
-			event.stopPropagation();
-			event.stopImmediatePropagation();
-			return;
-		}
-		if ('TRUE' === target.dataset['in2publishOverlay']) {
-			In2publishCoreModule.showPreloader();
-		}
-	}
-
-	In2publishCoreModule.showPreloader = function () {
-		In2publishCoreModule.objects.preLoader.removeClass('in2publish-preloader--hidden');
-		In2publishCoreModule.objects.typo3DocBody.addClass('stopScrolling');
-	};
-
-	In2publishCoreModule.ajaxUriListener = function () {
-		$('*[data-action-ajax-uri]').click(function (e) {
-			var $this = $(this);
-			var uri = $this.data('action-ajax-uri');
-			if ('href' === uri) {
-				uri = $this.prop('href');
-				e.preventDefault();
-			}
-			var once = true === $this.data('action-ajax-once');
-			var container = $this.data('action-ajax-result');
-			var filled = false;
-			if (undefined !== container) {
-				var $container = $(container);
-				filled = true === $container.data('container-filled');
-			}
-
-			if (!once || !filled) {
-				$.ajax({
-					url: uri,
-					beforeSend: function () {
-						In2publishCoreModule.showPreloader();
-					},
-					complete: function () {
-						In2publishCoreModule.hidePreLoader();
-					},
-					success: function (data) {
-						if (data && undefined !== container) {
-							$container.html(data);
-							$container.data('container-filled', true);
-						}
-						In2publishCoreModule.openOrCloseStageListingDropdownContainer(
-							$container.find('.in2publish-stagelisting__dropdown')
-						);
-					}
-				});
-			}
-		});
-	};
-
-	In2publishCoreModule.hidePreLoader = function () {
-		In2publishCoreModule.objects.preLoader.addClass('in2publish-preloader--hidden');
-		In2publishCoreModule.objects.typo3DocBody.removeClass('stopScrolling');
-	};
-
 	In2publishCoreModule.setupFilterListeners = function () {
 		const filters = document.querySelectorAll('.js-in2publish-filter');
 
@@ -284,97 +199,6 @@ define([
 		}
 	}
 
-	In2publishCoreModule.setupPublishListeners = function () {
-		document.querySelectorAll('.js-publish-trigger').forEach(
-			element => element.addEventListener(
-				'click',
-				In2publishCoreModule.publishFileEventListener,
-				{capture: true}
-			)
-		)
-	};
-
-	In2publishCoreModule.publishFileEventListener = function (event) {
-		event.preventDefault();
-		const target = event.currentTarget;
-		const type = target.dataset.type;
-		const severity = parseInt(target.dataset.severity || '0');
-		let actionButtonClass = 'btn-default';
-		let modalTitle = '';
-		let modalContent = '';
-		let modalButtonAbort = '';
-		let modalButtonPublish = '';
-		switch(severity) {
-			/*
-			 * TYPO3.Severity.error = 2
-			 * TYPO3.Severity.warning = 1
-			 * TYPO3.Severity.ok = 0
-			 * TYPO3.Severity.info = -1
-			 * TYPO3.Severity.notice = -2
-			 */
-			case -2:
-			case -1:
-				actionButtonClass = 'btn-info';
-				break;
-			case 0:
-				actionButtonClass = 'btn-success';
-				break;
-			case 1:
-				actionButtonClass = 'btn-warning';
-				break;
-			case 2:
-				actionButtonClass = 'btn-danger';
-				break;
-		}
-		if (TYPO3.lang['tx_in2publishcore.modal.publish.' + type + '.text'] !== undefined) {
-			modalTitle = TYPO3.lang['tx_in2publishcore.modal.publish.title'];
-			modalContent = TYPO3.lang['tx_in2publishcore.modal.publish.' + type + '.text'].replace('$name$', target.dataset.name);
-			modalButtonAbort = TYPO3.lang['tx_in2publishcore.action.abort'];
-			modalButtonPublish = TYPO3.lang['tx_in2publishcore.actions.publish'];
-		} else {
-			modalTitle = target.dataset.modalTitle;
-			modalContent = target.dataset.modalText + '\n' + target.dataset.modalReasons;
-			modalButtonAbort = target.dataset.modalButtonAbortCaption;
-			modalButtonPublish = target.dataset.modalButtonPublishCaption;
-		}
-		const configuration = {
-			title: modalTitle,
-			content: modalContent,
-			severity: severity,
-			buttons: [
-				{
-					text: modalButtonAbort,
-					btnClass: 'btn btn-default',
-					name: 'abort',
-					active: true,
-					trigger: function () {
-						Modal.currentModal.trigger('modal-dismiss');
-						In2publishCoreModule.hidePreLoader();
-					}
-				},
-				{
-					text: modalButtonPublish,
-					btnClass: 'btn ' + actionButtonClass,
-					name: 'publish',
-					trigger: () => {
-						Modal.currentModal.trigger('modal-dismiss');
-						if (target.classList.contains('js-publish-overlay')) {
-							In2publishCoreModule.showPreloader();
-						}
-						target.removeEventListener(
-							'click',
-							In2publishCoreModule.publishFileEventListener,
-							{capture: true}
-						);
-						target.dispatchEvent(event);
-						window.location = target.href;
-					}
-				}
-			]
-		};
-		Modal.advanced(configuration);
-	}
-
 	In2publishCoreModule.setupClearableInputs = function () {
 		(Array.from(document.querySelectorAll('.t3js-clearable'))).forEach(function (input) {
 			input.clearable();
@@ -382,9 +206,6 @@ define([
 	};
 
 	$(function () {
-		In2publishCoreModule.objects.body = $('body');
-		In2publishCoreModule.objects.preLoader = $('.in2publish-preloader');
-		In2publishCoreModule.objects.typo3DocBody = $('#typo3-docbody');
 		In2publishCoreModule.initialize();
 	});
 

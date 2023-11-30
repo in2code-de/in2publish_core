@@ -1,6 +1,9 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
 	<div
-		class="in2publish-footer"
+		class="in2publish-footer mt-4"
 		data-information-version="{extensionVersion}"
 	>
 		<f:link.external uri="https://www.in2code.de">
@@ -9,15 +12,16 @@
 				alt="in2code - wir leben TYPO3" width="160" height="48" class="in2publish-logo"
 			/>
 		</f:link.external>
+		<div class="my-2">
+			<br/>Copyright 2015-2023 in2code GmbH - Version {extensionVersion}
 
-		<br/>Copyright 2015-2023 in2code GmbH - Version {extensionVersion}
-
-		<div>Execution time: ###IN2CODE_IN2PUBLISH_EXECUTION_TIME###</div>
-		<f:if condition="{testStatus}">
-			<f:for each="{testStatus}" as="string">
-				<core:icon identifier="actions-exclamation-triangle-alt" />
-				<f:translate key="test_state_error.{string}"/>
-			</f:for>
-		</f:if>
+			<div>Execution time: ###IN2CODE_IN2PUBLISH_EXECUTION_TIME###</div>
+			<f:if condition="{testStatus}">
+				<f:for each="{testStatus}" as="string">
+					<core:icon identifier="actions-exclamation-triangle-alt" />
+					<f:translate key="test_state_error.{string}"/>
+				</f:for>
+			</f:if>
+		</div>
 	</div>
 </html>

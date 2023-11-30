@@ -168,6 +168,10 @@ class RecordFactoryTest extends UnitTestCase
         $eventDispatcher = $this->createMock(EventDispatcher::class);
         $eventDispatcher->expects($this->exactly(2))->method('dispatch');
 
+        $ignoredFieldsService = $this->createMock(IgnoredFieldsService::class);
+        $ignoredFieldsService->method('getIgnoredFields')->willReturn([]);
+
+        $recordFactory->injectIgnoredFieldsService($ignoredFieldsService);
         $recordFactory->injectEventDispatcher($eventDispatcher);
         $recordFactory->injectRecordIndex($recordIndex);
 
@@ -195,7 +199,6 @@ class RecordFactoryTest extends UnitTestCase
         $recordFactory->injectRecordIndex($recordIndex);
 
         $record = $recordFactory->createFolderRecord(
-            'combined_identifier',
             ['field_foo' => 'value_foo'],
             [],
         );

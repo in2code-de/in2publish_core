@@ -16,7 +16,7 @@ class DemandBuilder
         $demand = $this->demandsFactory->createDemand();
         foreach ($records->getRecordsFlat() as $record) {
             $classification = $record->getClassification();
-            $resolvers = $this->resolverService->getResolversForTable($classification);
+            $resolvers = $this->resolverService->getResolversForClassification($classification);
             foreach ($resolvers as $resolver) {
                 $resolver->resolve($demand, $record);
             }

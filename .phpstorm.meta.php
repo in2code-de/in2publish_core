@@ -42,9 +42,9 @@ namespace PHPSTORM_META {
     expectedArguments(
         \In2code\In2publishCore\Component\RemoteProcedureCall\Envelope::__construct(),
         0,
-        \In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher::CMD_FOLDER_EXISTS,
+        \In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher::CMD_GET_FOLDER_INFO,
+        \In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher::CMD_GET_FILE_INFO,
         \In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher::CMD_FILE_EXISTS,
-        \In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher::CMD_LIST_FOLDER_CONTENTS,
     );
     expectedArguments(
         \In2code\In2publishCore\Component\ConfigContainer\Builder::addNode(),

@@ -8,7 +8,9 @@ use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Service\ReplaceMarkersServiceInject;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function preg_match;
 
@@ -63,5 +65,25 @@ class SelectMmResolver extends AbstractResolver
             $record,
         );
         $demands->addDemand($demand);
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'metaInfo' => $this->metaInfo,
+            'foreignTableWhere' => $this->foreignTableWhere,
+            'column' => $this->column,
+            'mmTable' => $this->mmTable,
+            'foreignTable' => $this->foreignTable,
+            'selectField' => $this->selectField,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->metaInfo = $data['metaInfo'];
+        unset($data['metaInfo']);
+        $this->configure(...$data);
+        $this->injectReplaceMarkersService(GeneralUtility::makeInstance(ReplaceMarkersService::class));
     }
 }

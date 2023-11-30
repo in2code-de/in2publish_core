@@ -29,12 +29,11 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
+use In2code\In2publishCore\Features\AdminTools\Controller\AbstractAdminToolsController;
 use In2code\In2publishCore\Features\SystemInformationExport\Service\SystemInformationExportService;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Http\ForwardResponse;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -55,9 +54,8 @@ use function time;
 
 use const JSON_THROW_ON_ERROR;
 
-class SystemInformationExportController extends ActionController
+class SystemInformationExportController extends AbstractAdminToolsController
 {
-    use AdminToolsModuleTemplate;
 
     protected SystemInformationExportService $sysInfoExportService;
 
@@ -92,8 +90,14 @@ class SystemInformationExportController extends ActionController
             } else {
                 $args = [json_last_error(), json_last_error_msg()];
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('system_info.decode.json_error.details', 'in2publish_core', $args),
-                    LocalizationUtility::translate('system_info.decode.json_error', 'in2publish_core'),
+                    LocalizationUtility::translate(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.decode.json_error.details',
+                        null,
+                        $args
+                    ),
+                    LocalizationUtility::translate(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.decode.json_error',
+                    ),
                     AbstractMessage::ERROR,
                 );
             }

@@ -2,15 +2,74 @@
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<tr class="collapse" id="file-{record.id -> publish:security.hash()}">
-		<td></td>
-		<td colspan="4">
-			<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'local'}"/>
-		</td>
-		<td colspan="3">
-			<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'foreign'}"/>
-		</td>
-	</tr>
+	<f:if condition="{condition:IsUserAllowedToPublish()}">
+		<f:then>
+			<f:if condition="{record.stateRecursive} !== 'unchanged'">
+				<f:then>
+					<f:if condition="{record.reasonsWhyTheRecordIsNotPublishable.empty}">
+						<f:then>
+							<f:render section="DirtyPropertiesRowWithId" arguments="{_all}" />
+						</f:then>
+						<f:else>
+							<f:render section="DirtyPropertiesTableBodyWrapper" arguments="{_all}" />
+						</f:else>
+					</f:if>
+				</f:then>
+				<f:else>
+					<f:render section="DirtyPropertiesRowWithId" arguments="{_all}" />
+				</f:else>
+			</f:if>
+		</f:then>
+		<f:else>
+			<f:render section="DirtyPropertiesRowWithId" arguments="{_all}" />
+		</f:else>
+	</f:if>
+
+	<f:section name="DirtyPropertiesTableBodyWrapper">
+		<tbody class="collapse" id="file-{record.id -> publish:security.hash()}">
+			<f:render section="ReasonsTableRow" arguments="{_all}" />
+			<f:render section="DirtyPropertiesRow" arguments="{_all}" />
+		</tbody>
+	</f:section>
+
+	<f:section name="ReasonsTableRow">
+		<tr>
+			<td></td>
+			<td colspan="7">
+				<f:if condition="{record.reasonsWhyTheRecordIsNotPublishable}">
+					<ul class="list-unstyled mb-2 ms-0">
+						<f:for each="{record.reasonsWhyTheRecordIsNotPublishableHumanReadable}" as="reason">
+							<li>{reason}</li>
+						</f:for>
+					</ul>
+				</f:if>
+			</td>
+		</tr>
+	</f:section>
+
+	<f:section name="DirtyPropertiesRowWithId">
+		<tr class="collapse" id="file-{record.id -> publish:security.hash()}">
+			<td></td>
+			<td colspan="4">
+				<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'local'}"/>
+			</td>
+			<td colspan="3">
+				<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'foreign'}"/>
+			</td>
+		</tr>
+	</f:section>
+
+	<f:section name="DirtyPropertiesRow">
+		<tr>
+			<td></td>
+			<td colspan="4">
+				<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'local'}"/>
+			</td>
+			<td colspan="3">
+				<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'foreign'}"/>
+			</td>
+		</tr>
+	</f:section>
 
 	<f:section name="StageProperties">
 		<f:variable name="propertyKey">{stagingLevel}Props</f:variable>

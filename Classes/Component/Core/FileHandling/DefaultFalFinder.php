@@ -31,41 +31,42 @@ namespace In2code\In2publishCore\Component\Core\FileHandling;
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
+use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
+use In2code\In2publishCore\Component\Core\Demand\Type\FilesInFolderDemand;
+use In2code\In2publishCore\Component\Core\Demand\Type\FolderDemand;
+use In2code\In2publishCore\Component\Core\Demand\Type\FoldersInFolderDemand;
 use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FileInfo;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\ForeignFileInfoServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\LocalFileInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceInjection;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoServiceInjection;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
-use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
-use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function explode;
-use function ltrim;
-use function sha1;
+use function str_contains;
+use function trim;
 
 class DefaultFalFinder
 {
     use RecordFactoryInjection;
-    use RecordIndexInjection;
     use DemandsFactoryInjection;
     use DemandResolverInjection;
     use ResourceFactoryInjection;
-    use ForeignFileSystemInfoServiceInjection;
-    use FalDriverServiceInjection;
-    use FileSystemInfoServiceInjection;
     use RecordTreeBuilderInjection;
     use EventDispatcherInjection;
+    use LocalFileInfoServiceInjection;
+    use ForeignFileInfoServiceInjection;
+    use DemandBuilderInjection;
 
     /**
      * Creates a Record instance representing the current chosen folder in the
@@ -97,221 +98,51 @@ class DefaultFalFinder
             $folder = $this->resourceFactory->getDefaultStorage()->getRootLevelFolder();
             // Update the combinedIdentifier to the actual folder we work with.
             $combinedIdentifier = $folder->getCombinedIdentifier();
-            $storageUid = $folder->getStorage()->getUid();
+            $storage = $folder->getStorage()->getUid();
             $identifier = $folder->getIdentifier();
         } else {
+            $combinedIdentifier = $this->normalizeCombinedIdentifier($combinedIdentifier);
             try {
                 // This is the normal case. The local folder exists.
                 $folder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($combinedIdentifier);
-                $storageUid = $folder->getStorage()->getUid();
+                $storage = $folder->getStorage()->getUid();
             } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
-                $localFolderExists = false;
-                [$storageUid] = GeneralUtility::trimExplode(':', $combinedIdentifier);
-                $storageUid = (int)$storageUid;
-                $localStorage = $this->resourceFactory->getStorageObject($storageUid);
+                [$storage] = GeneralUtility::trimExplode(':', $combinedIdentifier);
+                $storage = (int)$storage;
+                $localStorage = $this->resourceFactory->getStorageObject($storage);
                 $folder = $localStorage->getRootLevelFolder();
             }
             $identifier = GeneralUtility::trimExplode(':', $combinedIdentifier)[1];
         }
-        $storageName = $folder->getStorage()->getName();
 
-        $foreignFolderExists = $this->foreignFileSystemInfoService->folderExists($storageUid, $identifier);
-        if (!$localFolderExists && !$foreignFolderExists) {
-            throw new FolderDoesNotExistOnBothSidesException($combinedIdentifier, $folder->getCombinedIdentifier());
-        }
-        unset($folder);
+        $recordTree = new RecordTree();
 
-        $folderName = PathUtility::basename($combinedIdentifier);
-        $folderIdentifier = explode(':', $combinedIdentifier)[1];
+        $demands = $this->demandsFactory->createDemand();
+        $demands->addDemand(new FolderDemand($storage, $identifier, $recordTree));
 
-        $localProps = [];
-        if ($localFolderExists) {
-            $localProps = [
-                'combinedIdentifier' => $combinedIdentifier,
-                'identifier' => $folderIdentifier,
-                'name' => $folderName ?: $storageName,
-                'storage' => $storageUid,
-            ];
-        }
+        $recordCollection = new RecordCollection();
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
 
-        $foreignProps = [];
-        if ($foreignFolderExists) {
-            $foreignProps = [
-                'combinedIdentifier' => $combinedIdentifier,
-                'identifier' => $folderIdentifier,
-                'name' => $folderName ?: $storageName,
-                'storage' => $storageUid,
-            ];
-        }
-        $folderRecord = $this->recordFactory->createFolderRecord($combinedIdentifier, $localProps, $foreignProps);
+        $demands = $this->demandBuilder->buildDemandForRecords($recordCollection);
+        $recordCollection = new RecordCollection();
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
+
+        $folderRecord = $recordTree->getChild(FolderRecord::CLASSIFICATION, $combinedIdentifier);
         if (null === $folderRecord) {
-            return new RecordTree();
+            throw new FolderDoesNotExistOnBothSidesException($combinedIdentifier, $folder->getCombinedIdentifier());
         }
 
         if ($onlyRoot) {
-            return new RecordTree([$folderRecord]);
+            $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
+            return $recordTree;
         }
 
-        $localFolderContents = $this->fileSystemInfoService->listFolderContents(
-            $storageUid,
-            $folderIdentifier,
-        );
-        $foreignFolderContents = $this->foreignFileSystemInfoService->listFolderContents(
-            $storageUid,
-            $folderIdentifier,
-        );
-
-        $folders = [];
-        foreach ($localFolderContents['folders'] ?? [] as $folder) {
-            $combinedIdentifier = $storageUid . ':/' . ltrim($folder, '/');
-            $folders[$combinedIdentifier]['local'] = [
-                'combinedIdentifier' => $combinedIdentifier,
-                'identifier' => $folder,
-                'name' => PathUtility::basename($folder),
-                'storage' => $storageUid,
-            ];
-        }
-        foreach ($foreignFolderContents['folders'] ?? [] as $folder) {
-            $combinedIdentifier = $storageUid . ':/' . ltrim($folder, '/');
-            $folders[$combinedIdentifier]['foreign'] = [
-                'combinedIdentifier' => $combinedIdentifier,
-                'identifier' => $folder,
-                'name' => PathUtility::basename($folder),
-                'storage' => $storageUid,
-            ];
-        }
-        foreach ($folders as $subFolderIdentifier => $sides) {
-            $subFolderRecord = $this->recordFactory->createFolderRecord(
-                $subFolderIdentifier,
-                $sides['local'] ?? [],
-                $sides['foreign'] ?? [],
-            );
-            if (null === $subFolderRecord) {
-                continue;
-            }
-            $folderRecord->addChild($subFolderRecord);
-        }
-
-        $files = [];
-        foreach ($localFolderContents['files'] ?? [] as $localFiles) {
-            foreach ($localFiles as $file) {
-                $files[$file['identifier']]['local'] = $file;
-            }
-        }
-        foreach ($foreignFolderContents['files'] ?? [] as $foreignFiles) {
-            foreach ($foreignFiles as $file) {
-                $files[$file['identifier']]['foreign'] = $file;
-            }
-        }
         $demands = $this->demandsFactory->createDemand();
-        foreach ($files as $sides) {
-            $fileRecord = $this->recordFactory->createFileRecord(
-                $sides['local'] ?? [],
-                $sides['foreign'] ?? [],
-            );
-            if (null === $fileRecord) {
-                continue;
-            }
-            $demands->addDemand(
-                new SelectDemand(
-                    'sys_file',
-                    'storage = ' . $fileRecord->getProp('storage'),
-                    'identifier_hash',
-                    sha1($fileRecord->getProp('identifier')),
-                    $fileRecord,
-                ),
-            );
-            $folderRecord->addChild($fileRecord);
-        }
+        $demands->addDemand(new FoldersInFolderDemand($storage, $identifier, $folderRecord));
+        $demands->addDemand(new FilesInFolderDemand($storage, $identifier, $folderRecord));
+
         $recordCollection = new RecordCollection();
-
         $this->demandResolver->resolveDemand($demands, $recordCollection);
-        $this->recordTreeBuilder->findRecordsByTca($recordCollection);
-
-        $filesMovedOutFromFolder = [];
-        $filesMovedIntoFolder = [];
-
-        $sysFileRecords = $recordCollection->getRecords('sys_file');
-        foreach ($sysFileRecords as $sysFileRecord) {
-            if ($sysFileRecord->getState() === Record::S_CHANGED) {
-                $localProps = $sysFileRecord->getLocalProps();
-                $foreignProps = $sysFileRecord->getForeignProps();
-                $localIdentifier = $localProps['identifier'];
-                $foreignIdentifier = $foreignProps['identifier'];
-                if ($localIdentifier !== $foreignIdentifier) {
-                    if (!isset($files[$localIdentifier]['local'])) {
-                        $filesMovedOutFromFolder[$localProps['storage']][] = $localIdentifier;
-                    }
-                    if (!isset($files[$foreignIdentifier]['foreign'])) {
-                        $filesMovedIntoFolder[$foreignProps['storage']][] = $foreignIdentifier;
-                    }
-                }
-            }
-        }
-
-        if (!empty($filesMovedOutFromFolder)) {
-            $foundMovedOutFiles = $this->fileSystemInfoService->getFileInfo($filesMovedOutFromFolder);
-            foreach ($foundMovedOutFiles as $identifiers) {
-                foreach ($identifiers as $identifier => $fileInfo) {
-                    $files[$identifier]['local'] = $fileInfo;
-                }
-            }
-        }
-        if (!empty($filesMovedIntoFolder)) {
-            $foundMovedIntoFiles = $this->foreignFileSystemInfoService->getFileInfo($filesMovedIntoFolder);
-            foreach ($foundMovedIntoFiles as $identifiers) {
-                foreach ($identifiers as $identifier => $fileInfo) {
-                    $files[$identifier]['foreign'] = $fileInfo;
-                }
-            }
-        }
-
-        foreach ($sysFileRecords as $sysFileRecord) {
-            if ($sysFileRecord->getState() === Record::S_CHANGED) {
-                $localProps = $sysFileRecord->getLocalProps();
-                $foreignProps = $sysFileRecord->getForeignProps();
-                $localIdentifier = $localProps['identifier'];
-                $foreignIdentifier = $foreignProps['identifier'];
-                if ($localIdentifier !== $foreignIdentifier) {
-                    $localCombinedIdentifier = $localProps['storage'] . ':' . $localIdentifier;
-                    $foreignCombinedIdentifier = $foreignProps['storage'] . ':' . $foreignIdentifier;
-                    if (isset($files[$foreignIdentifier])) {
-                        $files[$localIdentifier]['foreign'] = $files[$foreignIdentifier]['foreign'];
-                        unset($files[$foreignIdentifier]);
-                        $foreignRecordToRemove = $this->recordIndex->getRecord(
-                            FileRecord::CLASSIFICATION,
-                            $foreignCombinedIdentifier,
-                        );
-                        if (null !== $foreignRecordToRemove) {
-                            $folderRecord->removeChild($foreignRecordToRemove);
-                        }
-                        $localRecordToRemove = $this->recordIndex->getRecord(
-                            FileRecord::CLASSIFICATION,
-                            $localCombinedIdentifier,
-                        );
-                        if (null !== $localRecordToRemove) {
-                            $folderRecord->removeChild($localRecordToRemove);
-                        }
-                        $recordToAdd = $this->recordFactory->createFileRecord(
-                            $files[$localIdentifier]['local'] ?? [],
-                            $files[$localIdentifier]['foreign'] ?? [],
-                        );
-                        if (null !== $recordToAdd) {
-                            if (null !== $localRecordToRemove) {
-                                $sysFileRecord->removeParent($localRecordToRemove);
-                            }
-                            if (null !== $foreignRecordToRemove) {
-                                $sysFileRecord->removeParent($foreignRecordToRemove);
-                            }
-                            $recordToAdd->addChild($sysFileRecord);
-                            $folderRecord->addChild($recordToAdd);
-                        }
-                    }
-                }
-            }
-        }
-
-        $recordTree = new RecordTree([$folderRecord]);
 
         $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
 
@@ -321,18 +152,17 @@ class DefaultFalFinder
     public function findFileRecord(?string $combinedIdentifier): RecordTree
     {
         [$storage, $fileIdentifier] = explode(':', $combinedIdentifier);
+        $storage = (int)$storage;
+        $request = [$storage => [$fileIdentifier]];
 
-        $localProps = [];
-        $localFileInfo = $this->fileSystemInfoService->getFileInfo([$storage => [$fileIdentifier]]);
+        $localFileInfo = $this->localFileInfoService->getFileInfo($request);
+        $fileInformation = $localFileInfo->getInfo($storage, $fileIdentifier);
+        $localProps = $fileInformation->toArray();
 
-        if (!empty($localFileInfo[$storage][$fileIdentifier])) {
-            $localProps = $localFileInfo[$storage][$fileIdentifier];
-        }
-        $foreignProps = [];
-        $foreignFileInfo = $this->foreignFileSystemInfoService->getFileInfo([$storage => [$fileIdentifier]]);
-        if (!empty($foreignFileInfo[$storage][$fileIdentifier])) {
-            $foreignProps = $foreignFileInfo[$storage][$fileIdentifier];
-        }
+        $foreignFileInfo = $this->foreignFileInfoService->getFileInfo($request);
+        $fileInformation = $foreignFileInfo->getInfo($storage, $fileIdentifier);
+        $foreignProps = $fileInformation->toArray();
+
         $fileRecord = $this->recordFactory->createFileRecord($localProps, $foreignProps);
         if (null === $fileRecord) {
             return new RecordTree();
@@ -344,7 +174,7 @@ class DefaultFalFinder
                 'sys_file',
                 'storage = ' . $fileRecord->getProp('storage'),
                 'identifier_hash',
-                sha1($fileRecord->getProp('identifier')),
+                $fileRecord->getProp('identifier_hash'),
                 $fileRecord,
             ),
         );
@@ -362,15 +192,13 @@ class DefaultFalFinder
                     $foreignIdentifier = $foreignSysFileProps['identifier'];
                     $foreignStorage = (int)$foreignSysFileProps['storage'];
                     if ($localIdentifier !== $foreignIdentifier) {
-                        $foreignFileInfo = $this->foreignFileSystemInfoService->getFileInfo(
+                        $fileInfoCollection = $this->foreignFileInfoService->getFileInfo(
                             [$foreignStorage => [$foreignIdentifier]],
                         );
-                        if (!empty($foreignFileInfo[$foreignStorage][$foreignIdentifier])) {
-                            $foreignProps = $foreignFileInfo[$foreignStorage][$foreignIdentifier];
-                            $fileRecord = $this->recordFactory->createFileRecord(
-                                $localProps,
-                                $foreignProps,
-                            );
+                        $fileInfo = $fileInfoCollection->getInfo($foreignStorage, $foreignIdentifier);
+                        if ($fileInfo instanceof FileInfo) {
+                            $foreignProps = $fileInfo->toArray();
+                            $fileRecord = $this->recordFactory->createFileRecord($localProps, $foreignProps);
                             if (null === $fileRecord) {
                                 return new RecordTree();
                             }
@@ -386,5 +214,14 @@ class DefaultFalFinder
         $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
 
         return $recordTree;
+    }
+
+    protected function normalizeCombinedIdentifier(string $combinedIdentifier): string
+    {
+        if (str_contains($combinedIdentifier, ':')) {
+            [$storage, $name] = explode(':', $combinedIdentifier);
+            $combinedIdentifier = (int)$storage . ':/' . trim($name, '/');
+        }
+        return $combinedIdentifier;
     }
 }

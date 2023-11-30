@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseReconnectedInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\AbstractDatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
@@ -12,7 +13,7 @@ use function array_diff_assoc;
 
 class DatabaseRecordPublisher implements Publisher, TransactionalPublisher
 {
-    use ForeignDatabaseInjection;
+    use ForeignDatabaseReconnectedInjection;
 
     public function canPublish(Record $record): bool
     {
@@ -43,7 +44,9 @@ class DatabaseRecordPublisher implements Publisher, TransactionalPublisher
 
     public function start(): void
     {
-        $this->foreignDatabase->beginTransaction();
+        if (!$this->foreignDatabase->isTransactionActive()) {
+            $this->foreignDatabase->beginTransaction();
+        }
     }
 
     public function cancel(): void

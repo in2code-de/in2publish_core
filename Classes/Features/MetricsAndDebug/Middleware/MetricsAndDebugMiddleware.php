@@ -21,6 +21,7 @@ use function array_sum;
 use function date;
 use function str_replace;
 use function str_starts_with;
+use function uniqid;
 
 class MetricsAndDebugMiddleware implements MiddlewareInterface
 {
@@ -79,6 +80,8 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
                 unset($query['caller']);
                 $queriesByCaller[$caller][] = $query;
             }
+            uksort($queriesByCaller, static fn($a, $b) => count($queriesByCaller[$b]) - count($queriesByCaller[$a]));
+
             foreach ($queriesByCaller as $caller => $callerQueries) {
                 $times = array_column($callerQueries, 'executionNS');
                 $durationNS = array_sum($times);
@@ -90,8 +93,11 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
                 $queriesByCaller["$caller ($duration)"] = $callerQueries;
             }
             if (!empty($queries)) {
-                DebugUtility::debug($queries, 'Content Publisher Queries');
-                DebugUtility::debug($queriesByCaller, 'Queries By Caller');
+                /** @noinspection PhpRedundantOptionalArgumentInspection */
+                $requestGroup = uniqid('request_', false);
+                DebugUtility::debug($queries, 'Content Publisher Queries', $requestGroup);
+                DebugUtility::debug($queriesByCaller, 'Queries By Caller', $requestGroup);
+                DebugUtility::debug(array_sum(array_column($queries, 'executionNS')), 'Timing', $requestGroup);
             }
         }
     }

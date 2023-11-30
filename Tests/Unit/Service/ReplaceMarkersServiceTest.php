@@ -54,7 +54,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $record = $this->getRecordStub('tx_unit_test_table');
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
-        $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
@@ -74,7 +73,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         };
         $replaceMarkerService->injectLocalDatabase($connection);
         $replaceMarkerService->injectFlexFormTools($flexFormTools);
-        $replaceMarkerService->injectTcaPreProcessingService($tcaPreProcessingService);
         $replaceMarkerService->injectSiteFinder($siteFinder);
 
         $replacement = $replaceMarkerService->replaceMarkers(
@@ -95,7 +93,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $record = $this->getRecordStub('tx_unit_test_table');
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
-        $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
@@ -115,7 +112,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         };
         $replaceMarkerService->injectLocalDatabase($connection);
         $replaceMarkerService->injectFlexFormTools($flexFormTools);
-        $replaceMarkerService->injectTcaPreProcessingService($tcaPreProcessingService);
         $replaceMarkerService->injectSiteFinder($siteFinder);
 
         $replacement = $replaceMarkerService->replaceMarkers(
@@ -135,7 +131,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $record = $this->getRecordStub('tx_unit_test_table');
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
-        $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
         $siteFinder = $this->createMock(SiteFinder::class);
         $siteFinder->method('getSiteByPageId')->willReturn(
             new Site('test', 1, [
@@ -161,7 +156,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $replaceMarkerService->injectLocalDatabase($connection);
         $replaceMarkerService->injectFlexFormTools($flexFormTools);
         $replaceMarkerService->injectSiteFinder($siteFinder);
-        $replaceMarkerService->injectTcaPreProcessingService($tcaProcessingService);
 
         $replacement = $replaceMarkerService->replaceMarkers(
             $record,

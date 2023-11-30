@@ -32,11 +32,14 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
 use In2code\In2publishCore\Component\ConfigContainer\Cache\EarlyCacheInjection;
 use In2code\In2publishCore\Service\Extension\ExtensionServiceInjection;
 use Spyc;
+use Symfony\Component\Yaml\Parser;
 
 use function explode;
 use function file_exists;
+use function file_get_contents;
 use function hash_file;
 use function implode;
+use function str_replace;
 use function var_export;
 
 class VersionedFileProvider extends FileProvider
@@ -61,8 +64,10 @@ class VersionedFileProvider extends FileProvider
             if (file_exists($file)) {
                 $cacheKey = 'config_versioned_file_provider_' . hash_file('sha1', $file);
                 if (!$this->earlyCache->has($cacheKey)) {
-                    $this->loadSpycIfRequired();
-                    $config = Spyc::YAMLLoad($file);
+                    $yamlContents = file_get_contents($file);
+                    $yamlContents = str_replace(['groups: *', '---'], ['groups: "*"', ''], $yamlContents);
+                    $yaml = new Parser();
+                    $config = $yaml->parse($yamlContents);
                     $code = 'return ' . var_export($config, true) . ';';
                     $this->earlyCache->flushByTag('config_versioned_file_provider');
                     $this->earlyCache->set($cacheKey, $code, ['config_versioned_file_provider']);

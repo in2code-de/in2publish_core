@@ -36,7 +36,7 @@ class DbConfigTestCommandTest extends UnitTestCase
         ]);
 
         $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder->method('execute')->willReturn($query);
+        $queryBuilder->method('executeQuery')->willReturn($query);
 
         $connection = $this->createMock(Connection::class);
         $connection->method('createQueryBuilder')->willReturn($queryBuilder);

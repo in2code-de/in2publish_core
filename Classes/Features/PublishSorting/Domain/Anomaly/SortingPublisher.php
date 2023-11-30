@@ -77,8 +77,8 @@ class SortingPublisher
             $query->select('uid', 'sorting')
                   ->from($tableName)
                   ->where($query->expr()->in('pid', $pidList));
-            $statement = $query->execute();
-            $localRows = $statement->fetchAllAssociative();
+            $result = $query->executeQuery();
+            $localRows = $result->fetchAllAssociative();
 
             $updates = [];
             foreach ($localRows as $localRow) {
@@ -93,7 +93,7 @@ class SortingPublisher
                 $updateQuery->update($tableName)
                             ->set($sortingField, $sorting)
                             ->where($updateQuery->expr()->in('uid', $uidList))
-                            ->execute();
+                            ->executeStatement();
             }
         }
         $this->sortingsToBePublished = [];

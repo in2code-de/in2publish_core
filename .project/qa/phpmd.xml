@@ -58,7 +58,6 @@
                     \In2code\In2publishCore\Utility\LogUtility,
                     \In2code\In2publishCore\Utility\StorageDriverExtractor,
                     \In2code\In2publishCore\Utility\UriUtility,
-                    \Spyc
                 </value>
             </property>
         </properties>

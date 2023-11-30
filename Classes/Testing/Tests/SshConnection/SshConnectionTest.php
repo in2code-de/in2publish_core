@@ -40,6 +40,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_diff;
 use function preg_match;
 
+use const In2code\In2publishCore\TYPO3_V11;
+
 class SshConnectionTest implements TestCaseInterface
 {
     use ConfigContainerInjection;
@@ -65,6 +67,14 @@ class SshConnectionTest implements TestCaseInterface
 
         // This is the first time a RCE is executed, so we have to test here for the missing document root folder
         if (!$response->isSuccessful()) {
+            if ($response->getExitStatus() === 1425401293 || $response->getExitStatus() === 1425401287) {
+                return new TestResult(
+                    'ssh_connection.connection_failed',
+                    TestResult::ERROR,
+                    ['ssh_connection.connection_failure_message', $response->getErrorsString()],
+                );
+            }
+
             return new TestResult(
                 'ssh_connection.foreign_document_root_missing',
                 TestResult::ERROR,
@@ -99,8 +109,10 @@ class SshConnectionTest implements TestCaseInterface
             $requiredNames = [
                 'typo3',
                 'index.php',
-                'typo3conf',
             ];
+            if (TYPO3_V11) {
+                $requiredNames[] = 'typo3conf';
+            }
 
             if (!empty(array_diff($requiredNames, $documentRootFiles))) {
                 return new TestResult('ssh_connection.foreign_document_root_wrong', TestResult::ERROR);

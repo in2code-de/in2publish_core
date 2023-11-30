@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverServiceInjection;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\MoveFileInstruction;
@@ -12,12 +12,20 @@ use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceAndRename
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceFileInstruction;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitterInjection;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
-class FileRecordPublisher extends AbstractFilesystemPublisher
+class FileRecordPublisher extends AbstractFilesystemPublisher implements LoggerAwareInterface
 {
     use AssetTransmitterInjection;
     use FalDriverServiceInjection;
+    use RemoteCommandDispatcherInjection;
+    use LoggerAwareTrait;
+
+    /** @var array<string> */
+    protected array $transmittedFiles = [];
 
     public function canPublish(Record $record): bool
     {
@@ -72,6 +80,7 @@ class FileRecordPublisher extends AbstractFilesystemPublisher
                         );
                     } else {
                         $transmitTemporaryFile = $this->transmitTemporaryFile($record);
+                        $this->transmittedFiles[] = $transmitTemporaryFile;
                         $instruction = new ReplaceAndRenameFileInstruction(
                             $storage,
                             $foreignFileIdentifier,
@@ -81,6 +90,7 @@ class FileRecordPublisher extends AbstractFilesystemPublisher
                     }
                 } else {
                     $transmitTemporaryFile = $this->transmitTemporaryFile($record);
+                    $this->transmittedFiles[] = $transmitTemporaryFile;
                     $instruction = new ReplaceFileInstruction(
                         $storage,
                         $localFileIdentifier,

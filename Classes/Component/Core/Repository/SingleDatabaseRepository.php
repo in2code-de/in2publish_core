@@ -73,7 +73,7 @@ class SingleDatabaseRepository
             $query->orderBy('uid');
         }
 
-        $result = $query->execute();
+        $result = $query->executeQuery();
         return array_column($result->fetchAllAssociative(), null, 'uid');
     }
 
@@ -127,7 +127,7 @@ class SingleDatabaseRepository
             $query->orderBy('uid');
         }
 
-        $result = $query->execute();
+        $result = $query->executeQuery();
 
         $rows = $result->fetchAllAssociative();
 
@@ -198,7 +198,7 @@ class SingleDatabaseRepository
             $query->orderBy('uid');
         }
 
-        $result = $query->execute();
+        $result = $query->executeQuery();
         return array_column($result->fetchAllAssociative(), null, 'uid');
     }
 }

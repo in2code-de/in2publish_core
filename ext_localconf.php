@@ -1,10 +1,10 @@
 <?php
 
+use In2code\In2publishCore\Component\ConfigContainer\Provider\PageTsProvider;
 use In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtensionTrait;
 use In2code\In2publishCore\Controller\FrontendController;
 use In2code\In2publishCore\Log\Processor\BackendUserProcessor;
 use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
-use In2code\In2publishCore\Middleware\BackendRouteInitialization;
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
@@ -23,13 +23,6 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
         // Early return when installing per ZIP: autoload is not yet generated
         return;
     }
-
-    /************************************************* Patching TYPO3 *************************************************/
-    // Issue: https://forge.typo3.org/issues/95962
-    // Patch: https://review.typo3.org/c/Packages/TYPO3.CMS/+/72160
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\Middleware\BackendRouteInitialization::class] = [
-        'className' => BackendRouteInitialization::class,
-    ];
 
     /************************************************ Record Extension ************************************************/
     $file = Environment::getVarPath() . '/cache/code/content_publisher/record_extension_trait.php';
@@ -92,4 +85,7 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
         'dateField' => 'timestamp_begin',
         'expirePeriod' => 1,
     ];
+
+    /*********************************************** Enable PageTSProvider  *******************************************/
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['postUserLookUp'][1699367499] = PageTsProvider::class . '->processData';
 })();

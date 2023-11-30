@@ -16,7 +16,7 @@ use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesServiceInjection;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
-use In2code\In2publishCore\Service\Configuration\TcaServiceInjection;
+use In2code\In2publishCore\Service\Configuration\PageTypeServiceInjection;
 use In2code\In2publishCore\Service\Database\RawRecordServiceInjection;
 
 use function array_flip;
@@ -33,7 +33,7 @@ class RecordTreeBuilder
     use DemandsFactoryInjection;
     use DemandResolverInjection;
     use DemandBuilderInjection;
-    use TcaServiceInjection;
+    use PageTypeServiceInjection;
     use RawRecordServiceInjection;
 
     public function buildRecordTree(RecordTreeBuildRequest $request): RecordTree
@@ -155,7 +155,7 @@ class RecordTreeBuilder
         $tables = array_flip($tablesAsKeys);
 
         foreach ($pages as $page) {
-            $tablesAllowedOnPage = $this->tcaService->getTablesAllowedOnPage(
+            $tablesAllowedOnPage = $this->pageTypeService->getTablesAllowedOnPage(
                 $page->getId(),
                 $page->getProp('doktype'),
             );

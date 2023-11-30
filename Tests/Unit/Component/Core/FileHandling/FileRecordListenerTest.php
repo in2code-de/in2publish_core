@@ -6,16 +6,16 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
-use In2code\In2publishCore\Component\Core\FileHandling\FileDemandResolver;
-use In2code\In2publishCore\Component\Core\FileHandling\FileRecordListener;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\FileDemandResolver;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Event\RecordWasCreated;
+use In2code\In2publishCore\Features\ResolveFilesForIndices\EventListener\FileRecordListener;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use ReflectionProperty;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\FileHandling\FileRecordListener
+ * @coversDefaultClass \In2code\In2publishCore\Features\ResolveFilesForIndices\EventListener\FileRecordListener
  */
 class FileRecordListenerTest extends UnitTestCase
 {

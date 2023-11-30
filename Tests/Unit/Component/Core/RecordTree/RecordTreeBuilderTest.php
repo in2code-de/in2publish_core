@@ -17,6 +17,7 @@ use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesService;
+use In2code\In2publishCore\Service\Configuration\PageTypeService;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
@@ -83,14 +84,14 @@ class RecordTreeBuilderTest extends UnitTestCase
             1 => 'table_foo',
         ]);
 
-        $tcaService = $this->createMock(TcaService::class);
-        $tcaService->method('getTablesAllowedOnPage')->willReturn(['table_foo']);
+        $pageTypeService = $this->createMock(PageTypeService::class);
+        $pageTypeService->method('getTablesAllowedOnPage')->willReturn(['table_foo']);
 
         $recordTreeBuilder->injectDemandResolver($demandResolver);
         $recordTreeBuilder->injectRecordIndex($recordIndex);
         $recordTreeBuilder->injectDemandsFactory($demandsFactory);
         $recordTreeBuilder->injectRelevantTablesService($relevantTablesService);
-        $recordTreeBuilder->injectTcaService($tcaService);
+        $recordTreeBuilder->injectPageTypeService($pageTypeService);
 
         // act
         $recordsInCollection = $recordTreeBuilder->findAllRecordsOnPages();

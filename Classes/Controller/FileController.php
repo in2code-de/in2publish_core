@@ -35,6 +35,7 @@ use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinderInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherServiceInjection;
+use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
@@ -47,19 +48,13 @@ use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
-use function explode;
 use function http_build_query;
 use function implode;
-use function is_string;
 use function json_encode;
 use function parse_str;
-use function strlen;
-use function strpos;
-use function trim;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -88,9 +83,6 @@ class FileController extends ActionController
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
         $this->actualInjectPageRenderer($pageRenderer);
-        $this->pageRenderer->addInlineLanguageLabelFile(
-            'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf',
-        );
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
         $this->pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
@@ -101,14 +93,11 @@ class FileController extends ActionController
         );
     }
 
-    /**
-     * @throws StopActionException
-     */
     public function indexAction(): ResponseInterface
     {
         $pid = BackendUtility::getPageIdentifier();
         try {
-            $recordTree = $this->tryToGetFolderInstance($pid === 0 ? null : $pid);
+            $recordTree = $this->defaultFalFinder->findFolderRecord($pid === 0 ? null : $pid);
         } catch (FolderDoesNotExistOnBothSidesException $e) {
             $uri = $this->request->getUri();
             $queryParts = [];
@@ -131,21 +120,23 @@ class FileController extends ActionController
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
         $moduleTemplate->setContent($this->view->render());
+        /** @see packages/in2publish_core/Resources/Private/Templates/File/Index.html */
         return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
      * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
      *
-     * @throws StopActionException
+     * @throws FolderDoesNotExistOnBothSidesException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
-    public function publishFolderAction(string $combinedIdentifier, bool $skipNotification = false): void
+    public function publishFolderAction(string $combinedIdentifier, bool $skipNotification = false): ResponseInterface
     {
-        $recordTree = $this->tryToGetFolderInstance($combinedIdentifier, true);
+        $recordTree = $this->defaultFalFinder->findFolderRecord($combinedIdentifier, true);
+        $publishingContext = new PublishingContext($recordTree);
 
         try {
-            $this->publisherService->publishRecordTree($recordTree);
+            $this->publisherService->publish($publishingContext);
             if (!$skipNotification) {
                 $this->addFlashMessage(
                     LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$combinedIdentifier]),
@@ -166,20 +157,20 @@ class FileController extends ActionController
             }
         }
 
-        $this->redirect('index');
+        return $this->redirect('index');
     }
 
     /**
      * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
-     * @throws StopActionException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
-    public function publishFileAction(string $combinedIdentifier, bool $skipNotification = false): void
+    public function publishFileAction(string $combinedIdentifier, bool $skipNotification = false): ResponseInterface
     {
         $recordTree = $this->defaultFalFinder->findFileRecord($combinedIdentifier);
+        $publishingContext = new PublishingContext($recordTree);
 
         try {
-            $this->publisherService->publishRecordTree($recordTree);
+            $this->publisherService->publish($publishingContext);
             if (!$skipNotification) {
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
@@ -216,7 +207,7 @@ class FileController extends ActionController
             }
         }
 
-        $this->redirect('index');
+        return $this->redirect('index');
     }
 
     /**
@@ -235,15 +226,6 @@ class FileController extends ActionController
      */
     protected function tryToGetFolderInstance(?string $combinedIdentifier, bool $onlyRoot = false): ?RecordTree
     {
-        if (is_string($combinedIdentifier) && strpos($combinedIdentifier, ':') < strlen($combinedIdentifier)) {
-            [$storage, $name] = explode(':', $combinedIdentifier);
-            $name = trim($name, '/');
-            if (!empty($name)) {
-                $combinedIdentifier = $storage . ':/' . $name . '/';
-            } else {
-                $combinedIdentifier = $storage . ':/';
-            }
-        }
         return $this->defaultFalFinder->findFolderRecord($combinedIdentifier, $onlyRoot);
     }
 }

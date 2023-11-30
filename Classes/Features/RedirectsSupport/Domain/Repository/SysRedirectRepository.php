@@ -44,7 +44,7 @@ class SysRedirectRepository
                     ->from('sys_redirect')
                     ->orderBy('source_host')
                     ->groupBy('source_host')
-                    ->execute()
+                    ->executeQuery()
                     ->fetchAllAssociative();
     }
 
@@ -55,7 +55,7 @@ class SysRedirectRepository
                     ->from('sys_redirect')
                     ->orderBy('target_statuscode')
                     ->groupBy('target_statuscode')
-                    ->execute()
+                    ->executeQuery()
                     ->fetchAllAssociative();
     }
 
@@ -66,7 +66,7 @@ class SysRedirectRepository
                     ->from('sys_redirect')
                     ->where('uid = :redirect')
                     ->setParameter('redirect', $redirect)
-                    ->execute()
+                    ->executeQuery()
                     ->fetchAssociative();
         if (false === $row) {
             return null;
