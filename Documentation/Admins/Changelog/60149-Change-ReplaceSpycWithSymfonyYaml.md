@@ -25,6 +25,7 @@ Possibly all, probably only those who do not have the Content Publisher Enterpri
 
 1. Remove the "end of directives marker" `---` from any Content Publisher configuration YAML file.
 2. Replace block collections with arrays (see Example #1 Replace block collections with arrays)
+2. Quote all asterisks (see Example #2 Quote asterisk)
 
 ## Examples
 
@@ -46,4 +47,16 @@ After
     permission:
       definition:
         2: [3,4,5,6,7,8]
+```
+
+### #2 Quote asterisk
+Before:
+```yaml
+  workflowTreeColors:
+      groups: *
+```
+After
+```yaml
+  workflowTreeColors:
+      groups: '*'
 ```
