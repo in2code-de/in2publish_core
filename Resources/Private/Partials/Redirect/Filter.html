@@ -70,6 +70,21 @@
 				/>
 			</div>
 			<div class="col">
+				<label for="filter-is-publishable" class="form-label">
+					<f:translate key="filter.field.is_publishable"/>
+				</label>
+				<f:form.select property="publishable"
+							   id="filter-is-publishable"
+							   options="{
+						      is_publishable: '{f:translate(key:\'filter.field.is_publishable.true\')}',
+						      is_not_publishable: '{f:translate(key:\'filter.field.is_publishable.false\')}'
+						   }"
+							   class="form-select"
+							   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
+							   prependOptionValue=""
+				/>
+			</div>
+			<div class="col">
 				<input type="submit" value="{f:translate(key: 'filter.form.submit')}" class="btn btn-light"/>
 			</div>
 		</div>
