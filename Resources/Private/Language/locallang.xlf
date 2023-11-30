@@ -69,6 +69,9 @@
 			<trans-unit id="publish" resname="publish">
 				<source>Publish</source>
 			</trans-unit>
+			<trans-unit id="unpublishable" resname="unpublishable">
+				<source>Not publishable</source>
+			</trans-unit>
 			<trans-unit id="publish_pages" resname="publish_pages">
 				<source>Publish this page</source>
 			</trans-unit>

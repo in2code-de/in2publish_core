@@ -91,6 +91,10 @@
 				<source>Publish</source>
 				<target>Publizieren</target>
 			</trans-unit>
+			<trans-unit id="unpublishable" resname="unpublishable">
+				<source>Not publishable</source>
+				<target>Nicht Veröffentlichbar</target>
+			</trans-unit>
 			<trans-unit id="publish_pages" resname="publish_pages">
 				<source>Publish this page</source>
 				<target>Diese Seite publizieren</target>

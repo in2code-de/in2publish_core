@@ -110,22 +110,34 @@
 					</f:then>
 					<f:else>
 						<f:if condition="{record.stateRecursive} !== 'unchanged'">
-							<f:variable name="easy-modal-title"><f:translate key="tx_in2publishcore.modal.publish.title" /></f:variable>
-							<f:variable name="identifier"><publish:record.getMergedProperty propertyName="identifier" record="{record}" /></f:variable>
-							<f:variable name="easy-modal-content"><f:translate key="tx_in2publishcore.modal.publish.file.text" arguments="{0: identifier}" /></f:variable>
-							<f:link.action
-								class="btn btn-default js-in2publish-confirmation-modal"
-								action="publishFile"
-								arguments="{combinedIdentifier:record.id}"
-								data="{
-									easy-modal-severity: -1,
-									easy-modal-title: easy-modal-title,
-									easy-modal-content: easy-modal-content,
-								}"
-								>
-								<f:translate key="publish"/>
-								<core:icon identifier="actions-arrow-right" />
-							</f:link.action>
+							<f:if condition="{record.reasonsWhyTheRecordIsNotPublishable.empty}">
+								<f:then>
+									<f:variable name="easy-modal-title"><f:translate key="tx_in2publishcore.modal.publish.title" /></f:variable>
+									<f:variable name="identifier"><publish:record.getMergedProperty propertyName="identifier" record="{record}" /></f:variable>
+									<f:variable name="easy-modal-content"><f:translate key="tx_in2publishcore.modal.publish.file.text" arguments="{0: identifier}" /></f:variable>
+									<f:link.action
+										class="btn btn-default js-in2publish-confirmation-modal"
+										action="publishFile"
+										arguments="{combinedIdentifier:record.id}"
+										data="{
+											easy-modal-severity: -1,
+											easy-modal-title: easy-modal-title,
+											easy-modal-content: easy-modal-content,
+										}"
+										>
+										<f:translate key="publish"/>
+										<core:icon identifier="actions-arrow-right" />
+									</f:link.action>
+								</f:then>
+								<f:else>
+									<f:variable name="easy-modal-title"><f:translate key="record.reason.file" /></f:variable>
+									<f:variable name="easy-modal-content"><f:translate key="tx_in2publishcore.modal.publish.file.text" arguments="{0: identifier}" /></f:variable>
+									<button class="btn btn-disabled" disabled>
+										<f:translate key="unpublishable"/>
+										<core:icon identifier="actions-move-right-disabled" />
+									</button>
+								</f:else>
+							</f:if>
 						</f:if>
 					</f:else>
 				</f:if>
