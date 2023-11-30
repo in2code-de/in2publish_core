@@ -67,6 +67,14 @@ class SshConnectionTest implements TestCaseInterface
 
         // This is the first time a RCE is executed, so we have to test here for the missing document root folder
         if (!$response->isSuccessful()) {
+            if ($response->getExitStatus() === 1425401293 || $response->getExitStatus() === 1425401287) {
+                return new TestResult(
+                    'ssh_connection.connection_failed',
+                    TestResult::ERROR,
+                    ['ssh_connection.connection_failure_message', $response->getErrorsString()],
+                );
+            }
+
             return new TestResult(
                 'ssh_connection.foreign_document_root_missing',
                 TestResult::ERROR,
