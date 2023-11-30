@@ -1,5 +1,10 @@
 # Known Issues
 
+## File Preview URLs in Publish Files Module are not shown when using EXT:fal_securedownload
+
+File Preview URLs are not rendered in the Publish Files Module, if EXT:fal_securedownload is installed.
+However, the functionality of EXT:fal_securedownload and file publishing is not affected.
+
 ## File Preview URLs in Publish Files Module broken for non-public file storages
 
 File Preview URLs rendered for files on Foreign are broken, if the file storage is not marked as public.
