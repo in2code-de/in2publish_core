@@ -2,11 +2,6 @@
 
 ## For admins
 
-### Change TypoScript Paths For Templates
-TYPO3 v12 compatibility requires changes in the TypoScript configuration.
-The TypoScript path `module.tx_in2publish.view` can no longer be used to overwrite templates.
-Please read [60149-Change-TypoScriptPathsForTemplates.md] for details on how to adjust your TypoScript configuration.
-
 ### Change .yml configuration files
 Up to version 12.2, the Content Publisher used the YAML parser [Spyc] for parsing the configuration files. Since TYPO3
 now ships with a YAML parser, we now use this parser to reduce the code we have to maintain.
