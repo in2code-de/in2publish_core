@@ -1,5 +1,122 @@
 # In2publish Core Change Log
 
+12.3.0:
+
+- [DOCS] Update Changelog.md
+- [META] Set the EM conf version number to 12.3.0
+- [CLEANUP] Remove redundant PHP version constraints
+- [DOCS] Add known issue about missing file links
+- [DOCS] Remove section about Typoscript paths for templates in UPGRADING.md
+- [DOCS] Add upgrading information for version 12.3.0
+- [BUGFIX] Revert making file publisher reversible, they aren't!
+- [TEST] Fix FileSystemPublisherTests
+- [DOCS] Add instruction to quote asterisks in YAML for admins
+- [BUGFIX] Show reasons why files are not publishable in the filelist
+- [FEATURE] Adds another test return to get more specific testresult
+- [BUGFIX] Increase max depth when dumping compatible TCA
+- [FEATURE] Add LinkProcessor for TYPO3 v12
+- [DOCS] Add admin changelog for YAML
+- [BUGFIX] Add PreProcessor for TCA type file
+- [BUGFIX] Corrects Loading of Middleware
+- [DOCS] Adjust Feature List
+- [BUGFIX] Restore the confirmation modal for file and folder publishing
+- [BUGFIX] Ignore _file.publicUrl because it will always be different and is a computed property
+- [BUGFIX] Fix ignoring ctrl.versioningWS
+- [BUGFIX] Try to build absolute URLs to files for the preview buttons in the filelist module
+- [BUGFIX] Redirect to the previous page after publishing, not the published page
+- [BUGFIX] Restore context menu publishing for TYPO3 v12
+- [BUGFIX] Validate the resolver cache
+- [BUGFIX] Query sys_file_reference.table_local only in TYPO3 v11 as it was removed
+- [BUGFIX] Use middleware to inject the loading overlay, split JS into specific modules
+- [BUGFIX] Allow passing nodes directly to JS overlay and modal functions
+- [BUGFIX] Use Connection::PARAM_STR_ARRAY instead of ArrayParameterType
+- [REFACTOR] Extract $GLOBALS access to method
+- [BUGFIX] Overwrite toString for PageTreeRootRecord to return the "sitename"
+- [BUGFIX] Make PublisherService::publishRecordTree internal to force everyone to use the PublishingContext
+- [BUGFIX] Correctly exclude folders and files for the recursiveState of Folder Records
+- [BUGFIX] Resolve storage for StorageRootFolderRecords
+- [BUGFIX] Access correct property to set the name attribute of folders
+- [REFACTOR] Rename ResolverService::getResolversForTable to getResolversForClassification
+- [BUGFIX] Introduce a special class for folders which are file storage roots and display the correct icon
+- [FEATURE] Add some Injection Traits
+- [BUGFIX] Close modals in TYPO3 v12 via new API
+- [CLEANUP] Remove unused imports from FileController
+- [BUGFIX] Fix multiple errors that occur when calling publishRecordTree more than once
+- [FEATURE] Change Order of Modules in Publish Tools
+- [CODESTYLE] Add Annotations for Exceptions
+- [BUGFIX] Fix Database Compare Table View
+- [CLEANUP] Remove Logs Integration
+- [BUGFIX] Correct Caption of english Labels
+- [FEATURE] Moved all Labels from Publish Tools Module to locallang_mod4.xlf
+- [WIP] Changed all Templates of Publish Tools Module
+- Revert "[DOC] Add documentation for changed ext_typoscript_template suffix"
+- [BUGFIX] Fetch folder records with demand/resolver structure
+- [DOC] Add documentation for changed ext_typoscript_template suffix
+- [BUGFIX] Corrects styling of redirects module
+- [BUGFIX] Add Padding at the Top of the module
+- [BUGFIX] Jumpmenu Label is now rendered inline
+- [BUGFIX] Change order of flashmessage container
+- [REFACTOR] Remove outdated overlay div
+- [REFACTOR] Replace version_compare calls with TYPO3_V11 constant
+- [BUGFIX] Define (namespaced) constants for TYPO3 version for easier up/down-compatibility
+- [BUGFIX] Tighten Colors between v11 & v12
+- [BUGFIX] Show colors of badges in file module again
+- [REFACTOR] Removes deprecated QueryBuilder methods
+- [BUGFIX] Removes deprecated getSchemamanager call
+- [BUGFIX] Removes check for directory typo3conf in TYPO3v12
+- [REFACTOR] Use be.infobox viewhelper instead of own markup
+- [REFACTOR] Simplifies the generation of an controller alias
+- [FEATURE] Changes AdminButton to show primary styling correct
+- [BUGFIX] Remove deprecations from RegistryController
+- [BUGFIX] Remove deprecations from LetterBox
+- [REFACTOR] Remove deprecations fomr LogsExporter
+- [REFACTOR] Remove deprecated execute from GarbageCollectorTest
+- [BUGFIX] Return ResponseInterface in publishFile and publishFolder action
+- [REFACTOR] Removes unnecessary Event & Middleware
+- [BUGFIX] Add correct hrefs to Buttons on Publish Tools
+- [FEATURE] Register Publish Tools Menu in Modules.php
+- [REFACTOR] Module Registration for Publish Tools Module refactored
+- [REFACTOR] Changes backend module registration for m1, m3, m5
+- [BUGFIX] Make the PageTsProvider a Singleton to unlock it globally
+- [BUGFIX] Return the RedirectResponse in TYPO3 v12
+- [BUGFIX] Rename ext_typoscript_setup suffix to typoscript
+- [CLEANUP] Remove superfluous empty lines from ext_tables.php
+- [BUGFIX] Enable autowiring of the dynamic PageTypeService
+- [BUGFIX] Allow deserialization of TYPO3 v12 Site objects
+- [BUGFIX] Create a TYPO3 version aware service to replace TcaService::getTablesAllowedOnPage
+- [BUGFIX] Overwrite callActionMethod instead of initializeView to prevent version issues
+- [BUGFIX] Implement TYPO3 version specific code to translate the label of the Publish Overview Module shortcut button
+- [BUGFIX] Use withRequest to alter immutable request objects
+- [BUGFIX] Use the objects view property instead of initializeView arguments
+- [REFACTOR] Changes Icon from Tools Module to IconFactory
+- [REFACTOR] Change compare of version
+- [BUGFIX] Removes trailing slash in Module Configuration
+- [REFACTOR] Changes backend module registration for m1, m3, m5
+- [BUGFIX] Do not register the BackendRouteInitialization XCLASS in TYPO3 v12
+- [BUGFIX] Replace deprecated EventManager::getListeners with getAllListeners
+- [TASK] Remove deprecated TYPO3 constants
+- [BUGFIX] Set correct narrowed return type hint for ConnectionFactory
+- [BUGFIX] Handle constructor differences in PublishItemProvider between t3v11 and t3v12
+- [FEATURE] Cache the TcaPreProcessing result
+- [CLEANUP] Remove unused import/empty line
+- [BUGFIX] Reduce resolver meta info to required keys class and args
+- [BUGFIX] Replace Spyc with symfony/yaml
+- [TASK] Update composer requirements
+- [TASK] Add new branch aliases for develop branch
+- [TASK] Allow PHP8.1 as requirement and remove outdated branch-aliases
+- [BUGFIX] Inherit the base Exception from in2publish_core, not in2publish
+- [BUGFIX] Show debugged queries in separate tab for each request
+- [BUGFIX] Show the sum of query duration when debugging queries
+- [BUGFIX] Sort grouped queries by amount of calls
+- [REFACTOR] Use the CachedRuntimeCache instead of the custom implementation in ForeignSiteFinder
+- [BUGFIX] Use runtime cache to prevent multiple cache hits
+- [BUGFIX] Increment logged SQL queries statically
+- [TESTS] Update unit tests for PublishFileInstructions
+- [BUGFIX] Disable the function bar if publishing is not available
+- [BUGFIX] Ignore table tx_in2publishcore_filepublisher_instruction by default
+- [BUGFIX] Require table tx_in2publishcore_filepublisher_instruction instead of _task
+- [DOCS] Update changelog
+
 12.2.0:
 
 - [META] Set the EM conf version number to 12.2.0
