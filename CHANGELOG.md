@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+12.3.1:
+
+- [META] Set the EM conf version number to 12.3.1
+- [META] Mark TYPO3 v12 as compatible in ext_emconf.php
+- [RELEASE] Version 12.3.0 with TYPO3 v12 compatibility
+
 12.3.0:
 
 - [DOCS] Update Changelog.md
