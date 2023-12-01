@@ -48,6 +48,17 @@ class FileInfoService
             }
             $fileInfo['publicUrl'] = $publicUrl;
         }
-        return new FileInfo(...$fileInfo);
+        return new FileInfo(
+            $fileInfo['storage'],
+            $fileInfo['identifier'],
+            $fileInfo['name'],
+            $fileInfo['sha1'],
+            $fileInfo['publicUrl'],
+            $fileInfo['size'],
+            $fileInfo['mimetype'],
+            $fileInfo['extension'],
+            $fileInfo['folderHash'],
+            $fileInfo['identifierHash']
+        );
     }
 }

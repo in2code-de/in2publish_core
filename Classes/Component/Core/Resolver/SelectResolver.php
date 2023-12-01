@@ -75,8 +75,11 @@ class SelectResolver extends AbstractResolver
     public function __unserialize(array $data): void
     {
         $this->metaInfo = $data['metaInfo'];
-        unset($data['metaInfo']);
-        $this->configure(...$data);
+        $this->configure(
+            $data['column'],
+            $data['foreignTable'],
+            $data['foreignTableWhere']
+        );
         $this->injectReplaceMarkersService(GeneralUtility::makeInstance(ReplaceMarkersService::class));
     }
 }
