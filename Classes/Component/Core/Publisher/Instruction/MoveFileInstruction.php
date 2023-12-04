@@ -29,8 +29,8 @@ class MoveFileInstruction implements PublishInstruction
         $newFileName = PathUtility::basename($this->newFileIdentifier);
         if (!$driver->folderExists($newFolderName)) {
             $childFolder = trim(PathUtility::basename($newFolderName), '/');
-            $parentFolder= trim(PathUtility::dirname($newFolderName), '/');
-            $driver->createFolder($childFolder, $parentFolder);
+            $parentFolder = trim(PathUtility::dirname($newFolderName), '/');
+            $driver->createFolder($childFolder, $parentFolder, true);
         }
         $driver->moveFileWithinStorage($this->oldFileIdentifier, $newFolderName, $newFileName);
     }
