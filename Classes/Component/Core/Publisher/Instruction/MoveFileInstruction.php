@@ -7,6 +7,8 @@ namespace In2code\In2publishCore\Component\Core\Publisher\Instruction;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverService;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
+use function trim;
+
 class MoveFileInstruction implements PublishInstruction
 {
     protected int $storage;
@@ -26,7 +28,9 @@ class MoveFileInstruction implements PublishInstruction
         $newFolderName = PathUtility::dirname($this->newFileIdentifier);
         $newFileName = PathUtility::basename($this->newFileIdentifier);
         if (!$driver->folderExists($newFolderName)) {
-            $driver->createFolder($newFolderName);
+            $childFolder = trim(PathUtility::basename($newFolderName), '/');
+            $parentFolder= trim(PathUtility::dirname($newFolderName), '/');
+            $driver->createFolder($childFolder, $parentFolder);
         }
         $driver->moveFileWithinStorage($this->oldFileIdentifier, $newFolderName, $newFileName);
     }
