@@ -64,7 +64,7 @@ class ConditionalEventListenerCompilerPass implements CompilerPassInterface
             foreach ($tags as $attributes) {
                 if (!array_key_exists('condition', $attributes)) {
                     throw new InvalidArgumentException(
-                        'Service tag "event.listener" requires a condition attribute to be defined.  Missing in: ' . $serviceName,
+                        'Service tag "in2publish_core.conditional.event.listener" requires a condition attribute to be defined.  Missing in: ' . $serviceName,
                         1701773147,
                     );
                 }
@@ -76,7 +76,7 @@ class ConditionalEventListenerCompilerPass implements CompilerPassInterface
                 );
                 if (empty($eventIdentifiers)) {
                     throw new InvalidArgumentException(
-                        'Service tag "event.listener" requires an event attribute to be defined or the listener method must declare a parameter type.  Missing in: ' . $serviceName,
+                        'Service tag "in2publish_core.conditional.event.listener" requires an event attribute to be defined or the listener method must declare a parameter type.  Missing in: ' . $serviceName,
                         1701770451,
                     );
                 }
@@ -87,7 +87,7 @@ class ConditionalEventListenerCompilerPass implements CompilerPassInterface
                     $listenerIdentifier = $attributes['identifier'] ?? $serviceName;
                     $unorderedEventListeners[$eventIdentifier][$listenerIdentifier] = [
                         'service' => $serviceName,
-                        'method' => $attributes['method'] ?? null,
+                        'method' => $attributes['method'] ?? '__invoke',
                         'condition' => $attributes['condition'],
                         'before' => GeneralUtility::trimExplode(',', $attributes['before'] ?? '', true),
                         'after' => GeneralUtility::trimExplode(',', $attributes['after'] ?? '', true),

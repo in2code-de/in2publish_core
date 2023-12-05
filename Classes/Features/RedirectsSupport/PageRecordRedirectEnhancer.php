@@ -62,7 +62,7 @@ class PageRecordRedirectEnhancer
         $this->demandResolver->resolveDemand($demands, $recordCollection);
     }
 
-    public function collectDemandsForPages(Node $node, DemandsCollection $demands): void
+    protected function collectDemandsForPages(Node $node, DemandsCollection $demands): void
     {
         if ($node instanceof Record) {
             $pid = $node->getId();

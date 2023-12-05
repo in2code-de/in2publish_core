@@ -29,11 +29,8 @@ namespace In2code\In2publishCore\Features\AdminTools\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Service\Exception\ClassNotFoundException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
+use In2code\In2publishCore\Service\Condition\ConditionEvaluationServiceInjection;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
@@ -43,8 +40,7 @@ use function implode;
 
 class ToolsRegistry implements SingletonInterface
 {
-    use ConfigContainerInjection;
-    use ExtensionConfigurationInjection;
+    use ConditionEvaluationServiceInjection;
 
     protected array $entries = [];
 
@@ -64,16 +60,12 @@ class ToolsRegistry implements SingletonInterface
         ];
     }
 
-    /**
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     */
     public function getEntries(): array
     {
         $processedTools = [];
 
         foreach ($this->entries as $key => $config) {
-            if ($this->evaluateCondition($config)) {
+            if ($this->conditionEvaluationService->evaluate($config['condition'])) {
                 $controller = $config['controller'];
                 $processedTools[$key] = $config;
                 $actions = GeneralUtility::trimExplode(',', $processedTools[$key]['action']);
@@ -87,14 +79,12 @@ class ToolsRegistry implements SingletonInterface
 
     /**
      * @throws ClassNotFoundException
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
      */
     public function processData(): array
     {
         $controllerActions = [];
         foreach ($this->entries as $entry) {
-            if ($this->evaluateCondition($entry)) {
+            if ($this->conditionEvaluationService->evaluate($entry['condition'])) {
                 $controllerName = $entry['controller'];
                 $actions = GeneralUtility::trimExplode(',', $entry['action'], true);
 
@@ -113,8 +103,6 @@ class ToolsRegistry implements SingletonInterface
 
     /**
      * @throws ClassNotFoundException
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
      * @deprecated Will be removed in TYPO3 v13
      */
     public function processDataForTypo3V11(): array
@@ -124,24 +112,5 @@ class ToolsRegistry implements SingletonInterface
             $controllerActions[$controllerName] = implode(',', $actions);
         }
         return $controllerActions;
-    }
-
-    /**
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     */
-    protected function evaluateCondition(array $config): bool
-    {
-        if (null === $config['condition']) {
-            return true;
-        }
-        $parts = GeneralUtility::trimExplode(':', $config['condition'], true);
-        switch ($parts[0]) {
-            case 'CONF':
-                return (bool)$this->configContainer->get($parts[1]);
-            case 'EXTCONF':
-                return (bool)$this->extensionConfiguration->get($parts[1], $parts[2]);
-        }
-        return false;
     }
 }

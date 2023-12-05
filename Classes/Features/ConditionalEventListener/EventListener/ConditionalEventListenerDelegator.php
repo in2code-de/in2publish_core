@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\ConditionalEventListener\EventListener;
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
-use Psr\Container\ContainerInterface;
+use In2code\In2publishCore\CommonInjection\ContainerInjection;
+use In2code\In2publishCore\Service\Condition\ConditionEvaluationServiceInjection;
 
 use function get_class;
-use function is_string;
 
 class ConditionalEventListenerDelegator
 {
-    protected ContainerInterface $container;
-    protected ConfigContainer $configContainer;
+    use ContainerInjection;
+    use ConditionEvaluationServiceInjection;
+
     protected array $eventListeners;
     protected array $evaluatedListeners = [];
 
-    public function __construct(ContainerInterface $container, ConfigContainer $configContainer, array $eventListeners)
+    public function __construct(array $eventListeners)
     {
-        $this->container = $container;
-        $this->configContainer = $configContainer;
         $this->eventListeners = $eventListeners;
     }
 
@@ -39,7 +37,7 @@ class ConditionalEventListenerDelegator
             $this->evaluatedListeners[$eventName] = [];
             $eventListeners = $this->eventListeners[$eventName] ?? [];
             foreach ($eventListeners as $identifier => $eventListener) {
-                if ($this->evaluateConditions($eventListener['condition'])) {
+                if ($this->conditionEvaluationService->evaluate($eventListener['condition'])) {
                     $service = $this->container->get($eventListener['service']);
 
                     $this->evaluatedListeners[$eventName][$identifier] = $eventListener;
@@ -48,21 +46,5 @@ class ConditionalEventListenerDelegator
             }
         }
         return $this->evaluatedListeners[$eventName];
-    }
-
-    /**
-     * @param string|array<string> $conditions
-     */
-    public function evaluateConditions($conditions): bool
-    {
-        if (is_string($conditions)) {
-            $conditions = [$conditions];
-        }
-        foreach ($conditions as $condition) {
-            if (!$this->configContainer->get($condition)) {
-                return false;
-            }
-        }
-        return true;
     }
 }
