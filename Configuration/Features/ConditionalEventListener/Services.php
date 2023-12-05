@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 return static function (ContainerBuilder $builder): void {
     $builder->addCompilerPass(
-        new ConditionalEventListenerCompilerPass('in2publish_core.event.listener'),
+        new ConditionalEventListenerCompilerPass('in2publish_core.conditional.event.listener'),
         PassConfig::TYPE_BEFORE_OPTIMIZATION,
         75,
     );
