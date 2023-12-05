@@ -10,7 +10,7 @@ services:
   In2code\In2publishCore\Features\HideRecordsDeletedDifferently\EventListener\HideRecordsDeletedDifferentlyEventListener:
     tags:
       - name: in2publish_core.conditional.event.listener
-        condition: 'features.hideRecordsDeletedDifferently.enable'
+        condition: 'CONF:features.hideRecordsDeletedDifferently.enable'
         identifier: 'in2publish-HideRecordsDeletedDifferently-DecideIfRecordShouldBeIgnored'
         method: 'decideIfRecordShouldBeIgnored'
         event: In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored

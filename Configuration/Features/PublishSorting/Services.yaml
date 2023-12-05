@@ -13,12 +13,12 @@ services:
   In2code\In2publishCore\Features\PublishSorting\Domain\Anomaly\SortingPublisher:
     tags:
       - name: in2publish_core.conditional.event.listener
-        condition: 'features.publishSorting.enable'
+        condition: 'CONF:features.publishSorting.enable'
         identifier: 'in2publishcore-SortingPublisher-RecordWasPublished'
         method: 'collectSortingsToBePublished'
         event: In2code\In2publishCore\Event\RecordWasPublished
       - name: in2publish_core.conditional.event.listener
-        condition: 'features.publishSorting.enable'
+        condition: 'CONF:features.publishSorting.enable'
         identifier: 'in2publishcore-SortingPublisher-RecursiveRecordPublishingEnded'
         method: 'publishSortingRecursively'
         event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
