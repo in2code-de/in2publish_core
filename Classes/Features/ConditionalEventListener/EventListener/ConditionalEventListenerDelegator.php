@@ -8,6 +8,7 @@ use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use Psr\Container\ContainerInterface;
 
 use function get_class;
+use function is_string;
 
 class ConditionalEventListenerDelegator
 {
@@ -38,7 +39,7 @@ class ConditionalEventListenerDelegator
             $this->evaluatedListeners[$eventName] = [];
             $eventListeners = $this->eventListeners[$eventName] ?? [];
             foreach ($eventListeners as $identifier => $eventListener) {
-                if ($this->configContainer->get($eventListener['condition'])) {
+                if ($this->evaluateConditions($eventListener['condition'])) {
                     $service = $this->container->get($eventListener['service']);
 
                     $this->evaluatedListeners[$eventName][$identifier] = $eventListener;
@@ -47,5 +48,21 @@ class ConditionalEventListenerDelegator
             }
         }
         return $this->evaluatedListeners[$eventName];
+    }
+
+    /**
+     * @param string|array<string> $conditions
+     */
+    public function evaluateConditions($conditions): bool
+    {
+        if (is_string($conditions)) {
+            $conditions = [$conditions];
+        }
+        foreach ($conditions as $condition) {
+            if (!$this->configContainer->get($condition)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
