@@ -163,7 +163,7 @@ class RedirectController extends ActionController
     }
 
     /** @throws Throwable */
-    public function publishAction(array $redirects): void
+    public function publishAction(array $redirects): ResponseInterface
     {
         if (empty($redirects)) {
             $this->addFlashMessage(
@@ -193,7 +193,7 @@ class RedirectController extends ActionController
         } else {
             $this->addFlashMessage(sprintf('Redirects %s published', implode(', ', $redirects)));
         }
-        $this->redirect('list');
+        return $this->redirect('list');
     }
 
     /**
