@@ -14,6 +14,6 @@ The condition parts are delimited by `:` (colons)
 
 You can use the `ConditionEvaluationService` in your own code, in order to evaluate conditions (for an example have a
 look at the ToolsRegistry). You can also create your own evaluators for custom conditions
-(see [Custom Evaluators](CustomEvaluators.md)).
+(see [CutomEvaluators.md](Guides/CutomEvaluators.md)).
 
 ```php
