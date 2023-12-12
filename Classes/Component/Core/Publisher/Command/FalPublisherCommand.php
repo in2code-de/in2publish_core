@@ -54,6 +54,17 @@ class FalPublisherCommand extends Command
         $instructions = [];
         foreach ($rows as $row) {
             $arguments = json_decode($row['configuration'], true, 512, JSON_THROW_ON_ERROR);
+
+            /**
+             * PHP<8.1: Keep only values, remove keys
+             * (Support for associative array spreading was introduced in PHP 8.1, and
+             * causes fatal error "Cannot unpack array with string keys" in previous versions
+             *
+             * @ToDo: remove after dropping support for PHP versions < 8.1
+             */
+            if(PHP_VERSION_ID < 80100){
+                $arguments = array_values($arguments);
+            }
             $instructions[] = new $row['instruction'](...$arguments);
         }
 
