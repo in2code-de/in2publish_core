@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+1.0.9:
+- [META] Set the EM conf version number to 11.0.9
+- [BUGFIX] Search for file links only in href attributes
+- [BUGFIX] Do not enhance records with sys_redirects if they are excluded from publishing
+- [RELEASE] Version 11.0.8 with correct performance test
+
 11.0.8
 - [META] Set the EM conf version number to 11.0.8
 - [BUGFIX] Sort query results by language

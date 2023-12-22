@@ -64,6 +64,7 @@ use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
+use TYPO3\CMS\Core\Html\HtmlParser;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -91,7 +92,9 @@ use function parse_str;
 use function parse_url;
 use function preg_match;
 use function preg_match_all;
+use function preg_split;
 use function reset;
+use function str_starts_with;
 use function stripos;
 use function strlen;
 use function strpos;
@@ -648,18 +651,39 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                 }
             }
         }
-        if (strpos($bodyText, 'file:') !== false) {
-            preg_match_all('~file:(\d+)~', $bodyText, $matches);
-            if (!empty($matches[1])) {
-                $matches = $matches[1];
-            }
-            $matches = array_filter($matches);
-            if (
-                count($matches) > 0
-                && !in_array('sys_file', $excludedTableNames, true)
-            ) {
-                foreach ($matches as $match) {
-                    $relatedRecords[] = $this->findByIdentifier((int)$match, 'sys_file');
+        if (
+            !in_array('sys_file', $excludedTableNames, true)
+            && 0 < preg_match_all('~href="file:(\d+)"~', $bodyText)
+        ) {
+            /** @var HtmlParser $htmlParser */
+            $htmlParser = GeneralUtility::makeInstance(HtmlParser::class);
+            $tags = explode('<', $bodyText);
+            foreach ($tags as $tag) {
+                if (!str_starts_with($tag, 'a ')) {
+                    continue;
+                }
+                $tagEnd = strpos($tag, '>');
+                if (false === $tagEnd || $tagEnd < 5) {
+                    continue;
+                }
+                $tagContent = substr($tag, 0, $tagEnd);
+                $tagParts = preg_split('/\\s+/', $tagContent, 2);
+                if (!isset($tagParts[1])) {
+                    continue;
+                }
+                $tagAttributes = $htmlParser->get_tag_attributes($tagParts[1]);
+                if (isset($tagAttributes[0]['href']) && str_starts_with($tagAttributes[0]['href'], 'file:')) {
+                    $href = substr($tagAttributes[0]['href'], 5);
+                    if (MathUtility::canBeInterpretedAsInteger($href)) {
+                        $record = $this->findByIdentifier((int)$href, 'sys_file');
+                        if (
+                            null !== $record
+                            && [] !== $record->getLocalProperties()
+                            && [] !== $record->getForeignProperties()
+                        ) {
+                            $relatedRecords[] = $record;
+                        }
+                    }
                 }
             }
         }
