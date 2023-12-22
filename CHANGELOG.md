@@ -698,6 +698,39 @@
 - [GIT] Ignore build and qa files when creating a production dist
 - [GIT] Ignore the .github folder when creating a production dist
 
+1.0.9:
+- [META] Set the EM conf version number to 11.0.9
+- [BUGFIX] Search for file links only in href attributes
+- [BUGFIX] Do not enhance records with sys_redirects if they are excluded from publishing
+- [RELEASE] Version 11.0.8 with correct performance test
+
+11.0.8
+- [META] Set the EM conf version number to 11.0.8
+- [BUGFIX] Sort query results by language
+- [BUGFIX] Use suitable default values in SQL dumps
+- [BUGFIX] Add missing word in german translation
+- [BUGFIX] Fix DiskSpeed performance test units
+- [BUGFIX] Fix DBInit performance test units
+
+11.0.7:
+- [TASK] Raise version number in ext_emconf.php
+- Update de.locallang.xlf
+
+11.0.6:
+- [META] Set the EM conf version number to 11.0.6
+- [DOCS] Update changelog
+- [TASK] Add label for Publish redirects module
+- [BUGFIX] Correct SSH Adapter
+- [BUGFIX] Avoid error log entries for unset backend users in clear cache command
+- [BUGFIX] Update definition of defaultIgnoredTables for publishing
+
+11.0.5:
+- [META] Set the EM conf version number to 11.0.5
+- [DOCS] Update changelog
+- [BUGFIX] Avoid undefined array key access in ShallowRecordFinder
+- [BUGFIX] Fix registration of BackupCommand and description of ImportCommand
+- [TASK] Allow PHP 8.1 as requirement
+
 11.0.4:
 - **Everything included in the 10.2.5 release**
 - [META] Set the EM conf version number to 11.0.4
