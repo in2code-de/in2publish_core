@@ -243,18 +243,18 @@ class RedirectController extends ActionController
         return $this->htmlResponse();
     }
 
-    protected function getRedirectsByStateFromFilter(RecordTree $recordTree, Filter $filter = null) {
+    protected function getRedirectsByStateFromFilter(RecordTree $recordTree, Filter $filter = null): array {
         $redirects = $recordTree->getChildren()['sys_redirect'] ?? [];
 
-        if ($filter === null ||$filter->getPublishable() === 'missing'){
+        if ($filter === null ||$filter->getPublishable() === 'missing') {
             return $redirects;
         }
-        if ($filter->getPublishable() === 'is_publishable'){
+        if ($filter->getPublishable() === 'is_publishable') {
             $redirects = array_filter($redirects, static function (SysRedirectDatabaseRecord $redirect) {
                 return $redirect->getPublishingState() !== 'unchanged';
             });
         }
-        if ($filter->getPublishable() === 'is_not_publishable'){
+        if ($filter->getPublishable() === 'is_not_publishable') {
             $redirects = array_filter($redirects, static function (SysRedirectDatabaseRecord $redirect) {
                 return $redirect->getPublishingState() === 'unchanged';
             });
