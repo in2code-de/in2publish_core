@@ -48,10 +48,10 @@ use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedire
 use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
-use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -169,7 +169,7 @@ class RedirectController extends ActionController
             $this->addFlashMessage(
                 'No redirect has been selected for publishing',
                 'Skipping publishing',
-                ContextualFeedbackSeverity::NOTICE,
+                AbstractMessage::NOTICE,
             );
             $this->redirect('list');
         }
