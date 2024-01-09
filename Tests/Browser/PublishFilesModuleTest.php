@@ -39,7 +39,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             $driver->wait()->until(ElementIsVisible::resolve(WebDriverBy::cssSelector('[data-callback-action="uploadFile"]')));
             $driver->click(WebDriverBy::cssSelector('[data-callback-action="uploadFile"]'));
             TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
-                $file = '/full-app/app/local/tests/In2publishCore/Browser/files/carson-masterson-1540698-unsplash.jpg';
+                $file = '/app/Tests/Browser/files/carson-masterson-1540698-unsplash.jpg';
                 // https://www.selenium.dev/documentation/webdriver/elements/file_upload/#:~:text=Because%20Selenium%20cannot%20interact%20with,file%20that%20will%20be%20uploaded.
                 $driver->findElement(WebDriverBy::name('upload_1[]'))->sendKeys($file);
                 $driver->submitForm(WebDriverBy::id('FileUploadController'));

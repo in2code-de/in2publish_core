@@ -12,7 +12,7 @@
 	"repositories": [
 		{
 			"type": "path",
-			"url": "/app/*"
+			"url": "/packages/*"
 		}
 	],
 	"require": {

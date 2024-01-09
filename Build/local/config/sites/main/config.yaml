@@ -1,0 +1,52 @@
+base: local.v12.in2publish-core.de
+errorHandling: {  }
+languages:
+languages:
+  -
+    title: English
+    enabled: true
+    languageId: 0
+    base: /
+    typo3Language: default
+    locale: en_US.UTF-8
+    iso-639-1: en
+    navigationTitle: English
+    hreflang: en-us
+    direction: ltr
+    flag: us
+    websiteTitle: ''
+    solr_core_read: core_en
+  -
+    title: German
+    enabled: true
+    base: /de/
+    typo3Language: de
+    locale: de_DE.UTF-8
+    iso-639-1: de
+    websiteTitle: ''
+    navigationTitle: German
+    hreflang: de-DE
+    direction: ltr
+    fallbackType: strict
+    fallbacks: ''
+    flag: de
+    languageId: 1
+    solr_core_read: core_de
+  -
+    title: Japanese
+    enabled: true
+    base: /ja/
+    typo3Language: ja
+    locale: ja_JP.utf8
+    iso-639-1: ja
+    websiteTitle: ''
+    navigationTitle: ''
+    hreflang: ja-JP
+    direction: ltr
+    fallbackType: strict
+    fallbacks: ''
+    flag: jp
+    languageId: 2
+    solr_core_read: core_ja
+rootPageId: 1
+routes: {  }

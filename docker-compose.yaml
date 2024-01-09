@@ -5,6 +5,7 @@ services:
     image: in2code/httpd:2.4-alpine
     volumes:
       - ./:/app/
+      - ./:/packages/in2publish_core/
     env_file:
       - .env
     environment:
@@ -26,6 +27,7 @@ services:
       target: base
     volumes:
       - ./:/app/
+      - ./:/packages/in2publish_core/
       - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
     env_file:
       - .env
@@ -42,6 +44,7 @@ services:
     image: in2code/httpd:2.4-alpine
     volumes:
       - ./:/app/
+      - ./:/packages/in2publish_core/
     env_file:
       - .env
     environment:
@@ -63,6 +66,7 @@ services:
       target: base
     volumes:
       - ./:/app/
+      - ./:/packages/in2publish_core/
     env_file:
       - .env
     extra_hosts:

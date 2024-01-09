@@ -1,4 +1,5 @@
 /*/config/*
+!/*/config/sites
 !/*/config/system
 /*/config/system/*
 !/*/config/system/additional.php
