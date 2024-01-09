@@ -1,0 +1,540 @@
+#
+#    Example Configuration for in2publish on local
+#
+#    Fields annotated with "@user" can be overridden using PageTS or UserTS
+#
+
+# PHP & Database settings on foreign server (for SSH access see "sshConnection")
+foreign:
+
+  # root path of the foreign TYPO3 CMS instance
+  rootPath: /app/Build/foreign/public
+
+  # path of the var folder of the foreign TYPO3 CMS instance
+  varPath: /app/Build/foreign/var
+
+  # path to php binary
+  pathToPhp: php
+
+  # TYPO3_CONTEXT environment variable to preprend to remote CLI calls
+  context: Development/Docker
+
+  # OPTIONAL. This value is detected automatically. Configuration only required when automatic detection fails to
+  # identify the dispatcher location correctly. Enter the relative path from the document root to the dispatcher.
+  dispatcher:
+
+  # Additional environment variables to set before executing a remote cli command. The keys are the variable names
+  envVars: [ ]
+
+  # Set your production systems database credentials here. If you use port forwarding to
+  # the server where the database is installed, the host is 127.0.0.1 and the port is your forwarded port.
+  database:
+
+    # name of the foreign database. Set value in env var FOREIGN_DB_NAME or directly here.
+    name: '%env(FOREIGN_DB_NAME)%'
+
+    # name of the foreign mysql user. Set value in env var FOREIGN_DB_USER or directly here.
+    username: '%env(FOREIGN_DB_USER)%'
+
+    # password of the foreign user above. Set value in env var FOREIGN_DB_PASS or directly here.
+    password: '%env(FOREIGN_DB_PASS)%'
+
+    # hostname of the database to connect to. Set value in env var FOREIGN_DB_HOST or directly here.
+    hostname: '%env(FOREIGN_DB_HOST)%'
+
+    # default: 3306. Set value in env var FOREIGN_DB_PORT or directly here.
+    port: '%env(FOREIGN_DB_PORT)%'
+
+
+# Exclude tables from publishing
+excludeRelatedTables:
+  - be_groups
+  - be_users
+  - cache_treelist
+  - sys_history
+  - sys_log
+  - tx_extensionmanager_domain_model_extension
+  - tx_in2code_in2publish_task
+  - tx_in2code_rpc_data
+  - tx_in2code_rpc_request
+  - tx_in2publishcore_log
+  - tx_in2publishcore_running_request
+  - tx_in2publishcore_filepublisher_instruction
+
+
+# Ignore these fields for difference view (Publish Overview, Record Comparison).
+# Records which only have changes in ignored fields will not be shown as changed and not be published.
+# field rowDescription is ignored in order to perform for test case 14
+ignoredFields:
+  '.*':
+    ctrl:
+      - tstamp
+      - versioningWS
+      - transOrigDiffSourceField
+  pages:
+    fields:
+      - perms_userid
+      - perms_groupid
+      - perms_user
+      - perms_group
+      - perms_everybody
+      - SYS_LASTCHANGED
+      - rowDescription
+  sys_redirect:
+    fields:
+      - source_host
+      - hitcount
+      - lasthiton
+  sys_file:
+    fields:
+      - last_indexed
+  tt_content:
+    fields:
+      - rowDescription
+
+# factory settings (configuration about building relations in in2publish)
+factory:
+  # Resolve properties of records (and pages) which target records from "pages" table
+  # Use with care: Related pages will be published through the relation chain, too
+  resolvePageRelations: FALSE
+
+  # THIS OPTION COMES WITHOUT ANY WARRANTY. USE AT YOUR OWN RISK.
+  #
+  # Set to TRUE to directly connect file relations to the page through the PID. This makes it impossible to control
+  # publishing of content by the content element because the file reference will be published directly after the page
+  # and not have the content element as its parent.
+  # Also it is technically inaccurate, unexpected and might result in undocumented behaviour.
+  # This option will include file references which would not be resolved because you are using non-compatible extensions
+  # based on user functions like DCE or fluidcontent.
+  includeSysFileReference: FALSE
+
+
+# Manipulate view
+# @user
+view:
+  # Backend module Publish records
+  records:
+    # Activate Filter buttons
+    filterButtons: TRUE
+
+    # show record connection to root record as breadcrumb in overview module. Applies only when debug.allInformation = FALSE.
+    breadcrumb: TRUE
+
+    # Activate Publish all button
+    publishAll: TRUE
+
+  # Backend module Publish files
+  files:
+    # Activate Filter buttons
+    filterButtons: TRUE
+
+    # The Publish Overview Module uses this field name to display page names. You can change this field to e.g. nav_title
+    publishAll: TRUE
+
+  # publish module use as title field (for pages) you can set this f.e. to nav_title
+  titleField: title
+
+  # Backend module Publish Workflow
+  workflow:
+    # Activate Publish all button
+    publishAll: TRUE
+
+    # Display the number of the workflow states shown in the workflow module
+    workflowStatesCount: FALSE
+
+    # Show the workflow state count by state identifier
+    count:
+      enable: TRUE
+      definition:
+        1: TRUE
+      showLabels: TRUE
+
+# SSH and transfer settings for foreign ssh connection (file and commands)
+sshConnection:
+
+  # Hostname of the foreign server for SSH connection
+  host: foreign-php
+
+  # Default: 22, change if necessary
+  port: 22
+
+  # username of user on the foreign server
+  username: app
+
+  # absolute path to local ssh key (rsa/dsa/..)
+  privateKeyFileAndPathName: /home/app/.ssh/id_ed25519
+
+  # absolute path to local ssh key belonging to the private above
+  publicKeyFileAndPathName: /home/app/.ssh/id_ed25519.pub
+
+  # private key password, empty string if none set
+  privateKeyPassphrase: ''
+
+  # You should not disable this check if the FKFP does not change. If the foreign key will change often (e.g. in a docker/k8s/cloud environment) you can disable it at your own risk.
+  enableForeignKeyFingerprintCheck: FALSE
+
+  # Key fingerprint of the production server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
+  # You don't need to keep the colons
+  foreignKeyFingerprint: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+
+  # Method modification: one of SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1
+  foreignKeyFingerprintHashingMethod: SSH2_FINGERPRINT_MD5
+
+  # ignore if chmod fails. prevents exception
+  ignoreChmodFail: FALSE
+
+
+# module settings
+module:
+  # Enable/Disable Publishing overview module
+  m1: TRUE
+
+  # Enable/Disable Publishing workflow module
+  m2: TRUE
+
+  # Enable/Disable File Publishing module
+  m3: TRUE
+
+  # Enable/Disable Publish Tools module
+  m4: TRUE
+
+
+# Debug settings
+# @user
+debug:
+
+  # Show foreign key fingerprint instead of throwing an exception.
+  showForeignKeyFingerprint: FALSE
+
+  # Do not delete Envelope entries after they fulfilled their purpose
+  keepEnvelopes: FALSE
+
+  # This helps debugging demands which cause exceptions. Disabled to reduce overhead in production environments.
+  # Enable this to see which resolver and processor of which table and column is responsible for the demand.
+  traceDemand: FALSE
+
+# Backup configuration
+backup:
+
+  # Backup settings for table publishing
+  publishTableCommand:
+
+    # The number of backups to keep. 0 : no backups are made; 1 : one backup, keep none;
+    # greater than 1: keep the specified number of backups
+    keepBackups: 2
+
+    # Specify the location where table backups should be stored (absolute & writable).
+    backupLocation: /app/Build/local/backup
+
+    # Adds a "DROP TABLE {tablename} IF EXISTS" statement to the backup.
+    addDropTable: TRUE
+
+    # If TRUE, backups of tables will be stored in ZIP files instead of plain sql file.
+    # saves a lot of disc space.
+    zipBackup: TRUE
+
+# TCA processing settings
+tca:
+
+  # TCA processors decide if parts of the TCA are suitable to resolve relations
+  processor:
+    check: 'In2code\In2publishCore\Domain\Service\Processor\CheckProcessor'
+    flex: 'In2code\In2publishCore\Domain\Service\Processor\FlexProcessor'
+    group: 'In2code\In2publishCore\Domain\Service\Processor\GroupProcessor'
+    inline: 'In2code\In2publishCore\Domain\Service\Processor\InlineProcessor'
+    input: 'In2code\In2publishCore\Domain\Service\Processor\InputProcessor'
+    none: 'In2code\In2publishCore\Domain\Service\Processor\NoneProcessor'
+    passthrough: 'In2code\In2publishCore\Domain\Service\Processor\PassthroughProcessor'
+    radio: 'In2code\In2publishCore\Domain\Service\Processor\RadioProcessor'
+    select: 'In2code\In2publishCore\Domain\Service\Processor\SelectProcessor'
+    text: 'In2code\In2publishCore\Domain\Service\Processor\TextProcessor'
+    user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
+    imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'
+    slug: 'In2code\In2publishCore\Domain\Service\Processor\SlugProcessor'
+    category: 'In2code\In2publishCore\Domain\Service\Processor\CategoryProcessor'
+    language: 'In2code\In2publishCore\Domain\Service\Processor\LanguageProcessor'
+
+# workflow settings
+workflow:
+
+  # enable or disable workflow feature
+  enable: TRUE
+
+  # enable workflow even for other tables than only "pages" e.g. for tx_news_domain_model_news
+  tables: [ sys_category, tx_news_domain_model_news, tx_news_domain_model_link ]
+
+  # Set to FALSE if every translated record that is connected to a language parent should inherit the parent's workflow state
+  languageIndependentWorkflows: TRUE
+
+  # workflow states
+  states:
+
+    # Define workflow states - order will also be used for the backend workflow module.
+    # (0 must be "default", 1 must be "readyToPublish")
+    definition:
+      0: Published
+      2: Draft
+      3: Ready for approval
+      1: Ready to publish
+
+    # Control the display of workflow states in the backend.
+    # Styling is a definition list, because the integer keys are workflow state identifiers
+    style:
+      definition:
+        # Styling for the workflow state [0]: "Published"
+        0:
+          # General color. Used in TreeViewColors, Workflow dot and strip foreground color
+          color: '#A0A0A0'
+          # Color of the page tree node when active
+          hoverColor: 'rgba(0, 0, 0, 0)'
+          # Width of the diagonal stripes
+          stripWidth: 5px
+          # Set to "50%" for round workflow dots, "0" for squares, or ~"30%" for a square with rounded corners
+          borderRadius: 0
+          # Value between "0" and "1". The higher the value, the brighter each second stripe.
+          transparency: 0.1
+        2:
+          color: '#FFDB88'
+          hoverColor: rgba(255, 219, 136, 0.7)
+          stripWidth: 5px
+          borderRadius: 50%
+          transparency: 0.1
+        3:
+          color: '#425EA1'
+          hoverColor: rgba(66, 94, 161, 0.7)
+          stripWidth: 5px
+          borderRadius: 50%
+          transparency: 0.1
+        1:
+          color: '#5D9A46'
+          hoverColor: rgba(93, 154, 70, 0.7)
+          stripWidth: 5px
+          borderRadius: 50%
+          transparency: 0.2
+
+    # Define which usergroups can do state changes to a new state key.
+    # (no effect on admin users)
+    permission:
+      definition:
+        # Example: User of group 13 or 28 may set the state 3 (Ready for approval)
+        #  3:
+        #    13
+        #    28
+        2: [ 3,4,5,6,7,8 ]
+        3: [ 3,4,5,6,7,8 ]
+
+  # Define usergroups that are allowed to publish (in both modules if workspaces are active).
+  # (no effect on admin users)
+  permissionPublish: [ 6, 9 ]
+
+  # On page change (even for delete, move, etc...) always set page
+  # state to this state automatically.
+  # (doesn't cares about user permission)
+  autoState:
+    stateIdentifier: 2
+
+    # This message is viewed in the workflow conversation, when an workflow auto state has been applied. Supports split labels.
+    message: 'LLL:EXT:in2publish/Resources/Private/Language/locallang.xlf:workflow.auto_state.title'
+
+    # Allow downgrading the workflow state.
+    # If enabled the autoState will always be set - regardless of the current state (except the autoState self).
+    # When set to FALSE the autoState will only change if the output state is "Ready to Publish" or "Published"
+    allowDowngrade: TRUE
+
+  # show filter in workflow module
+  filter: TRUE
+
+  # Toggle if scheduled workflows should be published when the publishAll button is clicked
+  # @user
+  publishAllIncludesScheduled: TRUE
+
+# Toggle additional features for the content publisher
+features:
+
+  # Adds a new entry to the right click menu in the page tree to quickly publish a single page.
+  contextMenuPublishEntry:
+    # Disabled by default. See Documentation/KnownIssues.md first before activation.
+    enable: TRUE
+
+  # Hide records from the Publish Overview Module if they are deleted on one side and removed from the database on the other.
+  # Disable this feature if you are using EXT:recycler to publish the deletion of records in the recycler to Foreign.
+  hideRecordsDeletedDifferently:
+    enable: FALSE
+
+  # Support for redirects. Enabling this adds new fields to redirects to associate redirects with pages and a module to publish redirects.
+  redirectsSupport:
+    # Enable this feature. You need to clear *all* caches after changing this, because it changes the TCA.
+    enable: TRUE
+
+  # Publishes sorting of all related records (same table and pid) if sorting of a record/pages has changes.
+  publishSorting:
+    # Enabled by default.
+    enable: TRUE
+
+  # Backend Module to compare thr page rendering of local and foreign
+  comparisonModule:
+    enable: TRUE
+
+  # Content Language Control (previously "clc")
+  # Publish only selected languages (exclude languages from publishing)
+  contentLanguageControl:
+
+    # Toggle the feature
+    enable: TRUE
+
+    # integers of the sys_language records or ['*'] for any language to select initially or when "reset" was pressed
+    # @user
+    preselect: [ ]
+
+  # Cross Storage Publishing (previously "xsp")
+  crossStoragePublishing:
+
+    # Enable or disable the whole feature here
+    enable: TRUE
+
+    # Flag storages here for behaviour control
+    # Syntax: <UID>: ('skipDriver'|'skipStorage')
+    # skipDriver: Do not alter the selected driver or its configuration on foreign, but the storages name or description.
+    # skipStorage: Do not publish the FAL storage record, so it can have different configurations on local and foreign. Includes skipDriver.
+    #
+    # Example value:
+    # definition:
+    #   3: 'skipDriver'
+    #   4: 'skipStorage'
+    definition:
+      2: 'skipStorage'
+
+
+  # Publishable Workflow Widget: Provides a widget for the TYPO3 v10 dashboard, which shows Workflow States that are
+  # ready to publish.
+  publishableWorkflowsWidget:
+    # Maximum number of workflow states shown. Value must be between 1 and 50.
+    limit: 10
+
+  # Control the cache of the foreign backend in your local backend
+  remoteCacheControl:
+
+    # Enable or disable the tools module entry
+    enableTool: TRUE
+
+    # Enable menu entries in the clear cache menu
+    enableMenu: TRUE
+
+    # Enable menu entries in the context menu
+    enableContextMenu: TRUE
+
+  # Integration of EXT:solrfal. This feature is enabled if EXT:solrfal is installed and this feature is enabled.
+  # In special cases it might be necessary to disable the solrfal integration despite having solrfal installed, that's what the enable flag is for.
+  solrFalIntegration:
+    # enable or disable solrfal integration
+    enable: TRUE
+
+  # Integration of EXT:solr. This feature is enabled if EXT:solr is installed and this feature is enabled.
+  # In special cases it might be necessary to disable the solr integration despite having solr installed, that's what the enable flag is for.
+  solrIntegration:
+    # enable or disable solr integration
+    enable: TRUE
+
+  # Workflow Inline Form
+  # Allows you to directly set the workflow state when editing a workflow enabled record
+  workflowInlineForm:
+    enable: TRUE
+
+  # Show the workflow history in the edit view of a record if that record has custom workflows enabled (or is a page)
+  workflowInlineHistory:
+    enable: TRUE
+
+  # Enable mail notification for usergroups on state change.
+  workflowNotificationMail:
+    enable: TRUE
+
+    # Define which usergroup gets a notify mail on which new state.
+    usergroup:
+      definition:
+        0:
+        1: [ 1 ]
+        2: [ 1 ]
+        3: [ 1 ]
+
+    # mail sender properties
+    sender:
+      name: Workflow
+      email: sender@in2code.de
+
+  # Workflow Publishing Notification (WFPN): Allows editors to tick a checkbox when setting a new workflow state.
+  # When the box is ticked the editor will receive an email when the record has been published eventually.
+  # @user
+  workflowPublishingNotification:
+    enable: TRUE
+    # Preselect the checkbox for all editors (can be overwritten in Page/UserTS) when the output state is in the list.
+    preselect:
+      definition: [ 2, 3 ]
+
+    # Sender configuration
+    sender:
+      name: "Workflow Publishing"
+      email: "workflow-publishing@example.com"
+
+  # Allows you to select one or more Backend Users when changing a workflow state. You can specify an additional message.
+  # All selected Backend Users will receive an email with the workflow state change information and you additional message.
+  # Only Backend Users with edit access (or in targetStateAddGroups) and a valid email address will be selectable.
+  workflowStateAssignment:
+    # Feature is disabled by default to reduce cognitive load
+    enable: TRUE
+    # Disabled: You can only select one Backend User for each workflow state change
+    # Enabled: You can select multiple Backend Users each time.
+    multiple: FALSE
+    # Email
+    senderEmail: 'assignment@example.com'
+    # Possible values: ['fallback, 'overrule'].
+    # Fallback: If TYPO3 is not configured to use a valid default email address
+    #   ($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress']) the address specified in senderEmail will be used.
+    # Overrule: The address specified in senderEmail will always be used.
+    senderEmailMode: 'fallback'
+    # Allows you to narrow down the list of Backend Users shown in the single/multi selection
+    # element when editing a workflow state.
+    # CONFUSING: The option is called "targetStateGroupFilter" but the workflow state which determines the selection is
+    #   the workflow state that is being edited. It should be called "sourceStateGroupFilter". This feature used to be
+    #   integrated in a way that required the new state to be set and the assignment was shown afterward, where the new
+    #   workflow state identifier was already known. Now, this feature is integrated into the workflow state form itself,
+    #   so we can't know which workflow state is going to be set.
+    targetStateGroupFilter:
+      # <Target State>: [<required group>[, <required group>]...]
+      # e.g. Require group with uid 5 or 8 to be set when changing a workflow state FROM "Ready to Publish"
+      # definition:
+      #   1: [ 5, 8 ]
+      definition: [ ]
+    # Add users to the list of selectable Backend Users, even if
+    # they don't have edit access to the record of the workflow state
+    targetStateAddGroups:
+      # e.g. Add all users from groups with uid 5 or 8 to the options list when changing a workflow state FROM "Ready to Publish"
+      # definition:
+      #   1: [ 5, 8 ]
+      definition:
+        0: [ 3 ]
+        1: [ 3 ]
+        2: [ 3 ]
+        3: [ 3 ]
+    # Include or exclude admin users.
+    # Admin users often don't do editorial work, only technical stuff. You can exclude them from the list.
+    # (If they are doing editorial work, they should have an additional restricted editor account anyway)
+    includeAdmin: TRUE
+
+  # enable workflow colors in treeview (empty, *, commaseparated uids)
+  workflowTreeColors:
+    enable: TRUE
+    enableForOtherTables: TRUE
+    groups: '*'
+
+adapter:
+  local:
+    # Absolute path on the local server, where any folder or parent folder of the var folder from foreign is mounted.
+    localMount: '/mount/foreign/var/'
+    # The folder of the foreign server which is actually mounted on the local server.
+    mountPortion: '/app/var/'
+
+    ### OLDER VERSION OF THE ADAPTER
+    path: '/mount/foreign'
+
+    # If file transmission fails on a slow file system set this value to the number of seconds for a timeout, e.g. 1
+    fileTransmissionTimeout: 1

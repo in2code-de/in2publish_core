@@ -13,7 +13,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class UnitTestCase extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
-    protected $resetSingletonInstances = true;
+    protected bool $resetSingletonInstances = true;
 
     public function initializeIn2publishConfig(array $config = [])
     {

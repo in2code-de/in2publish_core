@@ -12,6 +12,11 @@ CYAN    := $(shell tput -Txterm setaf 6)
 WHITE   := $(shell tput -Txterm setaf 7)
 RESET   := $(shell tput -Txterm sgr0)
 
+# emojis
+EMOJI_robot := "🤖️"
+EMOJI_ping_pong := "🏓"
+EMOJI_face_with_rolling_eyes := "🙄"
+
 ## Show this help
 help:
 	echo "$(EMOJI_interrobang) Makefile help "
@@ -64,3 +69,54 @@ qa-tests-unit:
 ## Run all functional tests
 qa-tests-functional:
 	./Build/Scripts/runTests.sh -s functional
+
+stop :
+	docker compose stop
+	docker compose down
+
+start:
+	docker compose up -d
+
+setup: stop start .mysql-wait
+	docker compose exec local-php composer i
+	docker exec -u1000 in2publish_core-foreign-php-1 composer i
+	docker compose exec local-php vendor/bin/typo3 install:setup --force
+	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+	make restore
+
+## Wait for the mysql container to be fully provisioned
+.mysql-wait:
+	echo "$(EMOJI_ping_pong) Checking DB up and running"
+	while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do \
+		echo "$(EMOJI_face_with_rolling_eyes) Waiting for database ..."; \
+		sleep 3; \
+	done;
+
+restore: mysql-restore fileadmin-restore
+
+## Restores the database from the backup files in SQLDUMPSDIR
+mysql-restore: .mysql-wait
+	echo "$(EMOJI_robot) Restoring the local database"
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
+	echo "$(EMOJI_robot) Restoring the foreign database"
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
+
+## Restores the fileadmin from .project/data/fileadmin
+fileadmin-restore:
+	echo "$(EMOJI_robot) Restoring the fileadmin"
+	rsync -a --delete .project/data/fileadmin/local/ Build/local/public/fileadmin/
+	rsync -a --delete .project/data/fileadmin/foreign/ Build/foreign/public/fileadmin/
+
+acceptance:
+	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.xml
+
+## Create dumps of local and foreign database in dir .project/data/dumps
+dump-dbs: dump-local-database dump-foreign-database
+
+dump-local-database: .mysql-wait
+	echo "$(EMOJI_robot) Dumping the local database"
+	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+
+dump-foreign-database: .mysql-wait
+	echo "$(EMOJI_robot) Dumping the foreign database"
+	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"

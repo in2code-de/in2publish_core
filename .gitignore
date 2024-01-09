@@ -16,8 +16,9 @@ Resources/Private/Clickdummy/typo3_src-6.2.9
 Resources/Private/Clickdummy/zextensions.css
 
 # Generated
-.Build
 .project/phars
+.project/temp
+.project/artifacts
 Build/testing-docker/.env
 Build/.phpunit.result.cache
 .php-cs-fixer.cache
