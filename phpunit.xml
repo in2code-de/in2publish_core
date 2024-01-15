@@ -22,8 +22,8 @@
 
     <extensions>
         <bootstrap class="CoStack\StackTest\Bootstrap">
-            <parameter name="screenshot" value="/app/.project/artifacts/{testClass}/{testMethod}/{seed}/Screenshot.jpg"/>
-            <parameter name="pageSource" value="/app/.project/artifacts/{testClass}/{testMethod}/{seed}/Source.html"/>
+            <parameter name="screenshot" value="../../.project/artifacts/{testClass}/{testMethod}/{seed}/Screenshot.jpg"/>
+            <parameter name="pageSource" value="../../.project/artifacts/{testClass}/{testMethod}/{seed}/Source.html"/>
         </bootstrap>
     </extensions>
 </phpunit>

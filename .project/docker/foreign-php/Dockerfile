@@ -1,9 +1,16 @@
 FROM in2code/php-dev:8.1-fpm AS base
 
-RUN mkdir -m 700 -p /home/app/.ssh/
-COPY --chown=1000:1000 authorized_keys /home/app/.ssh/
+ARG USER_ID=1000
+ARG GROUP_ID=1000
 
 USER root
+
+RUN usermod -u $USER_ID app \
+    && groupmod -g $GROUP_ID app \
+    && mkdir -m 700 -p /home/app/.ssh/
+COPY --chown=$USER_ID authorized_keys /home/app/.ssh/
+RUN chown -R $USER_ID:$GROUP_ID /home/app/
+
 RUN chmod 600 /home/app/.ssh/authorized_keys \
     && apt-get update \
 	&& apt-get install -y --no-install-recommends openssh-server \

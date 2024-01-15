@@ -25,6 +25,10 @@ services:
       context: .project/docker/local-php
       dockerfile: Dockerfile
       target: base
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
+    user: ${USER_ID}
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
@@ -64,6 +68,9 @@ services:
       context: .project/docker/foreign-php
       dockerfile: Dockerfile
       target: base
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
@@ -125,9 +132,20 @@ services:
       SE_VNC_NO_PASSWORD: 1
     volumes:
       - ./:/app/
+      - /dev/shm:/dev/shm
     ports:
       - ${SELENIUM_NODE_CHROME_VNC_PORT:-14320}:5900
       - ${SELENIUM_NODE_CHROME_NOVNC_PORT:-14330}:7900
+
+  chrome_video:
+    image: selenium/video:ffmpeg-6.1-20231219
+    volumes:
+      - .project/artifacts/videos:/videos
+    depends_on:
+      - selenium-node-chrome
+    environment:
+      - DISPLAY_CONTAINER_NAME=selenium-node-chrome
+      - FILE_NAME=chrome_video.mp4
 
   selenium-node-firefox:
     image: ${SELENIUM_NODE_CHROME_IMAGE:-selenium/node-firefox}
@@ -141,9 +159,20 @@ services:
       SE_VNC_NO_PASSWORD: 1
     volumes:
       - ./:/app/
+      - /dev/shm:/dev/shm
     ports:
       - ${SELENIUM_NODE_FIREFOX_VNC_PORT:-14321}:5900
       - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-14331}:7900
+
+  firefox_video:
+    image: selenium/video:ffmpeg-6.1-20231219
+    volumes:
+      - .project/artifacts/videos:/videos
+    depends_on:
+      - selenium-node-firefox
+    environment:
+      - DISPLAY_CONTAINER_NAME=selenium-node-firefox
+      - FILE_NAME=firefox_video.mp4
 
 volumes:
   mysql-data:

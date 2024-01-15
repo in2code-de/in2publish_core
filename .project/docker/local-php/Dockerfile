@@ -1,10 +1,17 @@
 FROM in2code/php-dev:8.1-fpm AS base
 
-RUN mkdir -m 700 -p /home/app/.ssh/
-COPY --chown=1000:1000 id_ed25519 id_ed25519.pub /home/app/.ssh/
-RUN chmod 400 /home/app/.ssh/id*
+ARG USER_ID=1000
+ARG GROUP_ID=1000
 
 USER root
+
+RUN usermod -u $USER_ID app \
+    && groupmod -g $GROUP_ID app \
+    && mkdir -m 700 -p /home/app/.ssh/
+COPY id_ed25519 id_ed25519.pub /home/app/.ssh/
+RUN chmod 400 /home/app/.ssh/id* \
+    && chown -R $USER_ID:$GROUP_ID /home/app/
+
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends libssh2-1-dev \
 	&& pecl install ssh2-1.3.1 \
@@ -16,7 +23,7 @@ RUN apt-get update \
 	&& echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/zz_custom.ini \
     && echo "xdebug.mode=off" > /usr/local/etc/php/conf.d/zz_xdebug.ini
 
-USER 1000:1000
+USER $USER_ID:$GROUP_ID
 
 FROM base AS local
 

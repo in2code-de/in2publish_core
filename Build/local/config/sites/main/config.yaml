@@ -1,7 +1,6 @@
 base: local.v12.in2publish-core.de
 errorHandling: {  }
 languages:
-languages:
   -
     title: English
     enabled: true
