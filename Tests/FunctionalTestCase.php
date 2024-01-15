@@ -16,17 +16,14 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Container\ContainerInterface;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\TestingFramework\Core\DatabaseConnectionWrapper;
+use TYPO3\TestingFramework\Core\Functional\Framework\DataHandling\Snapshot\DatabaseSnapshot;
 use TYPO3\TestingFramework\Core\Testbase;
 
 use function copy;
 use function defined;
 use function dirname;
-use function get_called_class;
-use function getenv;
 use function in_array;
 use function putenv;
 
@@ -35,34 +32,30 @@ use function putenv;
  */
 abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functional\FunctionalTestCase
 {
-    protected $testExtensionsToLoad = [
+    protected array $testExtensionsToLoad = [
         'typo3/sysext/extensionmanager',
         'typo3conf/ext/in2publish_core',
     ];
     private ContainerInterface $container;
     /**
-     * This internal variable tracks if the given test is the first test of
+     * These two internal variable track if the given test is the first test of
      * that test case. This variable is set to current calling test case class.
      * Consecutive tests then optimize and do not create a full
      * database structure again but instead just truncate all tables which
      * is much quicker.
-     *
-     * @var string
      */
-    private static ?string $currestTestCaseClass = null;
+    private static string $currentTestCaseClass = '';
+    private bool $isFirstTest = true;
 
     /**
      * Set up creates a test instance and database.
      *
      * This method should be called with parent::setUp() in your test cases!
-     *
-     * @return void
-     * @throws DBALException
      */
     protected function setUp(): void
     {
         if (!defined('ORIGINAL_ROOT')) {
-            $this->markTestSkipped('Functional tests must be called through phpunit on CLI');
+            self::markTestSkipped('Functional tests must be called through phpunit on CLI');
         }
 
         $this->identifier = self::getInstanceIdentifier();
@@ -71,46 +64,21 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         putenv('TYPO3_PATH_APP=' . $this->instancePath);
 
         $testbase = new Testbase();
-        $testbase->defineTypo3ModeBe();
         $testbase->setTypo3TestingContext();
 
-        $isFirstTest = false;
-        $currentTestCaseClass = get_called_class();
-        if (self::$currestTestCaseClass !== $currentTestCaseClass) {
-            $isFirstTest = true;
-            self::$currestTestCaseClass = $currentTestCaseClass;
+        // See if we're the first test of this test case.
+        $currentTestCaseClass = static::class;
+        if (self::$currentTestCaseClass !== $currentTestCaseClass) {
+            self::$currentTestCaseClass = $currentTestCaseClass;
+        } else {
+            $this->isFirstTest = false;
         }
 
         // sqlite db path preparation
         $dbPathSqlite = dirname($this->instancePath) . '/functional-sqlite-dbs/test_' . $this->identifier . '.sqlite';
-        $dbPathSqliteEmpty = dirname($this->instancePath)
-            . '/functional-sqlite-dbs/test_'
-            . $this->identifier
-            . '.empty.sqlite';
+        $dbPathSqliteEmpty = dirname($this->instancePath) . '/functional-sqlite-dbs/test_' . $this->identifier . '.empty.sqlite';
 
-        $localConfiguration = ['DB' => ['Connections' => []]];
-        $connections = &$localConfiguration['DB']['Connections'];
-        $connections['Default']['dbname'] = getenv('localDatabaseName') ?: null;
-        $connections['Default']['host'] = getenv('localDatabaseHost') ?: null;
-        $connections['Default']['user'] = getenv('localDatabaseUsername') ?: null;
-        $connections['Default']['password'] = getenv('localDatabasePassword') ?: null;
-        $connections['Default']['port'] = getenv('localDatabasePort') ?: null;
-        $connections['Default']['unix_socket'] = getenv('localDatabaseSocket') ?: null;
-        $connections['Default']['driver'] = getenv('localDatabaseDriver') ?: 'mysqli';
-        $connections['Default']['charset'] = getenv('localDatabaseCharset') ?: null;
-
-        $connections['Foreign']['dbname'] = getenv('foreignDatabaseName') ?: null;
-        $connections['Foreign']['host'] = getenv('foreignDatabaseHost') ?: null;
-        $connections['Foreign']['user'] = getenv('foreignDatabaseUsername') ?: null;
-        $connections['Foreign']['password'] = getenv('foreignDatabasePassword') ?: null;
-        $connections['Foreign']['port'] = getenv('foreignDatabasePort') ?: null;
-        $connections['Foreign']['unix_socket'] = getenv('foreignDatabaseSocket') ?: null;
-        $connections['Foreign']['driver'] = getenv('foreignDatabaseDriver') ?: 'mysqli';
-        $connections['Foreign']['charset'] = getenv('foreignDatabaseCharset') ?: null;
-
-        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections'] = $connections;
-
-        if (!$isFirstTest) {
+        if (!$this->isFirstTest) {
             // Reusing an existing instance. This typically happens for the second, third, ... test
             // in a test case, so environment is set up only once per test case.
             GeneralUtility::purgeInstances();
@@ -120,6 +88,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
             }
             $testbase->loadExtensionTables();
         } else {
+            DatabaseSnapshot::initialize(dirname($this->getInstancePath()) . '/functional-sqlite-dbs/', $this->identifier);
             $testbase->removeOldInstanceIfExists($this->instancePath);
             // Basic instance directory structure
             $testbase->createDirectory($this->instancePath . '/fileadmin');
@@ -130,28 +99,76 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
             foreach ($this->additionalFoldersToCreate as $directory) {
                 $testbase->createDirectory($this->instancePath . '/' . $directory);
             }
-            $testbase->setUpInstanceCoreLinks($this->instancePath);
+            $defaultCoreExtensionsToLoad = [
+                'core',
+                'backend',
+                'frontend',
+                'extbase',
+                'install',
+                'fluid',
+            ];
+            $frameworkExtension = [
+                'Resources/Core/Functional/Extensions/json_response',
+                'Resources/Core/Functional/Extensions/private_container',
+            ];
+            $testbase->setUpInstanceCoreLinks($this->instancePath, $defaultCoreExtensionsToLoad, $this->coreExtensionsToLoad);
             $testbase->linkTestExtensionsToInstance($this->instancePath, $this->testExtensionsToLoad);
-            $testbase->linkFrameworkExtensionsToInstance($this->instancePath, $this->frameworkExtensionsToLoad);
+            $testbase->linkFrameworkExtensionsToInstance($this->instancePath, $frameworkExtension);
             $testbase->linkPathsInTestInstance($this->instancePath, $this->pathsToLinkInTestInstance);
             $testbase->providePathsInTestInstance($this->instancePath, $this->pathsToProvideInTestInstance);
 
-            $originalLocalDatabaseName = '';
-            $localDbName = '';
+            $localConfiguration = ['DB' => ['Connections' => []]];
+            $connections = &$localConfiguration['DB']['Connections'];
+            $connections['Default']['dbname'] = 'local';
+            $connections['Default']['host'] = 'mysql';
+            $connections['Default']['user'] = 'root';
+            $connections['Default']['password'] = 'root';
+            $connections['Default']['port'] = 3306;
+            $connections['Default']['unix_socket'] = null;
+            $connections['Default']['driver'] = 'mysqli';
+            $connections['Default']['charset'] = 'utf8mb4';
+
+            $connections['Foreign']['dbname'] = 'foreign';
+            $connections['Foreign']['host'] = 'mysql';
+            $connections['Foreign']['user'] = 'root';
+            $connections['Foreign']['password'] = 'root';
+            $connections['Foreign']['port'] = 3306;
+            $connections['Foreign']['unix_socket'] = null;
+            $connections['Foreign']['driver'] = 'mysqli';
+            $connections['Foreign']['charset'] = 'utf8mb4';
+
+            $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections'] = $connections;
+
+            $originalDatabaseName = '';
+            $dbName = '';
             $dbDriver = $localConfiguration['DB']['Connections']['Default']['driver'];
             if ($dbDriver !== 'pdo_sqlite') {
-                $originalLocalDatabaseName = $localConfiguration['DB']['Connections']['Default']['dbname'];
+                $originalDatabaseName = $localConfiguration['DB']['Connections']['Default']['dbname'];
+                if ($originalDatabaseName !== preg_replace('/[^a-zA-Z0-9_]/', '', $originalDatabaseName)) {
+                    throw new \RuntimeException(
+                        sprintf(
+                            'Database name "%s" is invalid. Use a valid name, for example "%s".',
+                            $originalDatabaseName,
+                            preg_replace('/[^a-zA-Z0-9_]/', '', $originalDatabaseName)
+                        ),
+                        1695139917
+                    );
+                }
                 // Append the unique identifier to the base database name to end up with a single database per test case
-                $localDbName = $originalLocalDatabaseName . '_ft' . $this->identifier;
-                $localConfiguration['DB']['Connections']['Default']['dbname'] = $localDbName;
-                $localConfiguration['DB']['Connections']['Default']['wrapperClass'] = DatabaseConnectionWrapper::class;
-                $testbase->testDatabaseNameIsNotTooLong($originalLocalDatabaseName, $localConfiguration);
+                $dbName = $originalDatabaseName . '_ft' . $this->identifier;
+                $localConfiguration['DB']['Connections']['Default']['dbname'] = $dbName;
+                $testbase->testDatabaseNameIsNotTooLong($originalDatabaseName, $localConfiguration);
+                if ($dbDriver === 'mysqli' || $dbDriver === 'pdo_mysql') {
+                    $localConfiguration['DB']['Connections']['Default']['charset'] = 'utf8mb4';
+                    $localConfiguration['DB']['Connections']['Default']['tableoptions']['charset'] = 'utf8mb4';
+                    $localConfiguration['DB']['Connections']['Default']['tableoptions']['collate'] = 'utf8mb4_unicode_ci';
+                    $localConfiguration['DB']['Connections']['Default']['initCommands'] = 'SET SESSION sql_mode = \'STRICT_ALL_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_VALUE_ON_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ONLY_FULL_GROUP_BY\';';
+                }
 
-                $originalLForeignDatabaseName = $localConfiguration['DB']['Connections']['Foreign']['dbname'];
-                $foreignDbName = $originalLForeignDatabaseName . '_ft' . $this->identifier;
+                $originalForeignDatabaseName = $localConfiguration['DB']['Connections']['Foreign']['dbname'];
+                $foreignDbName = $originalForeignDatabaseName . '_ft' . $this->identifier;
                 $localConfiguration['DB']['Connections']['Foreign']['dbname'] = $foreignDbName;
-                $localConfiguration['DB']['Connections']['Foreign']['wrapperClass'] = DatabaseConnectionWrapper::class;
-                $testbase->testDatabaseNameIsNotTooLong($originalLForeignDatabaseName, $localConfiguration);
+                $testbase->testDatabaseNameIsNotTooLong($originalForeignDatabaseName, $localConfiguration);
                 if ($dbDriver === 'mysqli') {
                     $localConfiguration['DB']['Connections']['Default']['initCommands'] = 'SET SESSION sql_mode = \'STRICT_ALL_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_VALUE_ON_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ONLY_FULL_GROUP_BY\';';
                     $localConfiguration['DB']['Connections']['Foreign']['initCommands'] = 'SET SESSION sql_mode = \'STRICT_ALL_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_VALUE_ON_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ONLY_FULL_GROUP_BY\';';
@@ -166,51 +183,47 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
             // $this->configurationToUseInTestInstance if needed again.
             $localConfiguration['SYS']['displayErrors'] = '1';
             $localConfiguration['SYS']['debugExceptionHandler'] = '';
+            // By setting errorHandler to empty string, only the phpunit error handler is
+            // registered in functional tests, so settings like convertWarningsToExceptions="true"
+            // in FunctionalTests.xml will let tests fail that throw warnings.
+            $localConfiguration['SYS']['errorHandler'] = '';
             $localConfiguration['SYS']['trustedHostsPattern'] = '.*';
             $localConfiguration['SYS']['encryptionKey'] = 'i-am-not-a-secure-encryption-key';
-            $localConfiguration['SYS']['caching']['cacheConfigurations']['extbase_object']['backend'] = NullBackend::class;
             $localConfiguration['GFX']['processor'] = 'GraphicsMagick';
-            $testbase->setUpLocalConfiguration(
-                $this->instancePath,
-                $localConfiguration,
-                $this->configurationToUseInTestInstance,
-            );
-
-            $defaultCoreExtensionsToLoad = [
-                'core',
-                'backend',
-                'frontend',
-                'extbase',
-                'install',
-                'recordlist',
-                'fluid',
-            ];
+            // Set cache backends to null backend instead of database backend let us save time for creating
+            // database schema for it and reduces selects/inserts to the database for cache operations, which
+            // are generally not really needed for functional tests. Specific tests may restore this in if needed.
+            $localConfiguration['SYS']['caching']['cacheConfigurations']['hash']['backend'] = 'TYPO3\\CMS\\Core\\Cache\\Backend\\NullBackend';
+            $localConfiguration['SYS']['caching']['cacheConfigurations']['imagesizes']['backend'] = 'TYPO3\\CMS\\Core\\Cache\\Backend\\NullBackend';
+            $localConfiguration['SYS']['caching']['cacheConfigurations']['pages']['backend'] = 'TYPO3\\CMS\\Core\\Cache\\Backend\\NullBackend';
+            $localConfiguration['SYS']['caching']['cacheConfigurations']['rootline']['backend'] = 'TYPO3\\CMS\\Core\\Cache\\Backend\\NullBackend';
+            $testbase->setUpLocalConfiguration($this->instancePath, $localConfiguration, $this->configurationToUseInTestInstance);
             $testbase->setUpPackageStates(
                 $this->instancePath,
                 $defaultCoreExtensionsToLoad,
                 $this->coreExtensionsToLoad,
                 $this->testExtensionsToLoad,
-                $this->frameworkExtensionsToLoad,
+                $frameworkExtension
             );
             $this->container = $testbase->setUpBasicTypo3Bootstrap($this->instancePath);
             if ($this->initializeDatabase) {
                 if ($dbDriver !== 'pdo_sqlite') {
-                    $testbase->setUpTestDatabase($localDbName, $originalLocalDatabaseName);
-                    $testbase->setUpTestDatabase($foreignDbName, $originalLForeignDatabaseName);
+                    $testbase->setUpTestDatabase($dbName, $originalDatabaseName);
+                    $testbase->setUpTestDatabase($foreignDbName, $originalForeignDatabaseName);
                 } else {
-                    $testbase->setUpTestDatabase($dbPathSqlite, $originalLocalDatabaseName);
-                    $testbase->setUpTestDatabase($dbPathSqlite, $originalLForeignDatabaseName);
+                    $testbase->setUpTestDatabase($dbPathSqlite, $originalDatabaseName);
+                    $testbase->setUpTestDatabase($dbPathSqlite, $originalForeignDatabaseName);
                 }
             }
             if ($this->initializeDatabase) {
                 $foreignBackup = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Foreign'];
                 $defaultBackup = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'];
                 unset($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Foreign']);
-                $testbase->createDatabaseStructure();
+                $testbase->createDatabaseStructure($this->container);
                 $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'] = $foreignBackup;
                 $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
                 $connectionPool->resetConnections();
-                $testbase->createDatabaseStructure();
+                $testbase->createDatabaseStructure($this->container);
                 $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'] = $foreignBackup;
                 $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Foreign'] = $defaultBackup;
                 $connectionPool->resetConnections();
@@ -220,10 +233,9 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
                 $reflection->setAccessible(true);
                 $reflection->setValue(DatabaseUtility::class, $foreignConnection);
 
-                $testbase->createDatabaseStructure();
                 if ($dbDriver === 'pdo_sqlite') {
                     // Copy sqlite file '/path/functional-sqlite-dbs/test_123.sqlite' to
-                    // '/path/functional-sqlite-dbs/test_123.empty.sqlite'. This is re-used for consequtive tests.
+                    // '/path/functional-sqlite-dbs/test_123.empty.sqlite'. This is re-used for consecutive tests.
                     copy($dbPathSqlite, $dbPathSqliteEmpty);
                 }
             }
@@ -237,14 +249,6 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
             'admin' => 1,
         ];
         $GLOBALS['BE_USER'] = $backendUserAuthentication;
-    }
-
-    protected function getContainer(): ContainerInterface
-    {
-        if (!$this->container instanceof ContainerInterface) {
-            throw new RuntimeException('Please invoke parent::setUp() before calling getContainer().', 1589221777);
-        }
-        return $this->container;
     }
 
     /**

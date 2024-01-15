@@ -108,7 +108,7 @@ fileadmin-restore:
 	rsync -a --delete .project/data/fileadmin/foreign/ Build/foreign/public/fileadmin/
 
 acceptance:
-	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.xml
+	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml
 
 ## Create dumps of local and foreign database in dir .project/data/dumps
 dump-dbs: dump-local-database dump-foreign-database
@@ -120,3 +120,6 @@ dump-local-database: .mysql-wait
 dump-foreign-database: .mysql-wait
 	echo "$(EMOJI_robot) Dumping the foreign database"
 	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+
+unit:
+	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml

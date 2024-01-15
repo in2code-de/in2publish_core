@@ -94,7 +94,7 @@ call_user_func(function () {
     GeneralUtility::setSingletonInstance(PackageManager::class, $packageManager);
     ExtensionManagementUtility::setPackageManager($packageManager);
 
-    $testbase->dumpClassLoadingInformation();
+//    $testbase->dumpClassLoadingInformation();
 
     GeneralUtility::purgeInstances();
 

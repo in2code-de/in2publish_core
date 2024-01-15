@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Command\Foreign\Status;
 
-use Doctrine\DBAL\ForwardCompatibility\Result;
+use Doctrine\DBAL\Result;
 use In2code\In2publishCore\Command\Foreign\Status\DbConfigTestCommand;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;

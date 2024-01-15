@@ -51,8 +51,17 @@ jobs:
       - name: Show me what's up 2
         run: docker compose ps
 
+      - name: Unit Tests
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
+        if: always()
+
+      - name: Functional Tests
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
+        if: always()
+
       - name: Acceptance Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.xml --testdox
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
+        if: always()
 
       - name: Show me what's up 3
         run: docker compose ps
