@@ -26,9 +26,9 @@ services:
       dockerfile: Dockerfile
       target: base
       args:
-        USER_ID: ${USER_ID}
-        GROUP_ID: ${GROUP_ID}
-    user: ${USER_ID}
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    user: ${USER_ID:-1000}
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
@@ -69,8 +69,8 @@ services:
       dockerfile: Dockerfile
       target: base
       args:
-        USER_ID: ${USER_ID}
-        GROUP_ID: ${GROUP_ID}
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
