@@ -175,6 +175,9 @@ class Dependency
 
     public function canBeFulfilledBy(Record $record): bool
     {
+        if ($this->selectedRecords->isEmpty()) {
+            return false;
+        }
         foreach ($this->selectedRecords as $selectedRecord) {
             if (
                 $record !== $selectedRecord
