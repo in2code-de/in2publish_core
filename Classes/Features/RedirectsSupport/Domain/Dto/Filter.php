@@ -40,6 +40,7 @@ class Filter
     protected ?string $target;
     protected ?int $code;
     protected ?string $association;
+    protected ?string $publishable;
 
     public function getDomain(): ?string
     {
@@ -89,6 +90,16 @@ class Filter
     public function setAssociation(?string $association): void
     {
         $this->association = $association ?: null;
+    }
+
+    public function getPublishable(): ?string
+    {
+        return $this->publishable;
+    }
+
+    public function setPublishable(?string $publishable): void
+    {
+        $this->publishable = $publishable;
     }
 
     /**

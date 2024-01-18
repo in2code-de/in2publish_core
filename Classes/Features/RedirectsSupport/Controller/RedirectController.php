@@ -44,6 +44,7 @@ use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\BackButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
+use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirectDatabaseRecord;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
 use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use Psr\Http\Message\ResponseInterface;
@@ -147,7 +148,7 @@ class RedirectController extends ActionController
         $recordCollection = new RecordCollection();
         $this->demandResolver->resolveDemand($demands, $recordCollection);
 
-        $redirects = $recordTree->getChildren()['sys_redirect'] ?? [];
+        $redirects = $this->getRedirectsByStateFromFilter($recordTree, $filter);
         $paginator = new ArrayPaginator($redirects, $page, 15);
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple(
@@ -240,5 +241,26 @@ class RedirectController extends ActionController
         $buttonBar->addButton(new SaveAndPublishButton($this->iconFactory));
 
         return $this->htmlResponse();
+    }
+
+    protected function getRedirectsByStateFromFilter(RecordTree $recordTree, Filter $filter = null): array
+    {
+        $redirects = $recordTree->getChildren()['sys_redirect'] ?? [];
+
+        if ($filter === null || $filter->getPublishable() === 'missing') {
+            return $redirects;
+        }
+        if ($filter->getPublishable() === 'is_publishable') {
+            $redirects = array_filter($redirects, static function (SysRedirectDatabaseRecord $redirect) {
+                return $redirect->getPublishingState() !== 'unchanged';
+            });
+        }
+        if ($filter->getPublishable() === 'is_not_publishable') {
+            $redirects = array_filter($redirects, static function (SysRedirectDatabaseRecord $redirect) {
+                return $redirect->getPublishingState() === 'unchanged';
+            });
+        }
+
+        return $redirects;
     }
 }
