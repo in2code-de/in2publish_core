@@ -40,36 +40,6 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
-.prepare:
-	mkdir -p $$HOME/.composer/cache
-	[ -f $$HOME/.composer/auth.json ] || echo "{}" > $$HOME/.composer/auth.json
-	mkdir -p $$HOME/.phive
-
-.prepare-tests:
-	if [[ ! -d .Build ]]; then ./Build/Scripts/runTests.sh -s composerInstall; fi
-
-## Initialize the project and install phive and composer dependencies
-install: .prepare
-	chmod +x .project/githooks/*
-	git config core.hooksPath .project/githooks/
-	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.phive:/tmp/phive in2code/php:7.4-fpm phive install --force-accept-unsigned
-	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.composer/cache:/tmp/composer/cache -v $$HOME/.composer/auth.json:/tmp/composer/auth.json in2code/php:7.4-fpm composer install
-
-## Run grumphp which will run all code quality tools concurrently
-qa-code-quality:
-	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.phive:/tmp/phive in2code/php:7.4-fpm bash -c "PATH=\"$$PWD/.project/phars:\$$PATH\" .project/phars/grumphp -c .project/qa/grumphp.yml run"
-
-## Run all automated tests in the in2publish_core test suite
-qa-tests: .prepare-tests qa-tests-unit qa-tests-functional
-
-## Run all unit tests
-qa-tests-unit:
-	./Build/Scripts/runTests.sh
-
-## Run all functional tests
-qa-tests-functional:
-	./Build/Scripts/runTests.sh -s functional
-
 stop :
 	docker compose stop
 	docker compose down
@@ -107,9 +77,6 @@ fileadmin-restore:
 	rsync -a --delete .project/data/fileadmin/local/ Build/local/public/fileadmin/
 	rsync -a --delete .project/data/fileadmin/foreign/ Build/foreign/public/fileadmin/
 
-acceptance:
-	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml
-
 ## Create dumps of local and foreign database in dir .project/data/dumps
 dump-dbs: dump-local-database dump-foreign-database
 
@@ -123,3 +90,9 @@ dump-foreign-database: .mysql-wait
 
 unit:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml
+
+functional:
+	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.functional.xml
+
+acceptance:
+	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml
