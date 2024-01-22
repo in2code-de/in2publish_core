@@ -45,23 +45,7 @@ class InlineProcessor extends AbstractProcessor
             $selectField = ($processedTca['MM_opposite_field'] ?? '') ? 'uid_foreign' : 'uid_local';
             $mmTable = $processedTca['MM'];
 
-            $foreignMatchFields = [];
-            foreach ($processedTca['MM_match_fields'] ?? [] as $matchField => $matchValue) {
-                if ((string)(int)$matchValue === (string)$matchValue) {
-                    $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
-                } else {
-                    $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';
-                }
-            }
-            $additionalWhere = implode(' AND ', $foreignMatchFields);
-            $additionalWhere = trim($additionalWhere);
-            if (str_starts_with($additionalWhere, 'AND ')) {
-                $additionalWhere = trim(substr($additionalWhere, 4));
-            }
-            $additionalWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($additionalWhere);
-            if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
-                $additionalWhere = $matches['where'];
-            }
+            $additionalWhere = $this->processMmMatchFields($processedTca);
 
             /** @var StaticJoinResolver $resolver */
             $resolver = $this->container->get(StaticJoinResolver::class);
@@ -69,16 +53,7 @@ class InlineProcessor extends AbstractProcessor
             return $resolver;
         }
 
-        $foreignMatchFields = [];
-        foreach ($processedTca['foreign_match_fields'] ?? [] as $matchField => $matchValue) {
-            if ((string)(int)$matchValue === (string)$matchValue) {
-                $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
-            } else {
-                $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';
-            }
-        }
-        $additionalWhere = implode(' AND ', $foreignMatchFields);
-        $additionalWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($additionalWhere);
+        $additionalWhere = $this->processForeignMatchFields($processedTca);
 
         if (null === $foreignField) {
             /** @var InlineMultiValueResolver $resolver */
@@ -100,5 +75,41 @@ class InlineProcessor extends AbstractProcessor
             $additionalWhere,
         );
         return $resolver;
+    }
+
+    public function processMmMatchFields(array $processedTca): string
+    {
+        $foreignMatchFields = [];
+        foreach ($processedTca['MM_match_fields'] ?? [] as $matchField => $matchValue) {
+            if ((string)(int)$matchValue === (string)$matchValue) {
+                $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
+            } else {
+                $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';
+            }
+        }
+        $additionalWhere = implode(' AND ', $foreignMatchFields);
+        $additionalWhere = trim($additionalWhere);
+        if (str_starts_with($additionalWhere, 'AND ')) {
+            $additionalWhere = trim(substr($additionalWhere, 4));
+        }
+        $additionalWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($additionalWhere);
+        if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
+            $additionalWhere = $matches['where'];
+        }
+        return $additionalWhere;
+    }
+
+    protected function processForeignMatchFields(array $processedTca): string
+    {
+        $foreignMatchFields = [];
+        foreach ($processedTca['foreign_match_fields'] ?? [] as $matchField => $matchValue) {
+            if ((string)(int)$matchValue === (string)$matchValue) {
+                $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
+            } else {
+                $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';
+            }
+        }
+        $additionalWhere = implode(' AND ', $foreignMatchFields);
+        return $this->tcaEscapingMarkerService->escapeMarkedIdentifier($additionalWhere);
     }
 }

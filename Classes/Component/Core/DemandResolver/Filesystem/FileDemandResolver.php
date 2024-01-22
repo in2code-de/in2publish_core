@@ -28,12 +28,7 @@ class FileDemandResolver implements DemandResolver
             return;
         }
 
-        $filesArray = [];
-        foreach ($files as $storage => $identifiers) {
-            foreach (array_keys($identifiers) as $identifier) {
-                $filesArray[$storage][] = $identifier;
-            }
-        }
+        $filesArray = $this->groupFilesByStorage($files);
 
         $localDriverInfo = $this->localFileInfoService->getFileInfo($filesArray);
         $localFileInfo = $this->addFileInfoToDriverInfo($files, $localDriverInfo);
@@ -57,11 +52,22 @@ class FileDemandResolver implements DemandResolver
         }
     }
 
+    protected function groupFilesByStorage(array $files): array
+    {
+        $filesArray = [];
+        foreach ($files as $storage => $identifiers) {
+            foreach (array_keys($identifiers) as $identifier) {
+                $filesArray[$storage][] = $identifier;
+            }
+        }
+        return $filesArray;
+    }
+
     protected function addFileInfoToDriverInfo(array $files, FilesystemInformationCollection $driverInfo): array
     {
         $result = [];
         foreach ($files as $storage => $identifiers) {
-            foreach ($identifiers as $identifier => $parentRecords) {
+            foreach (array_keys($identifiers) as $identifier) {
                 $fileInfo = $driverInfo->getInfo($storage, $identifier);
                 $result[$storage][$identifier] = $fileInfo->toArray();
             }

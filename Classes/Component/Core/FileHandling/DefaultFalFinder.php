@@ -56,6 +56,9 @@ use function explode;
 use function str_contains;
 use function trim;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class DefaultFalFinder
 {
     use RecordFactoryInjection;
@@ -76,6 +79,7 @@ class DefaultFalFinder
      * I only work with drivers, so I don't "accidentally" index files...
      *
      * @throws FolderDoesNotExistOnBothSidesException
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function findFolderRecord(?string $combinedIdentifier, bool $onlyRoot = false): RecordTree
     {

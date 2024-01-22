@@ -158,7 +158,7 @@ class FlexProcessorTest extends UnitTestCase
 
         $compatibleTcaParts = [];
         $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['select.fooBar']['resolver'] =
-            new class($called, $databaseRecord) implements Resolver {
+            new class ($called, $databaseRecord) implements Resolver {
                 protected array $called;
                 protected DatabaseRecord $databaseRecord;
 
@@ -182,7 +182,7 @@ class FlexProcessorTest extends UnitTestCase
                 }
             };
         $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] =
-            new class($called, $databaseRecord) implements Resolver {
+            new class ($called, $databaseRecord) implements Resolver {
                 protected array $called;
                 protected DatabaseRecord $databaseRecord;
 

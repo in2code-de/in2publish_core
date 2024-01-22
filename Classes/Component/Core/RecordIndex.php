@@ -64,6 +64,13 @@ class RecordIndex
     public function connectTranslations(): void
     {
         $classifications = $this->records->getClassifications();
+        $classifications = $this->removeClassificationsWithoutTranslations($classifications);
+        $this->changeTranslationRelationsFromChildToTranslation($classifications);
+        $this->moveTranslatedContentFromPageToTranslatedPage($classifications);
+    }
+
+    protected function removeClassificationsWithoutTranslations(array $classifications): array
+    {
         foreach ($classifications as $idx => $classification) {
             if (
                 !isset($GLOBALS['TCA'][$classification])
@@ -73,8 +80,14 @@ class RecordIndex
                 unset($classifications[$idx]);
             }
         }
+        return $classifications;
+    }
 
-        // Connect all translated records to their language parent
+    /**
+     * Connect all translated records to their language parent
+     */
+    protected function changeTranslationRelationsFromChildToTranslation(array $classifications): void
+    {
         foreach ($classifications as $classification) {
             $transOrigPointerField = $GLOBALS['TCA'][$classification]['ctrl']['transOrigPointerField'];
             $records = $this->records->getRecords($classification);
@@ -94,12 +107,17 @@ class RecordIndex
                 }
             }
         }
+    }
 
-        $pagesKey = array_search('pages', $classifications);
-        if (false !== $pagesKey) {
-            unset($classifications[$pagesKey]);
-        }
-        // Move translated records from the default-language-page children to the translated-page children
+    /**
+     * Move translated records from the default-language-page children to the translated-page children
+     */
+    protected function moveTranslatedContentFromPageToTranslatedPage(array $classifications): void
+    {
+        // We only move content to translated pages, not pages themselves.
+        // They were connected in changeTranslationRelationsFromChildToTranslation.
+        $classifications = $this->removePagesFromClassifications($classifications);
+
         $pages = $this->records->getRecords('pages');
         foreach ($pages as $page) {
             /** @var Record[][] $children */
@@ -120,6 +138,15 @@ class RecordIndex
                 }
             }
         }
+    }
+
+    protected function removePagesFromClassifications(array $classifications): array
+    {
+        $pagesKey = array_search('pages', $classifications);
+        if (false !== $pagesKey) {
+            unset($classifications[$pagesKey]);
+        }
+        return $classifications;
     }
 
     public function processDependencies(RecordTreeBuildRequest $request): void

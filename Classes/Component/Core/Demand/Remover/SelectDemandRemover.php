@@ -6,6 +6,8 @@ namespace In2code\In2publishCore\Component\Core\Demand\Remover;
 
 use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 
+use function array_keys;
+
 class SelectDemandRemover implements DemandRemover
 {
     private string $from;
@@ -31,7 +33,7 @@ class SelectDemandRemover implements DemandRemover
     public function removeFromDemandsArray(array &$demands): void
     {
         foreach ($demands[$this->from] ?? [] as $additionalWhere => $properties) {
-            foreach ($properties as $property => $values) {
+            foreach (array_keys($properties) as $property) {
                 if ($property === $this->field) {
                     unset($demands[$this->from][$additionalWhere][$property][$this->search]);
                 }

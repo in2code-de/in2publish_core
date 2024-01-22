@@ -43,7 +43,7 @@ class TtContentDatabaseRecord extends DatabaseRecord
                 ['uid' => $id],
                 Dependency::REQ_FULL_PUBLISHED,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.shortcut_record',
-                fn(Record $record): array => [
+                fn (Record $record): array => [
                     $record->__toString() ?: "{$record->getClassification()} [{$record->getId()}]",
                     $this->__toString() ?: "{$this->getClassification()} [{$this->getId()}]",
                 ],

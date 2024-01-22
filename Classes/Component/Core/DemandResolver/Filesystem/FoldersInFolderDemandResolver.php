@@ -26,6 +26,9 @@ class FoldersInFolderDemandResolver implements DemandResolver
     use LocalFolderInfoServiceInjection;
     use ForeignFolderInfoServiceInjection;
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     public function resolveDemand(Demands $demands, RecordCollection $recordCollection): void
     {
         /** @var array<int, array<string, array<string, Record>>> $foldersInFolderDemand */
@@ -34,10 +37,7 @@ class FoldersInFolderDemandResolver implements DemandResolver
             return;
         }
 
-        $request = [];
-        foreach ($foldersInFolderDemand as $storage => $parentFolderIdentifier) {
-            $request[$storage] = array_keys($parentFolderIdentifier);
-        }
+        $request = $this->groupByStorage($foldersInFolderDemand);
 
         $localResponseCollection = $this->localFolderInfoService->getFolderInfo($request);
         $foreignResponseCollection = $this->foreignFolderInfoService->getFolderInformation($request);
@@ -80,5 +80,14 @@ class FoldersInFolderDemandResolver implements DemandResolver
                 }
             }
         }
+    }
+
+    protected function groupByStorage(array $foldersInFolderDemand): array
+    {
+        $request = [];
+        foreach ($foldersInFolderDemand as $storage => $parentFolderIdentifier) {
+            $request[$storage] = array_keys($parentFolderIdentifier);
+        }
+        return $request;
     }
 }

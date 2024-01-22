@@ -85,7 +85,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
 
         $systemLanguages = array_filter(
             $this->translationConfigurationProvider->getSystemLanguages(),
-            fn(array $languageRecord): bool => $this->backendUser->checkLanguageAccess($languageRecord['uid']),
+            fn (array $languageRecord): bool => $this->backendUser->checkLanguageAccess($languageRecord['uid']),
         );
 
         $propsBySide = $record->getPropsBySide($this->arguments['side']);

@@ -86,7 +86,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 ['uid' => $transOrigPointer],
                 Dependency::REQ_EXISTING,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.existing',
-                fn(Record $record): array => [
+                fn (Record $record): array => [
                     $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
                 ],
@@ -100,7 +100,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                     ['uid' => $transOrigPointer],
                     Dependency::REQ_ENABLECOLUMNS,
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.enablecolumns',
-                    fn(Record $record): array => [
+                    fn (Record $record): array => [
                         $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                         implode(', ', $enableFieldLabels),
                         $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
@@ -121,7 +121,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 ['uid' => $pid],
                 Dependency::REQ_EXISTING,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_published_page.existing',
-                fn(Record $record): array => [
+                fn (Record $record): array => [
                     $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
                 ],
@@ -138,7 +138,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 ['uid' => $pid],
                 Dependency::REQ_ENABLECOLUMNS,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_published_page.enablecolumns',
-                fn(Record $record): array => [
+                fn (Record $record): array => [
                     $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
                     implode(', ', $enableFieldLabels),

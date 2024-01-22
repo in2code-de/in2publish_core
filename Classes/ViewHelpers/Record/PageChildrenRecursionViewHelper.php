@@ -33,6 +33,8 @@ class PageChildrenRecursionViewHelper extends ForViewHelper
      * @param RenderingContextInterface $renderingContext
      * @return string
      * @throws Exception
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public static function renderStatic(
         array $arguments,

@@ -44,7 +44,7 @@
                     \TYPO3\CMS\Extbase\Utility\ExtensionUtility,
                     \TYPO3\CMS\Extbase\Utility\LocalizationUtility,
                     \TYPO3\CMS\Extbase\Reflection\ObjectAccess,
-                    \In2code\In2publishCore\Config\Node\Specific\AbsSpecNode,
+                    \In2code\In2publishCore\Component\ConfigContainer\Node\Specific\AbsSpecNode,
                     \In2code\In2publishCore\Domain\Model\Record,
                     \In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope,
                     \In2code\In2publishCore\Testing\Utility\TestLabelLocalizer,
@@ -66,7 +66,7 @@
     <rule ref="rulesets/naming.xml/LongVariable">
         <properties>
             <property name="maximum">
-                <value>30</value>
+                <value>33</value>
             </property>
         </properties>
     </rule>

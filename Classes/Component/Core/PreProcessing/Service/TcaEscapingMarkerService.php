@@ -17,7 +17,7 @@ class TcaEscapingMarkerService
         if (str_contains($sql, '{#')) {
             $sql = preg_replace_callback(
                 '/{#(?P<identifier>[^}]+)}/',
-                fn(array $matches) => $this->localDatabase->quoteIdentifier($matches['identifier']),
+                fn (array $matches) => $this->localDatabase->quoteIdentifier($matches['identifier']),
                 $sql,
             );
         }

@@ -33,10 +33,7 @@ class FolderDemandResolver implements DemandResolver
             return;
         }
 
-        $request = [];
-        foreach ($folderDemands as $storage => $folderIdentifiers) {
-            $request[$storage] = array_keys($folderIdentifiers);
-        }
+        $request = $this->groupByStorage($folderDemands);
 
         $localResponseCollection = $this->localFolderInfoService->getFolderInfo($request);
         $foreignResponseCollection = $this->foreignFolderInfoService->getFolderInformation($request);
@@ -68,5 +65,14 @@ class FolderDemandResolver implements DemandResolver
                 }
             }
         }
+    }
+
+    protected function groupByStorage(array $folderDemands): array
+    {
+        $request = [];
+        foreach ($folderDemands as $storage => $folderIdentifiers) {
+            $request[$storage] = array_keys($folderIdentifiers);
+        }
+        return $request;
     }
 }

@@ -80,7 +80,7 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
                 unset($query['caller']);
                 $queriesByCaller[$caller][] = $query;
             }
-            uksort($queriesByCaller, static fn($a, $b) => count($queriesByCaller[$b]) - count($queriesByCaller[$a]));
+            uksort($queriesByCaller, static fn ($a, $b) => count($queriesByCaller[$b]) - count($queriesByCaller[$a]));
 
             foreach ($queriesByCaller as $caller => $callerQueries) {
                 $times = array_column($callerQueries, 'executionNS');

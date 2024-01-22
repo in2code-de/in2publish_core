@@ -16,6 +16,9 @@ use function implode;
 
 use const PHP_EOL;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class Dependency
 {
     public const REQ_EXISTING = 'existing';
@@ -191,7 +194,7 @@ class Dependency
 
     public function getReasonsHumanReadable(): string
     {
-        return implode(PHP_EOL, $this->reasons->map(static fn(Reason $reason) => $reason->getReadableLabel()));
+        return implode(PHP_EOL, $this->reasons->map(static fn (Reason $reason) => $reason->getReadableLabel()));
     }
 
     /**

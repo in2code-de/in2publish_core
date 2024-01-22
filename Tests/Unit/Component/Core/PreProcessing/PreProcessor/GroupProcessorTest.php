@@ -268,7 +268,8 @@ class GroupProcessorTest extends UnitTestCase
         $groupResolver = $this->createMock(GroupMmMultiTableResolver::class);
         $groupResolver->expects($this->once())
                       ->method('configure')
-                      ->with(['table_bar', 'table_foo'],
+                      ->with(
+                          ['table_bar', 'table_foo'],
                           'mmTable',
                           'field_bar',
                           'uid_local',

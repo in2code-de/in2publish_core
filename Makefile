@@ -100,7 +100,16 @@ acceptance:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml
 
 qa-php-cs-fixer:
-	docker run --rm -it -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/php-cs-fixer check --config=.project/qa/php-cs-fixer.php --diff
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/php-cs-fixer check --config=.project/qa/php-cs-fixer.php --diff
 
 fix-php-cs-fixer:
-	docker run --rm -it -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/php-cs-fixer fix --config=.project/qa/php-cs-fixer.php --diff
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/php-cs-fixer fix --config=.project/qa/php-cs-fixer.php --diff
+
+qa-php-code-sniffer:
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/phpcs --basepath="$$PWD" --standard=.project/qa/phpcs.xml
+
+fix-php-code-sniffer:
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/phpcbf --basepath="$$PWD" --standard=.project/qa/phpcs.xml
+
+qa-php-mess-detector:
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/phpmd Classes ansi .project/qa/phpmd.xml

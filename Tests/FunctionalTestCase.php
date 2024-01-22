@@ -19,7 +19,6 @@ use TYPO3\TestingFramework\Core\Testbase;
 use function defined;
 use function ob_end_clean;
 use function register_shutdown_function;
-
 use function spl_autoload_functions;
 
 use const ORIGINAL_ROOT;
