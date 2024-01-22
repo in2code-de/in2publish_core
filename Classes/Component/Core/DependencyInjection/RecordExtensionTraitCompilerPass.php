@@ -44,7 +44,7 @@ class RecordExtensionTraitCompilerPass implements CompilerPassInterface
 
         $recordExtensionTraitCode = file_get_contents(__DIR__ . '/../Record/Model/Extension/RecordExtensionTrait.php');
         $compiledRecordExtensionTraitCode = str_replace(
-            '###USES###',
+            '//###USES###',
             rtrim(ltrim($recordExtensionCode, ' '), PHP_EOL),
             $recordExtensionTraitCode,
         );

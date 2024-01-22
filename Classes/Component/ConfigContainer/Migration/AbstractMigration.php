@@ -31,7 +31,8 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Migration;
 
 use function array_key_exists;
 use function sha1;
-use function user_error;
+use function sprintf;
+use function trigger_error;
 
 /**
  * @deprecated Use the MigrationMessages trait instead. This class will be remove in in2publish_core v13.
@@ -57,6 +58,6 @@ abstract class AbstractMigration implements MigrationInterface
 
     public function __destruct()
     {
-        user_error(sprintf(self::DEPRECATION_MESSAGE, static::class, self::class));
+        trigger_error(sprintf(self::DEPRECATION_MESSAGE, static::class, self::class));
     }
 }

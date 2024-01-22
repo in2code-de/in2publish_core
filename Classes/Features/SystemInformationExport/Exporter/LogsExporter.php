@@ -32,9 +32,9 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use JsonException;
 
+use function date;
 use function json_decode;
 use function sprintf;
-use function date;
 use function substr;
 
 use const JSON_THROW_ON_ERROR;

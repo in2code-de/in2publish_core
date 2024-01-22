@@ -39,7 +39,7 @@ class AdminToolButton extends LinkButton
     protected $showLabelText = true;
 
     protected $defaultClasses = [
-        'btn','btn-default'
+        'btn', 'btn-default',
     ];
 
     public function isValid(): bool
@@ -88,5 +88,4 @@ class AdminToolButton extends LinkButton
             $this->defaultClasses[$index] = 'btn-primary';
         }
     }
-
 }

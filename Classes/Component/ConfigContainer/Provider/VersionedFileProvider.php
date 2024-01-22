@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
 
 use In2code\In2publishCore\Component\ConfigContainer\Cache\EarlyCacheInjection;
 use In2code\In2publishCore\Service\Extension\ExtensionServiceInjection;
-use Spyc;
 use Symfony\Component\Yaml\Parser;
 
 use function explode;

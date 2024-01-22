@@ -18,5 +18,4 @@ trait ForeignFileInfoServiceInjection
     {
         $this->foreignFileInfoService = $foreignFileInfoService;
     }
-
 }

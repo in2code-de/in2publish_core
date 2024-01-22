@@ -34,7 +34,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function sprintf;
-use function user_error;
+use function trigger_error;
 
 use const E_USER_DEPRECATED;
 
@@ -63,7 +63,7 @@ class DynamicValueProviderRegistry implements SingletonInterface
      */
     public function registerDynamicValue(string $key, string $class): void
     {
-        user_error(sprintf(self::DEPRECATED_MANUAL_REGISTRATION, $class, $key), E_USER_DEPRECATED);
+        trigger_error(sprintf(self::DEPRECATED_MANUAL_REGISTRATION, $class, $key), E_USER_DEPRECATED);
         if (!isset($this->providers[$key])) {
             $this->providers[$key] = GeneralUtility::makeInstance($class);
         }
