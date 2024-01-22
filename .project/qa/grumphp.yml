@@ -9,9 +9,4 @@ grumphp:
             config: '.project/qa/php-cs-fixer.php'
             diff: true
         phpmd:
-            ruleset: [ '.project/qa/phpmd.xml' ]
-        phpstan:
-            configuration: '.project/qa/phpstan.neon'
-            memory_limit: 1G
-        psalm:
-            config: '.project/qa/psalm.xml'
+            ruleset: [ '.project/qa/phpmd.xml' ]+

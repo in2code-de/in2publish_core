@@ -61,13 +61,11 @@ class PageChildrenRecursionViewHelper extends ForViewHelper
             }
             $arguments['each'] = array_reverse($arguments['each'], true);
         }
-        if (isset($arguments['iteration'])) {
-            $iterationData = [
-                'index' => 0,
-                'cycle' => 1,
-                'total' => count($arguments['each']),
-            ];
-        }
+        $iterationData = [
+            'index' => 0,
+            'cycle' => 1,
+            'total' => count($arguments['each']),
+        ];
 
         $output = '';
         foreach ($arguments['each'] as $keyValue => $singleElement) {
