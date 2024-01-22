@@ -99,6 +99,11 @@ functional:
 acceptance:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml
 
+setup-qa:
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm phive install
+
+qa: qa-php-cs-fixer qa-php-code-sniffer qa-php-mess-detector
+
 qa-php-cs-fixer:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/php-cs-fixer check --config=.project/qa/php-cs-fixer.php --diff
 
