@@ -22,4 +22,6 @@ call_user_func(function () {
     $testbase->defineOriginalRootPath();
     $testbase->createDirectory(ORIGINAL_ROOT . 'typo3temp/var/tests');
     $testbase->createDirectory(ORIGINAL_ROOT . 'typo3temp/var/transient');
+
+    $GLOBALS['EXEC_TIME'] = time();
 });
