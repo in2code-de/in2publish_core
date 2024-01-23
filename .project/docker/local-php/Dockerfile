@@ -7,7 +7,10 @@ USER root
 
 RUN usermod -u $USER_ID app \
     && groupmod -g $GROUP_ID app \
-    && mkdir -m 700 -p /home/app/.ssh/
+    && mkdir -m 700 -p /home/app/.ssh/ \
+    && curl -fsSL https://get.docker.com | sh \
+    && usermod -aG docker app \
+    && usermod -aG systemd-journal app
 COPY id_ed25519 id_ed25519.pub /home/app/.ssh/
 RUN chmod 400 /home/app/.ssh/id* \
     && chown -R $USER_ID:$GROUP_ID /home/app/

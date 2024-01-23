@@ -52,6 +52,8 @@ setup: stop start .mysql-wait
 	docker exec -u1000 in2publish_core-foreign-php-1 composer i
 	docker compose exec local-php vendor/bin/typo3 install:setup --force
 	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+	git checkout Build/local/config/sites/main/config.yaml
+	git checkout Build/foreign/config/sites/main/config.yaml
 	make restore
 
 ## Wait for the mysql container to be fully provisioned
