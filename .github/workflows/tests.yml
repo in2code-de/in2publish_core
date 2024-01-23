@@ -27,6 +27,15 @@ jobs:
       - name: Show me what's up
         run: docker compose ps
 
+      - name: Show me what's defined
+        run: printenv
+
+      - name: Show me what's there
+        run: ls -la
+
+      - name: Show me what's docker
+        run: ls -la /var/run/docker.sock
+
       - name: Composer Local
         run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install
 
