@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Add local env vars
-        run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env;
+        run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env; echo "HOST_PWD=$(pwd)" >> .env;
 
       - name: Docker Compose
         run: docker compose up -d
@@ -74,6 +74,10 @@ jobs:
 
       - name: Show me what's up 3
         run: docker compose ps
+        if: always()
+
+      - name: Show me what's logged
+        run: docker compose logs
         if: always()
 
       - name: Shut down to finish video recording
