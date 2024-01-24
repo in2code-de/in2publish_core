@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Add local env vars
-        run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env; echo "HOST_PWD=$(pwd)" >> .env;
+        run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env; echo "HOST_PWD=$(pwd)" >> .env; cat .env
 
       - name: Docker Compose
         run: docker compose up -d
@@ -29,6 +29,9 @@ jobs:
 
       - name: Show me what's defined
         run: printenv
+
+      - name: Show me what's defined inside
+        run: docker compose exec local-php printenv
 
       - name: Show me what's there
         run: ls -la

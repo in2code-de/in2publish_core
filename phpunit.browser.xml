@@ -32,6 +32,7 @@
             <parameter name="path" value="$HOST_PWD/.project/artifacts/{testClass}/{testMethod}/{seed}"/>
             <parameter name="file" value="{browser-container-name}.mp4"/>
             <parameter name="browser-container-name" value="selenium-node-firefox"/>
+            <parameter name="logs" value=".project/artifacts/logs/firefox-recorder.log"/>
         </bootstrap>
         <bootstrap class="CoStack\StackTest\Extensions\Screencast\Screencast">
             <parameter name="network" value="in2publish_core_default"/>
@@ -39,6 +40,7 @@
             <parameter name="path" value="$HOST_PWD/.project/artifacts/{testClass}/{testMethod}/{seed}"/>
             <parameter name="file" value="{browser-container-name}.mp4"/>
             <parameter name="browser-container-name" value="selenium-node-chrome"/>
+            <parameter name="logs" value=".project/artifacts/logs/chrome-recorder.log"/>
         </bootstrap>
     </extensions>
 </phpunit>
