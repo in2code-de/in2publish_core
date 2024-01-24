@@ -84,7 +84,7 @@ services:
       IN2PUBLISH_CONTEXT: Foreign
       TYPO3_INSTALL_DB_DBNAME: foreign
       TYPO3_INSTALL_SITE_NAME: "[FOREIGN] CP TYPO3 v12"
-      TYPO3_INSTALL_SITE_BASE_URL: "foreign.v12.in2publish-core.de"
+      TYPO3_INSTALL_SITE_BASE_URL: ${HOST_FOREIGN}
     working_dir: /app/Build/foreign/
 
   mysql:
