@@ -1,0 +1,11 @@
+/*/config/*
+!/*/config/sites
+!/*/config/system
+/*/config/system/*
+!/*/config/system/additional.php
+!/*/config/in2publish_core
+/*/public/*
+!/*/public/.gitkeep
+/*/var
+/*/vendor
+!/*/composer.json

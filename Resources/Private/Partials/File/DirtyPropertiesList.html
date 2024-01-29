@@ -1,23 +1,15 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
-	  xmlns:condition="http://typo3.org/ns/In2code/In2publish/ViewHelpers/Condition"
 	  data-namespace-typo3-fluid="true"
 >
-	<f:if condition="{condition:IsUserAllowedToPublish()}">
+	<f:if condition="{record.stateRecursive} !== 'unchanged'">
 		<f:then>
-			<f:if condition="{record.stateRecursive} !== 'unchanged'">
+			<f:if condition="{record.reasonsWhyTheRecordIsNotPublishable.empty}">
 				<f:then>
-					<f:if condition="{record.reasonsWhyTheRecordIsNotPublishable.empty}">
-						<f:then>
-							<f:render section="DirtyPropertiesRowWithId" arguments="{_all}" />
-						</f:then>
-						<f:else>
-							<f:render section="DirtyPropertiesTableBodyWrapper" arguments="{_all}" />
-						</f:else>
-					</f:if>
+					<f:render section="DirtyPropertiesRowWithId" arguments="{_all}" />
 				</f:then>
 				<f:else>
-					<f:render section="DirtyPropertiesRowWithId" arguments="{_all}" />
+					<f:render section="DirtyPropertiesTableBodyWrapper" arguments="{_all}" />
 				</f:else>
 			</f:if>
 		</f:then>
