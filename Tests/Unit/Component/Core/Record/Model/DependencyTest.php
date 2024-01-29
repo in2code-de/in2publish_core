@@ -261,7 +261,8 @@ class DependencyTest extends UnitTestCase
         $dependency3->method('isFulfilled')->willReturn(false);
 
         $fulfilledSupersedingDependencies = new ReflectionProperty(
-            $dependencyWithFulfilledDependencies, 'supersededBy',
+            $dependencyWithFulfilledDependencies,
+            'supersededBy',
         );
         $fulfilledSupersedingDependencies->setAccessible(true);
         $fulfilledSupersedingDependencies->setValue($dependencyWithFulfilledDependencies, [$dependency1, $dependency2]);

@@ -15,11 +15,11 @@ class MissingEvaluatorException extends In2publishCoreException
 {
     protected const MESSAGE = 'No evaluator found to evaluate condition: "%s"';
     public const CODE = 1701786012;
-    /** @var null|array|string */
+    /** @var array|string|null */
     protected $condition;
 
     /**
-     * @param null|array|string $condition
+     * @param array|string|null $condition
      */
     public function __construct($condition, Throwable $previous = null)
     {
@@ -30,7 +30,7 @@ class MissingEvaluatorException extends In2publishCoreException
         parent::__construct(sprintf(self::MESSAGE, $condition), self::CODE, $previous);
     }
 
-    /** @return null|array|string */
+    /** @return array|string|null */
     public function getCondition()
     {
         return $this->condition;

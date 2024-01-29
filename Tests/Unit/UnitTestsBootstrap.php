@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * This file is part of the TYPO3 CMS project.
  *
  * It is free software; you can redistribute it and/or modify it under
@@ -28,7 +29,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Testbase;
 
-/**
+/*
  * Boilerplate for a unit test phpunit boostrap file.
  *
  * This file is loosely maintained within TYPO3 testing-framework, extensions
@@ -42,6 +43,7 @@ use TYPO3\TestingFramework\Core\Testbase;
  * according script within TYPO3 core's Build/Scripts directory and
  * adapt to extensions needs.
  */
+
 call_user_func(function () {
     if (!getenv('IN2PUBLISH_CONTEXT')) {
         putenv('IN2PUBLISH_CONTEXT=Local');

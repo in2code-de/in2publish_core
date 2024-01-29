@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<phpmd-baseline>
+  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="Classes/Component/Core/FileHandling/DefaultFalFinder.php"/>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="Classes/Component/Core/PreProcessing/PreProcessor/AbstractProcessor.php" method="process"/>
+  <violation rule="PHPMD\Rule\Design\NpathComplexity" file="Classes/Component/Core/PreProcessing/PreProcessor/AbstractProcessor.php" method="process"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="Classes/Component/Core/Publisher/Command/FalPublisherCommand.php"/>
+  <violation rule="PHPMD\Rule\CleanCode\BooleanArgumentFlag" file="Classes/Component/Core/Publisher/PublisherService.php"/>
+  <violation rule="PHPMD\Rule\Design\EmptyCatchBlock" file="Classes/Component/Core/Record/Model/AbstractDatabaseRecord.php"/>
+  <violation rule="PHPMD\Rule\Design\WeightedMethodCount" file="Classes/Component/Core/Record/Model/AbstractRecord.php"/>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="Classes/Component/Core/Record/Model/AbstractRecord.php" method="calculateState"/>
+  <violation rule="PHPMD\Rule\Design\NpathComplexity" file="Classes/Component/Core/Record/Model/AbstractRecord.php" method="calculateState"/>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="Classes/Component/Core/Record/Model/Dependency.php" method="recordMatchesRequirements"/>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="Classes/Component/Core/Record/Model/Dependency.php" method="isReachable"/>
+  <violation rule="PHPMD\Rule\Design\NpathComplexity" file="Classes/Component/Core/RecordIndex.php" method="connectTranslations"/>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="Classes/Component/Core/Repository/SingleDatabaseRepository.php" method="findByPropertyWithJoin"/>
+  <violation rule="PHPMD\Rule\Design\NpathComplexity" file="Classes/Component/Core/Repository/SingleDatabaseRepository.php" method="findByPropertyWithJoin"/>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="Classes/Component/Core/Resolver/FlexResolver.php" method="resolve"/>
+  <violation rule="PHPMD\Rule\Design\NpathComplexity" file="Classes/Component/Core/Resolver/FlexResolver.php" method="resolve"/>
+  <violation rule="PHPMD\Rule\CleanCode\BooleanArgumentFlag" file="Classes/Controller/FileController.php"/>
+  <violation rule="PHPMD\Rule\Naming\LongClassName" file="Classes/Event/CollectReasonsWhyTheRecordIsNotPublishable.php"/>
+  <violation rule="PHPMD\Rule\CleanCode\IfStatementAssignment" file="Classes/Features/ConditionalEventListener/DependencyInjection/ConditionalEventListenerCompilerPass.php" method="getReflectionMethod"/>
+  <violation rule="PHPMD\Rule\Naming\ShortVariable" file="Classes/Features/ConditionalEventListener/DependencyInjection/ConditionalEventListenerCompilerPass.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="Classes/Features/FullTablePublishing/Command/BackupCommand.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="Classes/Features/FullTablePublishing/Command/Local/ImportCommand.php"/>
+  <violation rule="PHPMD\Rule\Naming\LongClassName" file="Classes/Features/HideRecordsDeletedDifferently/EventListener/HideRecordsDeletedDifferentlyEventListener.php"/>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="Classes/Features/MetricsAndDebug/Database/Logging/ContentPublisherSqlLogger.php" method="startQuery"/>
+  <violation rule="PHPMD\Rule\Design\NpathComplexity" file="Classes/Features/MetricsAndDebug/Database/Logging/ContentPublisherSqlLogger.php" method="startQuery"/>
+  <violation rule="PHPMD\Rule\CleanCode\StaticAccess" file="Classes/Features/MetricsAndDebug/Middleware/MetricsAndDebugMiddleware.php"/>
+  <violation rule="PHPMD\Rule\Naming\ShortVariable" file="Classes/Features/MetricsAndDebug/Middleware/MetricsAndDebugMiddleware.php"/>
+  <violation rule="PHPMD\Rule\Design\TooManyFields" file="Classes/Features/RedirectsSupport/Domain/Model/Dto/Redirect.php"/>
+  <violation rule="PHPMD\Rule\Controversial\CamelCasePropertyName" file="Classes/Features/RedirectsSupport/Domain/Model/Dto/Redirect.php"/>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="Classes/Features/ResolveFilesForIndices/EventListener/FileRecordListener.php" method="onRecordRelationsWereResolved"/>
+  <violation rule="PHPMD\Rule\Design\NumberOfChildren" file="Classes/In2publishCoreException.php"/>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="Classes/Testing/Tests/SshConnection/SshConnectionTest.php" method="run"/>
+  <violation rule="PHPMD\Rule\Design\NpathComplexity" file="Classes/Testing/Tests/SshConnection/SshConnectionTest.php" method="run"/>
+  <violation rule="PHPMD\Rule\Design\LongMethod" file="Classes/Testing/Tests/SshConnection/SshConnectionTest.php" method="run"/>
+  <violation rule="PHPMD\Rule\Design\CouplingBetweenObjects" file="Classes/Utility/DatabaseUtility.php"/>
+</phpmd-baseline>

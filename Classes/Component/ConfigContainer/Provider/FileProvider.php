@@ -33,7 +33,6 @@ use In2code\In2publishCore\Component\ConfigContainer\Cache\EarlyCacheInjection;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Spyc;
 use Symfony\Component\Yaml\Parser;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;

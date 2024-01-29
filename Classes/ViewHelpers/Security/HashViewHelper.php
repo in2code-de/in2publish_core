@@ -29,6 +29,9 @@ class HashViewHelper extends AbstractViewHelper
         return hash($method, $string);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function compile(
         $argumentsName,
         $closureName,

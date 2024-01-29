@@ -17,6 +17,9 @@ class FileInfo implements FilesystemInfo
     protected string $folderHash;
     private string $identifierHash;
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public function __construct(
         int $storage,
         string $identifier,

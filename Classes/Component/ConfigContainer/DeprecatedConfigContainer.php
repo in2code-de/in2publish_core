@@ -14,15 +14,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_filter;
 use function array_key_exists;
 use function sprintf;
-use function user_error;
 
 use const E_USER_DEPRECATED;
 
 trait DeprecatedConfigContainer
 {
-    /** @var array<class-string<ProviderInterface>, ProviderInterface|null|false> */
+    /** @var array<class-string<ProviderInterface>, ProviderInterface|false|null> */
     protected array $legacyProviders = [];
-    /** @var array<class-string<DefinerInterface>, DefinerInterface|null|false> */
+    /** @var array<class-string<DefinerInterface>, DefinerInterface|false|null> */
     protected array $legacyDefiners = [];
     /** @var array<class-string<PostProcessorInterface>, PostProcessorInterface|null> */
     protected array $legacyPostProcessors = [];
@@ -165,7 +164,7 @@ trait DeprecatedConfigContainer
      */
     public function registerProvider(string $provider): void
     {
-        user_error(
+        trigger_error(
             sprintf(
                 'Calling ConfigContainer->registerProvider is deprecated. This method will be removed in in2publish_core v13. Implement the ProviderServiceInterface in %s instead.',
                 $provider,
@@ -185,7 +184,7 @@ trait DeprecatedConfigContainer
      */
     public function registerDefiner(string $definer): void
     {
-        user_error(
+        trigger_error(
             sprintf(
                 'Calling ConfigContainer->registerDefiner is deprecated. This method will be removed in in2publish_core v13. Implement the DefinerServiceInterface in %s instead.',
                 $definer,
@@ -205,7 +204,7 @@ trait DeprecatedConfigContainer
      */
     public function registerPostProcessor(string $postProcessor): void
     {
-        user_error(
+        trigger_error(
             sprintf(
                 'Calling ConfigContainer->registerPostProcessor is deprecated. This method will be removed in in2publish_core v13. Implement the PostProcessorServiceInterface in %s instead.',
                 $postProcessor,
@@ -226,7 +225,7 @@ trait DeprecatedConfigContainer
      */
     public function registerMigration(string $migration): void
     {
-        user_error(
+        trigger_error(
             sprintf(
                 'Calling ConfigContainer->registerMigration is deprecated. This method will be removed in in2publish_core v13. Implement the MigrationServiceInterface in %s instead.',
                 $migration,

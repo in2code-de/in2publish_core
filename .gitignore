@@ -23,3 +23,4 @@ Build/testing-docker/.env
 Build/.phpunit.result.cache
 .php-cs-fixer.cache
 composer.lock
+docker-compose.yaml

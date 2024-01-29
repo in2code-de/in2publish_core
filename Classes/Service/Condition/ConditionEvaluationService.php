@@ -26,7 +26,7 @@ class ConditionEvaluationService
     }
 
     /**
-     * @param null|array<string>|string $conditions
+     * @param array<string>|string|null $conditions
      * @return bool
      */
     public function evaluate($conditions): bool
@@ -51,7 +51,7 @@ class ConditionEvaluationService
     }
 
     /**
-     * @param null|array<string>|string $condition
+     * @param array<string>|string|null $condition
      * @throws MissingEvaluatorException
      */
     protected function evaluateCondition($condition): bool

@@ -16,6 +16,7 @@ use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepositoryInjection;
 use In2code\In2publishCore\Component\Core\Repository\ForeignSingleDatabaseRepositoryInjection;
 use In2code\In2publishCore\Component\Core\Repository\LocalSingleDatabaseRepositoryInjection;
+use In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository;
 
 use function array_keys;
 
@@ -37,8 +38,8 @@ class JoinDemandResolver implements DemandResolver
     protected function resolveJoinDemands(Demands $demands): JoinRowCollection
     {
         $joinRowCollection = new JoinRowCollection();
-        foreach ($demands->getDemandsByType(JoinDemand::class) as $joinTable => $JoinSelect) {
-            foreach ($JoinSelect as $table => $tableSelect) {
+        foreach ($demands->getDemandsByType(JoinDemand::class) as $joinTable => $joinSelect) {
+            foreach ($joinSelect as $table => $tableSelect) {
                 foreach ($tableSelect as $additionalWhere => $properties) {
                     foreach ($properties as $property => $valueMaps) {
                         try {
@@ -73,32 +74,31 @@ class JoinDemandResolver implements DemandResolver
     protected function findMissingTableRecords(JoinRowCollection $joinRowCollection): void
     {
         $missingIdentifiers = $joinRowCollection->getMissingIdentifiers();
+        $this->findMissingTableRecordsOnSide(
+            $missingIdentifiers['local'] ?? [],
+            $joinRowCollection,
+            $this->localRepository,
+        );
+        $this->findMissingTableRecordsOnSide(
+            $missingIdentifiers['foreign'] ?? [],
+            $joinRowCollection,
+            $this->foreignRepository,
+        );
+    }
 
-        foreach ($missingIdentifiers['local'] ?? [] as $table => $joinTables) {
+    public function findMissingTableRecordsOnSide(
+        array $missingIdentifiers,
+        JoinRowCollection $joinRowCollection,
+        SingleDatabaseRepository $repository
+    ): void {
+        foreach ($missingIdentifiers as $table => $joinTables) {
             $identifiers = [];
             foreach ($joinTables as $joinTable => $missingUids) {
                 foreach ($missingUids as $identifier => $mmIds) {
                     $identifiers[$identifier][$joinTable] = $mmIds;
                 }
             }
-            $rows = $this->localRepository->findByProperty($table, 'uid', array_keys($identifiers));
-            foreach ($rows as $uid => $row) {
-                foreach ($identifiers[$uid] as $joinTable => $mmIds) {
-                    foreach ($mmIds as $mmId) {
-                        $joinRowCollection->amendRow($joinTable, $table, $mmId, 'local', $row);
-                    }
-                }
-            }
-        }
-
-        foreach ($missingIdentifiers['foreign'] ?? [] as $table => $joinTables) {
-            $identifiers = [];
-            foreach ($joinTables as $joinTable => $missingUids) {
-                foreach ($missingUids as $identifier => $mmIds) {
-                    $identifiers[$identifier][$joinTable] = $mmIds;
-                }
-            }
-            $rows = $this->foreignRepository->findByProperty($table, 'uid', array_keys($identifiers));
+            $rows = $repository->findByProperty($table, 'uid', array_keys($identifiers));
             foreach ($rows as $uid => $row) {
                 foreach ($identifiers[$uid] as $joinTable => $mmIds) {
                     foreach ($mmIds as $mmId) {
@@ -109,6 +109,9 @@ class JoinDemandResolver implements DemandResolver
         }
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function createAndMapMmRecords(
         JoinRowCollection $joinRowCollection,
         RecordCollection $recordCollection

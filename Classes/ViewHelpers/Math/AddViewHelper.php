@@ -27,6 +27,9 @@ class AddViewHelper extends AbstractViewHelper
         return $value + $increment;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function compile(
         $argumentsName,
         $closureName,

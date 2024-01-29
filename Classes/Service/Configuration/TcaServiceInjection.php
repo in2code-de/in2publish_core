@@ -14,7 +14,6 @@ trait TcaServiceInjection
     /**
      * @noinspection PhpUnused
      */
-
     public function injectTcaService(TcaService $tcaService): void
     {
         $this->tcaService = $tcaService;

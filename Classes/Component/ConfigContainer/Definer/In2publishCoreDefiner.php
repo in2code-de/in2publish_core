@@ -57,6 +57,9 @@ class In2publishCoreDefiner implements DefinerServiceInterface
         'tx_in2publishcore_filepublisher_instruction',
     ];
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()

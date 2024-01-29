@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Features\CompareDatabaseTool\Controller;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
@@ -54,7 +53,6 @@ use function max;
 class CompareDatabaseToolController extends ActionController
 {
     use AdminToolsModuleTemplate;
-    use ConfigContainerInjection;
     use LocalDatabaseInjection;
     use ForeignDatabaseInjection;
     use IgnoredFieldsServiceInjection;

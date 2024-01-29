@@ -17,7 +17,7 @@ class ContentPublisherHelper
             $driver->wait()->until(ElementIsNotVisible::resolve(WebDriverBy::cssSelector('.in2publish-loading-overlay')));
             return;
         }
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver):void {
+        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             $driver->wait()->until(ElementIsNotVisible::resolve(WebDriverBy::cssSelector('.in2publish-loading-overlay')));
         });
     }

@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\ViewHelpers\Record;
 
 use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Backend\Configuration\TranslationConfigurationProvider;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Imaging\Icon;
@@ -86,7 +85,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
 
         $systemLanguages = array_filter(
             $this->translationConfigurationProvider->getSystemLanguages(),
-            fn(array $languageRecord): bool => $this->backendUser->checkLanguageAccess($languageRecord['uid']),
+            fn (array $languageRecord): bool => $this->backendUser->checkLanguageAccess($languageRecord['uid']),
         );
 
         $propsBySide = $record->getPropsBySide($this->arguments['side']);

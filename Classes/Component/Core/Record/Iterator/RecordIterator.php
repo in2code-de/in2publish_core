@@ -12,6 +12,9 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 class RecordIterator
 {
+    /**
+     * @SuppressWarnings(PHPMD.EmptyCatchBlock)
+     */
     public function recurse(Node $node, Closure $closure): void
     {
         $records = [];
@@ -37,6 +40,7 @@ class RecordIterator
      * @param array<Record> $records
      * @param array<string, array<int, true>> $visited
      * @throws StopIteration
+     * @SuppressWarnings(PHPMD.EmptyCatchBlock)
      */
     protected function recurseRecords(array $records, Closure $closure, array &$visited, array &$stack): void
     {

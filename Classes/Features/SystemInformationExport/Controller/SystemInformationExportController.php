@@ -56,7 +56,6 @@ use const JSON_THROW_ON_ERROR;
 
 class SystemInformationExportController extends AbstractAdminToolsController
 {
-
     protected SystemInformationExportService $sysInfoExportService;
 
     /**

@@ -34,8 +34,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function implode;
 use function in_array;
+use function trigger_error;
 use function ucfirst;
-use function user_error;
 
 use const E_USER_DEPRECATED;
 
@@ -96,7 +96,7 @@ class TcaService implements SingletonInterface
      */
     public function getDeletedField(string $tableName): string
     {
-        user_error(
+        trigger_error(
             '\In2code\In2publishCore\Service\Configuration\TcaService::getDeletedField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
             E_USER_DEPRECATED,
         );
@@ -111,7 +111,7 @@ class TcaService implements SingletonInterface
      */
     public function getDisableField(string $tableName): string
     {
-        user_error(
+        trigger_error(
             '\In2code\In2publishCore\Service\Configuration\TcaService::getDisableField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
             E_USER_DEPRECATED,
         );
@@ -126,7 +126,7 @@ class TcaService implements SingletonInterface
      */
     public function getLanguageField(string $tableName): string
     {
-        user_error(
+        trigger_error(
             '\In2code\In2publishCore\Service\Configuration\TcaService::getLanguageField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
             E_USER_DEPRECATED,
         );
@@ -141,7 +141,7 @@ class TcaService implements SingletonInterface
      */
     public function getTransOrigPointerField(string $tableName): string
     {
-        user_error(
+        trigger_error(
             '\In2code\In2publishCore\Service\Configuration\TcaService::getTransOrigPointerField is deprecated. Please access $GLOBALS[\'TCA\'] directly. This Method will be removed in in2publish_core v13.',
             E_USER_DEPRECATED,
         );

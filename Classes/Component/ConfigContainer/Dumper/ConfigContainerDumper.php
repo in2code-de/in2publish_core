@@ -15,6 +15,8 @@ use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\PostProcessor
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderInterface;
 use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderServiceInterface;
 
+use function array_keys;
+
 class ConfigContainerDumper
 {
     private ConfigContainerFactory $configContainerFactory;
@@ -111,7 +113,7 @@ class ConfigContainerDumper
      */
     private function dumpDefiner(array $rawDump): array
     {
-        foreach ($rawDump['definerServices'] as $class => $definerService) {
+        foreach (array_keys($rawDump['definerServices']) as $class) {
             $rawDump['definerServices'][$class] = true;
         }
         return $rawDump;
@@ -173,7 +175,7 @@ class ConfigContainerDumper
      */
     private function dumpPostProcessors(array $rawDump): array
     {
-        foreach ($rawDump['postProcessorServices'] as $class => $postProcessorService) {
+        foreach (array_keys($rawDump['postProcessorServices']) as $class) {
             $rawDump['postProcessorServices'][$class] = true;
         }
         return $rawDump;

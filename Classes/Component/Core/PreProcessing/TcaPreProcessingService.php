@@ -71,12 +71,22 @@ class TcaPreProcessingService implements SingletonInterface
         $tables = $this->excludedTablesService->getAllNonExcludedTcaTables();
         $tca = array_intersect_key($GLOBALS['TCA'], array_flip($tables));
         ksort($tca);
+        $tca = $this->enableRichtextForColumnsUsedInInlineWithRichtextOverride($tca);
 
-        /*
-         * If any TCA type adds enableRichtext to a column, we must process the column by setting a resolver.
-         * We add enableRichtext to the TCA column if at least one type adds it via override.
-         * If we didn't do that we wouldn't have a resolver for e.g. tt_content bodytext.
-         */
+        foreach ($tca as $table => $tableConfig) {
+            if (isset($tableConfig['columns']) && is_array($tableConfig['columns'])) {
+                $this->preProcessTcaColumns($table, $tableConfig['columns']);
+            }
+        }
+    }
+
+    /**
+     * If any TCA type adds enableRichtext to a column, we must process the column by setting a resolver.
+     * We add enableRichtext to the TCA column if at least one type adds it via override.
+     * If we didn't do that we wouldn't have a resolver for e.g. tt_content bodytext.
+     */
+    public function enableRichtextForColumnsUsedInInlineWithRichtextOverride(array $tca): array
+    {
         foreach ($tca as $table => $tableConfig) {
             if (isset($tableConfig['types']) && is_array($tableConfig['types'])) {
                 foreach ($tableConfig['types'] as $typeConfig) {
@@ -91,12 +101,7 @@ class TcaPreProcessingService implements SingletonInterface
                 }
             }
         }
-
-        foreach ($tca as $table => $tableConfig) {
-            if (isset($tableConfig['columns']) && is_array($tableConfig['columns'])) {
-                $this->preProcessTcaColumns($table, $tableConfig['columns']);
-            }
-        }
+        return $tca;
     }
 
     public function preProcessTcaColumns(string $table, array $columnsConfig): void
