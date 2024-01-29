@@ -8,3 +8,10 @@ $GLOBALS['TYPO3_CONF_VARS']['LOG']['TYPO3']['CMS']['deprecations']['writerConfig
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'] = '*';
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['displayErrors'] = 1;
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['exceptionalErrors'] = 12290;
+
+if (getenv('TYPO3_CONTEXT') === 'Testing') {
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['displayErrors'] = '1';
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = '';
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['errorHandler'] = '';
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['trustedHostsPattern'] = '.*';
+}

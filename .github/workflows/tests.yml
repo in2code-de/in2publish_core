@@ -19,13 +19,25 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Add local env vars
-        run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env;
+        run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env; echo "HOST_PWD=$(pwd)" >> .env; cat .env
 
       - name: Docker Compose
         run: docker compose up -d
 
       - name: Show me what's up
         run: docker compose ps
+
+      - name: Show me what's defined
+        run: printenv
+
+      - name: Show me what's defined inside
+        run: docker compose exec local-php printenv
+
+      - name: Show me what's there
+        run: ls -la
+
+      - name: Show me what's docker
+        run: ls -la /var/run/docker.sock
 
       - name: Composer Local
         run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install
@@ -51,11 +63,24 @@ jobs:
       - name: Show me what's up 2
         run: docker compose ps
 
+      - name: Unit Tests
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
+        if: always()
+
+      - name: Functional Tests
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
+        if: always()
+
       - name: Acceptance Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.xml --testdox
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
+        if: always()
 
       - name: Show me what's up 3
         run: docker compose ps
+        if: always()
+
+      - name: Show me what's logged
+        run: docker compose logs
         if: always()
 
       - name: Shut down to finish video recording

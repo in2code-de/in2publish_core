@@ -58,7 +58,7 @@ class EnvironmentServiceTest extends UnitTestCase
         $configurationHash = sha1(serialize($configurationArray));
 
         /** @var Registry|MockObject $registry */
-        $registry = $this->getMockBuilder(Registry::class)->setMethods(['set'])->getMock();
+        $registry = $this->getMockBuilder(Registry::class)->onlyMethods(['set'])->getMock();
         $registry->expects($this->once())->method('set')->with(
             'tx_in2publishcore',
             'test_result',
@@ -83,7 +83,7 @@ class EnvironmentServiceTest extends UnitTestCase
         $environmentService->setTestResult(true);
     }
 
-    public function getResultRegistryReturnAndExpectedValueDataProvider(): array
+    public static function getResultRegistryReturnAndExpectedValueDataProvider(): array
     {
         $configurationHash = sha1(serialize(['boo' => ['far' => ['faz' => 'fuz']]]));
         $packagesHash = sha1(json_encode(['foo' => ['bar' => ['baz' => 'buz']]]));

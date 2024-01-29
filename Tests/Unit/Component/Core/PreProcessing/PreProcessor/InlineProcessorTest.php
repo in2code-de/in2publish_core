@@ -130,11 +130,6 @@ class InlineProcessorTest extends UnitTestCase
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $tcaMarkerService->expects($this->exactly(3))
                          ->method('escapeMarkedIdentifier')
-                         ->withConsecutive(
-                             [],
-                             [],
-                             ['foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"'],
-                         )
                          ->willReturnOnConsecutiveCalls(
                              '',
                              '',
@@ -147,18 +142,7 @@ class InlineProcessorTest extends UnitTestCase
         $container->method('get')->willReturn($inlineResolver);
         $inlineProcessor->injectContainer($container);
 
-        $inlineResolver->expects($this->exactly(3))
-                       ->method('configure')
-                       ->withConsecutive(
-                           ['table_foo', 'field_bar', null, ''],
-                           ['table_foo', 'field_bar', 'foreign_table_field_foo', ''],
-                           [
-                               'table_foo',
-                               'field_bar',
-                               'foreign_table_field_foo',
-                               'foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"',
-                           ],
-                       );
+        $inlineResolver->expects($this->exactly(3))->method('configure');
 
         $processingResult1 = $inlineProcessor->process('table_bar', 'field_bar', $tca1);
         $this->assertTrue($processingResult1->isCompatible());

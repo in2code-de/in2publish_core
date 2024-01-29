@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Tests\Unit\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
@@ -81,7 +80,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             'tx_unit_test_field',
         );
 
-        $this->assertSame('foo 52 bar', $replacement);
+        self::assertSame('foo 52 bar', $replacement);
     }
 
     /**
@@ -120,11 +119,12 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             'tx_unit_test_field',
         );
 
-        $this->assertSame('foo 52,11,9 bar', $replacement);
+        self::assertSame('foo 52,11,9 bar', $replacement);
     }
 
     /**
      * @covers ::replaceSiteMarker
+     * @covers ::quoteParsedSiteConfiguration
      */
     public function testReplaceSiteMarker(): void
     {
@@ -163,7 +163,127 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             'tx_unit_test_field',
         );
 
-        $this->assertSame('1 \'test\' \'string1\',\'string2\',\'foo1\',\'foo2\' 0', $replacement);
+        self::assertSame('1 \'test\' \'string1\',\'string2\',\'foo1\',\'foo2\' 0', $replacement);
+    }
+
+    /**
+     * @covers ::replaceRecFieldMarker
+     */
+    public function testReplaceRecFieldMarkerPrefersLocalValue(): void
+    {
+        $record = new DatabaseRecord(
+            'foo',
+            123,
+            ['uid' => 123, 'pid' => 0, 'tx_unit_test_field' => 'bar'],
+            ['uid' => 123, 'pid' => 0, 'tx_unit_test_field' => 'fun'],
+            [],
+        );
+
+        $localDatabase = $this->createMock(Connection::class);
+        $localDatabase->method('quote')->willReturnCallback(static fn(string $input): string => '"' . $input . '"');
+
+        $replaceMarkerService = new ReplaceMarkersService();
+        $replaceMarkerService->injectLocalDatabase($localDatabase);
+
+        $replacement = $replaceMarkerService->replaceMarkers(
+            $record,
+            'AAAA ###REC_FIELD_tx_unit_test_field### BBBB',
+            '_unused',
+        );
+
+        self::assertSame('AAAA "bar" BBBB', $replacement);
+    }
+
+    /**
+     * @covers ::replaceRecFieldMarker
+     */
+    public function testReplaceRecFieldMarkerUsesForeignAsFallback(): void
+    {
+        $record = new DatabaseRecord(
+            'foo',
+            123,
+            ['uid' => 123, 'pid' => 0],
+            ['uid' => 123, 'pid' => 0, 'tx_unit_test_field' => 'fun'],
+            [],
+        );
+
+        $localDatabase = $this->createMock(Connection::class);
+        $localDatabase->method('quote')->willReturnCallback(static fn(string $input): string => '"' . $input . '"');
+
+        $replaceMarkerService = new ReplaceMarkersService();
+        $replaceMarkerService->injectLocalDatabase($localDatabase);
+
+        $replacement = $replaceMarkerService->replaceMarkers(
+            $record,
+            'AAAA ###REC_FIELD_tx_unit_test_field### BBBB',
+            '_unused',
+        );
+
+        self::assertSame('AAAA "fun" BBBB', $replacement);
+    }
+
+    /**
+     * ###STORAGE_PID### is not tested as it uses static methods which can not be mocked and requires caches
+     */
+    public function testReplacePageMarker(): void
+    {
+        $record = new DatabaseRecord(
+            'foo',
+            123,
+            ['uid' => 123, 'pid' => 0],
+            ['uid' => 123, 'pid' => 0, 'tx_unit_test_field' => 'fun'],
+            [],
+        );
+
+        $localDatabase = $this->createMock(Connection::class);
+        $localDatabase->method('quote')->willReturnCallback(static fn(string $input): string => '"' . $input . '"');
+
+        $replaceMarkerService = new ReplaceMarkersService();
+        $replaceMarkerService->injectLocalDatabase($localDatabase);
+
+        $replacement = $replaceMarkerService->replaceMarkers(
+            $record,
+            'AAA ###CURRENT_PID### BBB ###THIS_UID### CCC',
+            '_unused',
+        );
+
+        self::assertSame('AAA 0 BBB 123 CCC', $replacement);
+    }
+
+    public function testReplacePageMarkerStoragePid(): void
+    {
+        self::markTestSkipped(
+            '###STORAGE_PID### is not tested as it uses static methods which can not be mocked and requires caches',
+        );
+
+        $record = new DatabaseRecord(
+            'foo',
+            123,
+            ['uid' => 123, 'pid' => 0],
+            ['uid' => 123, 'pid' => 0, 'tx_unit_test_field' => 'fun'],
+            [],
+        );
+
+        $localDatabase = $this->createMock(Connection::class);
+        $localDatabase->method('quote')->willReturnCallback(static fn(string $input): string => '"' . $input . '"');
+
+        $replaceMarkerService = new ReplaceMarkersService();
+        $replaceMarkerService->injectLocalDatabase($localDatabase);
+
+        $replacement = $replaceMarkerService->replaceMarkers(
+            $record,
+            'AAA ###STORAGE_PID### CCC',
+            '_unused',
+        );
+
+        $this->assertSame('AAA ###STORAGE_PID### CCC', $replacement);
+    }
+
+    /**
+     */
+    public function testReplaceFlexFormFieldMarkers(): void
+    {
+        self::markTestSkipped('FlexFormFieldMarkers rely on static methods from TYPO3 which can not be mocked.');
     }
 
     /**

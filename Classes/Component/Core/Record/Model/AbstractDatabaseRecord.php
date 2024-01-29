@@ -159,7 +159,10 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
         $labelAltForce = $GLOBALS['TCA'][$this->table]['ctrl']['label_alt_force'] ?? false;
 
         $labels = [];
-        $label = $this->getProp($labelField);
+        $label = $this->getClassification();
+        if (null !== $labelField) {
+            $label = $this->getProp($labelField);
+        }
         if (null !== $labelField && !empty($label)) {
             $labels[] = $label;
         }

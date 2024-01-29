@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.4/phpunit.xsd"
-         bootstrap="Build/local/vendor/autoload.php"
-         cacheDirectory=".project/temp/.phpunit.cache"
+         bootstrap="Tests/Unit/UnitTestsBootstrap.php"
+         cacheDirectory=".project/temp/.phpunit.unit.cache"
          executionOrder="depends,defects"
          beStrictAboutCoverageMetadata="true"
          beStrictAboutOutputDuringTests="true"
+         backupGlobals="true"
          failOnRisky="true"
          failOnWarning="true">
     <testsuites>
-        <testsuite name="Browser">
-            <directory>Tests/Browser/</directory>
+        <testsuite name="Unit">
+            <directory>Tests/Unit/</directory>
         </testsuite>
     </testsuites>
 
@@ -19,11 +20,4 @@
             <directory>Classes</directory>
         </include>
     </source>
-
-    <extensions>
-        <bootstrap class="CoStack\StackTest\Bootstrap">
-            <parameter name="screenshot" value="../../.project/artifacts/{testClass}/{testMethod}/{seed}/Screenshot.jpg"/>
-            <parameter name="pageSource" value="../../.project/artifacts/{testClass}/{testMethod}/{seed}/Source.html"/>
-        </bootstrap>
-    </extensions>
 </phpunit>

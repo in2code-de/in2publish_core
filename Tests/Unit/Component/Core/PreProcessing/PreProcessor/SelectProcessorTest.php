@@ -42,7 +42,7 @@ class SelectProcessorTest extends UnitTestCase
         $this->assertTrue($processingResult->isCompatible());
     }
 
-    public function forbiddenTcaDataProvider(): array
+    public static function forbiddenTcaDataProvider(): array
     {
         return [
             [['itemsProcFunc' => '']],
@@ -196,7 +196,7 @@ class SelectProcessorTest extends UnitTestCase
         $this->assertEquals($expectation, $isSysCategoryField);
     }
 
-    public function isSysCategoryFieldDataProvider(): array
+    public static function isSysCategoryFieldDataProvider(): array
     {
         return [
             'isSysCategoryField' => [

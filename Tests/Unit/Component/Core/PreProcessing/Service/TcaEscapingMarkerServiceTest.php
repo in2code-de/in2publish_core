@@ -23,11 +23,6 @@ class TcaEscapingMarkerServiceTest extends UnitTestCase
         $database = $this->createMock(Connection::class);
         $database->expects($this->exactly(3))
                  ->method('quoteIdentifier')
-                 ->withConsecutive(
-                     ['table'],
-                     ['field'],
-                     ['value'],
-                 )
                  ->willReturnOnConsecutiveCalls(
                      '`table`',
                      '`field`',
@@ -49,10 +44,6 @@ class TcaEscapingMarkerServiceTest extends UnitTestCase
         $database = $this->createMock(Connection::class);
         $database->expects($this->exactly(2))
                  ->method('quoteIdentifier')
-                 ->withConsecutive(
-                     ['field'],
-                     ['value'],
-                 )
                  ->willReturnOnConsecutiveCalls(
                      '\'field\'',
                      '\'value\'',

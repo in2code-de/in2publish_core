@@ -26,12 +26,13 @@ services:
       dockerfile: Dockerfile
       target: base
       args:
-        USER_ID: ${USER_ID}
-        GROUP_ID: ${GROUP_ID}
-    user: ${USER_ID}
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    user: ${USER_ID:-1000}
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
+      - /var/run/docker.sock:/var/run/docker.sock
       - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
     env_file:
       - .env
@@ -41,7 +42,8 @@ services:
       IN2PUBLISH_CONTEXT: Local
       TYPO3_INSTALL_DB_DBNAME: local
       TYPO3_INSTALL_SITE_NAME: "[LOCAL] CP TYPO3 v12"
-      TYPO3_INSTALL_SITE_BASE_URL: "local.v12.in2publish-core.de"
+      TYPO3_INSTALL_SITE_BASE_URL: ${HOST_LOCAL}
+      HOST_PWD: $PWD
     working_dir: /app/Build/local/
 
   foreign:
@@ -69,8 +71,8 @@ services:
       dockerfile: Dockerfile
       target: base
       args:
-        USER_ID: ${USER_ID}
-        GROUP_ID: ${GROUP_ID}
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
@@ -82,7 +84,7 @@ services:
       IN2PUBLISH_CONTEXT: Foreign
       TYPO3_INSTALL_DB_DBNAME: foreign
       TYPO3_INSTALL_SITE_NAME: "[FOREIGN] CP TYPO3 v12"
-      TYPO3_INSTALL_SITE_BASE_URL: "foreign.v12.in2publish-core.de"
+      TYPO3_INSTALL_SITE_BASE_URL: ${HOST_FOREIGN}
     working_dir: /app/Build/foreign/
 
   mysql:
@@ -137,16 +139,6 @@ services:
       - ${SELENIUM_NODE_CHROME_VNC_PORT:-14320}:5900
       - ${SELENIUM_NODE_CHROME_NOVNC_PORT:-14330}:7900
 
-  chrome_video:
-    image: selenium/video:ffmpeg-6.1-20231219
-    volumes:
-      - .project/artifacts/videos:/videos
-    depends_on:
-      - selenium-node-chrome
-    environment:
-      - DISPLAY_CONTAINER_NAME=selenium-node-chrome
-      - FILE_NAME=chrome_video.mp4
-
   selenium-node-firefox:
     image: ${SELENIUM_NODE_CHROME_IMAGE:-selenium/node-firefox}
     shm_size: 2gb
@@ -163,16 +155,6 @@ services:
     ports:
       - ${SELENIUM_NODE_FIREFOX_VNC_PORT:-14321}:5900
       - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-14331}:7900
-
-  firefox_video:
-    image: selenium/video:ffmpeg-6.1-20231219
-    volumes:
-      - .project/artifacts/videos:/videos
-    depends_on:
-      - selenium-node-firefox
-    environment:
-      - DISPLAY_CONTAINER_NAME=selenium-node-firefox
-      - FILE_NAME=firefox_video.mp4
 
 volumes:
   mysql-data:
