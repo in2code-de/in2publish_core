@@ -103,7 +103,7 @@ services:
       VIRTUAL_PORT: 8025
 
   selenium-hub:
-    image: ${SELENIUM_HUB_IMAGE:-selenium/hub}
+    image: ${SELENIUM_HUB_IMAGE:-seleniarm/hub}
     shm_size: 2gb
     healthcheck:
       test: '/opt/bin/check-grid.sh --host 0.0.0.0 --port 4444'
@@ -119,7 +119,7 @@ services:
       - ./:/app/
 
   selenium-node-chrome:
-    image: ${SELENIUM_NODE_CHROME_IMAGE:-selenium/node-chrome}
+    image: ${SELENIUM_NODE_CHROME_IMAGE:-seleniarm/node-chromium}
     shm_size: 2gb
     environment:
       SE_EVENT_BUS_HOST: selenium-hub
@@ -136,7 +136,7 @@ services:
       - ${SELENIUM_NODE_CHROME_NOVNC_PORT:-14330}:7900
 
   selenium-node-firefox:
-    image: ${SELENIUM_NODE_CHROME_IMAGE:-selenium/node-firefox}
+    image: ${SELENIUM_NODE_CHROME_IMAGE:-seleniarm/node-firefox}
     shm_size: 2gb
     environment:
       SE_EVENT_BUS_HOST: selenium-hub
