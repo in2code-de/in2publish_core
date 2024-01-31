@@ -53,10 +53,14 @@ stop: .link-compose-file
 	docker compose stop
 	docker compose down
 
+destroy: stop
+	echo "$(EMOJI_litter) Removing the project"
+	docker compose down -v --remove-orphans
+
 start: .link-compose-file
 	docker compose up -d
 
-setup: stop start .mysql-wait
+setup: stop destroy start .mysql-wait
 	docker compose exec local-php composer i
 	docker exec -u1000 in2publish_core-foreign-php-1 composer i
 	docker compose exec local-php vendor/bin/typo3 install:setup --force
