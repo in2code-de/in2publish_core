@@ -1,5 +1,54 @@
 # In2publish Core Change Log
 
+12.4.0: (includes 11.0.9)
+
+- [META] Set the branch alias version number to 12.4.x-dev
+- [META] Set the EM conf version number to 12.4.0
+- [TEST] Set correct Redirects Module assertion text
+- [TEST] Ensure first pagetree node is selected
+- [TEST] Remove deleted field from functional test
+- [TEST] Run compare database on local and foreign
+- [TEST] Restore site configs after TYPO3 setup
+- [TEST] Remove workflow tables from local dump
+- [TEST] Add filemount for be user publisher-page-tree-publish
+- [CI] Add docker compose file for CI
+- [BUGFIX] Add language configuration to site configuration
+- [FEATURE] Add destroy target to makefile
+- [BUGFIX] Remove trailing comma in template
+- [DEV] Update darwin docker compose to actually use seleniarm images
+- [DEV] Add docker compose file for darwin (ARM) and remove recorder
+- [DEV] Add setup-qa make target
+- [QA] Remove psalm and phpstan, they are currently unusable
+- [CODESTYLE][REFACTOR] Fix phpcs and phpmd issues (or add to phpmd baseline for later inspection)
+- [CODESTYLE] Fix php-cs-fixer issues
+- [DEV] Set foreign baseurl for automated setup via env var
+- [CI] Log screenrecording logs to investigate missing artifacts
+- [DEV] Change mail host to match the domain naming
+- [QA] Define missing PWD variable for github actions
+- [TEST] Show more info about github actions runner
+- [TEST] Fix functional test SingleDatabaseRepositoryTest::testFindByWhere because the test data changed
+- [QA] Split videos into one video per test
+- [BUGFIX] Set $GLOBALS['EXEC_TIME'] for functional tests
+- [TEST] Fix ReplaceAndRenameFileInstructionTest
+- [TASK] Add unit and functional tests for file instructions
+- [TEST] Test Dependency::isReachable
+- [TEST] Test publishing of redirects and records with depenencies
+- [TEST] Add more unit and functional tests for core components
+- [TEST] Add more tests, use created docker instance for functional tests
+- [CI] Run unit and functional tests in GH Actions
+- [CI] Run acceptance tests in pipeline
+- [TEST] Remove test which requires the enterprise edition
+- [BUGFIX] Remove code which leaked from the overwritten partial into the CE
+- [TEST] Install the project as in2publish_core version, fix file upload path
+- [TEST] Integrate acceptance tests based on co-stack/stack-test
+- [TASK] Update copyright year
+- [CODESTYLE] Move opening brace to newline and add missing space after logic operator
+- [FIX] Corrects Code Style
+- [FEATURE] Extend Redirects Module Filter
+- [BUGFIX] Add missing Fluid namespace import
+- [BUGFIX] Format check and select values correctly
+- [BUGFIX] Revert upgrade to ContextualFeedbackSeverity as it is not compatible with TYPO3 v11
+
 12.3.1:
 
 - [META] Set the EM conf version number to 12.3.1
