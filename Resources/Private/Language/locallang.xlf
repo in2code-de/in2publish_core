@@ -331,6 +331,15 @@
 			<trans-unit id="filter.field.has_association.missing" resname="filter.field.has_association.missing">
 				<source>Association missing</source>
 			</trans-unit>
+			<trans-unit id="filter.field.is_publishable">
+				<source>Publishing State</source>
+			</trans-unit>
+			<trans-unit id="filter.field.is_publishable.true">
+				<source>is publishable</source>
+			</trans-unit>
+			<trans-unit id="filter.field.is_publishable.false">
+				<source>is not publishable</source>
+			</trans-unit>
 			<trans-unit id="refresh_page" resname="refresh_page">
 				<source>Refresh page</source>
 			</trans-unit>

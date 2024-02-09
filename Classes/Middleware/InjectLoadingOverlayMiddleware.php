@@ -12,6 +12,7 @@ use TYPO3\CMS\Core\Http\StreamFactory;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function str_contains;
 use function str_starts_with;
 use function strpos;
 use function strtolower;
@@ -65,6 +66,9 @@ HTML;
                 $body->rewind();
             }
             $contents = $body->getContents();
+            if (!str_contains($contents, '<body>')) {
+                return $response;
+            }
 
             $offset = strpos($contents, '<body>') + 6;
             $contents = substr($contents, 0, $offset) . self::CODE . substr($contents, $offset);

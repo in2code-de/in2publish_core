@@ -11,9 +11,11 @@ use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use ReflectionMethod;
 use ReflectionProperty;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\Dependency
+ * @coversDefaultClass Dependency
  */
 class DependencyTest extends UnitTestCase
 {
@@ -22,7 +24,7 @@ class DependencyTest extends UnitTestCase
      */
     public function testDependencyCanBeInstantiated(): void
     {
-        $this->assertInstanceOf(
+        self::assertInstanceOf(
             Dependency::class,
             new Dependency(
                 $this->createMock(Record::class),
@@ -65,7 +67,7 @@ class DependencyTest extends UnitTestCase
         $dependency->addSupersedingDependency($supersedingDependency);
         $reflectionProperty = new ReflectionProperty(Dependency::class, 'supersededBy');
         $reflectionProperty->setAccessible(true);
-        $this->assertSame(
+        self::assertSame(
             [$supersedingDependency],
             $reflectionProperty->getValue($dependency),
         );
@@ -86,7 +88,7 @@ class DependencyTest extends UnitTestCase
                 return ['arguments'];
             },
         );
-        $this->assertSame(
+        self::assertSame(
             'property_foo=value_foo',
             $dependency->getPropertiesAsUidOrString(),
         );
@@ -102,7 +104,7 @@ class DependencyTest extends UnitTestCase
             },
         );
 
-        $this->assertSame(
+        self::assertSame(
             '4711',
             $dependency2->getPropertiesAsUidOrString(),
         );
@@ -112,7 +114,7 @@ class DependencyTest extends UnitTestCase
      * @covers ::fulfill
      * @covers ::recordMatchesRequirements
      */
-    public function testFulfillReturnsFalseIfRecordDoesNotExist()
+    public function testFulfillReturnsFalseIfRecordDoesNotExist(): void
     {
         // arrange
         $dependency = new Dependency(
@@ -132,25 +134,25 @@ class DependencyTest extends UnitTestCase
         $dependency->fulfill($recordCollection);
 
         // assert
-        $this->assertFalse($dependency->isFulfilled());
+        self::assertFalse($dependency->isFulfilled());
 
         $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
         $reflectionProperty->setAccessible(true);
         $reasons = $reflectionProperty->getValue($dependency);
 
-        $this->assertFalse($reasons->isEmpty());
+        self::assertFalse($reasons->isEmpty());
 
         $expectedReasonLabel = "LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.missing_dependency";
         $actualLabel = $reasons->getAll()[0]->getLabel();
 
-        $this->assertSame($expectedReasonLabel, $actualLabel);
+        self::assertSame($expectedReasonLabel, $actualLabel);
     }
 
     /**
      * @covers ::fulfill
      * @covers ::recordMatchesRequirements
      */
-    public function testFulfillReturnsTrueIfRecordIsUnchangedAndRequirementIsFullyPublished()
+    public function testFulfillReturnsTrueIfRecordIsUnchangedAndRequirementIsFullyPublished(): void
     {
         // arrange
         $dependency = new Dependency(
@@ -173,20 +175,20 @@ class DependencyTest extends UnitTestCase
         $dependency->fulfill($recordCollection);
 
         // assert
-        $this->assertTrue($dependency->isFulfilled());
+        self::assertTrue($dependency->isFulfilled());
 
         $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
         $reflectionProperty->setAccessible(true);
         $reasons = $reflectionProperty->getValue($dependency);
 
-        $this->assertTrue($reasons->isEmpty());
+        self::assertTrue($reasons->isEmpty());
     }
 
     /**
      * @covers ::fulfill
      * @covers ::recordMatchesRequirements
      */
-    public function testFulfillReturnsFalse()
+    public function testFulfillReturnsFalse(): void
     {
         // arrange
         $dependency = new Dependency(
@@ -213,7 +215,7 @@ class DependencyTest extends UnitTestCase
         $dependency->fulfill($recordCollection);
 
         // assert
-        $this->assertFalse($dependency->isFulfilled());
+        self::assertFalse($dependency->isFulfilled());
 
         $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
         $reflectionProperty->setAccessible(true);
@@ -221,14 +223,14 @@ class DependencyTest extends UnitTestCase
         $expectedReasonLabel = 'Label for my dependency';
         $actualLabel = $reasons->getAll()[0]->getLabel();
 
-        $this->assertSame($expectedReasonLabel, $actualLabel);
+        self::assertSame($expectedReasonLabel, $actualLabel);
     }
 
     /**
      * @covers ::areSupersededDependenciesFulfilled
      * @covers ::isSupersededByUnfulfilledDependency
      */
-    public function testAreSupersededDependenciesFulfilled()
+    public function testAreSupersededDependenciesFulfilled(): void
     {
         // arrange
         $dependencyWithFulfilledDependencies = new Dependency(
@@ -259,7 +261,8 @@ class DependencyTest extends UnitTestCase
         $dependency3->method('isFulfilled')->willReturn(false);
 
         $fulfilledSupersedingDependencies = new ReflectionProperty(
-            $dependencyWithFulfilledDependencies, 'supersededBy',
+            $dependencyWithFulfilledDependencies,
+            'supersededBy',
         );
         $fulfilledSupersedingDependencies->setAccessible(true);
         $fulfilledSupersedingDependencies->setValue($dependencyWithFulfilledDependencies, [$dependency1, $dependency2]);
@@ -291,10 +294,414 @@ class DependencyTest extends UnitTestCase
         $actualResultFulfilled = $testMethodFulfilled->invoke($dependencyWithFulfilledDependencies);
 
         // assert
-        $this->assertFalse($actualResultUnfilled);
-        $this->assertTrue($actualResultFulfilled);
+        self::assertFalse($actualResultUnfilled);
+        self::assertTrue($actualResultFulfilled);
 
-        $this->assertFalse($dependencyWithFulfilledDependencies->isSupersededByUnfulfilledDependency());
-        $this->assertTrue($dependencyWithUnfulfilledDependencies->isSupersededByUnfulfilledDependency());
+        self::assertFalse($dependencyWithFulfilledDependencies->isSupersededByUnfulfilledDependency());
+        self::assertTrue($dependencyWithUnfulfilledDependencies->isSupersededByUnfulfilledDependency());
+    }
+
+    /**
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsTrueForAdmins(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser->method('isAdmin')->willReturn(true);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+        $blockingRecord = new DatabaseRecord('bar', 2, ['uid' => 2], [], []);
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(Record $record): array => [(string)$record],
+        );
+        $recordCollection = new RecordCollection([$record, $blockingRecord]);
+        $dependency->fulfill($recordCollection);
+        self::assertFalse($dependency->isFulfilled());
+        self::assertTrue($dependency->isReachable($dataHandler));
+    }
+
+    /**
+     * Dependencies to non-existent records will be dropped.
+     * @see Dependency::isReachable
+     *
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsTrueIfRecordDoesNotExist(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser->method('isAdmin')->willReturn(false);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(string $string): string => $string,
+        );
+        $recordCollection = new RecordCollection([$record]);
+        $dependency->fulfill($recordCollection);
+        self::assertFalse($dependency->isFulfilled());
+        self::assertTrue($dependency->isReachable($dataHandler));
+    }
+
+    /**
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsFalseIfEditorHasNoLanguageAccess(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser->method('isAdmin')->willReturn(false);
+        $backendUser->method('checkLanguageAccess')->with(1)->willReturn(false);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+        // Assert the following method is not called to insure the test is correct
+        $dataHandler->expects($this->never())->method('tableReadOnly');
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+
+        $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
+        $translatedRecord = new DatabaseRecord(
+            'bar',
+            2,
+            ['uid' => 2, 'language' => 1],
+            ['uid' => 2, 'language' => 1],
+            [],
+        );
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(string $string): string => $string,
+        );
+        $recordCollection = new RecordCollection([$record, $translatedRecord]);
+        $dependency->fulfill($recordCollection);
+        self::assertFalse($dependency->isReachable($dataHandler));
+    }
+
+    /**
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsFalseIfTableIsReadonly(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser->method('isAdmin')->willReturn(false);
+        $backendUser->expects($this->once())->method('checkLanguageAccess')->with(1)->willReturn(true);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+        $dataHandler->expects($this->once())->method('tableReadOnly')->willReturn(true);
+        // Assert the following method is not called to insure the test is correct
+        $dataHandler->expects($this->never())->method('checkModifyAccessList');
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+
+        $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
+
+        $translatedRecord = new DatabaseRecord(
+            'bar',
+            2,
+            ['uid' => 2, 'language' => 1],
+            ['uid' => 2, 'language' => 1],
+            [],
+        );
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(string $string): string => $string,
+        );
+        $recordCollection = new RecordCollection([$record, $translatedRecord]);
+        $dependency->fulfill($recordCollection);
+        self::assertFalse($dependency->isReachable($dataHandler));
+    }
+
+    /**
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsFalseIfEditorIsNotAllowedToAccessTheTargetTable(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        // Expect one invocation to ensure that it is not invoked after checkModifyAccessList()
+        $backendUser->expects($this->once())->method('isAdmin')->willReturn(false);
+        $backendUser->expects($this->once())->method('checkLanguageAccess')->with(1)->willReturn(true);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+        $dataHandler->expects($this->once())->method('tableReadOnly')->willReturn(false);
+        $dataHandler->expects($this->once())->method('checkModifyAccessList')->willReturn(false);
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+
+        $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
+
+        $translatedRecord = new DatabaseRecord(
+            'bar',
+            2,
+            ['uid' => 2, 'language' => 1],
+            ['uid' => 2, 'language' => 1],
+            [],
+        );
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(string $string): string => $string,
+        );
+        $recordCollection = new RecordCollection([$record, $translatedRecord]);
+        $dependency->fulfill($recordCollection);
+        self::assertFalse($dependency->isReachable($dataHandler));
+    }
+
+    /**
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsTrueIfRequiredRecordIsOkay(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser->method('isAdmin')->willReturn(false);
+        $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $dataHandler->method('checkModifyAccessList')->willReturn(true);
+        $dataHandler->method('isInWebMount')->willReturn(true);
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+
+        $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
+
+        $translatedRecord = new DatabaseRecord(
+            'bar',
+            2,
+            ['uid' => 2, 'pid' => 1, 'language' => 1],
+            ['uid' => 2, 'pid' => 1, 'language' => 1],
+            [],
+        );
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(string $string): string => $string,
+        );
+        $recordCollection = new RecordCollection([$record, $translatedRecord]);
+        $dependency->fulfill($recordCollection);
+        self::assertTrue($dependency->isReachable($dataHandler));
+    }
+
+    /**
+     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsFalseIfRecordIsOnRootLevel(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser->method('isAdmin')->willReturn(false);
+        $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $dataHandler->method('checkModifyAccessList')->willReturn(true);
+        $dataHandler->method('isInWebMount')->willReturn(true);
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+
+        $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
+        $GLOBALS['TCA']['bar']['ctrl']['rootLevel'] = 1;
+
+        $translatedRecord = new DatabaseRecord(
+            'bar',
+            2,
+            ['uid' => 2, 'pid' => 0, 'language' => 1],
+            ['uid' => 2, 'pid' => 0, 'language' => 1],
+            [],
+        );
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(string $string): string => $string,
+        );
+        $recordCollection = new RecordCollection([$record, $translatedRecord]);
+        $dependency->fulfill($recordCollection);
+        self::assertFalse($dependency->isReachable($dataHandler));
+    }
+
+    /**
+     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsTrueIfRecordIsOnRootLevelButRestrictionIsIgnored(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser->method('isAdmin')->willReturn(false);
+        $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $dataHandler->method('checkModifyAccessList')->willReturn(true);
+        $dataHandler->method('isInWebMount')->willReturn(true);
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+
+        $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
+        $GLOBALS['TCA']['bar']['ctrl']['rootLevel'] = 1;
+        $GLOBALS['TCA']['bar']['ctrl']['security']['ignoreRootLevelRestriction'] = true;
+
+        $translatedRecord = new DatabaseRecord(
+            'bar',
+            2,
+            ['uid' => 2, 'pid' => 0, 'language' => 1],
+            ['uid' => 2, 'pid' => 0, 'language' => 1],
+            [],
+        );
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(string $string): string => $string,
+        );
+        $recordCollection = new RecordCollection([$record, $translatedRecord]);
+        $dependency->fulfill($recordCollection);
+        self::assertTrue($dependency->isReachable($dataHandler));
+    }
+
+    /**
+     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsFalseIfRecordTableIsEditLocked(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser->method('isAdmin')->willReturn(false);
+        $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $dataHandler->method('checkModifyAccessList')->willReturn(true);
+        $dataHandler->method('isInWebMount')->willReturn(true);
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+
+        $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
+        $GLOBALS['TCA']['bar']['ctrl']['editlock'] = 'adminOnly';
+
+        $translatedRecord = new DatabaseRecord(
+            'bar',
+            2,
+            ['uid' => 2, 'pid' => 0, 'language' => 1, 'adminOnly' => true],
+            ['uid' => 2, 'pid' => 0, 'language' => 1, 'adminOnly' => true],
+            [],
+        );
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(string $string): string => $string,
+        );
+        $recordCollection = new RecordCollection([$record, $translatedRecord]);
+        $dependency->fulfill($recordCollection);
+        self::assertFalse($dependency->isReachable($dataHandler));
+    }
+
+    /**
+     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsFalseIfRecordIsNotInWebMount(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser->method('isAdmin')->willReturn(false);
+        $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $dataHandler->method('checkModifyAccessList')->willReturn(true);
+        $dataHandler->method('isInWebMount')->willReturn(false);
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+
+        $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
+
+        $translatedRecord = new DatabaseRecord(
+            'bar',
+            2,
+            ['uid' => 2, 'pid' => 1, 'language' => 1],
+            ['uid' => 2, 'pid' => 1, 'language' => 1],
+            [],
+        );
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(string $string): string => $string,
+        );
+        $recordCollection = new RecordCollection([$record, $translatedRecord]);
+        $dependency->fulfill($recordCollection);
+        self::assertFalse($dependency->isReachable($dataHandler));
+    }
+
+    /**
+     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
+     * @covers ::isReachable
+     */
+    public function testIsReachableReturnsTrueIfRecordIsNotInWebMountButRestrictionIsIgnored(): void
+    {
+        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser->method('isAdmin')->willReturn(false);
+        $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
+        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler->BE_USER = $backendUser;
+        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $dataHandler->method('checkModifyAccessList')->willReturn(true);
+        $dataHandler->method('isInWebMount')->willReturn(false);
+
+        $record = new DatabaseRecord('foo', 1, [], [], []);
+
+        $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
+        $GLOBALS['TCA']['bar']['ctrl']['security']['ignoreWebMountRestriction'] = true;
+
+        $translatedRecord = new DatabaseRecord(
+            'bar',
+            2,
+            ['uid' => 2, 'pid' => 1, 'language' => 1],
+            ['uid' => 2, 'pid' => 1, 'language' => 1],
+            [],
+        );
+        $dependency = new Dependency(
+            $record,
+            'bar',
+            ['uid' => 2],
+            Dependency::REQ_EXISTING,
+            'Require bar 2',
+            static fn(string $string): string => $string,
+        );
+        $recordCollection = new RecordCollection([$record, $translatedRecord]);
+        $dependency->fulfill($recordCollection);
+        self::assertTrue($dependency->isReachable($dataHandler));
     }
 }

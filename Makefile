@@ -12,6 +12,11 @@ CYAN    := $(shell tput -Txterm setaf 6)
 WHITE   := $(shell tput -Txterm setaf 7)
 RESET   := $(shell tput -Txterm sgr0)
 
+# emojis
+EMOJI_robot := "🤖️"
+EMOJI_ping_pong := "🏓"
+EMOJI_face_with_rolling_eyes := "🙄"
+
 ## Show this help
 help:
 	echo "$(EMOJI_interrobang) Makefile help "
@@ -35,32 +40,94 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
-.prepare:
-	mkdir -p $$HOME/.composer/cache
-	[ -f $$HOME/.composer/auth.json ] || echo "{}" > $$HOME/.composer/auth.json
-	mkdir -p $$HOME/.phive
+## Choose the right docker compose file for your environment
+.link-compose-file:
+	echo "$(EMOJI_triangular_ruler) Linking the OS specific compose file"
+ifeq ($(shell uname -s), Darwin)
+	ln -snf .project/docker/docker-compose.darwin.yaml docker-compose.yaml
+else
+	ln -snf .project/docker/docker-compose.linux.yaml docker-compose.yaml
+endif
 
-.prepare-tests:
-	if [[ ! -d .Build ]]; then ./Build/Scripts/runTests.sh -s composerInstall; fi
+stop: .link-compose-file
+	docker compose stop
+	docker compose down
 
-## Initialize the project and install phive and composer dependencies
-install: .prepare
-	chmod +x .project/githooks/*
-	git config core.hooksPath .project/githooks/
-	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.phive:/tmp/phive in2code/php:7.4-fpm phive install --force-accept-unsigned
-	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.composer/cache:/tmp/composer/cache -v $$HOME/.composer/auth.json:/tmp/composer/auth.json in2code/php:7.4-fpm composer install
+destroy: stop
+	echo "$(EMOJI_litter) Removing the project"
+	docker compose down -v --remove-orphans
 
-## Run grumphp which will run all code quality tools concurrently
-qa-code-quality:
-	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.phive:/tmp/phive in2code/php:7.4-fpm bash -c "PATH=\"$$PWD/.project/phars:\$$PATH\" .project/phars/grumphp -c .project/qa/grumphp.yml run"
+start: .link-compose-file
+	docker compose up -d
 
-## Run all automated tests in the in2publish_core test suite
-qa-tests: .prepare-tests qa-tests-unit qa-tests-functional
+setup: stop destroy start .mysql-wait
+	docker compose exec local-php composer i
+	docker exec -u1000 in2publish_core-foreign-php-1 composer i
+	docker compose exec local-php vendor/bin/typo3 install:setup --force
+	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+	git checkout Build/local/config/sites/main/config.yaml
+	git checkout Build/foreign/config/sites/main/config.yaml
+	make restore
 
-## Run all unit tests
-qa-tests-unit:
-	./Build/Scripts/runTests.sh
+## Wait for the mysql container to be fully provisioned
+.mysql-wait:
+	echo "$(EMOJI_ping_pong) Checking DB up and running"
+	while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do \
+		echo "$(EMOJI_face_with_rolling_eyes) Waiting for database ..."; \
+		sleep 3; \
+	done;
 
-## Run all functional tests
-qa-tests-functional:
-	./Build/Scripts/runTests.sh -s functional
+restore: mysql-restore fileadmin-restore
+
+## Restores the database from the backup files in SQLDUMPSDIR
+mysql-restore: .mysql-wait
+	echo "$(EMOJI_robot) Restoring the local database"
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
+	echo "$(EMOJI_robot) Restoring the foreign database"
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
+
+## Restores the fileadmin from .project/data/fileadmin
+fileadmin-restore:
+	echo "$(EMOJI_robot) Restoring the fileadmin"
+	rsync -a --delete .project/data/fileadmin/local/ Build/local/public/fileadmin/
+	rsync -a --delete .project/data/fileadmin/foreign/ Build/foreign/public/fileadmin/
+
+## Create dumps of local and foreign database in dir .project/data/dumps
+dump-dbs: dump-local-database dump-foreign-database
+
+dump-local-database: .mysql-wait
+	echo "$(EMOJI_robot) Dumping the local database"
+	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+
+dump-foreign-database: .mysql-wait
+	echo "$(EMOJI_robot) Dumping the foreign database"
+	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+
+unit:
+	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml
+
+functional:
+	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.functional.xml
+
+acceptance:
+	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml
+
+setup-qa:
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm phive install
+
+qa: qa-php-cs-fixer qa-php-code-sniffer qa-php-mess-detector
+
+qa-php-cs-fixer:
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/php-cs-fixer check --config=.project/qa/php-cs-fixer.php --diff
+
+fix-php-cs-fixer:
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/php-cs-fixer fix --config=.project/qa/php-cs-fixer.php --diff
+
+qa-php-code-sniffer:
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/phpcs --basepath="$$PWD" --standard=.project/qa/phpcs.xml -s
+
+fix-php-code-sniffer:
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/phpcbf --basepath="$$PWD" --standard=.project/qa/phpcs.xml
+
+qa-php-mess-detector:
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:7.4-fpm .project/phars/phpmd Classes ansi .project/qa/phpmd.xml

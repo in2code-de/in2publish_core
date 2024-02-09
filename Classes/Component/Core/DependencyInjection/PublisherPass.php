@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+use function array_keys;
 use function interface_exists;
 
 /**
@@ -30,7 +31,8 @@ class PublisherPass implements CompilerPassInterface
             return;
         }
 
-        foreach ($container->findTaggedServiceIds($this->tagName) as $serviceName => $tags) {
+        $taggedServiceIds = $container->findTaggedServiceIds($this->tagName);
+        foreach (array_keys($taggedServiceIds) as $serviceName) {
             $definition = $container->findDefinition($serviceName);
             if ($definition->isAbstract() || interface_exists($definition->getClass())) {
                 continue;

@@ -1,0 +1,39 @@
+#
+#    Example Configuration for in2publish on foreign
+#
+
+# Backup configuration
+backup:
+
+  # Backup settings for table publishing
+  publishTableCommand:
+
+    # The number of backups to keep. 0 : no backups are made; 1 : one backup, keep none;
+    # greater than 1: keep the specified number of backups
+    keepBackups: 2
+
+    # Specify the location where table backups should be stored (absolute & writable).
+    backupLocation: /app/Build/foreign/backup
+
+    # Adds a "DROP TABLE {tablename} IF EXISTS" statement to the backup.
+    addDropTable: TRUE
+
+    # If TRUE, backups of tables will be stored in ZIP files instead of plain sql file.
+    # saves a lot of disc space.
+    zipBackup: TRUE
+
+
+# Features
+features:
+
+  # Toggle different warnings on live, so editors will not change content
+  warningOnForeign:
+
+    # Colorize the dark TYPO3 status bar to attract attention
+    colorizeHeader:
+
+      # Feature toggle
+      enable: TRUE
+
+      # Allowed values: HEX codes (3 or 6 chars), rgb(0, 0, 0), rgba(0, 0, 0, 0), predefined CSS color names (see CssColorValueValidator::$colorNames)
+      color: '#a06e23'

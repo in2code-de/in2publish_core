@@ -17,7 +17,8 @@ use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use Throwable;
 
 use function debug_backtrace;
-use function user_error;
+use function sprintf;
+use function trigger_error;
 
 use const DEBUG_BACKTRACE_IGNORE_ARGS;
 use const E_USER_DEPRECATED;
@@ -66,7 +67,7 @@ class PublisherService
         $frame = $backtrace[1];
         if ($frame['function'] !== 'publish' || $frame['class'] !== self::class) {
             $message = sprintf(self::DEPRECATION_DIRECTLY_INVOKED, $frame['class'], $frame['type'], $frame['function']);
-            user_error($message, E_USER_DEPRECATED);
+            trigger_error($message, E_USER_DEPRECATED);
         }
         unset($backtrace, $frame, $message);
 

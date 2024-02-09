@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+/usr/sbin/sshd -e -p 22
+status=$?
+if [ $status -ne 0 ]; then
+  echo "Failed to start SSH server: $status"
+  exit $status
+fi
+
+# first arg is `-f` or `--some-option`
+if [ "${1#-}" != "$1" ]; then
+	set -- php-fpm "$@"
+fi
+
+exec "$@"

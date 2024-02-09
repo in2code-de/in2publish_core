@@ -49,6 +49,9 @@ class IsPropertyDirtyViewHelper extends AbstractViewHelper
         return in_array($this->arguments['property'], $record->getChangedProps(), true);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function compile(
         $argumentsName,
         $closureName,

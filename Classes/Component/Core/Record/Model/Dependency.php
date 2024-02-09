@@ -16,6 +16,9 @@ use function implode;
 
 use const PHP_EOL;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class Dependency
 {
     public const REQ_EXISTING = 'existing';
@@ -175,6 +178,9 @@ class Dependency
 
     public function canBeFulfilledBy(Record $record): bool
     {
+        if ($this->selectedRecords->isEmpty()) {
+            return false;
+        }
         foreach ($this->selectedRecords as $selectedRecord) {
             if (
                 $record !== $selectedRecord
@@ -188,9 +194,24 @@ class Dependency
 
     public function getReasonsHumanReadable(): string
     {
-        return implode(PHP_EOL, $this->reasons->map(static fn(Reason $reason) => $reason->getReadableLabel()));
+        return implode(PHP_EOL, $this->reasons->map(static fn (Reason $reason) => $reason->getReadableLabel()));
     }
 
+    /**
+     * fulfill() must be called before this method. The recordIndex passed to fulfill() must contain any dependency
+     * target record including those outside the record tree. This is done in the RecordIndex before calling fulfill().
+     * @see \In2code\In2publishCore\Component\Core\RecordIndex::processDependencies
+     *
+     * When fulfill() did not select any record, the records do not exist in the database. If they exist in the
+     *     database
+     * but not in the record tree, they would have been found by RecordIndex::processDependencies prior to calling
+     * fulfill()
+     *
+     * So at this point, all existing relation targets are contained in $this->selectedRecords. If dependency targets
+     * are missing, they do not block publishing. Therefore, dependencies to non-existent records (= empty
+     * $this->selectedRecords) are ignored silently. It is intended, that $this->selectedRecords->are() returns empty if
+     * there are no records in it.
+     */
     public function isReachable(DataHandler $dataHandler): bool
     {
         $beUser = $dataHandler->BE_USER;
@@ -211,32 +232,28 @@ class Dependency
                 if (!$dataHandler->checkModifyAccessList($table)) {
                     return false;
                 }
-                if (!$beUser->isAdmin()) {
-                    $pid = $record->getProp('pid');
-                    if (
-                        (
-                            ($GLOBALS['TCA'][$table]['ctrl']['rootLevel'] ?? false)
-                            || 0 === $pid
-                        )
-                        && empty($GLOBALS['TCA'][$table]['ctrl']['security']['ignoreRootLevelRestriction'])
-                    ) {
-                        return false;
-                    }
-                    $editLockField = $GLOBALS['TCA'][$table]['ctrl']['editlock'] ?? null;
-                    if (null !== $editLockField && $record->getProp($editLockField)) {
-                        return false;
-                    }
-                    // If the PID is not null, the web mount restriction is
-                    // either ignored or the page must be within the web mount.
-                    if (
-                        null !== $pid
-                        && (
-                            !empty($GLOBALS['TCA'][$table]['ctrl']['security']['ignoreWebMountRestriction'])
-                            || !$dataHandler->isInWebMount($pid)
-                        )
-                    ) {
-                        return false;
-                    }
+                $pid = $record->getProp('pid');
+                if (
+                    (
+                        ($GLOBALS['TCA'][$table]['ctrl']['rootLevel'] ?? false)
+                        || 0 === $pid
+                    )
+                    && empty($GLOBALS['TCA'][$table]['ctrl']['security']['ignoreRootLevelRestriction'])
+                ) {
+                    return false;
+                }
+                $editLockField = $GLOBALS['TCA'][$table]['ctrl']['editlock'] ?? null;
+                if (null !== $editLockField && $record->getProp($editLockField)) {
+                    return false;
+                }
+                // If the PID is not null, the web mount restriction is
+                // either ignored or the page must be within the web mount.
+                if (
+                    null !== $pid
+                    && !($GLOBALS['TCA'][$table]['ctrl']['security']['ignoreWebMountRestriction'] ?? false)
+                    && !$dataHandler->isInWebMount($pid)
+                ) {
+                    return false;
                 }
             }
             return true;

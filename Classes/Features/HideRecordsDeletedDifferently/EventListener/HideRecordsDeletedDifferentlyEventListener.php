@@ -29,21 +29,13 @@ namespace In2code\In2publishCore\Features\HideRecordsDeletedDifferently\EventLis
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\AbstractDatabaseRecord;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 
 class HideRecordsDeletedDifferentlyEventListener
 {
-    use ConfigContainerInjection;
-
     public function decideIfRecordShouldBeIgnored(DecideIfRecordShouldBeIgnored $event): void
     {
-        // Ignore if this feature is disabled
-        if (!$this->configContainer->get('features.hideRecordsDeletedDifferently.enable')) {
-            return;
-        }
-
         $record = $event->getRecord();
 
         // Only database records can be soft deleted

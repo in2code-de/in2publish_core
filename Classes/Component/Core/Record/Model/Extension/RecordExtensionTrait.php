@@ -10,5 +10,5 @@ namespace In2code\In2publishCore\Component\Core\Record\Model\Extension;
  */
 trait RecordExtensionTrait
 {
-    ###USES###
+    //###USES###
 }

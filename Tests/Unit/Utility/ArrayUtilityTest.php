@@ -37,7 +37,7 @@ use In2code\In2publishCore\Utility\ArrayUtility;
  */
 class ArrayUtilityTest extends UnitTestCase
 {
-    public function removeFromArrayByKeyReturnsVoidDataProvider(): array
+    public static function removeFromArrayByKeyReturnsVoidDataProvider(): array
     {
         return [
             'superfluous_key' => [['abc' => '1', 'def' => 1236, 'ghi' => 'acb'], ['def', 'xy'], 2],

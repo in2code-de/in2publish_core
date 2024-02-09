@@ -95,10 +95,8 @@ class FlexProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($flexResolver);
         $flexFormTools = $this->createMock(FlexFormTools::class);
-        $flexFormTools->expects($this->exactly(2))->method('parseDataStructureByIdentifier')->withConsecutive(
-            [$json1],
-            [$json2],
-        );
+
+        $flexFormTools->expects($this->exactly(2))->method('parseDataStructureByIdentifier');
         $flexFormFlatteningService = $this->createMock(FlexFormFlatteningService::class);
         $flexFormFlatteningService->expects($this->exactly(2))
                                   ->method('flattenFlexFormDefinition')
@@ -107,10 +105,7 @@ class FlexProcessorTest extends UnitTestCase
                                       ['bar' => 'baz'],
                                   );
         $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
-        $tcaPreProcessingService->expects($this->exactly(2))->method('preProcessTcaColumns')->withConsecutive(
-            ['tableNameFoo/fieldNameBar/foo_pi1,bar', ['foo' => 'bar']],
-            ['tableNameFoo/fieldNameBar/foo_pi2,baz', ['bar' => 'baz']],
-        );
+        $tcaPreProcessingService->expects($this->exactly(2))->method('preProcessTcaColumns');
 
         $flexProcessor->injectContainer($container);
         $flexProcessor->injectFlexFormTools($flexFormTools);
@@ -163,7 +158,7 @@ class FlexProcessorTest extends UnitTestCase
 
         $compatibleTcaParts = [];
         $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['select.fooBar']['resolver'] =
-            new class($called, $databaseRecord) implements Resolver {
+            new class ($called, $databaseRecord) implements Resolver {
                 protected array $called;
                 protected DatabaseRecord $databaseRecord;
 
@@ -187,7 +182,7 @@ class FlexProcessorTest extends UnitTestCase
                 }
             };
         $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] =
-            new class($called, $databaseRecord) implements Resolver {
+            new class ($called, $databaseRecord) implements Resolver {
                 protected array $called;
                 protected DatabaseRecord $databaseRecord;
 

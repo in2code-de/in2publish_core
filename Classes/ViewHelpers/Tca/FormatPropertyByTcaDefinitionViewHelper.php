@@ -29,14 +29,20 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function date;
+use function htmlspecialchars;
 use function nl2br;
+use function str_starts_with;
 use function trim;
+
+use const ENT_QUOTES;
 
 class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 {
+    protected $escapeOutput = false;
     protected array $tableConfiguration = [];
 
     public function initializeArguments(): void
@@ -55,7 +61,11 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
         $tableName = $this->arguments['tableName'];
 
         $this->tableConfiguration = $GLOBALS['TCA'][$tableName]['columns'][$fieldName] ?? [];
-        $value = trim($this->renderChildren());
+        $value = $this->renderChildren();
+        if (null === $value) {
+            return '';
+        }
+        $value = trim((string)$value);
 
         if (empty($this->tableConfiguration['config']['type'])) {
             return $value;
@@ -68,14 +78,15 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
             case 'text':
                 $value = nl2br($value);
                 break;
+            case 'check':
+                return $value ? '<pre>true</pre>' : '<pre>false</pre>';
+            case 'select':
+                $value = $this->changeValueForTypeSelect($value);
+                break;
             default:
         }
 
-        if (empty($value)) {
-            $value = '-';
-        }
-
-        return $value;
+        return htmlspecialchars($value, ENT_QUOTES);
     }
 
     protected function changeValueForTypeInput(string $value): string
@@ -97,5 +108,21 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
             }
         }
         return $value;
+    }
+
+    protected function changeValueForTypeSelect(string $value): string
+    {
+        $items = $this->tableConfiguration['config']['items'] ?? [];
+        foreach ($items as $item) {
+            $itemValue = (string)($item['value'] ?? $item[1] ?? '');
+            if ($itemValue === $value) {
+                $value = $item['label'] ?? $item[0] ?? '';
+                if (str_starts_with($value, 'LLL')) {
+                    $value = LocalizationUtility::translate($value) ?: $value;
+                }
+                return $value;
+            }
+        }
+        return empty($value) ? $value : '[invalid value] (' . $value . ')';
     }
 }

@@ -31,13 +31,12 @@ namespace In2code\In2publishCore\Features\CompareDatabaseTool\Controller;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -54,7 +53,6 @@ use function max;
 class CompareDatabaseToolController extends ActionController
 {
     use AdminToolsModuleTemplate;
-    use ConfigContainerInjection;
     use LocalDatabaseInjection;
     use ForeignDatabaseInjection;
     use IgnoredFieldsServiceInjection;
@@ -206,7 +204,7 @@ class CompareDatabaseToolController extends ActionController
             $this->addFlashMessage(
                 LocalizationUtility::translate('compare_database.transfer.record_missing', 'in2publish_core'),
                 LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                ContextualFeedbackSeverity::ERROR,
+                AbstractMessage::ERROR,
             );
             $this->redirect('index');
         }
@@ -216,7 +214,7 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate('compare_database.transfer.exists_on_foreign', 'in2publish_core'),
                     LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                    ContextualFeedbackSeverity::ERROR,
+                    AbstractMessage::ERROR,
                 );
                 $this->redirect('index');
             }
@@ -241,7 +239,7 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate('compare_database.transfer.exists_on_local', 'in2publish_core'),
                     LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                    ContextualFeedbackSeverity::ERROR,
+                    AbstractMessage::ERROR,
                 );
                 $this->redirect('index');
             }
@@ -269,7 +267,7 @@ class CompareDatabaseToolController extends ActionController
                         'in2publish_core',
                     ),
                     LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
-                    ContextualFeedbackSeverity::ERROR,
+                    AbstractMessage::ERROR,
                 );
                 $this->redirect('index');
             }

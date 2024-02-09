@@ -10,28 +10,108 @@ jobs:
   testsuite:
     name: all tests
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        php: [ '7.4', '8.0' ]
-        minMax: [ 'composerInstallMin', 'composerInstallMax' ]
+#    strategy:
+#      matrix:
+#        php: [ '7.4', '8.0' ]
+#        minMax: [ 'composerInstallMin', 'composerInstallMax' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Composer
-        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s ${{ matrix.minMax }}
+      - name: Add local env vars
+        run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env; echo "HOST_PWD=$(pwd)" >> .env; cat .env
 
-      - name: Composer validate
-        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerValidate
+      - name: Copy docker compose file for CI
+        run: cp .project/docker/docker-compose.ci.yaml docker-compose.yaml
 
-      - name: Lint PHP
-        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s lint
+      - name: Docker Compose
+        run: docker compose up -d
 
-      - name: Unit tests
-        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s unit
+      - name: Show me what's up
+        run: docker compose ps
 
-      - name: Functional tests with mariadb
-        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d mariadb -s functional
+      - name: Show me what's defined
+        run: printenv
+
+      - name: Show me what's defined inside
+        run: docker compose exec local-php printenv
+
+      - name: Show me what's there
+        run: ls -la
+
+      - name: Show me what's docker
+        run: ls -la /var/run/docker.sock
+
+      - name: Composer Local
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install
+
+      - name: Composer Foreign
+        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 composer install
+
+      - name: Wait for Database
+        run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
+
+      - name: TYPO3 Setup Local
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
+
+      - name: TYPO3 Setup Foreign
+        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+
+      - name: Restore site configurations after setup
+        run: git checkout Build/local/config/sites/main/config.yaml && git checkout Build/foreign/config/sites/main/config.yaml
+
+      - name: Restore DB Local
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
+
+      - name: Restore DB Foreign
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
+
+      - name: Show me what's up 2
+        run: docker compose ps
+
+      - name: Unit Tests
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
+        if: always()
+
+      - name: Functional Tests
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
+        if: always()
+
+      - name: Acceptance Tests
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
+        if: always()
+
+      - name: Show me what's up 3
+        run: docker compose ps
+        if: always()
+
+      - name: Show me what's logged
+        run: docker compose logs
+        if: always()
+
+      - name: Shut down to finish video recording
+        run: docker compose down
+        if: always()
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-artifacts
+          path: |
+            .project/artifacts
+
+#      - name: Composer validate
+#        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerValidate
+
+#      - name: Lint PHP
+#        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s lint
+
+#      - name: Unit tests
+#        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s unit
+
+#      - name: Functional tests with mariadb
+#        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d mariadb -s functional
 
 #      - name: Functional tests with mssql
 #        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d mssql -s functional

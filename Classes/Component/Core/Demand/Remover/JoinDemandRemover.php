@@ -6,6 +6,8 @@ namespace In2code\In2publishCore\Component\Core\Demand\Remover;
 
 use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 
+use function array_keys;
+
 class JoinDemandRemover implements DemandRemover
 {
     protected string $mmTable;
@@ -33,7 +35,7 @@ class JoinDemandRemover implements DemandRemover
     public function removeFromDemandsArray(array &$demands): void
     {
         foreach ($demands[$this->mmTable][$this->joinTable] ?? [] as $additionalWhere => $properties) {
-            foreach ($properties as $property => $values) {
+            foreach (array_keys($properties) as $property) {
                 if ($property === $this->field) {
                     unset($demands[$this->mmTable][$this->joinTable][$additionalWhere][$property][$this->search]);
                 }

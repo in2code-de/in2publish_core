@@ -26,8 +26,8 @@ class DatabaseRecordFactoryFactoryCompilerPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container)
     {
-        $recordDatabaseFactoryFactoryDefinition = $container->getDefinition(DatabaseRecordFactoryFactory::class);
-        if (!$recordDatabaseFactoryFactoryDefinition) {
+        $recordDatabaseFactoryFactory = $container->getDefinition(DatabaseRecordFactoryFactory::class);
+        if (!$recordDatabaseFactoryFactory) {
             return;
         }
 
@@ -37,7 +37,7 @@ class DatabaseRecordFactoryFactoryCompilerPass implements CompilerPassInterface
                 continue;
             }
             $definition->setPublic(true);
-            $recordDatabaseFactoryFactoryDefinition->addMethodCall(
+            $recordDatabaseFactoryFactory->addMethodCall(
                 'addFactory',
                 [new Reference($serviceName)],
             );

@@ -14,7 +14,8 @@ trait FalStorageTestSubjectsProviderInjection
     /**
      * @noinspection PhpUnused
      */
-    public function injectFalStorageTestSubjectProvider(FalStorageTestSubjectsProvider $falStorageTestSubjectsProvider
+    public function injectFalStorageTestSubjectProvider(
+        FalStorageTestSubjectsProvider $falStorageTestSubjectsProvider
     ): void {
         $this->falStorageTestSubjectsProvider = $falStorageTestSubjectsProvider;
     }

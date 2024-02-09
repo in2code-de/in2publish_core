@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactory;
+use In2code\In2publishCore\Service\Condition\DependencyInjection\EvaluatorCompilerPass;
+use In2code\In2publishCore\Service\Condition\Evaluator\Evaluator;
 use In2code\In2publishCore\Service\Configuration\LegacyPageTypeService;
 use In2code\In2publishCore\Service\Configuration\PageTypeRegistryService;
 use In2code\In2publishCore\Service\Configuration\PageTypeService;
@@ -49,4 +51,7 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
             ->addTag('in2publish_core.factory.database_record',);
 
     $builder->addCompilerPass(new PublicServicePass('in2publish_core.testing.test'));
+
+    $builder->registerForAutoconfiguration(Evaluator::class)->addTag('in2publish_core.condition.evaluator');
+    $builder->addCompilerPass(new EvaluatorCompilerPass('in2publish_core.condition.evaluator'));
 };

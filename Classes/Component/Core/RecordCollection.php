@@ -37,7 +37,6 @@ class RecordCollection implements IteratorAggregate
 
     /**
      * @param iterable<Record>|iterable<array<Record>> $records
-     * @return void
      */
     public function addRecords(iterable $records): void
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Service;
 
+use In2code\In2publishCore\Component\Core\DependencyInjection\StaticResolverPass;
 use In2code\In2publishCore\Component\Core\PreProcessing\CachedTcaPreProcessingServiceInjection;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticResolver;
@@ -20,7 +21,7 @@ class ResolverService
 
     /**
      * @noinspection PhpUnused Called via DI
-     * @see \In2code\In2publishCore\Component\Core\DependencyInjection\StaticResolverPass
+     * @see StaticResolverPass
      */
     public function addStaticResolver(StaticResolver $staticResolver): void
     {

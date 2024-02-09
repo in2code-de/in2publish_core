@@ -80,7 +80,7 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
                 unset($query['caller']);
                 $queriesByCaller[$caller][] = $query;
             }
-            uksort($queriesByCaller, static fn($a, $b) => count($queriesByCaller[$b]) - count($queriesByCaller[$a]));
+            uksort($queriesByCaller, static fn ($a, $b) => count($queriesByCaller[$b]) - count($queriesByCaller[$a]));
 
             foreach ($queriesByCaller as $caller => $callerQueries) {
                 $times = array_column($callerQueries, 'executionNS');
@@ -88,7 +88,7 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
                 $durationMs = (int)($durationNS / 1e+6);
                 $durationS = (int)($durationMs / 1000);
                 $remainingMs = $durationMs - $durationS * 1000;
-                $duration = date("i:s", (int)$durationS) . '.' . $remainingMs;
+                $duration = date('i:s', (int)$durationS) . '.' . $remainingMs;
                 unset($queriesByCaller[$caller]);
                 $queriesByCaller["$caller ($duration)"] = $callerQueries;
             }

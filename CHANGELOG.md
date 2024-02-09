@@ -1,5 +1,54 @@
 # In2publish Core Change Log
 
+12.4.0: (includes 11.0.9)
+
+- [META] Set the branch alias version number to 12.4.x-dev
+- [META] Set the EM conf version number to 12.4.0
+- [TEST] Set correct Redirects Module assertion text
+- [TEST] Ensure first pagetree node is selected
+- [TEST] Remove deleted field from functional test
+- [TEST] Run compare database on local and foreign
+- [TEST] Restore site configs after TYPO3 setup
+- [TEST] Remove workflow tables from local dump
+- [TEST] Add filemount for be user publisher-page-tree-publish
+- [CI] Add docker compose file for CI
+- [BUGFIX] Add language configuration to site configuration
+- [FEATURE] Add destroy target to makefile
+- [BUGFIX] Remove trailing comma in template
+- [DEV] Update darwin docker compose to actually use seleniarm images
+- [DEV] Add docker compose file for darwin (ARM) and remove recorder
+- [DEV] Add setup-qa make target
+- [QA] Remove psalm and phpstan, they are currently unusable
+- [CODESTYLE][REFACTOR] Fix phpcs and phpmd issues (or add to phpmd baseline for later inspection)
+- [CODESTYLE] Fix php-cs-fixer issues
+- [DEV] Set foreign baseurl for automated setup via env var
+- [CI] Log screenrecording logs to investigate missing artifacts
+- [DEV] Change mail host to match the domain naming
+- [QA] Define missing PWD variable for github actions
+- [TEST] Show more info about github actions runner
+- [TEST] Fix functional test SingleDatabaseRepositoryTest::testFindByWhere because the test data changed
+- [QA] Split videos into one video per test
+- [BUGFIX] Set $GLOBALS['EXEC_TIME'] for functional tests
+- [TEST] Fix ReplaceAndRenameFileInstructionTest
+- [TASK] Add unit and functional tests for file instructions
+- [TEST] Test Dependency::isReachable
+- [TEST] Test publishing of redirects and records with depenencies
+- [TEST] Add more unit and functional tests for core components
+- [TEST] Add more tests, use created docker instance for functional tests
+- [CI] Run unit and functional tests in GH Actions
+- [CI] Run acceptance tests in pipeline
+- [TEST] Remove test which requires the enterprise edition
+- [BUGFIX] Remove code which leaked from the overwritten partial into the CE
+- [TEST] Install the project as in2publish_core version, fix file upload path
+- [TEST] Integrate acceptance tests based on co-stack/stack-test
+- [TASK] Update copyright year
+- [CODESTYLE] Move opening brace to newline and add missing space after logic operator
+- [FIX] Corrects Code Style
+- [FEATURE] Extend Redirects Module Filter
+- [BUGFIX] Add missing Fluid namespace import
+- [BUGFIX] Format check and select values correctly
+- [BUGFIX] Revert upgrade to ContextualFeedbackSeverity as it is not compatible with TYPO3 v11
+
 12.3.1:
 
 - [META] Set the EM conf version number to 12.3.1
@@ -697,6 +746,39 @@
 - Wip: [FEATURE] Create TcaHandling component to resolve TCA into closures
 - [GIT] Ignore build and qa files when creating a production dist
 - [GIT] Ignore the .github folder when creating a production dist
+
+1.0.9:
+- [META] Set the EM conf version number to 11.0.9
+- [BUGFIX] Search for file links only in href attributes
+- [BUGFIX] Do not enhance records with sys_redirects if they are excluded from publishing
+- [RELEASE] Version 11.0.8 with correct performance test
+
+11.0.8
+- [META] Set the EM conf version number to 11.0.8
+- [BUGFIX] Sort query results by language
+- [BUGFIX] Use suitable default values in SQL dumps
+- [BUGFIX] Add missing word in german translation
+- [BUGFIX] Fix DiskSpeed performance test units
+- [BUGFIX] Fix DBInit performance test units
+
+11.0.7:
+- [TASK] Raise version number in ext_emconf.php
+- Update de.locallang.xlf
+
+11.0.6:
+- [META] Set the EM conf version number to 11.0.6
+- [DOCS] Update changelog
+- [TASK] Add label for Publish redirects module
+- [BUGFIX] Correct SSH Adapter
+- [BUGFIX] Avoid error log entries for unset backend users in clear cache command
+- [BUGFIX] Update definition of defaultIgnoredTables for publishing
+
+11.0.5:
+- [META] Set the EM conf version number to 11.0.5
+- [DOCS] Update changelog
+- [BUGFIX] Avoid undefined array key access in ShallowRecordFinder
+- [BUGFIX] Fix registration of BackupCommand and description of ImportCommand
+- [TASK] Allow PHP 8.1 as requirement
 
 11.0.4:
 - **Everything included in the 10.2.5 release**

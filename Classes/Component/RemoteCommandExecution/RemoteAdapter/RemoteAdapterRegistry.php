@@ -36,7 +36,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_key_exists;
 use function in_array;
 use function sprintf;
-use function user_error;
+use function trigger_error;
 
 use const E_USER_DEPRECATED;
 
@@ -65,7 +65,7 @@ class RemoteAdapterRegistry
      */
     public function registerAdapter(string $identifier, string $class, string $label, array $tests = []): bool
     {
-        user_error(sprintf(self::DEPRECATION_MANUAL_REGISTRATION, $identifier), E_USER_DEPRECATED);
+        trigger_error(sprintf(self::DEPRECATION_MANUAL_REGISTRATION, $identifier), E_USER_DEPRECATED);
         $this->legacyAdapters[$identifier] = [
             'class' => $class,
             'tests' => $tests,

@@ -34,8 +34,9 @@ return static function (ContainerConfigurator $configurator): void {
         $services->set('tx_in2publish_redirectssupport_event_listener_enhancer')
                  ->class(PageRecordRedirectEnhancer::class)
                  ->tag(
-                     'event.listener',
+                     'in2publish_core.conditional.event.listener',
                      [
+                         'condition' => 'CONF:features.redirectsSupport.enable',
                          'identifier' => 'in2publishcore-PageRecordRedirectEnhancer-RecordRelationsWereResolved',
                          'method' => 'addRedirectsToPageRecord',
                          'event' => RecordRelationsWereResolved::class,
@@ -44,8 +45,9 @@ return static function (ContainerConfigurator $configurator): void {
         $services->set('tx_in2publish_redirectssupport_event_listener_replacer')
                  ->class(RedirectSourceHostReplacement::class)
                  ->tag(
-                     'event.listener',
+                     'in2publish_core.conditional.event.listener',
                      [
+                         'condition' => 'CONF:features.redirectsSupport.enable',
                          'identifier' => 'in2publishcore-RedirectSourceHostReplacement-RecordWasPublished',
                          'method' => 'replaceLocalWithForeignSourceHost',
                          'event' => RecordWasPublished::class,
@@ -54,16 +56,18 @@ return static function (ContainerConfigurator $configurator): void {
         $services->set('tx_in2publish_redirectssupport_event_listener_updater')
                  ->class(RedirectCacheUpdater::class)
                  ->tag(
-                     'event.listener',
+                     'in2publish_core.conditional.event.listener',
                      [
+                         'condition' => 'CONF:features.redirectsSupport.enable',
                          'identifier' => 'in2publishcore-RedirectCacheUpdater-RecordWasPublished',
                          'method' => 'publishRecordRecursiveAfterPublishing',
                          'event' => RecordWasPublished::class,
                      ],
                  )
                  ->tag(
-                     'event.listener',
+                     'in2publish_core.conditional.event.listener',
                      [
+                         'condition' => 'CONF:features.redirectsSupport.enable',
                          'identifier' => 'in2publishcore-RedirectCacheUpdater-RecursiveRecordPublishingEnded',
                          'method' => 'publishRecordRecursiveEnd',
                          'event' => RecursiveRecordPublishingEnded::class,

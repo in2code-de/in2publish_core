@@ -47,15 +47,47 @@ class FilesInFolderDemandResolver implements DemandResolver
             return;
         }
 
-        $fileDemands = $this->demandsFactory->createDemand();
+        $request = $this->groupDemandsByStorage($filesInFolderDemands);
 
+        $fileDemands = $this->getAndProcessFilesystemInformation($request, $filesInFolderDemands, $recordCollection);
+
+        $fileRecordCollection = new RecordCollection();
+        $this->demandResolver->resolveDemand($fileDemands, $fileRecordCollection);
+        $this->recordTreeBuilder->findRecordsByTca($fileRecordCollection);
+
+        foreach ($request as $storage => $parentFolderIdentifiers) {
+            foreach ($parentFolderIdentifiers as $parentFolderIdentifier) {
+                /** @var FolderRecord $folderRecord */
+                $folderRecord = $this->recordIndex->getRecord(
+                    FolderRecord::CLASSIFICATION,
+                    $storage . ':' . $parentFolderIdentifier,
+                );
+                $this->identifyMovedRecords($folderRecord);
+            }
+        }
+    }
+
+    protected function groupDemandsByStorage(array $filesInFolderDemands): array
+    {
         $request = [];
         foreach ($filesInFolderDemands as $storage => $parentFolderIdentifier) {
             $request[$storage] = array_keys($parentFolderIdentifier);
         }
+        return $request;
+    }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    protected function getAndProcessFilesystemInformation(
+        array $request,
+        array $filesInFolderDemands,
+        RecordCollection $recordCollection
+    ): Demands {
         $localResponseCollection = $this->localFolderInfoService->getFolderInfo($request);
         $foreignResponseCollection = $this->foreignFolderInfoService->getFolderInformation($request);
+
+        $fileDemands = $this->demandsFactory->createDemand();
 
         foreach ($filesInFolderDemands as $storage => $parentIdentifiers) {
             foreach ($parentIdentifiers as $parentIdentifier => $valueMap) {
@@ -106,20 +138,7 @@ class FilesInFolderDemandResolver implements DemandResolver
             }
         }
 
-        $fileRecordCollection = new RecordCollection();
-        $this->demandResolver->resolveDemand($fileDemands, $fileRecordCollection);
-        $this->recordTreeBuilder->findRecordsByTca($fileRecordCollection);
-
-        foreach ($request as $storage => $parentFolderIdentifiers) {
-            foreach ($parentFolderIdentifiers as $parentFolderIdentifier) {
-                /** @var FolderRecord $folderRecord */
-                $folderRecord = $this->recordIndex->getRecord(
-                    FolderRecord::CLASSIFICATION,
-                    $storage . ':' . $parentFolderIdentifier,
-                );
-                $this->identifyMovedRecords($folderRecord);
-            }
-        }
+        return $fileDemands;
     }
 
     protected function identifyMovedRecords(FolderRecord $folderRecord): void
@@ -155,6 +174,14 @@ class FilesInFolderDemandResolver implements DemandResolver
             }
         }
 
+        $fileRecords = $this->searchForFilesMovedOutFromFolder($filesMovedOutFromFolder, $fileRecords);
+        $fileRecords = $this->searchForFilesMovedIntoFolder($filesMovedIntoFolder, $fileRecords);
+
+        $this->identifyMovedRecordsBySysFileRecords($sysFileRecords, $fileRecords, $folderRecord, $sysFileRecordCollection);
+    }
+
+    public function searchForFilesMovedOutFromFolder(array $filesMovedOutFromFolder, array $fileRecords): array
+    {
         if (!empty($filesMovedOutFromFolder)) {
             $foundMovedOutFiles = $this->localFileInfoService->getFileInfo($filesMovedOutFromFolder);
             foreach ($foundMovedOutFiles as $localInfo) {
@@ -162,6 +189,11 @@ class FilesInFolderDemandResolver implements DemandResolver
                 $fileRecords[$identifier] = $this->recordFactory->createFileRecord($localInfo->toArray(), []);
             }
         }
+        return $fileRecords;
+    }
+
+    public function searchForFilesMovedIntoFolder(array $filesMovedIntoFolder, array $fileRecords): array
+    {
         if (!empty($filesMovedIntoFolder)) {
             $foundMovedIntoFiles = $this->foreignFileInfoService->getFileInfo($filesMovedIntoFolder);
             foreach ($foundMovedIntoFiles as $foreignInfo) {
@@ -169,7 +201,15 @@ class FilesInFolderDemandResolver implements DemandResolver
                 $fileRecords[$identifier] = $this->recordFactory->createFileRecord([], $foreignInfo->toArray());
             }
         }
+        return $fileRecords;
+    }
 
+    public function identifyMovedRecordsBySysFileRecords(
+        array $sysFileRecords,
+        array $fileRecords,
+        FolderRecord $folderRecord,
+        RecordCollection $sysFileRecordCollection
+    ): void {
         foreach ($sysFileRecords as $sysFileRecord) {
             if ($sysFileRecord->getState() === Record::S_CHANGED) {
                 $localIdentifier = $sysFileRecord->getLocalProps()['identifier'];
