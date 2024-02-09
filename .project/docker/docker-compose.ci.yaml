@@ -1,0 +1,150 @@
+version: '3.7'
+
+services:
+  local:
+    image: in2code/httpd:2.4-alpine
+    volumes:
+      - ./:/app/
+      - ./:/packages/in2publish_core/
+    env_file:
+      - .env
+    environment:
+      WEB_DOCUMENT_ROOT: /app/Build/local/public
+      WEB_PHP_SERVICE: local-php
+    networks:
+      default:
+        aliases:
+          - ${HOST_LOCAL}
+    working_dir: /app/Build/local/
+
+  local-php:
+    build:
+      context: .project/docker/local-php
+      dockerfile: Dockerfile
+      target: base
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    user: ${USER_ID:-1000}
+    volumes:
+      - ./:/app/
+      - ./:/packages/in2publish_core/
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
+    env_file:
+      - .env
+    environment:
+      IN2PUBLISH_CONTEXT: Local
+      TYPO3_INSTALL_DB_DBNAME: local
+      TYPO3_INSTALL_SITE_NAME: "[LOCAL] CP TYPO3 v12"
+      TYPO3_INSTALL_SITE_BASE_URL: ${HOST_LOCAL}
+      HOST_PWD: $PWD
+    working_dir: /app/Build/local/
+
+  foreign:
+    image: in2code/httpd:2.4-alpine
+    volumes:
+      - ./:/app/
+      - ./:/packages/in2publish_core/
+    env_file:
+      - .env
+    environment:
+      WEB_DOCUMENT_ROOT: /app/Build/foreign/public
+      WEB_PHP_SERVICE: foreign-php
+    networks:
+      default:
+        aliases:
+          - ${HOST_FOREIGN}
+    working_dir: /app/Build/foreign/
+
+  foreign-php:
+    build:
+      context: .project/docker/foreign-php
+      dockerfile: Dockerfile
+      target: base
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    volumes:
+      - ./:/app/
+      - ./:/packages/in2publish_core/
+    env_file:
+      - .env
+    environment:
+      IN2PUBLISH_CONTEXT: Foreign
+      TYPO3_INSTALL_DB_DBNAME: foreign
+      TYPO3_INSTALL_SITE_NAME: "[FOREIGN] CP TYPO3 v12"
+      TYPO3_INSTALL_SITE_BASE_URL: ${HOST_FOREIGN}
+    working_dir: /app/Build/foreign/
+
+  mysql:
+    image: in2code/mysql:8.0
+    command: --secure-file-priv=${SQLDUMPSDIR}
+    user: '1000'
+    env_file:
+      - .env
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - .project/docker/mysql/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
+      - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
+    ports:
+      - ${SQLPORT}:3306
+
+  mail:
+    image: axllent/mailpit
+    environment:
+      VIRTUAL_HOST: ${MAIL_HOST}
+      VIRTUAL_PORT: 8025
+
+  selenium-hub:
+    image: ${SELENIUM_HUB_IMAGE:-selenium/hub}
+    shm_size: 2gb
+    healthcheck:
+      test: '/opt/bin/check-grid.sh --host 0.0.0.0 --port 4444'
+      interval: 15s
+      timeout: 30s
+      retries: 5
+    environment:
+      SE_EVENT_BUS_PUBLISH_PORT: 4442
+      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+      SE_NODE_OVERRIDE_MAX_SESSIONS: true
+      SE_NODE_MAX_SESSIONS: 5
+    volumes:
+      - ./:/app/
+
+  selenium-node-chrome:
+    image: ${SELENIUM_NODE_CHROME_IMAGE:-selenium/node-chrome}
+    shm_size: 2gb
+    environment:
+      SE_EVENT_BUS_HOST: selenium-hub
+      SE_EVENT_BUS_PUBLISH_PORT: 4442
+      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+      SE_NODE_OVERRIDE_MAX_SESSIONS: true
+      SE_NODE_MAX_SESSIONS: 5
+      SE_VNC_NO_PASSWORD: 1
+    volumes:
+      - ./:/app/
+      - /dev/shm:/dev/shm
+    ports:
+      - ${SELENIUM_NODE_CHROME_VNC_PORT:-14320}:5900
+      - ${SELENIUM_NODE_CHROME_NOVNC_PORT:-14330}:7900
+
+  selenium-node-firefox:
+    image: ${SELENIUM_NODE_CHROME_IMAGE:-selenium/node-firefox}
+    shm_size: 2gb
+    environment:
+      SE_EVENT_BUS_HOST: selenium-hub
+      SE_EVENT_BUS_PUBLISH_PORT: 4442
+      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+      SE_NODE_OVERRIDE_MAX_SESSIONS: true
+      SE_NODE_MAX_SESSIONS: 5
+      SE_VNC_NO_PASSWORD: 1
+    volumes:
+      - ./:/app/
+      - /dev/shm:/dev/shm
+    ports:
+      - ${SELENIUM_NODE_FIREFOX_VNC_PORT:-14321}:5900
+      - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-14331}:7900
+
+volumes:
+  mysql-data:

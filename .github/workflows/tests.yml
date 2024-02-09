@@ -21,6 +21,9 @@ jobs:
       - name: Add local env vars
         run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env; echo "HOST_PWD=$(pwd)" >> .env; cat .env
 
+      - name: Copy docker compose file for CI
+        run: cp .project/docker/docker-compose.ci.yaml docker-compose.yaml
+
       - name: Docker Compose
         run: docker compose up -d
 
