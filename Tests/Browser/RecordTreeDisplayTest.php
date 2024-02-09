@@ -18,6 +18,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         TYPO3Helper::backendLogin($driver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($driver, 'Publish Overview');
 
+        TYPO3Helper::selectInPageTree($driver, []);
         TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             $select = new Select($driver->findElement(WebDriverBy::name('depth')));
             $select->setValueByText('0 level');
