@@ -48,6 +48,22 @@
 - [BUGFIX] Add missing Fluid namespace import
 - [BUGFIX] Format check and select values correctly
 - [BUGFIX] Revert upgrade to ContextualFeedbackSeverity as it is not compatible with TYPO3 v11
+- [BUGFIX] Do not inject content into requests without a body tag
+- [BUGFIX] Support AND operator as a workaround for tag attribute limitations in TYPO3 v11
+- [DOCS] Fix inter-documentation links
+- [DOC] Add documentation for conditional evaluation service and event listeners
+- [BUGFIX] Return response in record publish action
+- [BUGFIX] Fix condition prefixes for conditional event listener
+- [FEATURE] Create condition evaluation service and make remaining event listener conditional
+- [FEATURE] Support multiple conditions for conditional event listener
+- [REFACTOR] Rename conditional event listener tag to in2publish_core.conditional.event.listener
+- [CLEANUP] Remove enabled check from HideRecordsDeletedDifferentlyEventListener
+- [BUGFIX] Resolve conditions and listeners once
+- [FEATURE] Provide conditional event listener
+- [BUGFIX] Create the new folder of a moved file recursively
+- [BUGFIX] Fix folder creation before moving files
+- [RELEASE] Version 12.3.1 with fixed version constraint in ext_emconf.php
+
 
 12.3.1:
 
