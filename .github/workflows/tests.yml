@@ -21,6 +21,9 @@ jobs:
       - name: Add local env vars
         run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env; echo "HOST_PWD=$(pwd)" >> .env; cat .env
 
+      - name: Copy docker compose file for CI
+        run: cp .project/docker/docker-compose.ci.yaml docker-compose.yaml
+
       - name: Docker Compose
         run: docker compose up -d
 
@@ -53,6 +56,9 @@ jobs:
 
       - name: TYPO3 Setup Foreign
         run: docker exec -u$(id -u) in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+
+      - name: Restore site configurations after setup
+        run: git checkout Build/local/config/sites/main/config.yaml && git checkout Build/foreign/config/sites/main/config.yaml
 
       - name: Restore DB Local
         run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/

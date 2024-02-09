@@ -225,7 +225,6 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                 'canonical_link' => "",
                 'sitemap_priority' => "0.5",
                 'sitemap_changefreq' => "",
-                'no_search_sub_entries' => 0,
                 'tx_styleguide_containsdemo' => "",
             ],
         ], $rows);
