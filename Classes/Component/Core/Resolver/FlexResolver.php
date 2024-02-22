@@ -156,8 +156,11 @@ class FlexResolver extends AbstractResolver
     public function __unserialize(array $data): void
     {
         $this->metaInfo = $data['metaInfo'];
-        unset($data['metaInfo']);
-        $this->configure(...$data);
+        $this->configure(
+            $data['table'],
+            $data['column'],
+            $data['processedTca'],
+        );
         $this->injectResolverService(GeneralUtility::makeInstance(ResolverService::class));
         $this->injectFlexFormFlatteningService(GeneralUtility::makeInstance(FlexFormFlatteningService::class));
         $this->injectFlexFormService(GeneralUtility::makeInstance(FlexFormService::class));

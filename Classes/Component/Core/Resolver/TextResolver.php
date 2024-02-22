@@ -83,8 +83,7 @@ class TextResolver extends AbstractResolver
     public function __unserialize(array $data): void
     {
         $this->metaInfo = $data['metaInfo'];
-        unset($data['metaInfo']);
-        $this->configure(...$data);
+        $this->configure($data['column']);
         $this->injectEventDispatcher(GeneralUtility::makeInstance(EventDispatcher::class));
     }
 }
