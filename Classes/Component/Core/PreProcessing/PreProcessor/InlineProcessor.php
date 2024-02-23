@@ -9,11 +9,10 @@ use In2code\In2publishCore\Component\Core\Resolver\InlineMultiValueResolver;
 use In2code\In2publishCore\Component\Core\Resolver\InlineSelectResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 
 use function implode;
 use function preg_match;
-use function substr;
-use function trim;
 
 class InlineProcessor extends AbstractProcessor
 {
@@ -88,10 +87,7 @@ class InlineProcessor extends AbstractProcessor
             }
         }
         $additionalWhere = implode(' AND ', $foreignMatchFields);
-        $additionalWhere = trim($additionalWhere);
-        if (str_starts_with($additionalWhere, 'AND ')) {
-            $additionalWhere = trim(substr($additionalWhere, 4));
-        }
+        $additionalWhere = DatabaseUtility::stripLogicalOperatorPrefix($additionalWhere);
         $additionalWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($additionalWhere);
         if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
             $additionalWhere = $matches['where'];

@@ -10,14 +10,13 @@ use In2code\In2publishCore\Component\Core\Resolver\GroupMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 use function implode;
 use function preg_match;
 use function strpos;
-use function substr;
-use function trim;
 
 class GroupProcessor extends AbstractProcessor
 {
@@ -86,10 +85,7 @@ class GroupProcessor extends AbstractProcessor
                 }
             }
             $additionalWhere = implode(' AND ', $foreignMatchFields);
-            $additionalWhere = trim($additionalWhere);
-            if (str_starts_with($additionalWhere, 'AND ')) {
-                $additionalWhere = trim(substr($additionalWhere, 4));
-            }
+            $additionalWhere = DatabaseUtility::stripLogicalOperatorPrefix($additionalWhere);
             $additionalWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($additionalWhere);
             if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
                 $additionalWhere = $matches['where'];

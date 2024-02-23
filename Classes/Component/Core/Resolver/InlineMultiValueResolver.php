@@ -8,13 +8,12 @@ use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_merge;
 use function array_unique;
 use function preg_match;
-use function substr;
-use function trim;
 
 class InlineMultiValueResolver extends AbstractResolver
 {
@@ -46,10 +45,7 @@ class InlineMultiValueResolver extends AbstractResolver
         if (null !== $this->foreignTableField) {
             $additionalWhere .= ' AND ' . $this->foreignTableField . ' = "' . $record->getClassification() . '"';
         }
-        $additionalWhere = trim($additionalWhere);
-        if (str_starts_with($additionalWhere, 'AND ')) {
-            $additionalWhere = trim(substr($additionalWhere, 4));
-        }
+        $additionalWhere = DatabaseUtility::stripLogicalOperatorPrefix($additionalWhere);
         if (1 === preg_match(AbstractProcessor::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
             $additionalWhere = $matches['where'];
         }

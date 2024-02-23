@@ -8,13 +8,11 @@ use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarke
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 
 use function array_filter;
 use function array_key_exists;
 use function implode;
-use function str_starts_with;
-use function substr;
-use function trim;
 
 class SelectProcessor extends AbstractProcessor
 {
@@ -70,11 +68,7 @@ class SelectProcessor extends AbstractProcessor
             }
             $additionalWhere = implode(' AND ', $foreignMatchFields);
             $foreignTableWhere = implode(' AND ', array_filter([$foreignTableWhere, $additionalWhere]));
-            $foreignTableWhere = trim($foreignTableWhere);
-            if (str_starts_with($foreignTableWhere, 'AND ')) {
-                $foreignTableWhere = trim(substr($foreignTableWhere, 4));
-            }
-
+            $foreignTableWhere = DatabaseUtility::stripLogicalOperatorPrefix($foreignTableWhere);
             $foreignTableWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($foreignTableWhere);
 
             /** @var SelectMmResolver $resolver */
