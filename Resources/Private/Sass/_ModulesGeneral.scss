@@ -169,7 +169,7 @@ a.in2publish-notextdecoration {
     }
   }
 
-  .in2publish-stagelisting__item--deleted & {
+  .in2publish-stagelisting__item--soft_deleted & {
     background-color: $appleblossom;
 
     .in2publish-icon-folder {
@@ -179,7 +179,6 @@ a.in2publish-notextdecoration {
     .in2publish-icon-file {
       @extend .icon-file-broken;
     }
-
   }
 
   .in2publish-stagelisting__item--removed & {
