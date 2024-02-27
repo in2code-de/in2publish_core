@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Component\Core\Record\Model;
 
 use Generator;
 use In2code\In2publishCore\Component\Core\Reason\Reasons;
+use In2code\In2publishCore\Component\Core\Record\Iterator\IterationControls\SkipChildren;
 use In2code\In2publishCore\Component\Core\Record\Iterator\IterationControls\StopIteration;
 use In2code\In2publishCore\Component\Core\Record\Iterator\RecordIterator;
 use In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtensionTrait;
@@ -239,6 +240,9 @@ abstract class AbstractRecord implements Record
         $recordState = Record::S_UNCHANGED;
         $recordIterator = new RecordIterator();
         $recordIterator->recurse($this, function (Record $record) use (&$recordState) {
+            if ($record->getClassification() === 'pages' && $record !== $this) {
+                throw new SkipChildren();
+            }
             if ($record->getClassification() === 'pages') {
                 return;
             }
