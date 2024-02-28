@@ -232,6 +232,6 @@ class DatabaseUtility
      */
     public static function stripLogicalOperatorPrefix(string $constraint): string
     {
-        return preg_replace('/^(?:(AND|OR)[[:space:]]*)+/i', '', trim($constraint)) ?: '';
+        return preg_replace('/^(?:(AND|OR)[[:space:]]+)+/i', '', trim($constraint)) ?: '';
     }
 }
