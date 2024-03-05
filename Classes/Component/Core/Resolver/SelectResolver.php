@@ -14,8 +14,6 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function preg_match;
-use function substr;
-use function trim;
 
 class SelectResolver extends AbstractResolver
 {

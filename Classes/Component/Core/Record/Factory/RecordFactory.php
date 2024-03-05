@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Component\Core\Record\Factory;
  */
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
@@ -41,6 +42,7 @@ use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\RecordWasCreated;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RecordFactory
 {
@@ -123,14 +125,46 @@ class RecordFactory
 
     protected function shouldIgnoreRecord(Record $record): bool
     {
+        if ($this->isDeletedAndUnchangedRecord($record)) {
+            return true;
+        }
+
+        if ($this->isRemovedAndDeletedRecord($record)) {
+            return true;
+        }
+
         $event = new DecideIfRecordShouldBeIgnored($record);
         $this->eventDispatcher->dispatch($event);
-        return $event->shouldBeIgnored();
+        if ($event->shouldBeIgnored()) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function finishRecord(Record $record): void
     {
         $this->recordIndex->addRecord($record);
         $this->eventDispatcher->dispatch(new RecordWasCreated($record));
+    }
+
+    protected function isDeletedAndUnchangedRecord(Record $record): bool
+    {
+        $deleteField = $GLOBALS['TCA'][$record->getClassification()]['ctrl']['delete'] ?? null;
+        return null !== $deleteField
+            && array_key_exists($deleteField, $record->getLocalProps())
+            && $record->getLocalProps()[$deleteField]
+            && !count(array_diff($record->getLocalProps(), $record->getForeignProps()));
+    }
+
+    protected function isRemovedAndDeletedRecord(Record $record): bool
+    {
+        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+
+        if (!$configContainer->get('features.hideRecordsDeletedDifferently.enable')) {
+            return false;
+        }
+        return (empty($record->getLocalProps()) && isset($record->getForeignProps()['deleted']) && 1 === (int)$record->getForeignProps()['deleted'])
+            || (empty($record->getForeignProps()) && isset($record->getLocalProps()['deleted']) && 1 === (int)$record->getLocalProps()['deleted']);
     }
 }

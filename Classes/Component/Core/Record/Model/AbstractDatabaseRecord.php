@@ -209,4 +209,16 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
         }
         return $enableFieldLabels;
     }
+
+    public function isRemovedFromLocalDatabase(): bool
+    {
+        $deleteField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['delete'] ?? null;
+        return (null !== $deleteField && array_key_exists($deleteField, $this->getForeignProps()) && (bool)$this->getForeignProps()[$deleteField]) && empty($this->getLocalProps());
+    }
+
+    public function isRemovedFromForeignDatabase(): bool
+    {
+        $deleteField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['delete'] ?? null;
+        return (null !== $deleteField && array_key_exists($deleteField, $this->getLocalProps()) && (bool)$this->getLocalProps()[$deleteField]) && empty($this->getForeignProps());
+    }
 }
