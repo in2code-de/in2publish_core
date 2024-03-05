@@ -36,6 +36,9 @@
 			<trans-unit id="system_info.upload.upload" resname="system_info.upload.upload">
 				<source>Upload!</source>
 			</trans-unit>
+			<trans-unit id="system_info.upload.error" resname="system_info.upload.error">
+				<source>An error occured with the uploaded file!</source>
+			</trans-unit>
 			<trans-unit id="recordinspector.inspection_hint" resname="recordinspector.inspection_hint">
 				<source>Select classification and identifier for inspection</source>
 			</trans-unit>
