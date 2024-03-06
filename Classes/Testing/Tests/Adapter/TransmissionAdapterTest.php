@@ -175,7 +175,6 @@ class TransmissionAdapterTest implements TestCaseInterface
         $dependencies = [
             ConfigurationFormatTest::class,
             AdapterSelectionTest::class,
-            SshConnectionTest::class,
         ];
         if (isset($GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class])) {
             $dependencies = array_merge(
