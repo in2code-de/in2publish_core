@@ -53,6 +53,7 @@ use function strlen;
 use function time;
 
 use const JSON_THROW_ON_ERROR;
+use const In2code\In2publishCore\TYPO3_V11;
 
 class SystemInformationExportController extends AbstractAdminToolsController
 {
@@ -131,12 +132,27 @@ class SystemInformationExportController extends AbstractAdminToolsController
     public function sysInfoUploadAction(): ResponseInterface
     {
         try {
-            /** @var array $file */
-            $file = $this->request->getArgument('jsonFile');
+            if (TYPO3_V11) {
+                /** @var array $file */
+                $fileName = $this->request->getArgument('jsonFile')['tmp_name'];
+            } else {
+                $fileName = !empty($this->request->getUploadedFiles()['jsonFile']) ? $this->request->getUploadedFiles()['jsonFile']->getTemporaryFileName() : null;
+            }
         } catch (NoSuchArgumentException $e) {
-            return $this->htmlResponse();
+            $this->addFlashMessage(
+                LocalizationUtility::translate(
+                    'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.upload.error',
+                ),
+                '',
+                AbstractMessage::ERROR,
+            );
+            return (new ForwardResponse('sysInfoIndex'));
         }
-        $content = file_get_contents($file['tmp_name']);
-        return (new ForwardResponse('sysInfoDecode'))->withArguments(['json' => $content]);
+        if ($fileName !== null) {
+            $content = file_get_contents($fileName);
+            return (new ForwardResponse('sysInfoDecode'))->withArguments(['json' => $content]);
+        }
+
+        return (new ForwardResponse('sysInfoIndex'));
     }
 }
