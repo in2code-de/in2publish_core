@@ -52,8 +52,8 @@ use function ob_get_level;
 use function strlen;
 use function time;
 
-use const JSON_THROW_ON_ERROR;
 use const In2code\In2publishCore\TYPO3_V11;
+use const JSON_THROW_ON_ERROR;
 
 class SystemInformationExportController extends AbstractAdminToolsController
 {
@@ -146,13 +146,13 @@ class SystemInformationExportController extends AbstractAdminToolsController
                 '',
                 AbstractMessage::ERROR,
             );
-            return (new ForwardResponse('sysInfoIndex'));
+            return new ForwardResponse('sysInfoIndex');
         }
         if ($fileName !== null) {
             $content = file_get_contents($fileName);
             return (new ForwardResponse('sysInfoDecode'))->withArguments(['json' => $content]);
         }
 
-        return (new ForwardResponse('sysInfoIndex'));
+        return new ForwardResponse('sysInfoIndex');
     }
 }
