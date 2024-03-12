@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use In2code\In2publishCore\Features\MetricsAndDebug\Middleware\MetricsAndDebugMiddleware;
+use In2code\In2publishCore\Middleware\ExtbaseModuleSanitizeParameterMiddleware;
 use In2code\In2publishCore\Middleware\InjectLoadingOverlayMiddleware;
 
 return [
@@ -15,5 +16,9 @@ return [
             'target' => InjectLoadingOverlayMiddleware::class,
             'after' => 'typo3/cms-core/response-propagation',
         ],
+        'in2code/in2publish_core/extbase-module-sanitize-parameter-middleware' => [
+            'target' => ExtbaseModuleSanitizeParameterMiddleware::class,
+            'after' => 'typo3/cms-core/response-propagation',
+        ]
     ],
 ];

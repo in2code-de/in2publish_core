@@ -127,7 +127,7 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
 
     public function getAllForeignSiteUrls(): array
     {
-        if (isset($this->cache['allForeignUrls'])){
+        if (isset($this->cache['allForeignUrls'])) {
             return $this->cache['allForeignUrls'];
         }
         $allForeignSites = $this->foreignSiteFinder->getAllSites();
