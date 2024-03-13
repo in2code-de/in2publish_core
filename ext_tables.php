@@ -46,6 +46,10 @@ use const In2code\In2publishCore\TYPO3_V11;
         // Early return when installing per ZIP: autoload is not yet generated
         return;
     }
+    if (!empty($GLOBALS['IN2PUBLISH_IS_FRONTEND'])) {
+        // Early return when frontend is called
+        return;
+    }
 
     /**************************************************** Instances ***************************************************/
     $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
