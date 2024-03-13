@@ -120,6 +120,13 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
             return false;
         }
 
+        if (empty($rows[0])) {
+            $this->logger->error(
+                'No Envelope UID is given. Please check your database settings.'
+            );
+            return false;
+        }
+
         $uid = $rows[0]['uid'];
         $command = $rows[0]['command'];
 
