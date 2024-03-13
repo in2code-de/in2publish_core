@@ -11,6 +11,14 @@ class FilePreprocessor extends AbstractProcessor
 {
     protected string $type = 'file';
 
+    protected function additionalPreProcess(string $table, string $column, array $tca): array
+    {
+        if ($this->excludedTablesService->isExcludedTable('sys_file_reference')) {
+            return ['The table sys_file_reference is excluded from publishing'];
+        }
+        return [];
+    }
+
     protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver
     {
         $foreignTable = 'sys_file_reference';

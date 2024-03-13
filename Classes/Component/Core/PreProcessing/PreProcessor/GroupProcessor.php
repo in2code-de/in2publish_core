@@ -13,7 +13,9 @@ use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function array_diff;
 use function array_key_exists;
+use function array_keys;
 use function implode;
 use function preg_match;
 use function strpos;
@@ -55,8 +57,17 @@ class GroupProcessor extends AbstractProcessor
             return [];
         }
 
-        $reasons = [];
         $allowedTables = GeneralUtility::trimExplode(',', $allowed);
+        if (['pages'] === $allowedTables) {
+            return ['TCA relations to pages are not resolved.'];
+        }
+
+        $allowedTables = $this->excludedTablesService->removeExcludedTables($allowedTables);
+        if (empty($allowedTables)) {
+            return ['All tables of this relation (' . $allowed . ') are excluded.'];
+        }
+
+        $reasons = [];
         foreach ($allowedTables as $allowedTable) {
             if (!array_key_exists($allowedTable, $GLOBALS['TCA'])) {
                 $reasons[] = 'Can not reference the table "' . $allowedTable
@@ -69,7 +80,15 @@ class GroupProcessor extends AbstractProcessor
     protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver
     {
         $foreignTable = $processedTca['allowed'];
-        $tables = GeneralUtility::trimExplode(',', $foreignTable);
+        if ('*' === $foreignTable) {
+            $tables = $this->excludedTablesService->getAllNonExcludedTcaTables();
+        } else {
+            $tables = GeneralUtility::trimExplode(',', $foreignTable);
+            $tables = $this->excludedTablesService->removeExcludedTables($tables);
+        }
+
+        $tables = array_diff($tables, ['pages']);
+
         $isSingleTable = $this->isSingleTable($foreignTable);
 
         if (isset($processedTca['MM'])) {
@@ -78,7 +97,7 @@ class GroupProcessor extends AbstractProcessor
 
             $foreignMatchFields = [];
             foreach ($processedTca['MM_match_fields'] ?? [] as $matchField => $matchValue) {
-                if ((string)(int)$matchValue === (string)$matchValue) {
+                if ((string) (int) $matchValue === (string) $matchValue) {
                     $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
                 } else {
                     $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';
