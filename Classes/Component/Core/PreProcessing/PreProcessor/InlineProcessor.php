@@ -34,6 +34,15 @@ class InlineProcessor extends AbstractProcessor
         'MM_opposite_field',
     ];
 
+    protected function additionalPreProcess(string $table, string $column, array $tca): array
+    {
+        $foreignTable = $tca['foreign_table'] ?? null;
+        if (null !== $foreignTable && $this->excludedTablesService->isExcludedTable($foreignTable)) {
+            return ['The table ' . $foreignTable . ' is excluded from publishing'];
+        }
+        return [];
+    }
+
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
         $foreignTable = $processedTca['foreign_table'];
@@ -80,7 +89,7 @@ class InlineProcessor extends AbstractProcessor
     {
         $foreignMatchFields = [];
         foreach ($processedTca['MM_match_fields'] ?? [] as $matchField => $matchValue) {
-            if ((string)(int)$matchValue === (string)$matchValue) {
+            if ((string) (int) $matchValue === (string) $matchValue) {
                 $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
             } else {
                 $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';
@@ -99,7 +108,7 @@ class InlineProcessor extends AbstractProcessor
     {
         $foreignMatchFields = [];
         foreach ($processedTca['foreign_match_fields'] ?? [] as $matchField => $matchValue) {
-            if ((string)(int)$matchValue === (string)$matchValue) {
+            if ((string) (int) $matchValue === (string) $matchValue) {
                 $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
             } else {
                 $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';

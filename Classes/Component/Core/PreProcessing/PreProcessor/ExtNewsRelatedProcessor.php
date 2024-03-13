@@ -21,6 +21,14 @@ class ExtNewsRelatedProcessor extends AbstractProcessor
         return 'related';
     }
 
+    protected function additionalPreProcess(string $table, string $column, array $tca): array
+    {
+        if ($this->excludedTablesService->isExcludedTable('tx_news_domain_model_news')) {
+            return ['The table tx_news_domain_model_news is excluded from publishing'];
+        }
+        return [];
+    }
+
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
         $resolver = $this->container->get(StaticJoinResolver::class);

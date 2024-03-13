@@ -21,6 +21,14 @@ class FormFrameworkPreProcessor extends AbstractProcessor
         return 'settings.persistenceIdentifier';
     }
 
+    protected function additionalPreProcess(string $table, string $column, array $tca): array
+    {
+        if ($this->excludedTablesService->isExcludedTable('tt_content')) {
+            return ['The table tt_content is excluded from publishing'];
+        }
+        return [];
+    }
+
     protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver
     {
         return new FormFrameworkResolver();
