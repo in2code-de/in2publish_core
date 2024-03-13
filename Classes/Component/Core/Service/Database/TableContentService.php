@@ -120,9 +120,15 @@ class TableContentService implements SingletonInterface
 
     protected function queryTableFromDatabase(Connection $connection, string $table): array
     {
-        $quotedTable = $connection->quoteIdentifier($table);
-        $rows = $connection->executeQuery("SELECT DISTINCT `pid` FROM $quotedTable;")->fetchAllAssociative();
-        return array_column($rows, 'pid');
+        try {
+            $quotedTable = $connection->quoteIdentifier($table);
+            $rows = $connection->executeQuery("SELECT DISTINCT `pid` FROM $quotedTable;")->fetchAllAssociative();
+            return array_column($rows, 'pid');
+        } catch (Throwable $exception) {
+            // Ignore any errors.
+            // They might indicate that the table does not exist, but that's not this classes' responsibility
+        }
+        return [];
     }
 
     /**
