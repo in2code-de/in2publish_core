@@ -119,3 +119,13 @@ file publishing process. You can try to set the following configuration in your 
 
 This timeout (in seconds) may resolve the problems, but leads to very slow publishing. It should therefore only be used
 on development systems.
+
+## Steps if there are problems with the publication of data
+
+1. Content Publisher Selftest
+Call up the "Tests" tab in the "Publisher Tools" backend module. Problems are displayed in either red or orange and should be fixed.
+2. Install extension TYPO3 Database doctor (https://extensions.typo3.org/extension/dbdoctor)
+Install the TYPO3 Database doctor extension on both systems (Local & Foreign) and clean up the inconsistencies in the databases.
+**The use of the extension is at your own risk, it is best to make a data backup beforehand.**
+3. Check TCA
+If you are familiar with TCA, you can use the tab "Inspect TCA" in the "Publisher Tools" backend module to check if every relation you have in your data is correctly resolved.
