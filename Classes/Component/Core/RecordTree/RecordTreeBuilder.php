@@ -83,7 +83,10 @@ class RecordTreeBuilder
             $record = $this->rawRecordService->getRawRecord($table, $id, 'local');
             if (null !== $record && $record[$languageField] > 0) {
                 $id = $record[$transOrigPointerField];
-                $request = $request->withId($id);
+                // Only set this record to the l10n_parent if this record is connected
+                if ($id > 0) {
+                    $request = $request->withId($id);
+                }
             }
         }
         return $request;
