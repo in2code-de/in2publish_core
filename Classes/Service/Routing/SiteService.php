@@ -124,4 +124,38 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
         $this->cache['trigger']['logMissingSiteOnce'] = true;
         $this->logger->error('Can not identify site configuration for page.', ['page' => $pid, 'side' => $side]);
     }
+
+    public function getAllForeignSiteUrls(): array
+    {
+        if (isset($this->cache['allForeignUrls'])) {
+            return $this->cache['allForeignUrls'];
+        }
+        $allForeignSites = $this->foreignSiteFinder->getAllSites();
+        $this->cache['allForeignUrls'] = [];
+        foreach ($allForeignSites as $foreignSite) {
+            $rootPageId = $foreignSite->getRootPageId();
+            foreach ($foreignSite->getAllLanguages() as $language) {
+                $languageId = $language->getLanguageId();
+                try {
+                    $foreignUrl = $foreignSite->getRouter()
+                                ->generateUri((string)$rootPageId, ['_language' => $languageId])
+                                ->__toString();
+                } catch (Throwable $throwable) {
+                    $foreignUrl = (string)$throwable;
+                }
+                if (!in_array($foreignUrl, $this->cache['allForeignUrls'])) {
+                    $this->cache['allForeignUrls'][] = $foreignUrl;
+                }
+            }
+            try {
+                $foreignUrl = $foreignSite->getRouter()->generateUri((string)$rootPageId)->__toString();
+            } catch (Throwable $throwable) {
+                $foreignUrl = (string)$throwable;
+            }
+            if (!in_array($foreignUrl, $this->cache['allForeignUrls'])) {
+                $this->cache['allForeignUrls'][] = $foreignUrl;
+            }
+        }
+        return $this->cache['allForeignUrls'];
+    }
 }

@@ -112,8 +112,8 @@ class UniqueStorageTargetTest implements TestCaseInterface
 
             $addedFile = $localDriver->addFile($sourceFile, $localDriver->getRootLevelFolder(), $uniqueFile);
             if ($uniqueFile === ltrim($addedFile, '/')) {
-                $fileInfoCollection = $this->foreignFileInfoService->getFileInfo([$storageUid => [$uniqueFile]]);
-                if ($fileInfoCollection->getInfo($storageUid, $uniqueFile) instanceof FileInfo) {
+                $fileInfoCollection = $this->foreignFileInfoService->getFileInfo([$storageUid => [$addedFile]]);
+                if ($fileInfoCollection->getInfo($storageUid, $addedFile) instanceof FileInfo) {
                     $affectedStorages[] = '[' . $key . '] ' . $storages['local'][$key]['name'];
                 }
             } else {
