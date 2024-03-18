@@ -29,14 +29,20 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Fore
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
+use function get_class;
+use function implode;
 use function json_encode;
+use function max;
+use function sprintf;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -44,6 +50,7 @@ class RunTasksInQueueCommand extends Command
 {
     use ContextServiceInjection;
     use TaskRepositoryInjection;
+    use LoggerAwareTrait;
 
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
 
@@ -62,14 +69,7 @@ class RunTasksInQueueCommand extends Command
         // Tasks which should get executed do not have an execution begin
         $tasksToExecute = $this->taskRepository->findByExecutionBegin();
         foreach ($tasksToExecute as $task) {
-            try {
-                $success = $task->execute();
-                $result[] = 'Task ' . $task->getUid() . ($success ? ' was executed successfully' : ' failed');
-                $result[] = $task->getMessages();
-            } catch (Throwable $e) {
-                $result[] = $e->getMessage();
-                $exitCode = Command::FAILURE;
-            }
+            $exitCode = max($exitCode, $this->runTask($task, $result));
             $this->taskRepository->update($task);
         }
         if (empty($result)) {
@@ -77,5 +77,50 @@ class RunTasksInQueueCommand extends Command
         }
         $output->write(json_encode($result, JSON_THROW_ON_ERROR));
         return $exitCode;
+    }
+
+    protected function runTask(AbstractTask $task, array &$result): int
+    {
+        $taskUid = $task->getUid();
+
+        try {
+            $success = $task->execute();
+            $messages = $task->getMessages();
+        } catch (Throwable $exception) {
+            $this->logger->error(
+                sprintf(
+                    'Task %d (%s) failed with exception: "%s".',
+                    $taskUid,
+                    get_class($task),
+                    $exception->getMessage(),
+                ),
+                ['exception' => $exception, 'task' => $task->toArray()],
+            );
+            $result[] = sprintf(
+                'Task %d (%s) failed with exception: "%s". The exception was logged on the foreign system.',
+                $taskUid,
+                get_class($task),
+                $exception->getMessage(),
+            );
+            return Command::FAILURE;
+        }
+
+        if (!$success) {
+            $result[] = sprintf(
+                'Task %d (%s) failed with messages: "%s".',
+                $taskUid,
+                get_class($task),
+                implode(', ', $messages),
+            );
+            return Command::FAILURE;
+        }
+
+        $result[] = sprintf(
+            'Task %d (%s) executed with messages: "%s".',
+            $taskUid,
+            get_class($task),
+            implode(', ', $messages),
+        );
+        return Command::SUCCESS;
     }
 }
