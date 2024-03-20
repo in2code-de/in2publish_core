@@ -99,6 +99,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
      * @throws Throwable
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) Don't be so picky :/
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function receiveEnvelope(int $uid, bool $burnEnvelope = true)
     {
