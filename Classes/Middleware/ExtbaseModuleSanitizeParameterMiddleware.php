@@ -30,7 +30,11 @@ class ExtbaseModuleSanitizeParameterMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
         $queryParams = $request->getQueryParams();
-        if (!empty($queryParams['id'])) {
+        if (
+            !empty($queryParams['id']) &&
+            (int)$queryParams['id'] == $queryParams['id'] &&
+            empty($queryParams['combined_identifier'])
+        ) {
             $pageUid = 0;
             $sites = $this->siteFinder->getAllSites();
             $firstSite = reset($sites);
