@@ -37,14 +37,14 @@ class RecordInspectorController extends AbstractAdminToolsController
         return $this->htmlResponse();
     }
 
-    public function inspectAction(string $classification, string $id): ResponseInterface
+    public function inspectAction(string $classification, string $identifier): ResponseInterface
     {
         if ($classification === FileRecord::CLASSIFICATION) {
-            $recordTree = $this->defaultFalFinder->findFileRecord($id);
+            $recordTree = $this->defaultFalFinder->findFileRecord($identifier);
         } elseif ($classification === FolderRecord::CLASSIFICATION) {
-            $recordTree = $this->defaultFalFinder->findFolderRecord($id);
+            $recordTree = $this->defaultFalFinder->findFolderRecord($identifier);
         } else {
-            $request = new RecordTreeBuildRequest($classification, (int)$id, 1);
+            $request = new RecordTreeBuildRequest($classification, (int)$identifier, 1);
             $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
         }
         $this->view->assign('recordTree', $recordTree);
