@@ -127,5 +127,7 @@ Call up the "Tests" tab in the "Publisher Tools" backend module. Problems are di
 2. Install extension TYPO3 Database doctor (https://extensions.typo3.org/extension/dbdoctor)
 Install the TYPO3 Database doctor extension on both systems (Local & Foreign) and clean up the inconsistencies in the databases.
 **The use of the extension is at your own risk, it is best to make a data backup beforehand.**
-3. Check TCA
+3. Activate Advanced Debug Information
+You can activate the option addFormEngineDescription in your configuration YAML. This setting will show a description above each field when you edit an item in TYPO3 backend.
+4. Check TCA
 If you are familiar with TCA, you can use the tab "Inspect TCA" in the "Publisher Tools" backend module to check if every relation you have in your data is correctly resolved.
