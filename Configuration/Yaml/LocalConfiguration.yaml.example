@@ -187,6 +187,11 @@ debug:
   # Enable this to see which resolver and processor of which table and column is responsible for the demand.
   traceDemand: FALSE
 
+  # This helps debugging record relations. The Content Publisher will add a description to each field in the Form Engine
+  # (Backend Record Edit Form) and display information about the field's compatibility status. e.g. Fields with
+  # type=select and itemsProcFunc can not be used to resolve relations.
+  addFormEngineDescription: FALSE
+
 # Configuration for tasks
 tasks:
 

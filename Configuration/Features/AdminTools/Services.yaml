@@ -7,6 +7,10 @@ services:
   In2code\In2publishCore\Features\AdminTools\:
     resource: '../../../Classes/Features/AdminTools/*'
 
+  In2code\In2publishCore\Features\AdminTools\Backend\Form\DescriptionCompatibilityAugmentation:
+    public: true
+    shared: true
+
   In2code\In2publishCore\Features\AdminTools\Controller\LetterboxController:
     tags:
       - name: 'in2publish_core.admin_tool'
