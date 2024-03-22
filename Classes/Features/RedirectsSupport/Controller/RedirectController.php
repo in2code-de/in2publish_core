@@ -130,20 +130,25 @@ class RedirectController extends ActionController
         $query->getRestrictions()->removeAll();
         $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
         $foreignDeletedRedirects = $query->executeQuery()->fetchAllAssociative();
-        $additionalWhere = '';
+        $additonalConditions = [];
         if (!empty($foreignDeletedRedirects)) {
             $uidList = implode(',', array_column($foreignDeletedRedirects, 'uid'));
 
-            $additionalWhere = "deleted = 0 OR uid NOT IN ($uidList)";
-            if (null !== $filter) {
-                $additionalWhere = $filter->toAdditionWhere();
-            }
+            $additonalConditions[] = "(deleted = 0 OR uid NOT IN ($uidList))";
+        }
+        if (null !== $filter) {
+            $additonalConditions = $filter->toAdditionWhere();
+        }
+
+        $additonalWhere = '';
+        if (!empty($additonalConditions)) {
+            $additonalWhere = implode(' AND ', $additonalConditions);
         }
 
         $recordTree = new RecordTree();
 
         $demands = $this->demandsFactory->createDemand();
-        $demands->addDemand(new SysRedirectDemand('sys_redirect', $additionalWhere, $recordTree));
+        $demands->addDemand(new SysRedirectDemand('sys_redirect', $additonalWhere, $recordTree));
 
         $recordCollection = new RecordCollection();
         $this->demandResolver->resolveDemand($demands, $recordCollection);
