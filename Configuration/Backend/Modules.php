@@ -92,7 +92,7 @@ if ($configContainer->get('module.m4')) {
 if ($configContainer->get('features.redirectsSupport.enable')) {
     $backendModulesToRegister['in2publish_core_m5'] = [
         'parent' => 'site',
-        'position' => ['after' => 'redirects'],
+        'position' => ['after' => 'site_redirects'],
         'access' => 'user',
         'workspaces' => 'live',
         'path' => '/module/in2publish_core/m5',
