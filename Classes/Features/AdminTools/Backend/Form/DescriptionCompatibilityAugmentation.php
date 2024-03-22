@@ -52,7 +52,7 @@ class DescriptionCompatibilityAugmentation implements FormDataProviderInterface
             && $this->compatible[$table][$column]['resolver'] instanceof Resolver
         ) {
             $resolver = $this->compatible[$table][$column]['resolver'];
-            $details = sprintf("%s Tables: %s", get_class($resolver), implode(', ', $resolver->getTargetTables()));
+            $details = sprintf('%s Tables: %s', get_class($resolver), implode(', ', $resolver->getTargetTables()));
         }
         return sprintf('[Content Publisher debug information: %s]', $details);
     }
