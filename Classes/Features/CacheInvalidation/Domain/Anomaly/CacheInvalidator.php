@@ -70,7 +70,8 @@ class CacheInvalidator implements SingletonInterface
             }
         }
 
-        foreach (array_unique($pids) as $pid) {
+        // Remove PID 0 from array
+        foreach (array_diff(array_unique($pids), [0]) as $pid) {
             $this->clearCachePids[$pid] = $pid;
 
             if (!array_key_exists($pid, $this->clearCacheCommands)) {
