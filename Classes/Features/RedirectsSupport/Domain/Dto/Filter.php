@@ -31,8 +31,6 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto;
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
 
-use function implode;
-
 class Filter
 {
     protected ?string $domain;
@@ -106,7 +104,7 @@ class Filter
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) The method is pretty easy to understand
      * @SuppressWarnings(PHPMD.NPathComplexity) The method is pretty easy to understand
      */
-    public function toAdditionWhere(): string
+    public function toAdditionWhere(): array
     {
         $database = DatabaseUtility::buildLocalDatabaseConnection();
         $where = [];
@@ -140,6 +138,6 @@ class Filter
             }
         }
 
-        return implode(' AND ', $where);
+        return $where;
     }
 }
