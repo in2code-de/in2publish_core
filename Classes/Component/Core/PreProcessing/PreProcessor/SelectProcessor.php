@@ -46,6 +46,11 @@ class SelectProcessor extends AbstractProcessor
                 'MM_opposite_field is set on the foreign side of relations, which must not be resolved',
             ];
         }
+        if (array_key_exists('multiple', $tca) && $tca['multiple']) {
+            return [
+                'Multiple is broken in the TYPO3 Core, https://forge.typo3.org/issues/103604',
+            ];
+        }
         return [];
     }
 
