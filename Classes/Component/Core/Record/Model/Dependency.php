@@ -145,7 +145,7 @@ class Dependency
             $localProps = $record->getLocalProps();
             $foreignProps = $record->getForeignProps();
             foreach ($enableFields as $enableField) {
-                if ($localProps[$enableField] !== $foreignProps[$enableField]) {
+                if (($localProps[$enableField] ?? null) !== ($foreignProps[$enableField] ?? null)) {
                     return false;
                 }
             }
