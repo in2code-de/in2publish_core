@@ -113,13 +113,12 @@ class PublisherService
 
         // Do not use Record::isPublishable(). Check only the record's reasons but not dependencies.
         // Dependencies might have been fulfilled during publishing or ignored by the user by choice.
-        if (
-            $record->getState() !== Record::S_UNCHANGED
-            && !$record->hasReasonsWhyTheRecordIsNotPublishable()
-        ) {
+        if (!$record->hasReasonsWhyTheRecordIsNotPublishable()) {
             // deprecated, remove in v13
             $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
-            $this->publisherCollection->publish($record);
+            if ($record->getState() !== Record::S_UNCHANGED) {
+                $this->publisherCollection->publish($record);
+            }
             // deprecated, remove in v13
             $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));
             $this->eventDispatcher->dispatch(new RecordWasPublished($record));
