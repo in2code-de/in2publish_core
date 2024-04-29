@@ -63,7 +63,8 @@
 	"extra": {
 		"branch-alias": {
 			"dev-develop": "12.4.x-dev",
-			"dev-master": "12.4.x-dev"
+			"dev-master": "12.4.x-dev",
+			"dev-feature/ignore-pages-relation": "12.4.x-dev"
 		},
 		"typo3/cms": {
 			"extension-key": "in2publish_core"
