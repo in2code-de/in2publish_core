@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\RecordTree;
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
@@ -13,13 +14,11 @@ use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
-use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesServiceInjection;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Service\Configuration\PageTypeServiceInjection;
 use In2code\In2publishCore\Service\Database\RawRecordServiceInjection;
-use ReflectionProperty;
 
 use function array_flip;
 use function array_values;
@@ -37,13 +36,10 @@ class RecordTreeBuilder
     use DemandBuilderInjection;
     use PageTypeServiceInjection;
     use RawRecordServiceInjection;
+    use LocalDatabaseInjection;
 
     public function buildRecordTree(RecordTreeBuildRequest $request): RecordTree
     {
-        $refl = new ReflectionProperty(RecordIndex::class, 'records');
-        $refl->setAccessible(true);
-        $refl->setValue($this->recordIndex, new RecordCollection());
-
         $recordTree = new RecordTree([], $request);
 
         $recordCollection = new RecordCollection();
@@ -54,13 +50,18 @@ class RecordTreeBuilder
 
         $this->findPagesRecursively($defaultIdRequest, $recordCollection);
 
-        $recordCollection = $this->findAllRecordsOnPages();
+        $this->findAllRecordsOnPages($recordCollection);
 
         $this->findRecordsByTca($recordCollection, $request);
 
-        $this->recordIndex->connectTranslations();
+        $recordCollection->connectTranslations();
 
-        $this->recordIndex->processDependencies($request);
+        $recordCollection->processDependencies(
+            $request,
+            $this->demandsFactory,
+            $this->demandResolver,
+            $this->localDatabase,
+        );
 
         $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
 
@@ -142,15 +143,11 @@ class RecordTreeBuilder
         }
     }
 
-    public function findAllRecordsOnPages(): RecordCollection
+    public function findAllRecordsOnPages(RecordCollection $recordCollection): void
     {
-        // Make a new record collection with all records (pages and subpages or other non-page records).
-        // Required for subsequent method calls.
-        $recordCollection = new RecordCollection($this->recordIndex->getRecords());
-
         $pages = $recordCollection->getRecords('pages');
         if (empty($pages)) {
-            return $recordCollection;
+            return;
         }
         $demands = $this->demandsFactory->createDemand();
 
@@ -175,7 +172,6 @@ class RecordTreeBuilder
             }
         }
         $this->demandResolver->resolveDemand($demands, $recordCollection);
-        return $recordCollection;
     }
 
     /**
