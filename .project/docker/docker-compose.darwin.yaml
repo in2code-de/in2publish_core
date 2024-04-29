@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   local:
     image: in2code/httpd:2.4-alpine
