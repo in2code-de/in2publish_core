@@ -1,4 +1,4 @@
-FROM in2code/php-dev:7.4-fpm AS base
+FROM in2code/php-dev:8.1-fpm AS base
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
