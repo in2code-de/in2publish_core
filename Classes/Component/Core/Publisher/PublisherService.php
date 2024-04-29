@@ -99,6 +99,9 @@ class PublisherService
         $this->taskExecutionService->runTasks();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function publishRecord(Record $record, bool $includeChildPages = false): void
     {
         $classification = $record->getClassification();

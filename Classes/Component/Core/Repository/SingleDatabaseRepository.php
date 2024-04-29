@@ -141,7 +141,7 @@ class SingleDatabaseRepository
             }
             $mmIdentityProperties = [
                 $splitRow['mmtbl']['uid_local'],
-                $splitRow['mmtbl']['uid_foreign']
+                $splitRow['mmtbl']['uid_foreign'],
             ];
             $splitRows[hash('sha1', json_encode($mmIdentityProperties, JSON_THROW_ON_ERROR))] = $splitRow;
         }
