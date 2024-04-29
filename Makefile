@@ -58,6 +58,7 @@ destroy: stop
 	docker compose down -v --remove-orphans
 
 start: .link-compose-file
+	docker compose build --pull
 	docker compose up -d
 
 setup: stop destroy start .mysql-wait
