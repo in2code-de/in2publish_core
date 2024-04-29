@@ -13,11 +13,13 @@ use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
+use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesServiceInjection;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Service\Configuration\PageTypeServiceInjection;
 use In2code\In2publishCore\Service\Database\RawRecordServiceInjection;
+use ReflectionProperty;
 
 use function array_flip;
 use function array_values;
@@ -38,6 +40,10 @@ class RecordTreeBuilder
 
     public function buildRecordTree(RecordTreeBuildRequest $request): RecordTree
     {
+        $refl = new ReflectionProperty(RecordIndex::class, 'records');
+        $refl->setAccessible(true);
+        $refl->setValue($this->recordIndex, new RecordCollection());
+
         $recordTree = new RecordTree([], $request);
 
         $recordCollection = new RecordCollection();
