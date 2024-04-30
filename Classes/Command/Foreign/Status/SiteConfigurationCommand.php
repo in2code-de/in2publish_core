@@ -73,7 +73,7 @@ class SiteConfigurationCommand extends Command
             $site = $this->siteFinder->getSiteByPageId($pageId);
         } catch (SiteNotFoundException $e) {
             try {
-                GeneralUtility::makeInstance(RootlineUtility::class, $pageId, null)->get();
+                GeneralUtility::makeInstance(RootlineUtility::class, $pageId)->get();
             } catch (PageNotFoundException $e) {
                 return static::EXIT_PAGE_HIDDEN_OR_DISCONNECTED;
             }
