@@ -82,8 +82,8 @@ class SysRedirectDatabaseRecord extends DatabaseRecord
                 $this->localProps['source_host'] === $this->foreignProps['source_host']
                 && '*' !== ($this->localProps['sourceHost'] ?? null)
                 && (
-                    null !== ($localProps['tx_in2publishcore_foreign_site_id'] ?? null)
-                    || null !== ($localProps['tx_in2publishcore_page_uid'] ?? null)
+                    null !== ($this->localProps['tx_in2publishcore_foreign_site_id'] ?? null)
+                    || null !== ($this->localProps['tx_in2publishcore_page_uid'] ?? null)
                 )
             ) {
                 // source_host is ignored by default, but in case it is not what it should be,

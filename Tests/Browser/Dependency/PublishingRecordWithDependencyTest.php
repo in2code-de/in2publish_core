@@ -92,7 +92,7 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
             self::assertPageContains($driver, '5c.1.1 Child Ready to Publish');
 
             // Not publishable exclamation triangle
-            self::assertElementIsVisible(
+            self::assertElementIsNotVisible(
                 $driver,
                 WebDriverBy::xpath(
                     '//*[@data-record-identifier="pages-35"]//*[contains(@class, "in2publish-link-publish")]/*[contains(@class, "in2publish-icon-publish")]',

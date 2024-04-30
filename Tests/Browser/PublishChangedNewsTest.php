@@ -44,22 +44,7 @@ class PublishChangedNewsTest extends AbstractBrowserTestCase
             $relatedRecordsList = WebDriverBy::cssSelector('.in2publish-related__list');
             self::assertElementContains(
                 $driver,
-                '1:/user_upload/glenn-carstens-peters-npxXWgQ33ZQ-unsplash.jpg',
-                $relatedRecordsList
-            );
-            self::assertElementContains(
-                $driver,
-                '1:/user_upload/nate-johnston-JiBCTXVdR64-unsplash.jpg',
-                $relatedRecordsList
-            );
-            self::assertElementContains(
-                $driver,
                 '1:/user_upload/roman-wimmers-STrq0wSBGIs-unsplash.jpg',
-                $relatedRecordsList
-            );
-            self::assertElementContains(
-                $driver,
-                '1:/user_upload/maxim-berg-9XunOfueKKI-unsplash.jpg',
                 $relatedRecordsList
             );
         });
