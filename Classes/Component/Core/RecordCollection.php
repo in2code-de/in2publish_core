@@ -260,7 +260,8 @@ class RecordCollection implements IteratorAggregate
         RecordTreeBuildRequest $request,
         DemandsFactory $demandsFactory,
         DemandResolver $demandResolver,
-        Connection $localDatabase
+        Connection $localDatabase,
+        RecordIndex $recordIndex
     ): void {
         $recursionLimit = $request->getDependencyRecursionLimit();
         $dependencyTargets = new RecordCollection($this->records);
@@ -299,8 +300,6 @@ class RecordCollection implements IteratorAggregate
             $dependencyTargets = new RecordCollection();
             $demandResolver->resolveDemand($demands, $dependencyTargets);
         }
-
-        $recordIndex = GeneralUtility::makeInstance(RecordIndex::class);
 
         $this->map(static function (Record $record) use ($recordIndex): void {
             $dependencies = $record->getDependencies();

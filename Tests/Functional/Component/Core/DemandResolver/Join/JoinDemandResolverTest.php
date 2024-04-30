@@ -37,7 +37,7 @@ class JoinDemandResolverTest extends FunctionalTestCase
         $sysCategoryParents = $sysCategoryRecord->getParents();
         self::assertCount(1, $sysCategoryParents);
         $sysCategoryMmRecord = reset($sysCategoryParents);
-        self::assertSame('332c2fcd3a12a391958eeb76a6b09bc50d2ccd3f', $sysCategoryMmRecord->getId());
+        self::assertSame('7f64dfb449435fd9951d63ff8885d639b2cbe3bf', $sysCategoryMmRecord->getId());
         $mmParents = $sysCategoryMmRecord->getParents();
         self::assertCount(1, $mmParents);
         $mmParent = reset($mmParents);

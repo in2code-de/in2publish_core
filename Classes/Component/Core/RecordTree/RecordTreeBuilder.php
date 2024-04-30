@@ -61,6 +61,7 @@ class RecordTreeBuilder
             $this->demandsFactory,
             $this->demandResolver,
             $this->localDatabase,
+            $this->recordIndex,
         );
 
         $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
