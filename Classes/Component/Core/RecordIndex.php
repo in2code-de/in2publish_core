@@ -38,4 +38,12 @@ class RecordIndex
     {
         return $this->records->getRecord($classification, $id);
     }
+
+    /**
+     * @return RecordCollection<int, Record>
+     */
+    public function getRecordCollection(): RecordCollection
+    {
+        return $this->records;
+    }
 }

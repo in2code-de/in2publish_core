@@ -14,6 +14,7 @@ use Iterator;
 use IteratorAggregate;
 use NoRewindIterator;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_keys;
 use function array_search;
@@ -299,10 +300,12 @@ class RecordCollection implements IteratorAggregate
             $demandResolver->resolveDemand($demands, $dependencyTargets);
         }
 
-        $this->map(function (Record $record): void {
+        $recordIndex = GeneralUtility::makeInstance(RecordIndex::class);
+
+        $this->map(static function (Record $record) use ($recordIndex): void {
             $dependencies = $record->getDependencies();
             foreach ($dependencies as $dependency) {
-                $dependency->fulfill($this);
+                $dependency->fulfill($recordIndex->getRecordCollection());
             }
         });
     }
