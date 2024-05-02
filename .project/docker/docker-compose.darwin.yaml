@@ -22,7 +22,6 @@ services:
     build:
       context: .project/docker/local-php
       dockerfile: Dockerfile
-      target: base
       args:
         USER_ID: ${USER_ID:-1000}
         GROUP_ID: ${GROUP_ID:-1000}
@@ -65,7 +64,6 @@ services:
     build:
       context: .project/docker/foreign-php
       dockerfile: Dockerfile
-      target: base
       args:
         USER_ID: ${USER_ID:-1000}
         GROUP_ID: ${GROUP_ID:-1000}
