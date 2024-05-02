@@ -8,13 +8,11 @@ use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarke
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 
 use function array_filter;
 use function array_key_exists;
 use function implode;
-use function str_starts_with;
-use function substr;
-use function trim;
 
 class SelectProcessor extends AbstractProcessor
 {
@@ -41,6 +39,9 @@ class SelectProcessor extends AbstractProcessor
         'MM_opposite_field',
     ];
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
         if (array_key_exists('MM_opposite_field', $tca) && !$this->isSysCategoryField($tca)) {
@@ -48,6 +49,23 @@ class SelectProcessor extends AbstractProcessor
                 'MM_opposite_field is set on the foreign side of relations, which must not be resolved',
             ];
         }
+        if (array_key_exists('multiple', $tca) && $tca['multiple']) {
+            return [
+                'Multiple is broken in the TYPO3 Core, https://forge.typo3.org/issues/103604',
+            ];
+        }
+
+        // Skip relations to table "pages", except if it's the page's transOrigPointerField
+        $foreignTable = $tca['foreign_table'] ?? null;
+        $transOrigPointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
+        if ('pages' === $foreignTable && ('pages' !== $table || $column !== $transOrigPointerField)) {
+            return ['TCA relations to pages are not resolved.'];
+        }
+
+        if (null !== $foreignTable && $this->excludedTablesService->isExcludedTable($foreignTable)) {
+            return ['The table ' . $foreignTable . ' is excluded from publishing'];
+        }
+
         return [];
     }
 
@@ -70,11 +88,7 @@ class SelectProcessor extends AbstractProcessor
             }
             $additionalWhere = implode(' AND ', $foreignMatchFields);
             $foreignTableWhere = implode(' AND ', array_filter([$foreignTableWhere, $additionalWhere]));
-            $foreignTableWhere = trim($foreignTableWhere);
-            if (str_starts_with($foreignTableWhere, 'AND ')) {
-                $foreignTableWhere = trim(substr($foreignTableWhere, 4));
-            }
-
+            $foreignTableWhere = DatabaseUtility::stripLogicalOperatorPrefix($foreignTableWhere);
             $foreignTableWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($foreignTableWhere);
 
             /** @var SelectMmResolver $resolver */

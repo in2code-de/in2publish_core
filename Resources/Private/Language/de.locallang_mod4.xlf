@@ -47,6 +47,10 @@
 				<source>Upload!</source>
 				<target>Hochladen!</target>
 			</trans-unit>
+			<trans-unit id="system_info.upload.error" resname="system_info.upload.error">
+				<source>An error occured with the uploaded file!</source>
+				<target>Ein Fehler ist bei der hochgeladenen Datei aufgetreten!</target>
+			</trans-unit>
 			<trans-unit id="recordinspector.inspection_hint" resname="recordinspector.inspection_hint">
 				<source>Select classification and identifier for inspection</source>
 				<target>Bitte Klassifizierung und Identität auswählen</target>

@@ -4,16 +4,24 @@ namespace In2code\In2publishCore\Component\Core;
 
 use Closure;
 use Generator;
+use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
+use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
+use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use Iterator;
 use IteratorAggregate;
 use NoRewindIterator;
+use TYPO3\CMS\Core\Database\Connection;
 
 use function array_keys;
+use function array_search;
+use function implode;
 use function is_array;
 
 /**
- * This should be a WeakMap but that's available only in PHP 8, but we have to support 7.4.
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class RecordCollection implements IteratorAggregate
 {
@@ -160,5 +168,148 @@ class RecordCollection implements IteratorAggregate
     public function getIterator(): Iterator
     {
         return new NoRewindIterator($this->getRecordsFlat());
+    }
+
+    public function connectTranslations(): void
+    {
+        $classifications = $this->getClassifications();
+        $classifications = $this->removeClassificationsWithoutTranslations($classifications);
+        $this->changeTranslationRelationsFromChildToTranslation($classifications);
+        $this->moveTranslatedContentFromPageToTranslatedPage($classifications);
+    }
+
+    protected function removeClassificationsWithoutTranslations(array $classifications): array
+    {
+        foreach ($classifications as $idx => $classification) {
+            if (
+                !isset($GLOBALS['TCA'][$classification])
+                || empty($GLOBALS['TCA'][$classification]['ctrl']['languageField'])
+                || empty($GLOBALS['TCA'][$classification]['ctrl']['transOrigPointerField'])
+            ) {
+                unset($classifications[$idx]);
+            }
+        }
+        return $classifications;
+    }
+
+    /**
+     * Connect all translated records to their language parent
+     */
+    protected function changeTranslationRelationsFromChildToTranslation(array $classifications): void
+    {
+        foreach ($classifications as $classification) {
+            $transOrigPointerField = $GLOBALS['TCA'][$classification]['ctrl']['transOrigPointerField'];
+            $records = $this->getRecords($classification);
+            foreach ($records as $record) {
+                if (
+                    $record->getLanguage() > 0
+                    && null === $record->getTranslationParent()
+                ) {
+                    $transOrigPointer = $record->getProp($transOrigPointerField);
+                    if ($transOrigPointer > 0) {
+                        $translationParent = $records[$transOrigPointer] ?? null;
+                        if (null !== $translationParent) {
+                            $translationParent->addTranslation($record);
+                            $record->removeChild($translationParent);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Move translated records from the default-language-page children to the translated-page children
+     */
+    protected function moveTranslatedContentFromPageToTranslatedPage(array $classifications): void
+    {
+        // We only move content to translated pages, not pages themselves.
+        // They were connected in changeTranslationRelationsFromChildToTranslation.
+        $classifications = $this->removePagesFromClassifications($classifications);
+
+        $pages = $this->getRecords('pages');
+        foreach ($pages as $page) {
+            /** @var Record[][] $children */
+            $children = $page->getChildren();
+            foreach ($classifications as $classification) {
+                // These $childRecords have a languageField and transOrigPointerField
+                foreach ($children[$classification] ?? [] as $record) {
+                    $language = $record->getLanguage();
+                    if ($language > 0) {
+                        $translations = $page->getTranslations()[$language] ?? [];
+                        if (!empty($translations)) {
+                            $page->removeChild($record);
+                            foreach ($translations as $translation) {
+                                $translation->addChild($record);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected function removePagesFromClassifications(array $classifications): array
+    {
+        $pagesKey = array_search('pages', $classifications);
+        if (false !== $pagesKey) {
+            unset($classifications[$pagesKey]);
+        }
+        return $classifications;
+    }
+
+    public function processDependencies(
+        RecordTreeBuildRequest $request,
+        DemandsFactory $demandsFactory,
+        DemandResolver $demandResolver,
+        Connection $localDatabase,
+        RecordIndex $recordIndex
+    ): void {
+        $recursionLimit = $request->getDependencyRecursionLimit();
+        $dependencyTargets = new RecordCollection($this->records);
+
+        while ($recursionLimit-- > 0 && !$dependencyTargets->isEmpty()) {
+            $dependencyTree = new RecordTree();
+            $demands = $demandsFactory->createDemand();
+
+            $dependencyTargets->map(
+                function (Record $record) use ($demands, $dependencyTree, $localDatabase, $recordIndex): void {
+                    $dependencies = $record->getDependencies();
+                    foreach ($dependencies as $dependency) {
+                        $classification = $dependency->getClassification();
+                        $properties = $dependency->getProperties();
+                        if (!$recordIndex->getRecordsByProperties($classification, $properties)) {
+                            if (isset($properties['uid'])) {
+                                $demand = new SelectDemand($classification, '', 'uid', $properties['uid'], $dependencyTree);
+                                $demands->addDemand($demand);
+                            } else {
+                                $property = array_key_first($properties);
+                                $value = $properties[$property];
+                                unset($properties[$property]);
+                                $where = [];
+                                foreach ($properties as $property => $value) {
+                                    $quotedIdentifier = $localDatabase->quoteIdentifier($property);
+                                    $quotedValue = $localDatabase->quote($value);
+                                    $where[] = $quotedIdentifier . '=' . $quotedValue;
+                                }
+                                $where = implode(' AND ', $where);
+                                $demand = new SelectDemand($classification, $where, $property, $value, $dependencyTree);
+                                $demands->addDemand($demand);
+                            }
+                        }
+                    }
+                },
+            );
+
+            $dependencyTargets = new RecordCollection();
+            $demandResolver->resolveDemand($demands, $dependencyTargets);
+        }
+
+        $this->map(static function (Record $record) use ($recordIndex): void {
+            $dependencies = $record->getDependencies();
+            foreach ($dependencies as $dependency) {
+                $dependency->fulfill($recordIndex->getRecordCollection());
+            }
+        });
     }
 }

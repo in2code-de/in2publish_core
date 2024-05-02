@@ -1,5 +1,79 @@
 # In2publish Core Change Log
 
+12.5.0:
+
+- [BUGFIX] Pass correct record to edit and history links for changed records on the page
+- [BUGFIX] Remove edit and history links from page properties
+- [META] Set the branch alias version number to 12.5.x-dev
+- [META] Set the EM conf version number to 12.5.0
+- [BUGFIX] Pass includeChildPages options on to child record publishing
+- [BUGFIX] Record the creation of new records to process all relevant records for the buildRecordTree request
+- [BUGFIX] Use the record index to search for records globally
+- [TEST] Fix Unit Tests
+- [DEV] Always enable xdebug
+- [CODESTYLE] Make QA happy
+- [BUGFIX] Do not resolve relations to pages from TCA
+- [META] Add branch alias
+- [BUGFIX] Do not resolve TCA defined relations to pages
+- [BUGFIX] Omit default argument of RootlineUtility constructor
+- [BUGFIX] Publish record translations when the default language records is published
+- [BUGFIX] Make qa happy
+- [TESTS] Put logs also in the seed folder
+- [TESTS] Restructure artifacts paths
+- [TESTS] Fix expectation that after publishing, the page is still publishable
+- [TESTS] Fix list of expected images in the CE of the news
+- [TESTS] Always close the foreign session to record the active window
+- [DEV] Rebuild the php dockerfile if possible
+- [DEV] Upgrade to PHP 8.1 to test TYPO3 v12 (v11 is not officially supported anymore by CPv12)
+- [DEV] Remove obsolete version field from docker compose files
+- [BUGFIX] Fix eventthrowing for unchanged records
+- [BUGFIX] Translations are now published again
+- [BUGFIX] Pass the record index to the collection instead of statically retrieving it
+- [BUGFIX] Serve records to fulfill dependencies from the record index
+- [META] Remove branch alias for feature/reset-record-index
+- [BUGFIX] Always make a fresh record collection to build record trees
+- [META] Add branch alias
+- [BUGFIX] Use a local object with defined state to finish the record tree
+- [BUGFIX] Fixes support of mm tables with primary key
+- [BUGFIX] Check if the enable field exists before accessing it
+- [BUGFIX] Call the RedirectsSupport DataBender before publishing a redirect
+- [BUGFIX] Corrects menu position of redirects module
+- [BUGFIX] Makes filter in redirect module work again
+- [FEATURE] CacheInvalidator will no longer try to invalidate on pid 0
+- [CODESTYLE] Remove double quotes
+- [DOCUMENTATION] Add Documentation for Advanced Debug Information
+- [FEATURE] Add field information provider to show if fields can be published
+- [BUGFIX] Rename parameter id to identifier to mitigate extbase bugs
+- [CODESTYLE] Makes qa happy
+- [BUGFIX] Corrects middleware Handling of combined identifier
+- [BUGFIX] Prevent exceptions for non existing tables
+- [BUGFIX] Align use identifiers for files
+- [BUGFIX] Typecast parameter for marker replacement
+- [FEATURE] Add check if envelope data is filled
+- [BUGFIX] Backendstuff is not used when frontend is called
+- [BUGFIX] Adds a middleware to work around a bug in TYPO3 Core
+- [FEATURE] Extend SiteService
+- [BUGFIX] Correct RecordTreeBuilder Behaviour
+- [DOCUMENTATION] Add documentation for new redirect fields
+- [BUGFIX] Rewrite task execution to return one task response per line and log exceptions
+- [DOCUMENTATION] Add some information of dealing with inconsistency
+- [CODESTYLE] Make qa happy
+- [BUGFIX] Strip logical operator separated by space
+- [FIX] Removes unneeded dependency in publish tools test
+- [BUGFIX] Fixes Upload of Systeminformation in Publisher Tools
+- [BUGFIX] show/hide deleted records correct again
+- [BUGFIX] Readd red color to deleted pages in overview module
+- [BUGFIX] Do not respect page children from current page for state
+- [FEATURE] Add logger to log publishing events into sys_log
+- [BUGFIX] Replace array unpacking by string keys with reflection for PHP 7.4 support
+- [TEST] Downgrade PHP to 7.4 for the test environment
+- [CLEANUP] Remove old test files
+- [BUGFIX] Use case-insensitive method to remove AND/OR from queries
+- [BUGFIX] Wire configuration values for FileInfo constructor as PHP 7.4 does not support array key argument mapping
+- [BUGFIX] Wire configuration values for resolves as PHP 7.4 does not support array key argument mapping
+- [CLEANUP] Remove workflow tables from test data
+- [META] Exclude new test files from git archive
+
 12.4.0: (includes 11.0.9)
 
 - [META] Set the branch alias version number to 12.4.x-dev
@@ -48,6 +122,22 @@
 - [BUGFIX] Add missing Fluid namespace import
 - [BUGFIX] Format check and select values correctly
 - [BUGFIX] Revert upgrade to ContextualFeedbackSeverity as it is not compatible with TYPO3 v11
+- [BUGFIX] Do not inject content into requests without a body tag
+- [BUGFIX] Support AND operator as a workaround for tag attribute limitations in TYPO3 v11
+- [DOCS] Fix inter-documentation links
+- [DOC] Add documentation for conditional evaluation service and event listeners
+- [BUGFIX] Return response in record publish action
+- [BUGFIX] Fix condition prefixes for conditional event listener
+- [FEATURE] Create condition evaluation service and make remaining event listener conditional
+- [FEATURE] Support multiple conditions for conditional event listener
+- [REFACTOR] Rename conditional event listener tag to in2publish_core.conditional.event.listener
+- [CLEANUP] Remove enabled check from HideRecordsDeletedDifferentlyEventListener
+- [BUGFIX] Resolve conditions and listeners once
+- [FEATURE] Provide conditional event listener
+- [BUGFIX] Create the new folder of a moved file recursively
+- [BUGFIX] Fix folder creation before moving files
+- [RELEASE] Version 12.3.1 with fixed version constraint in ext_emconf.php
+
 
 12.3.1:
 

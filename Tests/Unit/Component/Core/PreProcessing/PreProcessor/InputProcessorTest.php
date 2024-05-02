@@ -46,7 +46,7 @@ class InputProcessorTest extends UnitTestCase
         );
         $this->assertFalse($processingResult->isCompatible());
         $this->assertSame(
-            ['An input field must either have renderType="inputLink" or softref="typolink" or softref="typolink_tag"'],
+            'An input field must either have renderType="inputLink" or softref="typolink" or softref="typolink_tag"',
             $processingResult->getValue(),
         );
     }

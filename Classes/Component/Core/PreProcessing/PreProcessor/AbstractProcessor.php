@@ -8,14 +8,18 @@ use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\Exception\M
 use In2code\In2publishCore\Component\Core\PreProcessing\ProcessingResult;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessor;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
+use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesServiceInjection;
 use Psr\Container\ContainerInterface;
 
 use function array_key_exists;
 use function array_keys;
 use function array_merge;
+use function count;
 
 abstract class AbstractProcessor implements TcaPreProcessor
 {
+    use ExcludedTablesServiceInjection;
+
     public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
     protected ContainerInterface $container;
 
@@ -91,6 +95,9 @@ abstract class AbstractProcessor implements TcaPreProcessor
             $reasons[] = $reason;
         }
         if (!empty($reasons)) {
+            if (1 === count($reasons)) {
+                [$reasons] = $reasons;
+            }
             return new ProcessingResult(ProcessingResult::INCOMPATIBLE, $reasons);
         }
         $processedTca = [];
@@ -103,7 +110,7 @@ abstract class AbstractProcessor implements TcaPreProcessor
         if (null === $resolver) {
             return new ProcessingResult(
                 ProcessingResult::INCOMPATIBLE,
-                ['The processor did not return a valid resolver. The target table might be excluded or empty.'],
+                'The processor did not return a valid resolver. The target table might be excluded or empty.',
             );
         }
         return new ProcessingResult(

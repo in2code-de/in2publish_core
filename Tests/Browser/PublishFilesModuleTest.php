@@ -193,6 +193,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
                 ),
             );
         });
+        $foreignDriver->close();
     }
 
 
@@ -258,6 +259,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
                 WebDriverBy::cssSelector('[data-filelist-identifier="1:/Testcases/2c_target_folder/MovedFile_2c.txt"]'),
             );
         });
+        $foreignDriver->close();
     }
 
     /**
@@ -319,6 +321,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
                 WebDriverBy::cssSelector('[data-filelist-identifier="1:/Testcases/2d_deleted_file/2d_deleted_file.txt"]'),
             );
         });
+        $foreignDriver->close();
     }
 
     /**
@@ -381,6 +384,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
                 WebDriverBy::cssSelector('[data-id="1:/Testcases/2f_delete_folder/"]'),
             );
         });
+        $foreignDriver->close();
     }
 
     /**
@@ -443,5 +447,6 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
                 WebDriverBy::cssSelector('[data-filelist-identifier="1:/Testcases/2g_target_folder/2g_moved_folder_with_file/MovedFileInFolder_2g.txt"]'),
             );
         });
+        $foreignDriver->close();
     }
 }

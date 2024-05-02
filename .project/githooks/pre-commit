@@ -21,7 +21,7 @@ DIFF=$(git -c diff.mnemonicprefix=false -c diff.noprefix=false --no-pager diff -
       -v $PWD:$PWD \
       -w $PWD \
       -e GRUMPHP_GIT_WORKING_DIR="$(git rev-parse --show-toplevel)" \
-      in2code/php:7.4-fpm \
+      in2code/php:8.1-fpm \
       '.project/phars/grumphp' \
       'git:pre-commit' \
       '--skip-success-output' \

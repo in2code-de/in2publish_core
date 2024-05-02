@@ -9,6 +9,7 @@ use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarke
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
+use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use ReflectionMethod;
@@ -35,6 +36,11 @@ class SelectProcessorTest extends UnitTestCase
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
         $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $selectProcessor->injectExcludedTablesService($excludedTablesService);
+
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'select',
             'foreign_table' => 'tableNameBeng',
@@ -65,6 +71,11 @@ class SelectProcessorTest extends UnitTestCase
 
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $selectProcessor->injectExcludedTablesService($excludedTablesService);
+
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
         $this->assertFalse($processingResult->isCompatible());
     }
@@ -105,6 +116,11 @@ class SelectProcessorTest extends UnitTestCase
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
         $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $selectProcessor->injectExcludedTablesService($excludedTablesService);
+
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
         $this->assertSame($processorTca, $processingResult->getValue()['tca']);
     }
@@ -134,6 +150,10 @@ class SelectProcessorTest extends UnitTestCase
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
         $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $selectProcessor->injectExcludedTablesService($excludedTablesService);
 
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
 
@@ -172,6 +192,10 @@ class SelectProcessorTest extends UnitTestCase
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
         $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $selectProcessor->injectExcludedTablesService($excludedTablesService);
 
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\RecordTree;
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
@@ -35,9 +36,12 @@ class RecordTreeBuilder
     use DemandBuilderInjection;
     use PageTypeServiceInjection;
     use RawRecordServiceInjection;
+    use LocalDatabaseInjection;
 
     public function buildRecordTree(RecordTreeBuildRequest $request): RecordTree
     {
+        $this->recordIndex->startRecordingNewRecords('buildRecordTree');
+
         $recordTree = new RecordTree([], $request);
 
         $recordCollection = new RecordCollection();
@@ -48,13 +52,21 @@ class RecordTreeBuilder
 
         $this->findPagesRecursively($defaultIdRequest, $recordCollection);
 
-        $recordCollection = $this->findAllRecordsOnPages();
+        $pagesCollection = $this->recordIndex->getRecording('buildRecordTree');
+        $this->findAllRecordsOnPages($pagesCollection);
 
-        $this->findRecordsByTca($recordCollection, $request);
+        $allRecordsCollection = $this->recordIndex->getRecording('buildRecordTree');
+        $this->findRecordsByTca($allRecordsCollection, $request);
 
-        $this->recordIndex->connectTranslations();
-
-        $this->recordIndex->processDependencies($request);
+        $allNewRecords = $this->recordIndex->stopRecordingAndGetRecords('buildRecordTree');
+        $allNewRecords->connectTranslations();
+        $allNewRecords->processDependencies(
+            $request,
+            $this->demandsFactory,
+            $this->demandResolver,
+            $this->localDatabase,
+            $this->recordIndex,
+        );
 
         $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
 
@@ -83,7 +95,10 @@ class RecordTreeBuilder
             $record = $this->rawRecordService->getRawRecord($table, $id, 'local');
             if (null !== $record && $record[$languageField] > 0) {
                 $id = $record[$transOrigPointerField];
-                $request = $request->withId($id);
+                // Only set this record to the l10n_parent if this record is connected
+                if ($id > 0) {
+                    $request = $request->withId($id);
+                }
             }
         }
         return $request;
@@ -133,15 +148,11 @@ class RecordTreeBuilder
         }
     }
 
-    public function findAllRecordsOnPages(): RecordCollection
+    public function findAllRecordsOnPages(RecordCollection $recordCollection): void
     {
-        // Make a new record collection with all records (pages and subpages or other non-page records).
-        // Required for subsequent method calls.
-        $recordCollection = new RecordCollection($this->recordIndex->getRecords());
-
         $pages = $recordCollection->getRecords('pages');
         if (empty($pages)) {
-            return $recordCollection;
+            return;
         }
         $demands = $this->demandsFactory->createDemand();
 
@@ -166,7 +177,6 @@ class RecordTreeBuilder
             }
         }
         $this->demandResolver->resolveDemand($demands, $recordCollection);
-        return $recordCollection;
     }
 
     /**

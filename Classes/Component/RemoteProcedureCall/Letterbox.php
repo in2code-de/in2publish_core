@@ -99,6 +99,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
      * @throws Throwable
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) Don't be so picky :/
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function receiveEnvelope(int $uid, bool $burnEnvelope = true)
     {
@@ -116,6 +117,13 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
             $this->logger->error(
                 'Failed to receive envelope [' . $uid . '] "' . $exception . '"',
                 ['exception' => $exception],
+            );
+            return false;
+        }
+
+        if (empty($rows[0])) {
+            $this->logger->error(
+                'No Envelope UID is given. Please check your database settings.'
             );
             return false;
         }

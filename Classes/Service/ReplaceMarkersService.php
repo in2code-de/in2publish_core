@@ -148,7 +148,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
         if (false !== strpos($string, '###PAGE_TSCONFIG')) {
             $marker = [
                 'PAGE_TSCONFIG_ID' => fn ($input): int => (int)$input,
-                'PAGE_TSCONFIG_IDLIST' => fn ($input): string => implode(',', GeneralUtility::intExplode(',', $input)),
+                'PAGE_TSCONFIG_IDLIST' => fn ($input): string => implode(',', GeneralUtility::intExplode(',', (string)$input)),
                 'PAGE_TSCONFIG_STR' => fn ($input): string => $this->localDatabase->quote($input),
             ];
 

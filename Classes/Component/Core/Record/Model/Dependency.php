@@ -145,7 +145,7 @@ class Dependency
             $localProps = $record->getLocalProps();
             $foreignProps = $record->getForeignProps();
             foreach ($enableFields as $enableField) {
-                if ($localProps[$enableField] !== $foreignProps[$enableField]) {
+                if (($localProps[$enableField] ?? null) !== ($foreignProps[$enableField] ?? null)) {
                     return false;
                 }
             }
@@ -200,7 +200,7 @@ class Dependency
     /**
      * fulfill() must be called before this method. The recordIndex passed to fulfill() must contain any dependency
      * target record including those outside the record tree. This is done in the RecordIndex before calling fulfill().
-     * @see \In2code\In2publishCore\Component\Core\RecordIndex::processDependencies
+     * @see RecordCollection::processDependencies
      *
      * When fulfill() did not select any record, the records do not exist in the database. If they exist in the
      *     database

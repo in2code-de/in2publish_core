@@ -22,7 +22,7 @@ class TextResolver extends AbstractResolver
 {
     use EventDispatcherInjection;
 
-    private const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)(?:#[\w\d\-\_\!]+)?~';
+    private const REGEX_T3URN = '~(?P<URN>t3\://(?:file)\?uid=\d+)(?:#[\w\d\-\_\!]+)?~';
     protected string $column;
 
     public function configure(string $column): void
@@ -32,7 +32,7 @@ class TextResolver extends AbstractResolver
 
     public function getTargetTables(): array
     {
-        return ['sys_file', 'pages'];
+        return ['sys_file'];
     }
 
     public function resolve(Demands $demands, Record $record): void
@@ -64,9 +64,6 @@ class TextResolver extends AbstractResolver
             if ('file' === $urnParsed['host'] && isset($data['uid'])) {
                 $demands->addDemand(new SelectDemand('sys_file', '', 'uid', $data['uid'], $record));
             }
-            if ('page' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands->addDemand(new SelectDemand('pages', '', 'uid', $data['uid'], $record));
-            }
         }
 
         $this->eventDispatcher->dispatch(new DemandsForTextWereCollected($demands, $record, $text));
@@ -83,8 +80,7 @@ class TextResolver extends AbstractResolver
     public function __unserialize(array $data): void
     {
         $this->metaInfo = $data['metaInfo'];
-        unset($data['metaInfo']);
-        $this->configure(...$data);
+        $this->configure($data['column']);
         $this->injectEventDispatcher(GeneralUtility::makeInstance(EventDispatcher::class));
     }
 }

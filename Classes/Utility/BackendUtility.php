@@ -96,6 +96,13 @@ class BackendUtility
             return (int)$identifier;
         }
 
+        // get id from ?combined_identifier=1:/xyz/abcd
+        // This works around a bug in TYPO3 Core when using Extbase Backend Modules in file context
+        // @see ExtbaseModuleSanitizeParameterMiddleware.php
+        if (null !== ($getCombinedIdentifier = GeneralUtility::_GP('combined_identifier'))) {
+            return $getCombinedIdentifier;
+        }
+
         // get id from ?id=123
         if (null !== ($getId = GeneralUtility::_GP('id'))) {
             return is_numeric($getId) ? (int)$getId : $getId;

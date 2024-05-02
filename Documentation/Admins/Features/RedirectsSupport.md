@@ -27,3 +27,12 @@ Each status and action icon is explained below the list. You can also hover over
 
 Publishable redirects with changes also have a checkbox. You can select multiple redirects and publish them at once.
 The selection is lost when the navigation is used, so you can only publish multiple redirects on a single page.
+
+## Create / edit redirects
+If a new redirect is created, the following new fields are added by the Content Publisher. Both are null by default,
+but at least one of them must be filled in order to publish the redirect.
+* in2publishcore_page_uid
+* in2publishcore_foreign_site_id
+You can either select a foreign site or a page in the local page tree to be used for the redirect.
+
+![New Redirect Fields](_img/new_redirect.png)

@@ -38,12 +38,12 @@ class AbstractProcessorTest extends UnitTestCase
 
         $processingResult = $abstractProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
         $this->assertFalse($processingResult->isCompatible());
-        $reason = $processingResult->getValue()[0];
+        $reason = $processingResult->getValue();
         $this->assertSame('first_reason', $reason);
 
         $tca = ['type' => 'inline', 'forbidden_key_2' => 'foo'];
         $processingResult = $abstractProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
-        $reason = $processingResult->getValue()[0];
+        $reason = $processingResult->getValue();
         $this->assertFalse($processingResult->isCompatible());
         $this->assertSame('second_reason', $reason);
     }
@@ -67,13 +67,13 @@ class AbstractProcessorTest extends UnitTestCase
         $tca = ['type' => 'inline', 'key_1' => 'foo'];
         $processingResult = $abstractProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
         $this->assertFalse($processingResult->isCompatible());
-        $reason = $processingResult->getValue()[0];
+        $reason = $processingResult->getValue();
         $this->assertSame('Key 2 is required', $reason);
 
         $tca = ['type' => 'inline', 'key_2' => 'foo'];
         $processingResult = $abstractProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
         $this->assertFalse($processingResult->isCompatible());
-        $reason = $processingResult->getValue()[0];
+        $reason = $processingResult->getValue();
         $this->assertSame('Key 1 is required', $reason);
     }
 
@@ -105,7 +105,7 @@ class AbstractProcessorTest extends UnitTestCase
 
         $tca = ['type' => 'inline'];
         $result = $abstractProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
-        $reason = $result->getValue()[0];
+        $reason = $result->getValue();
         $this->assertFalse($result->isCompatible());
         $this->assertSame(
             'The processor did not return a valid resolver. The target table might be excluded or empty.',

@@ -22,7 +22,7 @@ class TextResolverTest extends UnitTestCase
     public function testTargetTables(): void
     {
         $textResolver = new TextResolver();
-        $expectedTargetTables = ['sys_file', 'pages'];
+        $expectedTargetTables = ['sys_file'];
         $this->assertSame($expectedTargetTables, $textResolver->getTargetTables());
     }
 
@@ -30,7 +30,7 @@ class TextResolverTest extends UnitTestCase
      * @covers ::resolve
      * @covers ::findRelationsInText
      */
-    public function testResolverFindsPageAndFileRelations(): void
+    public function testResolverFindsFileRelations(): void
     {
         $textResolver = new TextResolver();
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -47,15 +47,6 @@ class TextResolverTest extends UnitTestCase
         $textResolver->resolve($demands, $databaseRecord);
 
         $selectDemand = $demands->getDemandsByType(SelectDemand::class);
-
-        $this->assertArrayHasKey('pages', $selectDemand);
-
-        $pagesArray = $selectDemand['pages'];
-        foreach ($pagesArray as $subArray) {
-            $this->assertArrayHasKey('uid', $subArray);
-            $this->assertArrayHasKey('tt_content\1', $subArray['uid'][1]);
-            $this->assertArrayHasKey('tt_content\1', $subArray['uid'][2]);
-        }
 
         $this->assertArrayHasKey('sys_file', $selectDemand);
         $fileArray = $selectDemand['sys_file'];

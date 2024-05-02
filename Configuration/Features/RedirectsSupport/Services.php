@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Event\RecordWasPublished;
+use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater;
@@ -50,7 +51,7 @@ return static function (ContainerConfigurator $configurator): void {
                          'condition' => 'CONF:features.redirectsSupport.enable',
                          'identifier' => 'in2publishcore-RedirectSourceHostReplacement-RecordWasPublished',
                          'method' => 'replaceLocalWithForeignSourceHost',
-                         'event' => RecordWasPublished::class,
+                         'event' => RecordWasSelectedForPublishing::class,
                      ],
                  );
         $services->set('tx_in2publish_redirectssupport_event_listener_updater')

@@ -20,7 +20,9 @@ use In2code\In2publishCore\Component\Core\Service\RelevantTablesService;
 use In2code\In2publishCore\Service\Configuration\PageTypeService;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder
@@ -59,15 +61,6 @@ class RecordTreeBuilderTest extends UnitTestCase
 
         $fooRecord = new DatabaseRecord('table_foo', 33, ['pid' => 42], [], []);
 
-        $recordIndex = $this->createMock(RecordIndex::class);
-        $recordIndex->expects($this->once())->method('getRecords')
-                    ->willReturn(
-                        [
-                            0 => $pageRecord,
-                            1 => $fooRecord,
-                        ],
-                    );
-
         $demandResolver = $this->createMock(DemandResolver::class);
         $demandResolver->expects(self::once())->method('resolveDemand')->willReturnCallback(
             function (Demands $demands, RecordCollection $recordCollection) use ($fooRecord) {
@@ -88,19 +81,20 @@ class RecordTreeBuilderTest extends UnitTestCase
         $pageTypeService->method('getTablesAllowedOnPage')->willReturn(['table_foo']);
 
         $recordTreeBuilder->injectDemandResolver($demandResolver);
-        $recordTreeBuilder->injectRecordIndex($recordIndex);
         $recordTreeBuilder->injectDemandsFactory($demandsFactory);
         $recordTreeBuilder->injectRelevantTablesService($relevantTablesService);
         $recordTreeBuilder->injectPageTypeService($pageTypeService);
 
+        $recordCollection = new RecordCollection([$pageRecord, $fooRecord]);
+
         // act
-        $recordsInCollection = $recordTreeBuilder->findAllRecordsOnPages();
+        $recordTreeBuilder->findAllRecordsOnPages($recordCollection);
 
         // assert
-        $pageRecordsInCollection = $recordsInCollection->getRecords('pages');
+        $pageRecordsInCollection = $recordCollection->getRecords('pages');
         $this->assertEquals($pageRecord, $pageRecordsInCollection[42]);
 
-        $fooRecordsInCollection = $recordsInCollection->getRecords('table_foo');
+        $fooRecordsInCollection = $recordCollection->getRecords('table_foo');
         $this->assertEquals($fooRecord, $fooRecordsInCollection[33]);
     }
 
@@ -115,10 +109,16 @@ class RecordTreeBuilderTest extends UnitTestCase
         $recordFactory = $this->createMock(RecordFactory::class);
         $recordIndex = $this->createMock(RecordIndex::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
+        $demandsFactory = $this->createMock(DemandsFactory::class);
+        $demandsResolver = $this->createMock(DemandResolver::class);
+        $localDatabase = $this->createMock(Connection::class);
 
         $recordTreeBuilder->injectRecordFactory($recordFactory);
         $recordTreeBuilder->injectRecordIndex($recordIndex);
         $recordTreeBuilder->injectEventDispatcher($eventDispatcher);
+        $recordTreeBuilder->injectDemandsFactory($demandsFactory);
+        $recordTreeBuilder->injectDemandResolver($demandsResolver);
+        $recordTreeBuilder->injectLocalDatabase($localDatabase);
 
         $request = $this->createMock(RecordTreeBuildRequest::class);
         $request->method('getTable')->willReturn('pages');

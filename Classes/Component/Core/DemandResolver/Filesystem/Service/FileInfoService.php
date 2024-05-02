@@ -37,7 +37,6 @@ class FileInfoService
         $fileInfo = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
         $fileInfo['folderHash'] = $fileInfo['folder_hash'];
         $fileInfo['identifierHash'] = $fileInfo['identifier_hash'];
-        unset($fileInfo['folder_hash'], $fileInfo['identifier_hash']);
         $fileInfo['sha1'] = $driver->hash($fileIdentifier, 'sha1');
         $fileInfo['publicUrl'] = null;
         $publicUrl = $driver->getPublicUrl($fileInfo['identifier']);
@@ -48,6 +47,17 @@ class FileInfoService
             }
             $fileInfo['publicUrl'] = $publicUrl;
         }
-        return new FileInfo(...$fileInfo);
+        return new FileInfo(
+            $fileInfo['storage'],
+            $fileInfo['identifier'],
+            $fileInfo['name'],
+            $fileInfo['sha1'],
+            $fileInfo['publicUrl'],
+            $fileInfo['size'],
+            $fileInfo['mimetype'],
+            $fileInfo['extension'],
+            $fileInfo['folderHash'],
+            $fileInfo['identifierHash'],
+        );
     }
 }

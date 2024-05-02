@@ -183,7 +183,8 @@ class In2publishCoreDefiner implements DefinerServiceInterface
                           'debug',
                           Builder::start()
                                  ->addBoolean('keepEnvelopes', false)
-                                 ->addBoolean('traceDemand', false),
+                                 ->addBoolean('traceDemand', false)
+                                 ->addBoolean('addFormEngineDescription', false),
                       )
                       ->addArray(
                           'backup',

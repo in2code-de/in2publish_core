@@ -1,4 +1,4 @@
-FROM in2code/php-dev:8.1-fpm AS base
+FROM in2code/php-dev:8.1-fpm
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -21,13 +21,8 @@ RUN chmod 600 /home/app/.ssh/authorized_keys \
 	&& apt-get autoremove -y \
 	&& apt-get clean \
 	&& echo "php_admin_value[memory_limit] = 256M" >> /usr/local/etc/php-fpm.d/www.conf \
-	&& echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/zz_custom.ini \
-    && echo "xdebug.mode=off" > /usr/local/etc/php/conf.d/zz_xdebug.ini
+	&& echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/zz_custom.ini
 
 COPY docker-php-entrypoint /usr/local/bin/docker-php-entrypoint
 
 EXPOSE 22
-
-FROM base AS local
-
-COPY xdebug.ini /usr/local/etc/php/conf.d/zz_xdebug.ini

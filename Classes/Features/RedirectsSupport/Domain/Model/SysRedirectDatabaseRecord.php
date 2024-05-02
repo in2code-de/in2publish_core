@@ -72,6 +72,28 @@ class SysRedirectDatabaseRecord extends DatabaseRecord
         return 'publishable';
     }
 
+    protected function calculateChangedProps(): array
+    {
+        $props = parent::calculateChangedProps();
+        if (empty($props)) {
+            // (Sanity) check the published domain. If the redirect is associated
+            // with a site or page, the local and foreign source_host must differ
+            if (
+                $this->localProps['source_host'] === $this->foreignProps['source_host']
+                && '*' !== ($this->localProps['sourceHost'] ?? null)
+                && (
+                    null !== ($this->localProps['tx_in2publishcore_foreign_site_id'] ?? null)
+                    || null !== ($this->localProps['tx_in2publishcore_page_uid'] ?? null)
+                )
+            ) {
+                // source_host is ignored by default, but in case it is not what it should be,
+                // mark the record as changed to allow users to publish the incorrect redirect
+                $props[] = 'source_host';
+            }
+        }
+        return $props;
+    }
+
     public function __toString(): string
     {
         $localProps = $this->getLocalProps();

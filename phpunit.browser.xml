@@ -22,25 +22,24 @@
 
     <extensions>
         <bootstrap class="CoStack\StackTest\Bootstrap">
-            <parameter name="screenshot"
-                       value="../../.project/artifacts/{testClass}/{testMethod}/{seed}/Screenshot.jpg"/>
-            <parameter name="pageSource" value="../../.project/artifacts/{testClass}/{testMethod}/{seed}/Source.html"/>
+            <parameter name="screenshot" value="$HOST_PWD/.project/artifacts/{seed}/{testClass}/{testMethod}/screenshot.jpg"/>
+            <parameter name="pageSource" value="$HOST_PWD/.project/artifacts/{seed}/{testClass}/{testMethod}/source.html"/>
         </bootstrap>
         <bootstrap class="CoStack\StackTest\Extensions\Screencast\Screencast">
             <parameter name="network" value="in2publish_core_default"/>
             <parameter name="image" value="selenium/video:ffmpeg-6.1-20231219"/>
-            <parameter name="path" value="$HOST_PWD/.project/artifacts/{testClass}/{testMethod}/{seed}"/>
+            <parameter name="path" value="$HOST_PWD/.project/artifacts/{seed}/{testClass}/{testMethod}"/>
             <parameter name="file" value="{browser-container-name}.mp4"/>
             <parameter name="browser-container-name" value="selenium-node-firefox"/>
-            <parameter name="logs" value=".project/artifacts/logs/firefox-recorder.log"/>
+            <parameter name="logs" value=".project/artifacts/{seed}/logs/firefox-recorder.log"/>
         </bootstrap>
         <bootstrap class="CoStack\StackTest\Extensions\Screencast\Screencast">
             <parameter name="network" value="in2publish_core_default"/>
             <parameter name="image" value="selenium/video:ffmpeg-6.1-20231219"/>
-            <parameter name="path" value="$HOST_PWD/.project/artifacts/{testClass}/{testMethod}/{seed}"/>
+            <parameter name="path" value="$HOST_PWD/.project/artifacts/{seed}/{testClass}/{testMethod}"/>
             <parameter name="file" value="{browser-container-name}.mp4"/>
             <parameter name="browser-container-name" value="selenium-node-chrome"/>
-            <parameter name="logs" value=".project/artifacts/logs/chrome-recorder.log"/>
+            <parameter name="logs" value=".project/artifacts/{seed}/logs/chrome-recorder.log"/>
         </bootstrap>
     </extensions>
 </phpunit>

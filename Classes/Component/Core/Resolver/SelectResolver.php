@@ -10,11 +10,10 @@ use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractPro
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Service\ReplaceMarkersServiceInject;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function preg_match;
-use function substr;
-use function trim;
 
 class SelectResolver extends AbstractResolver
 {
@@ -48,10 +47,7 @@ class SelectResolver extends AbstractResolver
             $this->foreignTableWhere,
             $this->column,
         );
-        $additionalWhere = trim($additionalWhere);
-        if (str_starts_with($additionalWhere, 'AND ')) {
-            $additionalWhere = trim(substr($additionalWhere, 4));
-        }
+        $additionalWhere = DatabaseUtility::stripLogicalOperatorPrefix($additionalWhere);
         if (1 === preg_match(AbstractProcessor::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
             $additionalWhere = $matches['where'];
         }
@@ -75,8 +71,7 @@ class SelectResolver extends AbstractResolver
     public function __unserialize(array $data): void
     {
         $this->metaInfo = $data['metaInfo'];
-        unset($data['metaInfo']);
-        $this->configure(...$data);
+        $this->configure($data['column'], $data['foreignTable'], $data['foreignTableWhere']);
         $this->injectReplaceMarkersService(GeneralUtility::makeInstance(ReplaceMarkersService::class));
     }
 }
