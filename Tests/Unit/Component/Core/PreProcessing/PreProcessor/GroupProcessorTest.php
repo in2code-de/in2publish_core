@@ -10,6 +10,7 @@ use In2code\In2publishCore\Component\Core\Resolver\GroupMmMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
+use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use ReflectionMethod;
 use Symfony\Component\DependencyInjection\Container;
@@ -73,9 +74,14 @@ class GroupProcessorTest extends UnitTestCase
                   ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
 
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $excludedTablesService->method('removeExcludedTables')->willReturnArgument(0);
+        $groupProcessor->injectExcludedTablesService($excludedTablesService);
+
         $processingResult = $groupProcessor->process('table_foo', 'field_foo', $tca);
         $this->assertFalse($processingResult->isCompatible());
-        $reason = $processingResult->getValue()[0];
+        $reason = $processingResult->getValue();
         $this->assertSame('The internal type "file" is not supported', $reason);
 
         $tca = ['type' => 'group', 'allowed' => 'table_foo', 'internal_type' => 'db'];
@@ -102,9 +108,14 @@ class GroupProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $groupProcessor->injectContainer($container);
 
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $excludedTablesService->method('removeExcludedTables')->willReturnArgument(0);
+        $groupProcessor->injectExcludedTablesService($excludedTablesService);
+
         $processingResult = $groupProcessor->process('table_foo', 'field_foo', $tca);
         $this->assertFalse($processingResult->isCompatible());
-        $reason = $processingResult->getValue()[0];
+        $reason = $processingResult->getValue();
         $expectedMessage = 'Can not reference the table "table_bar" from "allowed. It is not present in the TCA';
         $this->assertSame($expectedMessage, $reason);
 
@@ -129,6 +140,10 @@ class GroupProcessorTest extends UnitTestCase
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
         $container = $this->createMock(Container::class);
         $groupProcessor->injectContainer($container);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $groupProcessor->injectExcludedTablesService($excludedTablesService);
 
         $processingResult = $groupProcessor->process('table_foo', 'field_bar', $tca);
         $this->assertFalse($processingResult->isCompatible());
@@ -162,6 +177,11 @@ class GroupProcessorTest extends UnitTestCase
                   ->with(GroupSingleTableResolver::class)
                   ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $excludedTablesService->method('removeExcludedTables')->willReturnArgument(0);
+        $groupProcessor->injectExcludedTablesService($excludedTablesService);
 
         $singleTableTca = ['type' => 'group', 'allowed' => 'table_foo'];
         $processingResult = $groupProcessor->process('table_foo', 'field_bar', $singleTableTca);
@@ -197,6 +217,11 @@ class GroupProcessorTest extends UnitTestCase
                   ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
 
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $excludedTablesService->method('removeExcludedTables')->willReturnArgument(0);
+        $groupProcessor->injectExcludedTablesService($excludedTablesService);
+
         $processingResult = $groupProcessor->process('table_bar', 'field_bar', $multiTableTca);
         $resolver = $processingResult->getValue()['resolver'];
         $this->assertTrue($processingResult->isCompatible());
@@ -220,8 +245,15 @@ class GroupProcessorTest extends UnitTestCase
         $groupProcessor = new GroupProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $excludedTablesService->method('removeExcludedTables')->willReturnArgument(0);
+        $excludedTablesService->method('getAllNonExcludedTcaTables')->willReturn(['table_foo', 'table_bar', 'table_baz', 'pages']);
+        $groupProcessor->injectExcludedTablesService($excludedTablesService);
+
         $groupResolver = $this->createMock(GroupMultiTableResolver::class);
-        $groupResolver->expects($this->once())->method('configure')->with(['*'], 'field_bar');
+        $groupResolver->expects($this->once())->method('configure')->with(['table_foo', 'table_bar', 'table_baz'], 'field_bar');
 
         $container = $this->createMock(Container::class);
         $container->expects($this->once())
@@ -229,6 +261,7 @@ class GroupProcessorTest extends UnitTestCase
                   ->with(GroupMultiTableResolver::class)
                   ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
+
 
         $processingResult = $groupProcessor->process('table_bar', 'field_bar', $allTableTca);
         $resolver = $processingResult->getValue()['resolver'];
@@ -289,6 +322,11 @@ class GroupProcessorTest extends UnitTestCase
                   );
         $groupProcessor->injectContainer($container);
 
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $excludedTablesService->method('removeExcludedTables')->willReturnArgument(0);
+        $groupProcessor->injectExcludedTablesService($excludedTablesService);
+
         $processingResult1 = $groupProcessor->process('table_bar', 'field_bar', $mmTableTcaMultipleTable);
         $this->assertTrue($processingResult1->isCompatible());
         $resolver = $processingResult1->getValue()['resolver'];
@@ -347,6 +385,11 @@ class GroupProcessorTest extends UnitTestCase
                   ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
 
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $excludedTablesService->method('removeExcludedTables')->willReturnArgument(0);
+        $groupProcessor->injectExcludedTablesService($excludedTablesService);
+
         $processingResult = $groupProcessor->process('table_bar', 'field_bar', $mmTableTcaWithStringValues);
         $this->assertTrue($processingResult->isCompatible());
         $this->assertInstanceOf(GroupMmMultiTableResolver::class, $groupResolver);
@@ -400,6 +443,11 @@ class GroupProcessorTest extends UnitTestCase
                   ->with(GroupMmMultiTableResolver::class)
                   ->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $excludedTablesService->method('removeExcludedTables')->willReturnArgument(0);
+        $groupProcessor->injectExcludedTablesService($excludedTablesService);
 
         $processingResult = $groupProcessor->process('table_bar', 'field_bar', $mmTableTcaWithIntegerValues);
         $this->assertTrue($processingResult->isCompatible());

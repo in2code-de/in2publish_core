@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\PreProcessing\PreProc
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\CategoryProcessor;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerService;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
+use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Database\Connection;
@@ -41,6 +42,10 @@ class CategoryProcessorTest extends UnitTestCase
                                  ->willReturn($additionalWhereAfter);
 
         $categoryProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $categoryProcessor->injectExcludedTablesService($excludedTablesService);
 
         $resolver = $this->createMock(SelectMmResolver::class);
         $resolver->expects($this->once())->method('configure')->with(

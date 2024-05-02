@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\PreProcessing\PreProc
 
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\ExtNewsRelatedProcessor;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
+use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -34,6 +35,10 @@ class ExtNewsRelatedProcessorTest extends UnitTestCase
         );
         $container->expects($this->once())->method('get')->willReturn($staticJoinResolver);
         $extRelatedProcessor->injectContainer($container);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $extRelatedProcessor->injectExcludedTablesService($excludedTablesService);
 
         $result = $extRelatedProcessor->process('table_foo', 'field_foo', $tca);
         $this->assertTrue($result->isCompatible());

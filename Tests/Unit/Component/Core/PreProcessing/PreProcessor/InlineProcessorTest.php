@@ -9,6 +9,7 @@ use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarke
 use In2code\In2publishCore\Component\Core\Resolver\InlineMultiValueResolver;
 use In2code\In2publishCore\Component\Core\Resolver\InlineSelectResolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
+use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
 
@@ -33,9 +34,13 @@ class InlineProcessorTest extends UnitTestCase
         $container->method('get')->willReturn($inlineResolver);
         $inlineProcessor->injectContainer($container);
 
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $inlineProcessor->injectExcludedTablesService($excludedTablesService);
+
         $processingResult = $inlineProcessor->process('table_bar', 'field_bar', $tca);
         $this->assertFalse($processingResult->isCompatible());
-        $reason = $processingResult->getValue()[0];
+        $reason = $processingResult->getValue();
         $this->assertSame(
             'symmetric_field is set on the foreign side of relations, which must not be resolved',
             $reason,
@@ -60,7 +65,7 @@ class InlineProcessorTest extends UnitTestCase
 
         $processingResult = $inlineProcessor->process('table_bar', 'field_bar', $tca);
         $this->assertFalse($processingResult->isCompatible());
-        $reason = $processingResult->getValue()[0];
+        $reason = $processingResult->getValue();
         $this->assertSame('Must be set, there is no type "inline" without a foreign table', $reason);
     }
 
@@ -84,6 +89,10 @@ class InlineProcessorTest extends UnitTestCase
         $inlineResolver = $this->createMock(InlineSelectResolver::class);
         $container->method('get')->willReturn($inlineResolver);
         $inlineProcessor->injectContainer($container);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $inlineProcessor->injectExcludedTablesService($excludedTablesService);
 
         $inlineResolver->expects($this->once())
                        ->method('configure')
@@ -141,6 +150,10 @@ class InlineProcessorTest extends UnitTestCase
         $inlineResolver = $this->createMock(InlineMultiValueResolver::class);
         $container->method('get')->willReturn($inlineResolver);
         $inlineProcessor->injectContainer($container);
+
+        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService->method('isExcludedTable')->willReturn(false);
+        $inlineProcessor->injectExcludedTablesService($excludedTablesService);
 
         $inlineResolver->expects($this->exactly(3))->method('configure');
 
