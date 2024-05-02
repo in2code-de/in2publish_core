@@ -51,6 +51,18 @@ class SelectProcessor extends AbstractProcessor
                 'Multiple is broken in the TYPO3 Core, https://forge.typo3.org/issues/103604',
             ];
         }
+
+        // Skip relations to table "pages", except if it's the page's transOrigPointerField
+        $foreignTable = $tca['foreign_table'] ?? null;
+        $transOrigPointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
+        if ('pages' === $foreignTable && ('pages' !== $table || $column !== $transOrigPointerField)) {
+            return ['TCA relations to pages are not resolved.'];
+        }
+
+        if (null !== $foreignTable && $this->excludedTablesService->isExcludedTable($foreignTable)) {
+            return ['The table ' . $foreignTable . ' is excluded from publishing'];
+        }
+
         return [];
     }
 
@@ -65,7 +77,7 @@ class SelectProcessor extends AbstractProcessor
 
             $foreignMatchFields = [];
             foreach ($processedTca['MM_match_fields'] ?? [] as $matchField => $matchValue) {
-                if ((string)(int)$matchValue === (string)$matchValue) {
+                if ((string) (int) $matchValue === (string) $matchValue) {
                     $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
                 } else {
                     $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';
