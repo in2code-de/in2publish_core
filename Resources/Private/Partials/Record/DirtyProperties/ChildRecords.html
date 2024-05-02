@@ -16,13 +16,12 @@
 					<f:if condition="{relatedRecord.changed}">
 						<li>
 							<f:if condition="{stagingLevel} == 'local'">
-								<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.id}" table="{record.classification}">
+								<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{relatedRecord.id}" table="{relatedRecord.classification}">
 									<i class="in2publish-icon-history"></i>
 								</publish:Link.RecordHistory>
-								<f:if condition="{record.id} > 1">
-									<be:link.editRecord class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}">
+								<f:if condition="{relatedRecord.id} > 1">
+									<be:link.editRecord class="in2publish-notextdecoration" uid="{relatedRecord.id}" table="{relatedRecord.classification}">
 										<i class="in2publish-icon-edit"></i>
-										<f:translate key="dirty_properties_edit" default="edit"/>
 									</be:link.editRecord>
 								</f:if>
 							</f:if>
