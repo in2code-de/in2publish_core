@@ -272,32 +272,34 @@ class RecordCollection implements IteratorAggregate
             $dependencyTree = new RecordTree();
             $demands = $demandsFactory->createDemand();
 
-            $dependencyTargets->map(function (Record $record) use ($demands, $dependencyTree, $localDatabase): void {
-                $dependencies = $record->getDependencies();
-                foreach ($dependencies as $dependency) {
-                    $classification = $dependency->getClassification();
-                    $properties = $dependency->getProperties();
-                    if (!$this->getRecordsByProperties($classification, $properties)) {
-                        if (isset($properties['uid'])) {
-                            $demand = new SelectDemand($classification, '', 'uid', $properties['uid'], $dependencyTree);
-                            $demands->addDemand($demand);
-                        } else {
-                            $property = array_key_first($properties);
-                            $value = $properties[$property];
-                            unset($properties[$property]);
-                            $where = [];
-                            foreach ($properties as $property => $value) {
-                                $quotedIdentifier = $localDatabase->quoteIdentifier($property);
-                                $quotedValue = $localDatabase->quote($value);
-                                $where[] = $quotedIdentifier . '=' . $quotedValue;
+            $dependencyTargets->map(
+                function (Record $record) use ($demands, $dependencyTree, $localDatabase, $recordIndex): void {
+                    $dependencies = $record->getDependencies();
+                    foreach ($dependencies as $dependency) {
+                        $classification = $dependency->getClassification();
+                        $properties = $dependency->getProperties();
+                        if (!$recordIndex->getRecordsByProperties($classification, $properties)) {
+                            if (isset($properties['uid'])) {
+                                $demand = new SelectDemand($classification, '', 'uid', $properties['uid'], $dependencyTree);
+                                $demands->addDemand($demand);
+                            } else {
+                                $property = array_key_first($properties);
+                                $value = $properties[$property];
+                                unset($properties[$property]);
+                                $where = [];
+                                foreach ($properties as $property => $value) {
+                                    $quotedIdentifier = $localDatabase->quoteIdentifier($property);
+                                    $quotedValue = $localDatabase->quote($value);
+                                    $where[] = $quotedIdentifier . '=' . $quotedValue;
+                                }
+                                $where = implode(' AND ', $where);
+                                $demand = new SelectDemand($classification, $where, $property, $value, $dependencyTree);
+                                $demands->addDemand($demand);
                             }
-                            $where = implode(' AND ', $where);
-                            $demand = new SelectDemand($classification, $where, $property, $value, $dependencyTree);
-                            $demands->addDemand($demand);
                         }
                     }
-                }
-            });
+                },
+            );
 
             $dependencyTargets = new RecordCollection();
             $demandResolver->resolveDemand($demands, $dependencyTargets);
