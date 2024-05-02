@@ -6,12 +6,16 @@ namespace In2code\In2publishCore\Component\Core;
 
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
+use function array_keys;
+
 class RecordIndex
 {
     /**
      * @var RecordCollection<int, Record>
      */
     private RecordCollection $records;
+    /** @var array<RecordCollection> */
+    private array $recordings = [];
 
     public function __construct()
     {
@@ -20,6 +24,9 @@ class RecordIndex
 
     public function addRecord(Record $record): void
     {
+        foreach (array_keys($this->recordings) as $recordingName) {
+            $this->recordings[$recordingName]->addRecord($record);
+        }
         $this->records->addRecord($record);
     }
 
@@ -45,5 +52,30 @@ class RecordIndex
     public function getRecordCollection(): RecordCollection
     {
         return $this->records;
+    }
+
+    /**
+     * @return array<Record>
+     */
+    public function getRecordsByProperties(string $classification, array $properties)
+    {
+        return $this->records->getRecordsByProperties($classification, $properties);
+    }
+
+    public function startRecordingNewRecords(string $name): void
+    {
+        $this->recordings[$name] = new RecordCollection();
+    }
+
+    public function getRecording(string $name): RecordCollection
+    {
+        return $this->recordings[$name];
+    }
+
+    public function stopRecordingAndGetRecords(string $name): RecordCollection
+    {
+        $records = $this->recordings[$name];
+        unset($this->recordings[$name]);
+        return $records;
     }
 }

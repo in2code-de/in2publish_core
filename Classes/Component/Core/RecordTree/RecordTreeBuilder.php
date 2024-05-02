@@ -40,6 +40,8 @@ class RecordTreeBuilder
 
     public function buildRecordTree(RecordTreeBuildRequest $request): RecordTree
     {
+        $this->recordIndex->startRecordingNewRecords('buildRecordTree');
+
         $recordTree = new RecordTree([], $request);
 
         $recordCollection = new RecordCollection();
@@ -50,13 +52,15 @@ class RecordTreeBuilder
 
         $this->findPagesRecursively($defaultIdRequest, $recordCollection);
 
-        $this->findAllRecordsOnPages($recordCollection);
+        $pagesCollection = $this->recordIndex->getRecording('buildRecordTree');
+        $this->findAllRecordsOnPages($pagesCollection);
 
-        $this->findRecordsByTca($recordCollection, $request);
+        $allRecordsCollection = $this->recordIndex->getRecording('buildRecordTree');
+        $this->findRecordsByTca($allRecordsCollection, $request);
 
-        $recordCollection->connectTranslations();
-
-        $recordCollection->processDependencies(
+        $allNewRecords = $this->recordIndex->stopRecordingAndGetRecords('buildRecordTree');
+        $allNewRecords->connectTranslations();
+        $allNewRecords->processDependencies(
             $request,
             $this->demandsFactory,
             $this->demandResolver,
