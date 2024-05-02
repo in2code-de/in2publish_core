@@ -138,7 +138,7 @@ class PublisherService
                 continue;
             }
             foreach ($children as $child) {
-                $this->publishRecord($child, true);
+                $this->publishRecord($child, $includeChildPages);
             }
         }
     }
