@@ -89,7 +89,7 @@ class InlineProcessor extends AbstractProcessor
     {
         $foreignMatchFields = [];
         foreach ($processedTca['MM_match_fields'] ?? [] as $matchField => $matchValue) {
-            if ((string) (int) $matchValue === (string) $matchValue) {
+            if ((string)(int)$matchValue === (string)$matchValue) {
                 $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
             } else {
                 $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';
@@ -108,7 +108,7 @@ class InlineProcessor extends AbstractProcessor
     {
         $foreignMatchFields = [];
         foreach ($processedTca['foreign_match_fields'] ?? [] as $matchField => $matchValue) {
-            if ((string) (int) $matchValue === (string) $matchValue) {
+            if ((string)(int)$matchValue === (string)$matchValue) {
                 $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
             } else {
                 $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';

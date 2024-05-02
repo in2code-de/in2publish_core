@@ -15,7 +15,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_diff;
 use function array_key_exists;
-use function array_keys;
 use function implode;
 use function preg_match;
 use function strpos;
@@ -97,7 +96,7 @@ class GroupProcessor extends AbstractProcessor
 
             $foreignMatchFields = [];
             foreach ($processedTca['MM_match_fields'] ?? [] as $matchField => $matchValue) {
-                if ((string) (int) $matchValue === (string) $matchValue) {
+                if ((string)(int)$matchValue === (string)$matchValue) {
                     $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
                 } else {
                     $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';

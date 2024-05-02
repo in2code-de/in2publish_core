@@ -39,6 +39,9 @@ class SelectProcessor extends AbstractProcessor
         'MM_opposite_field',
     ];
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
         if (array_key_exists('MM_opposite_field', $tca) && !$this->isSysCategoryField($tca)) {
@@ -77,7 +80,7 @@ class SelectProcessor extends AbstractProcessor
 
             $foreignMatchFields = [];
             foreach ($processedTca['MM_match_fields'] ?? [] as $matchField => $matchValue) {
-                if ((string) (int) $matchValue === (string) $matchValue) {
+                if ((string)(int)$matchValue === (string)$matchValue) {
                     $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
                 } else {
                     $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';

@@ -14,13 +14,15 @@ use Iterator;
 use IteratorAggregate;
 use NoRewindIterator;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_keys;
 use function array_search;
 use function implode;
 use function is_array;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class RecordCollection implements IteratorAggregate
 {
     /**
