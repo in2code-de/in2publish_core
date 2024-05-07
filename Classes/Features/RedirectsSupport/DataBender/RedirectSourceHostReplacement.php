@@ -35,7 +35,9 @@ use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function in_array;
 
@@ -50,6 +52,10 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
         Record::S_MOVED,
     ];
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     public function replaceLocalWithForeignSourceHost(RecordWasSelectedForPublishing $event): void
     {
         $record = $event->getRecord();
@@ -99,6 +105,24 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
             $properties['source_host'] = $newHost;
             $record->setLocalProps($properties);
             return;
+        }
+
+        // 4. Check Target
+        $target = $properties['target'];
+        if (null !== $target && str_contains($target, 't3://')) {
+            $coreLinkService = GeneralUtility::makeInstance(LinkService::class);
+            $linkAttributes = $coreLinkService->resolveByStringRepresentation($target);
+            if (!empty($linkAttributes['pageuid'])) {
+                $url = BackendUtility::buildPreviewUri('pages', $linkAttributes['pageuid'], 'foreign');
+                if (null === $url) {
+                    return;
+                }
+                $newHost = $url->getHost();
+
+                $properties['source_host'] = $newHost;
+                $record->setLocalProps($properties);
+                return;
+            }
         }
 
         $this->logger->alert(
