@@ -1,5 +1,9 @@
 # In2publish Core Change Log
 
+12.5.1:
+- [BUGFIX] Correct evaluation of publishing state
+- [BUGFIX] Fixes Databender for Redirects
+
 12.5.0:
 
 - [BUGFIX] Pass correct record to edit and history links for changed records on the page

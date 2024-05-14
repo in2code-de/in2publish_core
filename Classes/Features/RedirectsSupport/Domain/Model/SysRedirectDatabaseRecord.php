@@ -80,7 +80,7 @@ class SysRedirectDatabaseRecord extends DatabaseRecord
             // with a site or page, the local and foreign source_host must differ
             if (
                 $this->localProps['source_host'] === $this->foreignProps['source_host']
-                && '*' !== ($this->localProps['sourceHost'] ?? null)
+                && '*' !== ($this->localProps['source_host'] ?? null)
                 && (
                     null !== ($this->localProps['tx_in2publishcore_foreign_site_id'] ?? null)
                     || null !== ($this->localProps['tx_in2publishcore_page_uid'] ?? null)
