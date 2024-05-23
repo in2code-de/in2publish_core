@@ -113,7 +113,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
             $coreLinkService = GeneralUtility::makeInstance(LinkService::class);
             $linkAttributes = $coreLinkService->resolveByStringRepresentation($target);
             if (!empty($linkAttributes['pageuid'])) {
-                $url = BackendUtility::buildPreviewUri('pages', $linkAttributes['pageuid'], 'foreign');
+                $url = BackendUtility::buildPreviewUri('pages', (int)$linkAttributes['pageuid'], 'foreign');
                 if (null === $url) {
                     return;
                 }
