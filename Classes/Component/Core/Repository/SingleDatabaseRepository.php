@@ -12,6 +12,7 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
 
 use function array_column;
+use function array_key_exists;
 use function hash;
 use function json_encode;
 use function substr;
@@ -138,6 +139,9 @@ class SingleDatabaseRepository
             foreach ($row as $column => $value) {
                 // Split the prefix into mmtbl/table (0-5) and the actual column name (6-X).
                 $splitRow[substr($column, 0, 5)][substr($column, 6)] = $value;
+            }
+            if (array_key_exists('uid', $splitRow['table']) && null === $splitRow['table']['uid']) {
+                unset($splitRow['table']);
             }
             $mmIdentityProperties = [
                 $splitRow['mmtbl']['uid_local'],

@@ -135,7 +135,7 @@ class JoinDemandResolver implements DemandResolver
                         if (null === $mmRecord) {
                             continue;
                         }
-                        if (!empty($row['local']['table']) || !empty($row['foreign']['table'])) {
+                        if (!empty($row['local']['table']['uid']) || !empty($row['foreign']['table']['uid'])) {
                             $uid = $row['local']['table']['uid'] ?? $row['foreign']['table']['uid'];
                             $tableRecord = $this->recordIndex->getRecord($table, $uid);
                             if (null === $tableRecord) {
