@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+12.5.2:
+- [DOCS] Add known issue to explain missing (orphaned) MM records in the record tree
+- [BUGFIX] Discard the table portion of a joined row if the joined record does not exist
+- [META] Exclude compile-sass from archive
+- [BUGFIX] Cast pageuid to integer to build the preview URL
+
 12.5.1:
 - [BUGFIX] Correct evaluation of publishing state
 - [BUGFIX] Fixes Databender for Redirects
