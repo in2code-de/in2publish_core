@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Browser\Dependency;
 
 use CoStack\StackTest\TYPO3\TYPO3Helper;
-use CoStack\StackTest\WebDriver\Factory;
+use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use In2code\In2publishCore\Tests\Browser\AbstractBrowserTestCase;
@@ -17,7 +17,7 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
 {
     public function testRecordWithUnfulfilledDependencyIsPublishableAfterDependenciesAreFulfilled(): void
     {
-        $driver = Factory::getInstance()->createMultiDriver('local');
+        $driver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin(
             $driver,
             'https://local.v12.in2publish-core.de/typo3',
@@ -76,14 +76,12 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
                 WebDriverBy::xpath('//*[@data-record-identifier="pages-36"]'),
             );
         });
-        $driver->inFirstDriver(static function (WebDriver $driver): void {
-            TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
-                $driver->click(
-                    WebDriverBy::xpath(
-                        '//*[@data-record-identifier="pages-35"]//*[contains(@class, "in2publish-link-publish")]/*[contains(@class, "in2publish-icon-publish")]',
-                    ),
-                );
-            });
+        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+            $driver->click(
+                WebDriverBy::xpath(
+                    '//*[@data-record-identifier="pages-35"]//*[contains(@class, "in2publish-link-publish")]/*[contains(@class, "in2publish-icon-publish")]',
+                ),
+            );
         });
 
         TYPO3Helper::selectModuleByText($driver, 'Publish Overview');

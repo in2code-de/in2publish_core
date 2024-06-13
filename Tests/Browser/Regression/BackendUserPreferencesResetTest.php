@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Browser\Regression;
 
 use CoStack\StackTest\TYPO3\TYPO3Helper;
-use CoStack\StackTest\WebDriver\Factory;
+use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use In2code\In2publishCore\Tests\Browser\AbstractBrowserTestCase;
@@ -14,7 +14,7 @@ class BackendUserPreferencesResetTest extends AbstractBrowserTestCase
 {
     public function testBackendUserSettingsCanBeReset(): void
     {
-        $driver = Factory::getInstance()->createMultiDriver('local');
+        $driver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($driver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
 
         $driver->click(WebDriverBy::cssSelector('#typo3-cms-backend-backend-toolbaritems-usertoolbaritem'));

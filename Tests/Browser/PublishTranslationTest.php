@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Browser;
 
 use CoStack\StackTest\TYPO3\TYPO3Helper;
-use CoStack\StackTest\WebDriver\Factory;
+use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -14,7 +14,7 @@ class PublishTranslationTest extends AbstractBrowserTestCase
 {
     public function testTranslatedContentInFreeModeCanBePublished(): void
     {
-        $driver = Factory::getInstance()->createMultiDriver('local');
+        $driver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($driver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
 
         TYPO3Helper::selectModuleByText($driver, 'Page');
@@ -71,7 +71,7 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             );
         });
 
-        $foreignDriver = Factory::getInstance()->createMultiDriver('foreign');
+        $foreignDriver = WebDriverFactory::getInstance()->createMultiDriver('foreign');
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
         TYPO3Helper::selectInPageTree(
@@ -88,7 +88,7 @@ class PublishTranslationTest extends AbstractBrowserTestCase
 
     public function testTranslatedContentInConnectedModeCanBePublished(): void
     {
-        $driver = Factory::getInstance()->createMultiDriver('local');
+        $driver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($driver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
 
         TYPO3Helper::selectModuleByText($driver, 'Page');
@@ -145,7 +145,7 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             );
         });
 
-        $foreignDriver = Factory::getInstance()->createMultiDriver('foreign');
+        $foreignDriver = WebDriverFactory::getInstance()->createMultiDriver('foreign');
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
         TYPO3Helper::selectInPageTree(

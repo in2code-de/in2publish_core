@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Browser;
 
-use CoStack\StackTest\Elements\Single\Select;
+use CoStack\StackTest\Elements\Select;
 use CoStack\StackTest\TYPO3\TYPO3Helper;
-use CoStack\StackTest\WebDriver\Factory;
+use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 
@@ -14,7 +14,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
 {
     public function testTheLevelOfRecordsToShowCanBeSelected(): void
     {
-        $driver = Factory::getInstance()->createMultiDriver('local');
+        $driver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($driver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($driver, 'Publish Overview');
 
@@ -134,7 +134,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
 
     public function testRecordTreeStartsWithSelectedPage(): void
     {
-        $driver = Factory::getInstance()->createMultiDriver('local');
+        $driver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($driver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($driver, 'Publish Overview');
 

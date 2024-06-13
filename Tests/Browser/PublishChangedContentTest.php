@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Browser;
 
 use CoStack\StackTest\TYPO3\TYPO3Helper;
-use CoStack\StackTest\WebDriver\Factory;
+use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 
@@ -16,7 +16,7 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
      */
     public function testChangedPageContentCanBePublished(): void
     {
-        $driver = Factory::getInstance()->createMultiDriver('local');
+        $driver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($driver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
 
         TYPO3Helper::selectModuleByText($driver, 'Page');
@@ -37,14 +37,12 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
             self::assertPageContains($driver, '1b.1 Header - changed');
         });
 
-        $driver->inFirstDriver(static function (WebDriver $driver): void {
-            TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
-                $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
-                self::assertPageContains($driver, 'The selected record has been published successfully');
-            });
+        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            self::assertPageContains($driver, 'The selected record has been published successfully');
         });
 
-        $foreignDriver = Factory::getInstance()->createMultiDriver('foreign');
+        $foreignDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Page');
         TYPO3Helper::selectInPageTree(
