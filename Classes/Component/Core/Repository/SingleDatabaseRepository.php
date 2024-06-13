@@ -81,6 +81,7 @@ class SingleDatabaseRepository
     /**
      * @throws DBALException
      * @throws Exception
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function findByPropertyWithJoin(
         string $mmTable,
