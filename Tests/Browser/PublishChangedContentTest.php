@@ -49,6 +49,8 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
             $foreignDriver,
             ['Home', 'EXT:in2publish_core', '1b Page content', '1b.1 Page content - changed'],
         );
+        // Workaround
+        sleep(1);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             $driver->findElement(WebDriverBy::xpath('//div[@data-table="tt_content" and @data-uid="49"]//a[@title="Edit"]'))->click();
             self::assertElementContains(
