@@ -22,6 +22,8 @@ class PublishChangedPagePropertiesTest extends AbstractBrowserTestCase
         TYPO3Helper::selectModuleByText($driver, 'Page');
         TYPO3Helper::selectInPageTree($driver, ['Home', 'EXT:in2publish_core', '1a Page properties - changed']);
         TYPO3Helper::selectModuleByText($driver, 'Publish Overview');
+        // Workaround
+        sleep(1);
 
         TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'TYPO3 Content Publisher - publish pages and records overview');
@@ -43,6 +45,8 @@ class PublishChangedPagePropertiesTest extends AbstractBrowserTestCase
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Page');
         TYPO3Helper::selectInPageTree($foreignDriver, ['Home', 'EXT:in2publish_core', '1a Page properties - changed']);
+        // Workaround
+        sleep(1);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             $driver->findElement(WebDriverBy::xpath('//a[@title="Edit"]'))->click();
             self::assertElementContains(
@@ -52,6 +56,7 @@ class PublishChangedPagePropertiesTest extends AbstractBrowserTestCase
             );
         });
         $foreignDriver->close();
+        $driver->close();
 
         self::assertTrue(true);
     }
