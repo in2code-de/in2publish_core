@@ -23,7 +23,7 @@ class PublishChangedPagePropertiesTest extends AbstractBrowserTestCase
         TYPO3Helper::selectInPageTree($driver, ['Home', 'EXT:in2publish_core', '1a Page properties - changed']);
         TYPO3Helper::selectModuleByText($driver, 'Publish Overview');
         // Workaround
-        sleep(1);
+        sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'TYPO3 Content Publisher - publish pages and records overview');

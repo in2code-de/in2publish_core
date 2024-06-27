@@ -55,7 +55,7 @@ class PublishTranslationTest extends AbstractBrowserTestCase
                 ),
             )->click();
         });
-        sleep(2);
+        sleep($this->sleepTime);
         TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'The selected record has been published successfully');
         });
@@ -86,6 +86,9 @@ class PublishTranslationTest extends AbstractBrowserTestCase
         });
         $foreignDriver->close();
         $driver->close();
+
+        unset($foreignDriver);
+        unset($driver);
 
         self::assertTrue(true);
     }
@@ -161,12 +164,15 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             ['Home', 'EXT:in2publish_core', '1d Translated Content', '1d.2 Connected Mode'],
         );
         // Workaround
-        sleep(1);
+        sleep(2);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'Header in German - Version 3');
         });
         $foreignDriver->close();
         $driver->close();
+
+        unset($foreignDriver);
+        unset($driver);
 
         self::assertTrue(true);
     }

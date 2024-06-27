@@ -59,7 +59,7 @@ class PublishChangedNewsTest extends AbstractBrowserTestCase
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
         TYPO3Helper::selectInPageTree($foreignDriver, ['Home', 'News Folder']);
         // Workaround
-        sleep(1);
+        sleep($this->sleepTime);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'Content element with image - edited');
         });
