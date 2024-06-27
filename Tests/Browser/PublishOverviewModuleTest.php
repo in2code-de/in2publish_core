@@ -21,5 +21,7 @@ class PublishOverviewModuleTest extends AbstractBrowserTestCase
         TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'TYPO3 Content Publisher - publish pages and records overview');
         });
+
+        $driver->close();
     }
 }

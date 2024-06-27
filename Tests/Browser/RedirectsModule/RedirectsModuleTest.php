@@ -37,5 +37,6 @@ class RedirectsModuleTest extends AbstractBrowserTestCase
 
             self::assertPageContains($driver, 'Associated redirect Redirect [19] (local.v12.in2publish.de) /extin2publish/8-treatremovedanddeletedasdifference -> t3://page?uid=39&_language=0 with site main');
         });
+        $driver->close();
     }
 }

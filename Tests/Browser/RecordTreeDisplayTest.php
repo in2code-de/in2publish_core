@@ -130,6 +130,8 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
             self::assertPageContains($driver, '4.1.1.1 Subpage - Level 4');
             self::assertPageContains($driver, '4.1.1.1.1 Subpage - Level 5');
         });
+
+        $driver->close();
     }
 
     public function testRecordTreeStartsWithSelectedPage(): void
@@ -141,7 +143,12 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             $select = new Select($driver->findElement(WebDriverBy::name('depth')));
             $select->setValueByText('1 level');
+        });
 
+        // Workaround
+        sleep($this->sleepTime);
+
+        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
             self::assertPageContains($driver, 'Home');
             self::assertPageNotContains($driver, 'EXT:in2publish_core');
@@ -151,6 +158,9 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         });
 
         TYPO3Helper::selectInPageTree($driver, ['Home']);
+
+        // Workaround
+        sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             self::assertPageNotContains($driver, '[LOCAL] CP TYPO3 v12');
@@ -163,6 +173,9 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
 
         TYPO3Helper::selectInPageTree($driver, ['Home', 'EXT:in2publish_core']);
 
+        // Workaround
+        sleep($this->sleepTime);
+
         TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             self::assertPageNotContains($driver, '[LOCAL] CP TYPO3 v12');
             self::assertPageNotContains($driver, 'Home');
@@ -173,7 +186,8 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         });
 
         TYPO3Helper::selectInPageTree($driver, ['Home', 'EXT:in2publish_core', '4 PageTree depth']);
-
+        // Workaround
+        sleep(1);
         TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             self::assertPageNotContains($driver, '[LOCAL] CP TYPO3 v12');
             self::assertPageNotContains($driver, 'Home');
@@ -182,5 +196,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
             self::assertPageContains($driver, '4.1 Subpage - Level 1');
             self::assertPageNotContains($driver, '4.1.1 Subpage - Level 2');
         });
+
+        $driver->close();
     }
 }

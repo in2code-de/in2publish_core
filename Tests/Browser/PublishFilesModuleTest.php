@@ -92,6 +92,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             );
         });
         $foreignSession->close();
+        $driver->close();
 
         self::assertTrue(true);
     }
@@ -122,7 +123,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
         TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($localDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($localDriver, ['fileadmin', 'Testcases', '2b_published_file']);
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $driver->contextClick(
                 WebDriverBy::cssSelector(
                     '[data-filelist-identifier="1:/Testcases/2b_published_file/bds-photo-1523151-unsplash.jpg"]',
@@ -131,8 +132,8 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             $driver->wait()->until(ElementIsVisible::resolve(WebDriverBy::cssSelector('[data-callback-action="renameFile"]')));
             $driver->click(WebDriverBy::cssSelector('[data-callback-action="renameFile"]'));
         });
-        TYPO3Helper::waitUntilModalIsOpen($driver);
-        $driver->submitForm(WebDriverBy::xpath('//typo3-backend-modal/div[contains(@class, "modal")]//form'), [
+        TYPO3Helper::waitUntilModalIsOpen($localDriver);
+        $localDriver->submitForm(WebDriverBy::xpath('//typo3-backend-modal/div[contains(@class, "modal")]//form'), [
             'name' => 'renamed-1523151-unsplash.jpg',
         ]);
         // Refresh in other browsers
@@ -155,16 +156,16 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             self::assertElementContains($driver, 'renamed-1523151-unsplash.jpg', WebDriverBy::cssSelector('[data-id="1:/Testcases/2b_published_file/renamed-1523151-unsplash.jpg"] td.col-filename--local'));
             self::assertElementContains($driver, 'bds-photo-1523151-unsplash.jpg', WebDriverBy::cssSelector('[data-id="1:/Testcases/2b_published_file/renamed-1523151-unsplash.jpg"] td.col-filename--foreign'));
         });
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $fileSelector = WebDriverBy::cssSelector(
                 '[data-id="1:/Testcases/2b_published_file/renamed-1523151-unsplash.jpg"]',
             );
             $fileRow = $driver->findElement($fileSelector);
             $fileRow->findElement(WebDriverBy::linkText('Publish'))->click();
         });
-        TYPO3Helper::clickModalButton($driver, 'Publish');
-        ContentPublisherHelper::waitUntilPublishingFinished($driver);
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::clickModalButton($localDriver, 'Publish');
+        ContentPublisherHelper::waitUntilPublishingFinished($localDriver);
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains(
                 $driver,
                 'The selected file 1:/Testcases/2b_published_file/renamed-1523151-unsplash.jpg has been published to the foreign system.',
@@ -186,6 +187,10 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             );
         });
         $foreignDriver->close();
+        $localDriver->close();
+
+        unset($foreignDriver);
+        unset($localDriver);
     }
 
 
@@ -219,16 +224,16 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             self::assertElementEquals($driver, '/Testcases/2c_target_folder/MovedFile_2c.txt', WebDriverBy::cssSelector('[data-id="1:/Testcases/2c_target_folder/MovedFile_2c.txt"] td.col-filename--local'));
             self::assertElementEquals($driver, '/Testcases/2c_source_folder/MovedFile_2c.txt', WebDriverBy::cssSelector('[data-id="1:/Testcases/2c_target_folder/MovedFile_2c.txt"] td.col-filename--foreign'));
         });
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $fileSelector = WebDriverBy::cssSelector(
                 '[data-id="1:/Testcases/2c_target_folder/MovedFile_2c.txt"]',
             );
             $fileRow = $driver->findElement($fileSelector);
             $fileRow->findElement(WebDriverBy::linkText('Publish'))->click();
         });
-        TYPO3Helper::clickModalButton($driver, 'Publish');
-        ContentPublisherHelper::waitUntilPublishingFinished($driver);
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::clickModalButton($localDriver, 'Publish');
+        ContentPublisherHelper::waitUntilPublishingFinished($localDriver);
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains(
                 $driver,
                 'The selected file 1:/Testcases/2c_target_folder/MovedFile_2c.txt has been published to the foreign system.',
@@ -250,6 +255,9 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             );
         });
         $foreignDriver->close();
+        $localDriver->close();
+        unset($foreignDriver);
+        unset($localDriver);
     }
 
     /**
@@ -281,21 +289,21 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             self::assertElementEquals($driver, '2d_deleted_file.txt', WebDriverBy::cssSelector('[data-id="1:/Testcases/2d_deleted_file/2d_deleted_file.txt"] td.col-filename--local'));
             self::assertElementEquals($driver, '2d_deleted_file.txt', WebDriverBy::cssSelector('[data-id="1:/Testcases/2d_deleted_file/2d_deleted_file.txt"] td.col-filename--foreign'));
         });
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $fileSelector = WebDriverBy::cssSelector(
                 '[data-id="1:/Testcases/2d_deleted_file/2d_deleted_file.txt"]',
             );
             $fileRow = $driver->findElement($fileSelector);
             $fileRow->findElement(WebDriverBy::linkText('Publish'))->click();
         });
-        TYPO3Helper::clickModalButton($driver, 'Publish');
-        ContentPublisherHelper::waitUntilPublishingFinished($driver);
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::clickModalButton($localDriver, 'Publish');
+        ContentPublisherHelper::waitUntilPublishingFinished($localDriver);
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $localDriver): void {
             self::assertPageContains(
-                $driver,
+                $localDriver,
                 'The selected file 1:/Testcases/2d_deleted_file/2d_deleted_file.txt has been published to the foreign system.',
             );
-            self::assertElementNotExists($driver, WebDriverBy::cssSelector('[data-id="1:/Testcases/2d_deleted_file/2d_deleted_file.txt"]'));
+            self::assertElementNotExists($localDriver, WebDriverBy::cssSelector('[data-id="1:/Testcases/2d_deleted_file/2d_deleted_file.txt"]'));
         });
 
         // Assert file on foreign
@@ -310,6 +318,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             );
         });
         $foreignDriver->close();
+        $localDriver->close();
     }
 
     /**
@@ -342,16 +351,16 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             self::assertElementEquals($driver, '---', WebDriverBy::cssSelector('[data-id="1:/Testcases/2f_delete_folder/"] td.col-filename--local'));
             self::assertElementEquals($driver, '2f_delete_folder', WebDriverBy::cssSelector('[data-id="1:/Testcases/2f_delete_folder/"] td.col-filename--foreign'));
         });
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $fileSelector = WebDriverBy::cssSelector(
                 '[data-id="1:/Testcases/2f_delete_folder/"]',
             );
             $fileRow = $driver->findElement($fileSelector);
             $fileRow->findElement(WebDriverBy::linkText('Publish'))->click();
         });
-        TYPO3Helper::clickModalButton($driver, 'Publish');
-        ContentPublisherHelper::waitUntilPublishingFinished($driver);
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::clickModalButton($localDriver, 'Publish');
+        ContentPublisherHelper::waitUntilPublishingFinished($localDriver);
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains(
                 $driver,
                 'The selected folder 1:/Testcases/2f_delete_folder/ has been published to the foreign system.',
@@ -371,6 +380,10 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             );
         });
         $foreignDriver->close();
+        $localDriver->close();
+
+        unset($foreignDriver);
+        unset($localDriver);
     }
 
     /**
@@ -378,7 +391,9 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
      */
     public function testRenamedFolderCanBePublished(): void
     {
+//        self::markTestSkipped('Facebook\WebDriver\Exception\TimeoutException');
         // Assert folder exists on foreign
+
         $foreignDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Filelist');
@@ -403,28 +418,32 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             self::assertElementEquals($driver, '/Testcases/2g_target_folder/2g_moved_folder_with_file/MovedFileInFolder_2g.txt', WebDriverBy::cssSelector('[data-id="1:/Testcases/2g_target_folder/2g_moved_folder_with_file/MovedFileInFolder_2g.txt"] td.col-filename--local'));
             self::assertElementEquals($driver, '/Testcases/2g_moved_folder_with_file/MovedFileInFolder_2g.txt', WebDriverBy::cssSelector('[data-id="1:/Testcases/2g_target_folder/2g_moved_folder_with_file/MovedFileInFolder_2g.txt"] td.col-filename--foreign'));
         });
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $fileSelector = WebDriverBy::cssSelector(
                 '[data-id="1:/Testcases/2g_target_folder/2g_moved_folder_with_file/MovedFileInFolder_2g.txt"]',
             );
             $fileRow = $driver->findElement($fileSelector);
             $fileRow->findElement(WebDriverBy::linkText('Publish'))->click();
         });
-        TYPO3Helper::clickModalButton($driver, 'Publish');
-        ContentPublisherHelper::waitUntilPublishingFinished($driver);
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::clickModalButton($localDriver, 'Publish');
+        ContentPublisherHelper::waitUntilPublishingFinished($localDriver);
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains(
                 $driver,
                 'The selected file 1:/Testcases/2g_target_folder/2g_moved_folder_with_file/MovedFileInFolder_2g.txt has been published to the foreign system.',
             );
             self::assertElementContains($driver, 'Unchanged', WebDriverBy::cssSelector('[data-id="1:/Testcases/2g_target_folder/2g_moved_folder_with_file/MovedFileInFolder_2g.txt"] td.col-state .rounded-pill'));
         });
+        $localDriver->close();
+        unset($localDriver);
 
         // Assert file on foreign
         $foreignDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases', '2g_target_folder', '2g_moved_folder_with_file']);
+        // Workaround
+        sleep($this->sleepTime);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertElementExists(
                 $driver,
@@ -432,5 +451,6 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             );
         });
         $foreignDriver->close();
+
     }
 }

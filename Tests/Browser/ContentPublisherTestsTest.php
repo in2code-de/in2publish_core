@@ -23,6 +23,8 @@ class ContentPublisherTestsTest extends AbstractBrowserTestCase
             self::assertSourceNotContains($driver, 'callout-danger');
         });
 
+        $driver->close();
+
         self::assertTrue(true);
     }
 }

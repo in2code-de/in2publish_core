@@ -39,6 +39,10 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
 
         TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+        });
+        // Workaround
+        sleep($this->sleepTime);
+        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'The selected record has been published successfully');
         });
 
@@ -60,6 +64,7 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
             );
         });
         $foreignDriver->close();
+        $driver->close();
 
         self::assertTrue(true);
     }

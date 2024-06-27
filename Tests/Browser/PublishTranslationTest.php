@@ -48,15 +48,16 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             );
         });
 
-        $driver->inFirstDriver(static function (WebDriver $driver): void {
-            TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
-                $driver->findElement(
-                    WebDriverBy::xpath(
-                        '//*[@data-record-identifier="pages-72"]//*[@class="in2publish-icon-publish"]',
-                    ),
-                )->click();
-                self::assertPageContains($driver, 'The selected record has been published successfully');
-            });
+        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+            $driver->findElement(
+                WebDriverBy::xpath(
+                    '//*[@data-record-identifier="pages-72"]//*[@class="in2publish-icon-publish"]',
+                ),
+            )->click();
+        });
+        sleep($this->sleepTime);
+        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+            self::assertPageContains($driver, 'The selected record has been published successfully');
         });
 
         TYPO3Helper::selectModuleByText($driver, 'Publish Overview');
@@ -71,17 +72,23 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             );
         });
 
-        $foreignDriver = WebDriverFactory::getInstance()->createMultiDriver('foreign');
+        $foreignDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
         TYPO3Helper::selectInPageTree(
             $foreignDriver,
             ['Home', 'EXT:in2publish_core', '1d Translated Content', '1d.1 Free Mode'],
         );
+        // Workaround
+        sleep(1);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'Header in German - Version 3');
         });
         $foreignDriver->close();
+        $driver->close();
+
+        unset($foreignDriver);
+        unset($driver);
 
         self::assertTrue(true);
     }
@@ -122,15 +129,19 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             );
         });
 
-        $driver->inFirstDriver(static function (WebDriver $driver): void {
-            TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
-                $driver->findElement(
-                    WebDriverBy::xpath(
-                        '//*[@data-record-identifier="pages-75"]//*[@class="in2publish-icon-publish"]',
-                    ),
-                )->click();
-                self::assertPageContains($driver, 'The selected record has been published successfully');
-            });
+        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+            $driver->findElement(
+                WebDriverBy::xpath(
+                    '//*[@data-record-identifier="pages-75"]//*[@class="in2publish-icon-publish"]',
+                ),
+            )->click();
+        });
+
+        // Workaround
+        sleep(2);
+
+        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+            self::assertPageContains($driver, 'The selected record has been published successfully');
         });
 
         TYPO3Helper::selectModuleByText($driver, 'Publish Overview');
@@ -145,17 +156,23 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             );
         });
 
-        $foreignDriver = WebDriverFactory::getInstance()->createMultiDriver('foreign');
+        $foreignDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
         TYPO3Helper::selectInPageTree(
             $foreignDriver,
             ['Home', 'EXT:in2publish_core', '1d Translated Content', '1d.2 Connected Mode'],
         );
+        // Workaround
+        sleep(2);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'Header in German - Version 3');
         });
         $foreignDriver->close();
+        $driver->close();
+
+        unset($foreignDriver);
+        unset($driver);
 
         self::assertTrue(true);
     }

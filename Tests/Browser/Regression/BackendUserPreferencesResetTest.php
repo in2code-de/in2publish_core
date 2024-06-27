@@ -33,5 +33,7 @@ class BackendUserPreferencesResetTest extends AbstractBrowserTestCase
                 'The user settings have been reset to default values and temporary data has been cleared.',
             );
         });
+
+        $driver->close();
     }
 }

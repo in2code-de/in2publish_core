@@ -30,6 +30,7 @@ services:
       - ./:/app/:cached
       - ./:/packages/in2publish_core/:cached
       - /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock
+      - /var/run/docker.sock:/var/run/docker.sock
       - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}:cached
     env_file:
       - .env

@@ -58,10 +58,13 @@ class PublishChangedNewsTest extends AbstractBrowserTestCase
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
         TYPO3Helper::selectInPageTree($foreignDriver, ['Home', 'News Folder']);
+        // Workaround
+        sleep($this->sleepTime);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'Content element with image - edited');
         });
         $foreignDriver->close();
+        $driver->close();
 
         self::assertTrue(true);
     }

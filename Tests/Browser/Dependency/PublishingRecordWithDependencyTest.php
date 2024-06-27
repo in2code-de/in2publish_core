@@ -105,5 +105,7 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
                 ),
             );
         });
+
+        $driver->close();
     }
 }
