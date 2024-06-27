@@ -19,17 +19,17 @@ class RedirectsModuleTest extends AbstractBrowserTestCase
 {
     public function testRedirectWithoutAssociationCanBePublished(): void
     {
-        $driver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($driver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
-        TYPO3Helper::selectModuleByText($driver, 'Publish Redirects');
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        $localDriver = WebDriverFactory::createChromeDriver();
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::selectModuleByText($localDriver, 'Publish Redirects');
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 't3://page?uid=67&_language=0');
             self::assertPageContains($driver, 't3://page?uid=39&_language=0');
             self::assertPageContains($driver, '/extin2publish/8-treatremovedanddeletedasdifference');
             self::assertElementIsVisible($driver, WebDriverBy::xpath('//a[@title="Publish with site association"]'));
             $driver->click(WebDriverBy::xpath('//a[@title="Publish with site association"]'));
         });
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $element = $driver->findElement(WebDriverBy::name('properties[siteId]'));
             $select = new Select($element);
             $select->setValue('main');
@@ -37,6 +37,8 @@ class RedirectsModuleTest extends AbstractBrowserTestCase
 
             self::assertPageContains($driver, 'Associated redirect Redirect [19] (local.v12.in2publish.de) /extin2publish/8-treatremovedanddeletedasdifference -> t3://page?uid=39&_language=0 with site main');
         });
-        $driver->close();
+
+        $localDriver->close();
+        unset($localDriver);
     }
 }
