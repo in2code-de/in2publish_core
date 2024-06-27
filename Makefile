@@ -170,4 +170,16 @@ typo3-rebuild-caches:
 	echo "$(EMOJI_hot_face) rebuilding DI cache on foreign"
 	docker compose exec foreign-php ./vendor/bin/typo3 help > /dev/null
 
+## Starts composer-update
+composer-update:
+	echo "$(EMOJI_package) updating composer dependencies"
+	docker compose exec -u app local-php composer update -W
+	docker compose exec -u app foreign-php composer update -W
+
+## Starts composer-install
+composer-install:
+	echo "$(EMOJI_package) Installing composer dependencies"
+	docker compose exec -u app local-php composer install
+	docker compose exec -u app foreign-php composer install
+
 include .env
