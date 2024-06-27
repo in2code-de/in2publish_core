@@ -130,7 +130,7 @@ unit:
 functional:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.functional.xml
 
-acceptance:
+acceptance: typo3-clearcache typo3-rebuild-caches
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml
 
 setup-qa:
@@ -152,5 +152,22 @@ fix-php-code-sniffer:
 
 qa-php-mess-detector:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm .project/phars/phpmd Classes ansi .project/qa/phpmd.xml
+
+## Clears TYPO3 caches via typo3-console
+typo3-clearcache:
+	echo "$(EMOJI_broom) Clearing TYPO3 caches"
+	docker compose exec -u app local-php ./vendor/bin/typo3 cache:flush
+	docker compose exec -u app foreign-php ./vendor/bin/typo3 cache:flush
+
+## Hard-deletes all caches (including DI) and rebuilds them on the fly
+typo3-rebuild-caches:
+	echo "$(EMOJI_broom) clearing DI cache on local"
+	rm -rf Build/local/var/cache/code/
+	echo "$(EMOJI_hot_face) rebuilding DI cache on local"
+	docker compose exec local-php ./vendor/bin/typo3 help > /dev/null
+	echo "$(EMOJI_broom) clearing DI cache on foreign"
+	rm -rf Build/foreign/var/cache/code/
+	echo "$(EMOJI_hot_face) rebuilding DI cache on foreign"
+	docker compose exec foreign-php ./vendor/bin/typo3 help > /dev/null
 
 include .env
