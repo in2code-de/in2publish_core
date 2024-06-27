@@ -61,7 +61,7 @@ start: .link-compose-file
 	docker compose build --pull
 	docker compose up -d
 
-setup: stop destroy start .mysql-wait
+setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	docker compose exec local-php composer i
 	docker exec -u1000 in2publish_core-foreign-php-1 composer i
 	docker compose exec local-php vendor/bin/typo3 install:setup --force
@@ -77,6 +77,26 @@ setup: stop destroy start .mysql-wait
 		echo "$(EMOJI_face_with_rolling_eyes) Waiting for database ..."; \
 		sleep 3; \
 	done;
+
+.install-packages:
+	if [[ "$$OSTYPE" == "linux-gnu" ]]; then \
+		if [[ "$$(command -v certutil > /dev/null; echo $$?)" -ne 0 ]]; then sudo apt install libnss3-tools; fi; \
+		if [[ "$$(command -v mkcert > /dev/null; echo $$?)" -ne 0 ]]; then sudo curl -L https://github.com/FiloSottile/mkcert/releases/download/v1.4.1/mkcert-v1.4.1-linux-amd64 -o /usr/local/bin/mkcert; sudo chmod +x /usr/local/bin/mkcert; fi; \
+	elif [[ "$$OSTYPE" == "darwin"* ]]; then \
+	    BREW_LIST=$$(brew ls --formula); \
+		if [[ ! $$BREW_LIST == *"mkcert"* ]]; then brew install mkcert; fi; \
+		if [[ ! $$BREW_LIST == *"nss"* ]]; then brew install nss; fi; \
+	fi;
+	mkcert -install > /dev/null
+
+.create-certificate:
+	echo "$(EMOJI_secure) Creating SSL certificates for dinghy http proxy"
+	mkdir -p $(HOME)/.dinghy/certs/
+	PROJECT=$$(echo "$${PWD##*/}" | tr -d '.'); \
+	if [[ ! -f $(HOME)/.dinghy/certs/$$PROJECT.docker.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/$$PROJECT.docker.crt -key-file $(HOME)/.dinghy/certs/$$PROJECT.docker.key "*.$$PROJECT.docker"; fi;
+	if [[ ! -f $(HOME)/.dinghy/certs/${HOST_LOCAL}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${HOST_LOCAL}.crt -key-file $(HOME)/.dinghy/certs/${HOST_LOCAL}.key ${HOST_LOCAL}; fi;
+	if [[ ! -f $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.crt -key-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ${HOST_FOREIGN}; fi;
+	if [[ ! -f $(HOME)/.dinghy/certs/${MAIL_HOST}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${MAIL_HOST}.crt -key-file $(HOME)/.dinghy/certs/${MAIL_HOST}.key ${MAIL_HOST}; fi;
 
 restore: mysql-restore fileadmin-restore
 
@@ -132,3 +152,5 @@ fix-php-code-sniffer:
 
 qa-php-mess-detector:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm .project/phars/phpmd Classes ansi .project/qa/phpmd.xml
+
+include .env
