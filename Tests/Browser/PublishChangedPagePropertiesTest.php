@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Browser;
 
+use CoStack\StackTest\Test\Constraint\Visibility\ElementIsVisible;
 use CoStack\StackTest\TYPO3\TYPO3Helper;
 use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
@@ -55,6 +56,7 @@ class PublishChangedPagePropertiesTest extends AbstractBrowserTestCase
 
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             $driver->findElement(WebDriverBy::xpath('//a[@title="Edit"]'))->click();
+            $driver->wait()->until(ElementIsVisible::resolve(WebDriverBy::cssSelector('[data-formengine-input-name="data[pages][5][title]"]')));
             self::assertElementContains(
                 $driver,
                 '1a Page properties - changed',
