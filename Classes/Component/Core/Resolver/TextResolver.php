@@ -48,6 +48,19 @@ class TextResolver extends AbstractResolver
 
     protected function findRelationsInText(Demands $demands, string $text, Record $record): void
     {
+        if (empty($text)) {
+            return;
+        }
+        // RTE field with uploaded image
+        if (strpos($text, 'data-htmlarea-file-uid') !== false) {
+            preg_match_all('/data-htmlarea-file-uid="(\d+)"/', $text, $matches);
+            if (empty($matches[1])) {
+                return;
+            }
+            foreach ($matches[1] as $uid) {
+                $demands->addDemand(new SelectDemand('sys_file', '', 'uid', $uid, $record));
+            }
+        }
         if (strpos($text, 't3://') === false) {
             return;
         }
