@@ -11,6 +11,7 @@ use function in_array;
 class InputProcessor extends TextProcessor
 {
     protected string $type = 'input';
+    protected array $required = [];
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
