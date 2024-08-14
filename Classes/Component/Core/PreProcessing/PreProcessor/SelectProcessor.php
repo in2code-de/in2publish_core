@@ -8,6 +8,7 @@ use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarke
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
+use In2code\In2publishCore\Component\Core\Resolver\SelectStandaloneMmResolver;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 
 use function array_filter;
@@ -58,11 +59,11 @@ class SelectProcessor extends AbstractProcessor
         // Skip relations to table "pages", except if it's the page's transOrigPointerField
         $foreignTable = $tca['foreign_table'] ?? null;
         $transOrigPointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
-        if ('pages' === $foreignTable && ('pages' !== $table || $column !== $transOrigPointerField)) {
+        if (empty($tca['MM']) && 'pages' === $foreignTable && ('pages' !== $table || $column !== $transOrigPointerField)) {
             return ['TCA relations to pages are not resolved.'];
         }
 
-        if (null !== $foreignTable && $this->excludedTablesService->isExcludedTable($foreignTable)) {
+        if (empty($tca['MM']) && null !== $foreignTable && $this->excludedTablesService->isExcludedTable($foreignTable)) {
             return ['The table ' . $foreignTable . ' is excluded from publishing'];
         }
 
@@ -90,6 +91,12 @@ class SelectProcessor extends AbstractProcessor
             $foreignTableWhere = implode(' AND ', array_filter([$foreignTableWhere, $additionalWhere]));
             $foreignTableWhere = DatabaseUtility::stripLogicalOperatorPrefix($foreignTableWhere);
             $foreignTableWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($foreignTableWhere);
+
+            if ('pages' === $foreignTable || $this->excludedTablesService->isExcludedTable($foreignTable)) {
+                $resolver = $this->container->get(SelectStandaloneMmResolver::class);
+                $resolver->configure($mmTable, $selectField);
+                return $resolver;
+            }
 
             /** @var SelectMmResolver $resolver */
             $resolver = $this->container->get(SelectMmResolver::class);

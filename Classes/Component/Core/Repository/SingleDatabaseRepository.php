@@ -210,4 +210,29 @@ class SingleDatabaseRepository
         $result = $query->executeQuery();
         return array_column($result->fetchAllAssociative(), null, 'uid');
     }
+
+    public function findMmByProperty(string $table, string $property, array $values): array
+    {
+        $query = $this->connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('*')
+              ->from($table)
+              ->where(
+                  $query->expr()->in(
+                      $property,
+                      $query->createNamedParameter($values, DbalConnection::PARAM_STR_ARRAY),
+                  ),
+              );
+
+        $result = $query->executeQuery();
+        $rows = [];
+        foreach ($result->fetchAllAssociative() as $row) {
+            $mmIdentityProperties = [
+                $row['uid_local'],
+                $row['uid_foreign'],
+            ];
+            $rows[hash('sha1', json_encode($mmIdentityProperties, JSON_THROW_ON_ERROR))] = $row;
+        }
+        return $rows;
+    }
 }
