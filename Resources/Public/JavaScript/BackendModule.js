@@ -9,7 +9,9 @@ define([
 	'TYPO3/CMS/In2publishCore/ConfirmationModal',
 ], function ($, DebounceEvent, Modal, LoadingOverlay, ConfirmationModal) {
 	var In2publishCoreModule = {
-		isPublishFilesModule: (document.querySelector('.module[data-module-name="file_In2publishCoreM3"]') !== null),
+		isPublishFilesModule: (document.querySelector('.module[data-module-name="in2publish_core_m3"]') !== null)
+			// TYPO3 v11
+			|| (document.querySelector('.module[data-module-name="file_In2publishCoreM3"]') !== null),
 		unchangedFilter: false,
 		changedFilter: false,
 		addedFilter: false,
