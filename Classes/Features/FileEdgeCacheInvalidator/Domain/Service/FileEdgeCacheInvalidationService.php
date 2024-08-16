@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Servic
 
 use Doctrine\DBAL\Result;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use TYPO3\CMS\Core\Authentication\CommandLineUserAuthentication;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -142,11 +143,29 @@ class FileEdgeCacheInvalidationService
 
     protected function clearCachesForPages(RecordCollection $recordCollection): void
     {
-        $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
+        $dataHandler = $this->getDataHandler();
         $dataHandler->start([], []);
         $pages = $recordCollection->getPages();
         foreach ($pages as $page) {
             $dataHandler->clear_cacheCmd($page);
         }
+    }
+
+    protected function getDataHandler(): DataHandler
+    {
+        /** @var DataHandler $dataHandler */
+        $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
+        /** @var CommandLineUserAuthentication $user */
+        $user = $GLOBALS['BE_USER'];
+
+        if (!$user->user) {
+            $user->authenticate();
+        }
+
+        $dataHandler->BE_USER = $user;
+
+        /** @psalm-suppress InternalProperty */
+        $dataHandler->admin = true;
+        return $dataHandler;
     }
 }
