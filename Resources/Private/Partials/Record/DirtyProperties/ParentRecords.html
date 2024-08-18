@@ -8,19 +8,25 @@
 	</f:comment>
 	<f:if condition="{record.state} == 'changed' || {record.state} == 'deleted'">
 		<f:if condition="{record.changedProps}">
-			<h3>
-				<f:translate key="dirty_properties_pageproperties" arguments="{0:'{publish:Tca.GetTableLabelFromLocallang(tableName:record.classification)}'}">Properties</f:translate>
-			</h3>
-			<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
-				<f:for each="{record.changedProps}" as="fieldName">
-					<li>
-						<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}"/>
-						<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.classification}">
-							<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="{stagingLevel}"/>
-						</publish:Tca.FormatPropertyByTcaDefinition>
-					</li>
-				</f:for>
-			</ul>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th><f:translate key="dirty_properties_pageproperties" arguments="{0:'{publish:Tca.GetTableLabelFromLocallang(tableName:record.classification)}'}">Properties</f:translate></th>
+					</tr>
+				</thead>
+				<tbody>
+					<f:for each="{record.changedProps}" as="fieldName">
+						<tr>
+							<td>
+								<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}"/>
+								<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.classification}">
+									<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="{stagingLevel}"/>
+								</publish:Tca.FormatPropertyByTcaDefinition>
+							</td>
+						</tr>
+					</f:for>
+				</tbody>
+			</table>
 		</f:if>
 	</f:if>
 </html>

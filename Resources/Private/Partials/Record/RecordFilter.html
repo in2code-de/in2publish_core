@@ -1,0 +1,67 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+
+<div class="tx-in2publish-margins in2publishjs__publishfilter">
+
+	<fieldset class="form-section">
+		<div class="row">
+
+			<f:comment>
+				Filter by record name
+			</f:comment>
+
+			<div class="form-group col-sm-12">
+				<label for="in2publish__publishfilter_title"><f:translate key="module_m1_filter_field_title">title</f:translate></label>
+				<input id="in2publish__publishfilter_title" class="form-control js-form-search t3js-clearable" data-workflow-filter-field="true" name="record-title" />
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset class="form-section">
+		<div class="row">
+
+			<f:comment>
+				Filter by change state
+			</f:comment>
+
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label for="in2publish__publishfilter_state"><f:translate key="module_m1_filter_state">Filter by change state</f:translate></label>
+					<select id="in2publish__publishfilter_state" class="form-control js-in2publish-statefilter" data-workflow-filter-field="true">
+						<option value=""><f:translate key="module_m1_filter_state.all">All</f:translate></option>
+						<option value="changed"><f:translate key="record.state.changed.short">changed</f:translate></option>
+						<option value="added"><f:translate key="record.state.added.short">added</f:translate></option>
+						<option value="deleted"><f:translate key="record.state.deleted.short">deleted</f:translate></option>
+						<option value="moved"><f:translate key="record.state.moved.short">moved</f:translate></option>
+					</select>
+				</div>
+			</div>
+
+			<f:comment>
+				Filter by relative level
+			</f:comment>
+
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label for="in2publish__publishfilter_level"><f:translate key="module_m1_filter_field_level">level</f:translate></label>
+					<select id="in2publish__publishfilter_level" class="form-control js-in2publish-levelfilter" data-workflow-filter-field="true" name="relative-level">
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 0  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 0', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 0 }">0 levels</f:translate></option>
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 1  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 1', then: 'selected')}><f:translate key="m1.page_recursion.depth" arguments="{0:  1 }">1 level</f:translate></option>
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 2  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 2', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 2 }">2 levels</f:translate></option>
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 3  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 3', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 3 }">3 levels</f:translate></option>
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 4  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 4', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 4 }">4 levels</f:translate></option>
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 5  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 5', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 5 }">5 levels</f:translate></option>
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 6  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 6', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 6 }">6 levels</f:translate></option>
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 7  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 7', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 7 }">7 levels</f:translate></option>
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 8  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 8', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 8 }">8 levels</f:translate></option>
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 9  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 9', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 9 }">9 levels</f:translate></option>
+						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 10 })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 10', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 10}">10 levels</f:translate></option>
+					</select>
+				</div>
+			</div>
+
+		</div>
+	</fieldset>
+
+</div>
+
+</html>

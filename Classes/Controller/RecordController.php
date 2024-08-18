@@ -116,24 +116,6 @@ class RecordController extends ActionController
         }
 
         $this->moduleTemplate->setModuleClass('in2publish_core_m1');
-
-        $menuRegistry = $this->moduleTemplate->getDocHeaderComponent()->getMenuRegistry();
-        $menu = $menuRegistry->makeMenu();
-        $menu->setIdentifier('depth');
-        $menu->setLabel(LocalizationUtility::translate('m1.page_recursion', 'in2publish_core'));
-        for ($i = 0; $i <= 10; $i++) {
-            $menuItem = $menu->makeMenuItem();
-            $menuItem->setActive($i === $data['pageRecursionLimit']);
-            if ($i > 1) {
-                $title = LocalizationUtility::translate('m1.page_recursion.depths', 'in2publish_core', [$i]);
-            } else {
-                $title = LocalizationUtility::translate('m1.page_recursion.depth', 'in2publish_core', [$i]);
-            }
-            $menuItem->setTitle($title);
-            $menuItem->setHref($this->uriBuilder->uriFor('index', ['pageRecursionLimit' => $i]));
-            $menu->addMenuItem($menuItem);
-        }
-        $menuRegistry->addMenu($menu);
     }
 
     /**
@@ -143,6 +125,7 @@ class RecordController extends ActionController
      */
     public function indexAction(int $pageRecursionLimit): ResponseInterface
     {
+        $backendUser = $this->getBackendUser();
         $pid = BackendUtility::getPageIdentifier();
         if (!is_int($pid)) {
             $pid = 0;
@@ -161,6 +144,7 @@ class RecordController extends ActionController
         $this->view->assign('publishingAvailable', $localDbAvailable && $foreignDbAvailable);
 
         $this->view->assign('recordTree', $recordTree);
+        $this->view->assign('moduleData', $backendUser->getModuleData('tx_in2publishcore_m1'));
         return $this->htmlResponse();
     }
 

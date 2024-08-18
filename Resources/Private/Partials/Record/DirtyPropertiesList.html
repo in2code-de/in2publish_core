@@ -3,61 +3,14 @@
 	  xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<div class="in2publish-stagelisting__dropdown in2publish-stagelisting__dropdown--close in2publish-clearfix">
-		<f:render partial="Record/Breadcrumbs" arguments="{config: config, breadcrumbs: record.breadcrumbs}" />
-		<f:render partial="Record/ShowReasonsWhyNotPublishable" arguments="{record: record}" />
-
-		<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--left">
-			<div class="in2publish-stagelisting__dropdown__actions">
-				<f:if condition="{record.state} != 'deleted' && {record.id} > 1">
-					<f:then>
-						<publish:Link.RecordHistory class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}"><i class="in2publish-icon-history"></i><f:translate key="dirty_properties_history_page">Page History</f:translate></publish:Link.RecordHistory>
-						<be:link.editRecord class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}">
-							<i class="in2publish-icon-edit"></i>
-							<f:translate key="dirty_properties_edit" default="edit" />
-						</be:link.editRecord>
-						<f:if condition="{record.localProps.doktype} < 199">
-							<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.id}" table="{record.classification}" stagingLevel="local" target="_blank">
-								<i class="in2publish-icon-eye"></i>
-								<f:translate key="dirty_properties_preview_page">Preview</f:translate>
-							</publish:Link.PreviewRecord>
-						</f:if>
-					</f:then>
-					<f:else>
-						&nbsp;
-					</f:else>
-				</f:if>
-			</div>
-
+	<f:render partial="Record/ShowReasonsWhyNotPublishable" arguments="{record: record}" />
+	<f:render partial="Record/Breadcrumbs" arguments="{config: config, breadcrumbs: record.breadcrumbs}" />
+	<div class="row gx-0">
+		<div class="col-6">
 			<f:render partial="Record/DirtyProperties/ParentRecords" arguments="{record: record, stagingLevel: 'local'}" />
 			<f:render partial="Record/DirtyProperties/ChildRecords" arguments="{record: record, stagingLevel: 'local'}" />
 		</div>
-
-		<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--right">
-			<div class="in2publish-stagelisting__dropdown__actions">
-				<f:if condition="{record.state} != 'added' && {record.id} > 1">
-					<f:then>
-						<f:if condition="{record.foreignProps.doktype} < 199">
-							<f:then>
-								<f:if condition="{record.state} != 'deleted' && {record.localProps.doktype} < 199">
-									<publish:uri.compareUri identifier="{record.id}" class="in2publish-notextdecoration"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></publish:uri.compareUri>
-								</f:if>
-								<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.id}" table="{record.classification}" stagingLevel="foreign" target="_blank">
-									<i class="in2publish-icon-eye"></i>
-									<f:translate key="dirty_properties_preview_page">Preview</f:translate>
-								</publish:Link.PreviewRecord>
-							</f:then>
-							<f:else>
-								&nbsp;
-							</f:else>
-						</f:if>
-					</f:then>
-					<f:else>
-						&nbsp;
-					</f:else>
-				</f:if>
-			</div>
-
+		<div class="col-6">
 			<f:render partial="Record/DirtyProperties/ParentRecords" arguments="{record: record, stagingLevel: 'foreign'}" />
 			<f:render partial="Record/DirtyProperties/ChildRecords" arguments="{record: record, stagingLevel: 'foreign'}" />
 		</div>
