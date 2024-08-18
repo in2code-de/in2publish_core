@@ -383,6 +383,18 @@
 			<trans-unit id="tx_in2publishcore.modal.publish.folder.text">
 				<source>Are you sure you want to publish the folder %s? This cannot be reversed.</source>
 			</trans-unit>
+			<trans-unit id="module_m1_filter_state">
+				<source>Filter by change state</source>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_state.all">
+				<source>Filter by change state</source>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_field_level">
+				<source>Filter records by their level</source>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_field_title">
+				<source>Filter by title</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
