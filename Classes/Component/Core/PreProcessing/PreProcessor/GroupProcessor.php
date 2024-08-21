@@ -40,6 +40,10 @@ class GroupProcessor extends AbstractProcessor
         'uploadfolder',
     ];
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
         $internalType = $tca['internal_type'] ?? 'db';
@@ -77,6 +81,10 @@ class GroupProcessor extends AbstractProcessor
         return $reasons;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver
     {
         $foreignTable = $processedTca['allowed'];

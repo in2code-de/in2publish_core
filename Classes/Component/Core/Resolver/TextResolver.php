@@ -46,6 +46,9 @@ class TextResolver extends AbstractResolver
         }
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function findRelationsInText(Demands $demands, string $text, Record $record): void
     {
         if (empty($text)) {

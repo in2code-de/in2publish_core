@@ -100,7 +100,6 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
 
         $foreignDriver->close();
         unset($foreignDriver);
-
     }
 
     /**

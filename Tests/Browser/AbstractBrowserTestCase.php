@@ -14,10 +14,10 @@ use function register_shutdown_function;
 
 abstract class AbstractBrowserTestCase extends TestCase
 {
+    use DriverAssertions;
+
     // Sleep Time used for "Workaround Sleeps"
     protected $sleepTime = 3;
-
-    use DriverAssertions;
 
     protected function setUp(): void
     {

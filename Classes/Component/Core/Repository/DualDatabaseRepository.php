@@ -84,5 +84,4 @@ class DualDatabaseRepository
 
         return $this->mergeRowsByIdentifier($localRows, $foreignRows);
     }
-
 }

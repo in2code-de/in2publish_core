@@ -6,7 +6,6 @@ use Doctrine\DBAL\Exception;
 use In2code\In2publishCore\Component\Core\Demand\CallerAwareDemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\Demand\Type\MmDemand;
-use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\DemandResolver\Exception\InvalidDemandException;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;

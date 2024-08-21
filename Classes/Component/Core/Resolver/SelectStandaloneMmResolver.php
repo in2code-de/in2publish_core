@@ -5,16 +5,11 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
-use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\Demand\Type\MmDemand;
-use In2code\In2publishCore\Component\Core\Demand\Type\StandaloneMmDemand;
-use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Service\ReplaceMarkersServiceInject;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-use function preg_match;
 
 class SelectStandaloneMmResolver extends AbstractResolver
 {
