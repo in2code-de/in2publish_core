@@ -182,4 +182,9 @@ composer-install:
 	docker compose exec -u app local-php composer install
 	docker compose exec -u app foreign-php composer install
 
+## Install all phars required with phive
+.phive-install:
+	mkdir -p ~/.phive/
+	docker run --rm -it -u1000:1000 -v "$$PWD":/app -v $$HOME/.phive/:/tmp/phive/ -e PHIVE_HOME=/tmp/phive/ in2code/php:7.4-fpm phive install
+
 include .env
