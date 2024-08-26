@@ -61,7 +61,7 @@ start: .link-compose-file
 	docker compose build --pull
 	docker compose up -d
 
-setup: stop destroy start .mysql-wait
+setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	docker compose exec local-php composer i
 	docker exec -u1000 in2publish_core-foreign-php-1 composer i
 	docker compose exec local-php vendor/bin/typo3 install:setup --force
@@ -77,6 +77,26 @@ setup: stop destroy start .mysql-wait
 		echo "$(EMOJI_face_with_rolling_eyes) Waiting for database ..."; \
 		sleep 3; \
 	done;
+
+.install-packages:
+	if [[ "$$OSTYPE" == "linux-gnu" ]]; then \
+		if [[ "$$(command -v certutil > /dev/null; echo $$?)" -ne 0 ]]; then sudo apt install libnss3-tools; fi; \
+		if [[ "$$(command -v mkcert > /dev/null; echo $$?)" -ne 0 ]]; then sudo curl -L https://github.com/FiloSottile/mkcert/releases/download/v1.4.1/mkcert-v1.4.1-linux-amd64 -o /usr/local/bin/mkcert; sudo chmod +x /usr/local/bin/mkcert; fi; \
+	elif [[ "$$OSTYPE" == "darwin"* ]]; then \
+	    BREW_LIST=$$(brew ls --formula); \
+		if [[ ! $$BREW_LIST == *"mkcert"* ]]; then brew install mkcert; fi; \
+		if [[ ! $$BREW_LIST == *"nss"* ]]; then brew install nss; fi; \
+	fi;
+	mkcert -install > /dev/null
+
+.create-certificate:
+	echo "$(EMOJI_secure) Creating SSL certificates for dinghy http proxy"
+	mkdir -p $(HOME)/.dinghy/certs/
+	PROJECT=$$(echo "$${PWD##*/}" | tr -d '.'); \
+	if [[ ! -f $(HOME)/.dinghy/certs/$$PROJECT.docker.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/$$PROJECT.docker.crt -key-file $(HOME)/.dinghy/certs/$$PROJECT.docker.key "*.$$PROJECT.docker"; fi;
+	if [[ ! -f $(HOME)/.dinghy/certs/${HOST_LOCAL}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${HOST_LOCAL}.crt -key-file $(HOME)/.dinghy/certs/${HOST_LOCAL}.key ${HOST_LOCAL}; fi;
+	if [[ ! -f $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.crt -key-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ${HOST_FOREIGN}; fi;
+	if [[ ! -f $(HOME)/.dinghy/certs/${MAIL_HOST}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${MAIL_HOST}.crt -key-file $(HOME)/.dinghy/certs/${MAIL_HOST}.key ${MAIL_HOST}; fi;
 
 restore: mysql-restore fileadmin-restore
 
@@ -110,7 +130,7 @@ unit:
 functional:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.functional.xml
 
-acceptance:
+acceptance: typo3-clearcache typo3-rebuild-caches
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml
 
 setup-qa:
@@ -132,3 +152,39 @@ fix-php-code-sniffer:
 
 qa-php-mess-detector:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm .project/phars/phpmd Classes ansi .project/qa/phpmd.xml
+
+## Clears TYPO3 caches via typo3-console
+typo3-clearcache:
+	echo "$(EMOJI_broom) Clearing TYPO3 caches"
+	docker compose exec -u app local-php ./vendor/bin/typo3 cache:flush
+	docker compose exec -u app foreign-php ./vendor/bin/typo3 cache:flush
+
+## Hard-deletes all caches (including DI) and rebuilds them on the fly
+typo3-rebuild-caches:
+	echo "$(EMOJI_broom) clearing DI cache on local"
+	rm -rf Build/local/var/cache/code/
+	echo "$(EMOJI_hot_face) rebuilding DI cache on local"
+	docker compose exec local-php ./vendor/bin/typo3 help > /dev/null
+	echo "$(EMOJI_broom) clearing DI cache on foreign"
+	rm -rf Build/foreign/var/cache/code/
+	echo "$(EMOJI_hot_face) rebuilding DI cache on foreign"
+	docker compose exec foreign-php ./vendor/bin/typo3 help > /dev/null
+
+## Starts composer-update
+composer-update:
+	echo "$(EMOJI_package) updating composer dependencies"
+	docker compose exec -u app local-php composer update -W
+	docker compose exec -u app foreign-php composer update -W
+
+## Starts composer-install
+composer-install:
+	echo "$(EMOJI_package) Installing composer dependencies"
+	docker compose exec -u app local-php composer install
+	docker compose exec -u app foreign-php composer install
+
+## Install all phars required with phive
+.phive-install:
+	mkdir -p ~/.phive/
+	docker run --rm -it -u1000:1000 -v "$$PWD":/app -v $$HOME/.phive/:/tmp/phive/ -e PHIVE_HOME=/tmp/phive/ in2code/php:7.4-fpm phive install
+
+include .env

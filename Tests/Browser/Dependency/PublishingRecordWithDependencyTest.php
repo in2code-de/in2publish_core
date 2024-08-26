@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Browser\Dependency;
 
 use CoStack\StackTest\TYPO3\TYPO3Helper;
-use CoStack\StackTest\WebDriver\Factory;
+use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use In2code\In2publishCore\Tests\Browser\AbstractBrowserTestCase;
@@ -17,21 +17,21 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
 {
     public function testRecordWithUnfulfilledDependencyIsPublishableAfterDependenciesAreFulfilled(): void
     {
-        $driver = Factory::getInstance()->createMultiDriver('local');
+        $localDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin(
-            $driver,
+            $localDriver,
             'https://local.v12.in2publish-core.de/typo3',
             'publisher-page-tree-publish',
             'publisher-page-tree-publish',
         );
-        TYPO3Helper::selectModuleByText($driver, 'Page');
+        TYPO3Helper::selectModuleByText($localDriver, 'Page');
         TYPO3Helper::selectInPageTree(
-            $driver,
+            $localDriver,
             ['EXT:in2publish', '5c Workflows - Unfulfilled Dependencies', '5c.1 Parent not published'],
         );
-        TYPO3Helper::selectModuleByText($driver, 'Publish Overview');
+        TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
 
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, '5c.1 Parent not published');
             self::assertPageContains($driver, '5c.1.1 Child Ready to Publish');
 
@@ -76,18 +76,16 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
                 WebDriverBy::xpath('//*[@data-record-identifier="pages-36"]'),
             );
         });
-        $driver->inFirstDriver(static function (WebDriver $driver): void {
-            TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
-                $driver->click(
-                    WebDriverBy::xpath(
-                        '//*[@data-record-identifier="pages-35"]//*[contains(@class, "in2publish-link-publish")]/*[contains(@class, "in2publish-icon-publish")]',
-                    ),
-                );
-            });
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
+            $driver->click(
+                WebDriverBy::xpath(
+                    '//*[@data-record-identifier="pages-35"]//*[contains(@class, "in2publish-link-publish")]/*[contains(@class, "in2publish-icon-publish")]',
+                ),
+            );
         });
 
-        TYPO3Helper::selectModuleByText($driver, 'Publish Overview');
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, '5c.1 Parent not published');
             self::assertPageContains($driver, '5c.1.1 Child Ready to Publish');
 
@@ -107,5 +105,8 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
                 ),
             );
         });
+
+        $localDriver->close();
+        unset($localDriver);
     }
 }

@@ -9,6 +9,7 @@ use In2code\In2publishCore\Component\Core\Resolver\GroupMmMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
+use In2code\In2publishCore\Component\Core\Resolver\SelectStandaloneMmResolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -39,6 +40,10 @@ class GroupProcessor extends AbstractProcessor
         'uploadfolder',
     ];
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
         $internalType = $tca['internal_type'] ?? 'db';
@@ -57,12 +62,12 @@ class GroupProcessor extends AbstractProcessor
         }
 
         $allowedTables = GeneralUtility::trimExplode(',', $allowed);
-        if (['pages'] === $allowedTables) {
+        if (empty($tca['MM']) && ['pages'] === $allowedTables) {
             return ['TCA relations to pages are not resolved.'];
         }
 
         $allowedTables = $this->excludedTablesService->removeExcludedTables($allowedTables);
-        if (empty($allowedTables)) {
+        if (empty($tca['MM']) && empty($allowedTables)) {
             return ['All tables of this relation (' . $allowed . ') are excluded.'];
         }
 
@@ -76,6 +81,10 @@ class GroupProcessor extends AbstractProcessor
         return $reasons;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver
     {
         $foreignTable = $processedTca['allowed'];
@@ -107,6 +116,12 @@ class GroupProcessor extends AbstractProcessor
             $additionalWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($additionalWhere);
             if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
                 $additionalWhere = $matches['where'];
+            }
+
+            if ('pages' === $foreignTable || $this->excludedTablesService->isExcludedTable($foreignTable)) {
+                $resolver = $this->container->get(SelectStandaloneMmResolver::class);
+                $resolver->configure($mmTable, $selectField);
+                return $resolver;
             }
 
             if (!$isSingleTable) {

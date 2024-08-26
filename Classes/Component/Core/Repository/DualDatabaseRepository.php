@@ -76,4 +76,12 @@ class DualDatabaseRepository
 
         return $this->mergeRowsByIdentifier($localRows, $foreignRows);
     }
+
+    public function findMmByProperty(string $table, string $property, array $values): array
+    {
+        $localRows = $this->localRepository->findMmByProperty($table, $property, $values);
+        $foreignRows = $this->foreignRepository->findMmByProperty($table, $property, $values);
+
+        return $this->mergeRowsByIdentifier($localRows, $foreignRows);
+    }
 }

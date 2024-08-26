@@ -16,6 +16,9 @@ abstract class AbstractBrowserTestCase extends TestCase
 {
     use DriverAssertions;
 
+    // Sleep Time used for "Workaround Sleeps"
+    protected $sleepTime = 3;
+
     protected function setUp(): void
     {
         $env = [];

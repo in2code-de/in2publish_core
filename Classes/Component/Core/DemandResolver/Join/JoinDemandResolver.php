@@ -78,18 +78,21 @@ class JoinDemandResolver implements DemandResolver
             $missingIdentifiers['local'] ?? [],
             $joinRowCollection,
             $this->localRepository,
+            'local'
         );
         $this->findMissingTableRecordsOnSide(
             $missingIdentifiers['foreign'] ?? [],
             $joinRowCollection,
             $this->foreignRepository,
+            'foreign'
         );
     }
 
     public function findMissingTableRecordsOnSide(
         array $missingIdentifiers,
         JoinRowCollection $joinRowCollection,
-        SingleDatabaseRepository $repository
+        SingleDatabaseRepository $repository,
+        string $side
     ): void {
         foreach ($missingIdentifiers as $table => $joinTables) {
             $identifiers = [];
@@ -102,7 +105,7 @@ class JoinDemandResolver implements DemandResolver
             foreach ($rows as $uid => $row) {
                 foreach ($identifiers[$uid] as $joinTable => $mmIds) {
                     foreach ($mmIds as $mmId) {
-                        $joinRowCollection->amendRow($joinTable, $table, $mmId, 'foreign', $row);
+                        $joinRowCollection->amendRow($joinTable, $table, $mmId, $side, $row);
                     }
                 }
             }

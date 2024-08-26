@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Browser;
 
+use CoStack\StackTest\Test\Constraint\Visibility\ElementIsVisible;
 use CoStack\StackTest\TYPO3\TYPO3Helper;
-use CoStack\StackTest\WebDriver\Factory;
+use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 
@@ -16,14 +17,17 @@ class PublishChangedPagePropertiesTest extends AbstractBrowserTestCase
      */
     public function testChangedPagePropertiesCanBePublished(): void
     {
-        $driver = Factory::getInstance()->createMultiDriver('local');
-        TYPO3Helper::backendLogin($driver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        $localDriver = WebDriverFactory::createChromeDriver();
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
 
-        TYPO3Helper::selectModuleByText($driver, 'Page');
-        TYPO3Helper::selectInPageTree($driver, ['Home', 'EXT:in2publish_core', '1a Page properties - changed']);
-        TYPO3Helper::selectModuleByText($driver, 'Publish Overview');
+        TYPO3Helper::selectModuleByText($localDriver, 'Page');
+        TYPO3Helper::selectInPageTree($localDriver, ['Home', 'EXT:in2publish_core', '1a Page properties - changed']);
+        TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
 
-        TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
+        // Workaround
+        sleep($this->sleepTime);
+
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'TYPO3 Content Publisher - publish pages and records overview');
             self::assertElementIsVisible($driver, WebDriverBy::cssSelector('[data-record-identifier="pages-5"]'));
             $recordRow = $driver->findElement(WebDriverBy::cssSelector('[data-record-identifier="pages-5"]'));
@@ -34,27 +38,33 @@ class PublishChangedPagePropertiesTest extends AbstractBrowserTestCase
             self::assertPageContains($driver, 'Page title 1a Page properties - changed');
         });
 
-        $driver->inFirstDriver(static function (WebDriver $driver): void {
-            TYPO3Helper::inContentIFrameContext($driver, static function (WebDriver $driver): void {
-                $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
-                self::assertPageContains($driver, 'The selected record has been published successfully');
-            });
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
+            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            self::assertPageContains($driver, 'The selected record has been published successfully');
         });
 
-        $foreignDriver = Factory::getInstance()->createMultiDriver('foreign');
+        $localDriver->close();
+        unset($localDriver);
+
+        $foreignDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Page');
         TYPO3Helper::selectInPageTree($foreignDriver, ['Home', 'EXT:in2publish_core', '1a Page properties - changed']);
+
+        // Workaround
+        sleep($this->sleepTime);
+
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             $driver->findElement(WebDriverBy::xpath('//a[@title="Edit"]'))->click();
+            $driver->wait()->until(ElementIsVisible::resolve(WebDriverBy::cssSelector('[data-formengine-input-name="data[pages][5][title]"]')));
             self::assertElementContains(
                 $driver,
                 '1a Page properties - changed',
                 WebDriverBy::cssSelector('[data-formengine-input-name="data[pages][5][title]"]'),
             );
         });
-        $foreignDriver->close();
 
-        self::assertTrue(true);
+        $foreignDriver->close();
+        unset($foreignDriver);
     }
 }

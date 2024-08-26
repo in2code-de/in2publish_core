@@ -8,6 +8,7 @@ use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarke
 use In2code\In2publishCore\Component\Core\Resolver\InlineMultiValueResolver;
 use In2code\In2publishCore\Component\Core\Resolver\InlineSelectResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
+use In2code\In2publishCore\Component\Core\Resolver\SelectStandaloneMmResolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 
@@ -37,7 +38,7 @@ class InlineProcessor extends AbstractProcessor
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
         $foreignTable = $tca['foreign_table'] ?? null;
-        if (null !== $foreignTable && $this->excludedTablesService->isExcludedTable($foreignTable)) {
+        if (empty($tca['MM']) && null !== $foreignTable && $this->excludedTablesService->isExcludedTable($foreignTable)) {
             return ['The table ' . $foreignTable . ' is excluded from publishing'];
         }
         return [];
@@ -54,6 +55,12 @@ class InlineProcessor extends AbstractProcessor
             $mmTable = $processedTca['MM'];
 
             $additionalWhere = $this->processMmMatchFields($processedTca);
+
+            if ('pages' === $foreignTable || $this->excludedTablesService->isExcludedTable($foreignTable)) {
+                $resolver = $this->container->get(SelectStandaloneMmResolver::class);
+                $resolver->configure($mmTable, $selectField);
+                return $resolver;
+            }
 
             /** @var StaticJoinResolver $resolver */
             $resolver = $this->container->get(StaticJoinResolver::class);
