@@ -1,12 +1,36 @@
 # In2publish Core Change Log
 
+12.5.3:
+
+- [CODESTYLE] Make qa happy
+- [BUGFIX] Add make target for installing qa tools
+- [FEATURE] Adds Support for MM-Records to excluded Tables
+- [BUGFIX] Make Processor for inputLink work properly
+- [BUGFIX] Fixes finding missing records
+- [BUGFIX] Enable Logging in Command on foreign
+- [BUGFIX] Resolve images uploaded in RTE
+- [TESTING] Harden a test
+- [TEST] Align structure of artifacts with in2publish
+- [TESTING] Align Tests
+- [DEV] Add composer update & install to makefile
+- [DEV] Add Cache Clearing Commands to Makefile
+- [DEV] Align Makefiles between in2publish and in2publish_core
+- [TESTING] Make Sleep Time configurable
+- [BUGFIX] Activate Screencasts on Mac
+- [TESTING] Make Tests also work on macs
+- [TEST] Add workaround for loading pagetree
+- [REFACTOR] Adopt new StackTest Structure
+- [CODESTYLE] Make qa happy
+
 12.5.2:
+
 - [DOCS] Add known issue to explain missing (orphaned) MM records in the record tree
 - [BUGFIX] Discard the table portion of a joined row if the joined record does not exist
 - [META] Exclude compile-sass from archive
 - [BUGFIX] Cast pageuid to integer to build the preview URL
 
 12.5.1:
+
 - [BUGFIX] Correct evaluation of publishing state
 - [BUGFIX] Fixes Databender for Redirects
 
