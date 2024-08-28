@@ -167,12 +167,12 @@ define([
 		const searchForm = document.querySelector('.js-form-search');
 		if (searchForm) {
 			new DebounceEvent('input', function (event) {
-				const searchValue = event.target.value;
+				const searchValue = event.target.value.toLowerCase();
 				const elements = document.querySelectorAll('.in2publish-stagelisting__item');
 
 				(Array.from(elements)).forEach(function (item) {
 					if (searchValue !== '') {
-						const searchable = item.getAttribute('data-searchable');
+						const searchable = item.getAttribute('data-searchable').toLowerCase();
 
 						if (!searchable.includes(searchValue)) {
 							item.classList.add('d-none');
