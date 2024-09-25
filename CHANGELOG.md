@@ -1,5 +1,9 @@
 # In2publish Core Change Log
 
+15.5.4:
+- [BUGFIX] Enable Logging in Command on foreign
+- [BUGFIX] LogLevel is evaluated correctly
+
 12.5.3:
 
 - [CODESTYLE] Make qa happy
