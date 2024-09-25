@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Fore
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -50,16 +50,9 @@ class RunTasksInQueueCommand extends Command
 {
     use ContextServiceInjection;
     use TaskRepositoryInjection;
+    use LoggerAwareTrait;
 
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
-
-    protected ?LoggerInterface $logger = null;
-
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-        parent::__construct();
-    }
 
     public function isEnabled(): bool
     {
