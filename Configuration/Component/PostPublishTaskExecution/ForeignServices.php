@@ -25,6 +25,5 @@ return static function (ContainerConfigurator $configurator): void {
                      'hidden' => true,
                      'schedulable' => false,
                  ],
-             )
-            ->public();
+             );
 };

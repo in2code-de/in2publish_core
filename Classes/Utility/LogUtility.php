@@ -27,14 +27,14 @@ namespace In2code\In2publishCore\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Psr\Log\LogLevel;
+use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 
 class LogUtility
 {
     public static function translateLogLevelToSeverity(int $logLevel): int
     {
-        switch ($logLevel) {
+        switch (LogLevel::getInternalName($logLevel)) {
             case LogLevel::DEBUG:
                 $severity = AbstractMessage::NOTICE;
                 break;
