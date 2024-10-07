@@ -45,3 +45,6 @@ services:
   In2code\In2publishCore\Component\Core\Publisher\PublisherService:
     public: true
     shared: true
+
+  In2code\In2publishCore\Component\Core\Service\ResolverService:
+    public: true
