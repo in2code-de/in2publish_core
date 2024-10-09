@@ -1,6 +1,13 @@
 # In2publish Core Change Log
 
-15.5.4:
+12.5.5:
+- [BUGFIX] Correct Response of Compare Tool
+- [BUGFIX] Make ResolverService public
+- [BUGFIX] Fix cache clear task
+- [BUGFIX] Fix filters in file module
+- [TASK] Make search in file module case-insensitive
+
+12.5.4:
 - [BUGFIX] Enable Logging in Command on foreign
 - [BUGFIX] LogLevel is evaluated correctly
 
