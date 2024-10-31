@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\DataBender;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\Core\Reason\Reason;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
@@ -81,6 +82,9 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
         if (null !== $siteId) {
             $site = $this->foreignSiteFinder->getSiteByIdentifier($siteId);
             if (null === $site) {
+                // HERE: This will throw exception further downstream
+                // do not publish
+
                 $this->logger->alert(
                     'A redirect has an associated site, but that site does not exist',
                     ['uid' => $record->getId()],

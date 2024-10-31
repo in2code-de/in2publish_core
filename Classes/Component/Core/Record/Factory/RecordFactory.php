@@ -133,6 +133,7 @@ class RecordFactory
             return true;
         }
 
+        // Here
         $event = new DecideIfRecordShouldBeIgnored($record);
         $this->eventDispatcher->dispatch($event);
         if ($event->shouldBeIgnored()) {

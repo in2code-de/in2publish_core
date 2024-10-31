@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Event\RecordWasPublished;
 use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
@@ -9,6 +10,7 @@ use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater;
 use In2code\In2publishCore\Features\RedirectsSupport\EventListener\EarlyRedirectsSupportEventListener;
+use In2code\In2publishCore\Features\RedirectsSupport\EventListener\NoChangedPropsEventListener;
 use In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer;
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -43,6 +45,18 @@ return static function (ContainerConfigurator $configurator): void {
                          'event' => RecordRelationsWereResolved::class,
                      ],
                  );
+        $services->set('tx_in2publish_redirectssupport_event_listener_no_changed_props')
+                 ->class(NoChangedPropsEventListener::class)
+                 ->tag(
+                'in2publish_core.conditional.event.listener',
+                    [
+                        'condition' => 'CONF:features.redirectsSupport.enable',
+                        'identifier' => 'in2publishcore-NoChangedPropsEventListener-checkChangedProps',
+                        'method' => 'checkForEmptyChangedProps',
+                        'event' => CollectReasonsWhyTheRecordIsNotPublishable::class,
+                    ],
+            );
+
         $services->set('tx_in2publish_redirectssupport_event_listener_replacer')
                  ->class(RedirectSourceHostReplacement::class)
                  ->tag(
