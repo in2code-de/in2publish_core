@@ -51,7 +51,9 @@ class SelectMmResolver extends AbstractResolver
             $this->column,
         );
         if (1 === preg_match(AbstractProcessor::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
-            $additionalWhere = $matches['where'];
+            $statementBeforeOrderBy = $matches[1] ?? '';
+            $statementAfterOrderBy = $matches[2] ?? '';
+            $additionalWhere = trim($statementBeforeOrderBy . ' ' . $statementAfterOrderBy);
         }
 
         $value = $record->getId();
