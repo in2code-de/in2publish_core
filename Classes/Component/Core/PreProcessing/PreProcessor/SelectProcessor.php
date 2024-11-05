@@ -88,7 +88,14 @@ class SelectProcessor extends AbstractProcessor
                 }
             }
             $additionalWhere = implode(' AND ', $foreignMatchFields);
-            $foreignTableWhere = implode(' AND ', array_filter([$foreignTableWhere, $additionalWhere]));
+            if (1 === preg_match(AbstractProcessor::ADDITIONAL_ORDER_BY_PATTERN, $foreignTableWhere, $matches) && !empty($matches['where'])) {
+                $foreignTableWhere = implode(' AND ', [$matches['where'], $additionalWhere]);
+                if (!empty($matches['col'])) {
+                    $foreignTableWhere .= ' ORDER BY ' . $matches['col'] . ($matches['dir'] ?? '');
+                }
+            } else {
+                $foreignTableWhere = implode(' AND ', [$foreignTableWhere, $additionalWhere]);
+            }
             $foreignTableWhere = DatabaseUtility::stripLogicalOperatorPrefix($foreignTableWhere);
             $foreignTableWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($foreignTableWhere);
 
