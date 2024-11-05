@@ -20,7 +20,7 @@ abstract class AbstractProcessor implements TcaPreProcessor
 {
     use ExcludedTablesServiceInjection;
 
-    public const ADDITIONAL_ORDER_BY_PATTERN = '/^(.*?)ORDER\s+BY\s+\w+(?:\.\w+)?(?:\s+(?:DESC|ASC))?(?:\s+(AND\s+.*|OR\s+.*)|$)/is';
+    public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
     protected ContainerInterface $container;
 
     /**
