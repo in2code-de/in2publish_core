@@ -100,8 +100,11 @@ class SelectDemandResolver implements DemandResolver
                     if (null === $record) {
                         continue;
                     }
-                    $recordCollection->addRecord($record);
+                } else {
+                    $this->recordIndex->addRecord($record);
                 }
+
+                $recordCollection->addRecord($record);
                 $localMapValue = $record->getLocalProps()[$property] ?? null;
                 $foreignMapValue = $record->getForeignProps()[$property] ?? null;
                 $mapValues = array_unique([$localMapValue, $foreignMapValue]);
