@@ -34,6 +34,8 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
                 WebDriverBy::cssSelector('[data-action="opendirtypropertieslistcontainer"]'),
             );
             $info->click();
+            // Workaround
+            sleep(2);
             self::assertPageContains($driver, '1b.1 Header - changed');
         });
 
