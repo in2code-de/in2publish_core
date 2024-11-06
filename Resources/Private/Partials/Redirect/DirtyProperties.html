@@ -11,12 +11,12 @@
 
 	Line breaks and whitespace is visible where this partial is rendered.
 </f:comment>
-	<f:if condition="{redirect.record.state} == 'changed'"><f:then>
+	<f:if condition="{redirect.state} == 'changed'"><f:then>
 <f:translate key="redirect.record.property" /> | <f:translate key="redirect.record.property.old" /> -> <f:translate key="redirect.record.property.new" />
 
-<f:for each="{redirect.record.dirtyProperties}" as="name">{name} | <publish:Miscellaneous.GetPropertyFromStagingDefinition record="{redirect.record}" propertyName="{name}" stagingLevel="foreign"/> -> <publish:Miscellaneous.GetPropertyFromStagingDefinition record="{redirect.record}" propertyName="{name}" stagingLevel="local"/>
+<f:for each="{redirect.changedProps}" as="name">{name} | <publish:Miscellaneous.GetPropertyFromStagingDefinition record="{redirect}" propertyName="{name}" stagingLevel="foreign"/> -> <publish:Miscellaneous.GetPropertyFromStagingDefinition record="{redirect}" propertyName="{name}" stagingLevel="local"/>
 </f:for>
 	</f:then><f:else>
-<f:translate key="record.state.{redirect.record.state}" />
+<f:translate key="record.state.{redirect.state}" />
 	</f:else></f:if>
 </html>
