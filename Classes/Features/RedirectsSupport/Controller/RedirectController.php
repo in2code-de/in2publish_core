@@ -224,9 +224,9 @@ class RedirectController extends ActionController
                 ),
             );
             if (isset($_POST['_saveandpublish'])) {
-                $this->redirect('publish', null, null, ['redirects' => [$redirectDto->uid]]);
+                return $this->redirect('publish', null, null, ['redirects' => [$redirectDto->uid]]);
             }
-            $this->redirect('list');
+            return $this->redirect('list');
         }
         $sites = $this->foreignSiteFinder->getAllSites();
         $siteOptions = [
