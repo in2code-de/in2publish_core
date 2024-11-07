@@ -1,5 +1,13 @@
 # In2publish Core Change Log
 
+12.5.6:
+- [TEST] Adjust PublishChangedContentTest
+- [BUGFIX] Fix publishbackgroundall dependency index
+- [BUGFIX] Fix DirtyProperties of Redirect
+- [BUGFIX] Correct functional of save and publish button
+- [TEST] Correct Tests
+- [BUGFIX] Implement suggested bugfix for duplicate key exception
+
 12.5.5:
 - [BUGFIX] Correct Response of Compare Tool
 - [BUGFIX] Make ResolverService public

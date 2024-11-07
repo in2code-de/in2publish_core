@@ -46,7 +46,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
             [170, 180],
         );
         self::assertSame([
-            '7f64dfb449435fd9951d63ff8885d639b2cbe3bf' => [
+            '1e829e4ee2bd6fa3a73ee64c6461313b08939ee7' => [
                 'mmtbl' => [
                     'uid_local' => 1,
                     'uid_foreign' => 170,
@@ -91,7 +91,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                     'slug' => "styleguide-demo-category",
                 ],
             ],
-            '1a96d1af72a6c1f3208d78a4f66a4e9b9bcf4198' => [
+            '427137b54c066f401f490c1af0aea53e5ed70536' => [
                 'mmtbl' => [
                     'uid_local' => 1,
                     'uid_foreign' => 180,

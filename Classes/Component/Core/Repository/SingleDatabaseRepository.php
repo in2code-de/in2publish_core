@@ -148,6 +148,14 @@ class SingleDatabaseRepository
                 $splitRow['mmtbl']['uid_local'],
                 $splitRow['mmtbl']['uid_foreign'],
             ];
+            if(isset($splitRow['mmtbl']['tablenames']))
+            {
+                $mmIdentityProperties[] = $splitRow['mmtbl']['tablenames'];
+            }
+            if(isset($splitRow['mmtbl']['fieldname']))
+            {
+                $mmIdentityProperties[] = $splitRow['mmtbl']['fieldname'];
+            }
             $splitRows[hash('sha1', json_encode($mmIdentityProperties, JSON_THROW_ON_ERROR))] = $splitRow;
         }
         /*
@@ -230,6 +238,8 @@ class SingleDatabaseRepository
             $mmIdentityProperties = [
                 $row['uid_local'],
                 $row['uid_foreign'],
+                $row['tablenames'] ?? null,
+                $row['fieldname'] ?? null,
             ];
             $rows[hash('sha1', json_encode($mmIdentityProperties, JSON_THROW_ON_ERROR))] = $row;
         }
