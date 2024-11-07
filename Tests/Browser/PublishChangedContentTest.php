@@ -34,12 +34,13 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
                 WebDriverBy::cssSelector('[data-action="opendirtypropertieslistcontainer"]'),
             );
             $info->click();
-            // Workaround
-            sleep(2);
-            self::assertPageContains($driver, '1b.1 Header - changed');
         });
 
+        // Workaround
+        sleep($this->sleepTime);
+
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
+            self::assertPageContains($driver, '1b.1 Header - changed');
             $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
         });
 
