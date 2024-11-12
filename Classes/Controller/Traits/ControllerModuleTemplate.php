@@ -31,6 +31,8 @@ namespace In2code\In2publishCore\Controller\Traits;
 
 use In2code\In2publishCore\Backend\Button\ModuleShortcutButton;
 use In2code\In2publishCore\CommonInjection\ModuleTemplateFactoryInjection;
+use In2code\In2publishCore\Event\ModuleTemplateWasPreparedForRendering;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
@@ -43,6 +45,8 @@ use function strtolower;
 
 /**
  * @property Request $request
+ * @property EventDispatcherInterface $eventDispatcher
+ * @property string $actionMethodName
  */
 trait ControllerModuleTemplate
 {
@@ -84,6 +88,14 @@ trait ControllerModuleTemplate
         $buttonBar->addButton($moduleShortcutButton);
 
         $this->moduleTemplate->setContent($this->view->render());
+
+        $event = new ModuleTemplateWasPreparedForRendering(
+            $this->moduleTemplate,
+            static::class,
+            $this->actionMethodName
+        );
+        $this->eventDispatcher->dispatch($event);
+
         return $this->moduleTemplate->renderContent();
     }
 }
