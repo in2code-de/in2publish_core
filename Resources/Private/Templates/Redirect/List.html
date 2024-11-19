@@ -1,6 +1,7 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
 	  xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
 	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+	  xmlns:redirect="http://typo3.org/ns/In2code/In2publishCore/Features/RedirectsSupport/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
 	<f:layout name="Default"/>
@@ -65,30 +66,41 @@
 											<core:icon identifier="actions-open"/>
 										</be:link.editRecord>
 									</f:if>
-									<f:switch expression="{redirect.publishingState}">
-										<f:case value="publishable">
-											<div class="btn-group">
-												<label class="btn btn-default btn-checkbox">
-													<f:form.checkbox title="Select for bulk publishing" value="{redirect.id}" style="margin: 0" name="redirects[]"/>
-													<f:variable name="viewPublishAll" value="1"/>
-													<span class="t3-icon fa"></span>
-												</label>
-												<f:link.action action="publish" class="btn btn-default" arguments="{redirects: {0: redirect.id}}" title="Publish">
-													<core:icon identifier="actions-caret-right" size="small"/>
-												</f:link.action>
-											</div>
-										</f:case>
-										<f:case value="siteRequired">
-											<f:link.action action="selectSite" class="btn btn-default" arguments="{redirect: redirect.id}" title="Publish with site association">
-												<core:icon identifier="actions-caret-right" overlay="overlay-external-link" size="small"/>
-											</f:link.action>
-										</f:case>
-										<f:case value="publishing">
-											<a href="#" class="btn btn-default disabled" title="This redirect is currently being published">
-												<core:icon identifier="spinner-circle" size="small"/>
-											</a>
-										</f:case>
-									</f:switch>
+									<f:if condition="!{redirect.reasonsWhyTheRecordIsNotPublishable.empty}">
+										<f:then>
+											<redirect:showReasonsButton class="btn btn-default js-in2publish-confirmation-modal" redirectRecord="{redirect}">
+												<span class="t3js-icon icon icon-size-small icon-state-default icon-actions-exclamation-triangle-alt" data-identifier="actions-exclamation-triangle-alt" aria-hidden="true">
+													<core:icon identifier="actions-exclamation-triangle-alt" />
+												</span>
+											</redirect:showReasonsButton>
+										</f:then>
+										<f:else>
+											<f:switch expression="{redirect.publishingState}">
+												<f:case value="publishable">
+													<div class="btn-group">
+														<label class="btn btn-default btn-checkbox">
+															<f:form.checkbox title="Select for bulk publishing" value="{redirect.id}" style="margin: 0" name="redirects[]"/>
+															<f:variable name="viewPublishAll" value="1"/>
+															<span class="t3-icon fa"></span>
+														</label>
+														<f:link.action action="publish" class="btn btn-default" arguments="{redirects: {0: redirect.id}}" title="Publish">
+															<core:icon identifier="actions-caret-right" size="small"/>
+														</f:link.action>
+													</div>
+												</f:case>
+												<f:case value="siteRequired">
+													<f:link.action action="selectSite" class="btn btn-default" arguments="{redirect: redirect.id}" title="Publish with site association">
+														<core:icon identifier="actions-caret-right" overlay="overlay-external-link" size="small"/>
+													</f:link.action>
+												</f:case>
+												<f:case value="publishing">
+													<a href="#" class="btn btn-default disabled" title="This redirect is currently being published">
+														<core:icon identifier="spinner-circle" size="small"/>
+													</a>
+												</f:case>
+											</f:switch>
+										</f:else>
+									</f:if>
 								</td>
 							</tr>
 						</f:for>
