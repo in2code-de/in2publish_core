@@ -29,16 +29,12 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\ViewHelpers;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\CommonInjection\TranslationConfigurationProviderInjection;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirectDatabaseRecord;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class ShowReasonsButtonViewHelper extends AbstractTagBasedViewHelper
 {
-
-
     protected $tagName = 'a';
 
     public function initializeArguments(): void
@@ -48,13 +44,13 @@ class ShowReasonsButtonViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument('redirectRecord', SysRedirectDatabaseRecord::class, '', true);
     }
 
-    public function render() : string
+    public function render(): string
     {
         /**
          * @var $redirectRecord SysRedirectDatabaseRecord
          */
         $redirectRecord = $this->arguments['redirectRecord'];
-        $this->tag->addAttribute('href','#');
+        $this->tag->addAttribute('href', '#');
         $this->tag->setContent($this->renderChildren());
         $modalConfiguration = [
             'settings' => [
@@ -68,8 +64,8 @@ class ShowReasonsButtonViewHelper extends AbstractTagBasedViewHelper
                     'btnClass' => 'btn btn-default',
                     'name' => 'abort',
                     'active' => true,
-                ]
-            ]
+                ],
+            ],
         ];
         $this->tag->addAttribute('data-modal-configuration', json_encode($modalConfiguration));
 

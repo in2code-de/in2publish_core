@@ -40,8 +40,8 @@ final class ModuleTemplateWasPreparedForRendering
     public function __construct(
         ModuleTemplate $moduleTemplate,
         string $controllerClass,
-        string $actionMethodName)
-    {
+        string $actionMethodName
+    ) {
         $this->moduleTemplate = $moduleTemplate;
         $this->controllerClass = $controllerClass;
         $this->actionMethodName = $actionMethodName;
@@ -61,5 +61,4 @@ final class ModuleTemplateWasPreparedForRendering
     {
         return $this->actionMethodName;
     }
-
 }
