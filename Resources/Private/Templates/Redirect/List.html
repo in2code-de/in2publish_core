@@ -66,7 +66,7 @@
 											<core:icon identifier="actions-open"/>
 										</be:link.editRecord>
 									</f:if>
-									<f:if condition="!{redirect.reasonsWhyTheRecordIsNotPublishable.empty}">
+									<f:if condition="{redirect.publishingState} != 'unchanged' && !{redirect.reasonsWhyTheRecordIsNotPublishable.empty}">
 										<f:then>
 											<redirect:showReasonsButton class="btn btn-default js-in2publish-confirmation-modal" redirectRecord="{redirect}">
 												<span class="t3js-icon icon icon-size-small icon-state-default icon-actions-exclamation-triangle-alt" data-identifier="actions-exclamation-triangle-alt" aria-hidden="true">
