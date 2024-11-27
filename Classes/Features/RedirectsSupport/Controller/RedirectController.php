@@ -46,6 +46,7 @@ use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPubli
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirectDatabaseRecord;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
+use In2code\In2publishCore\Features\RedirectsSupport\Event\RedirectsWereFilteredForListing;
 use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -154,7 +155,11 @@ class RedirectController extends ActionController
         $this->demandResolver->resolveDemand($demands, $recordCollection);
 
         $redirects = $this->getRedirectsByStateFromFilter($recordTree, $filter);
-        $paginator = new ArrayPaginator($redirects, $page, 15);
+
+        $event = new RedirectsWereFilteredForListing($redirects);
+        $this->eventDispatcher->dispatch($event);
+
+        $paginator = new ArrayPaginator($event->getRedirects(), $page, 15);
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple(
             [
