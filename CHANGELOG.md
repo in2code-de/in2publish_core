@@ -1,5 +1,14 @@
 # In2publish Core Change Log
 
+12.5.7
+
+- [META] Set the EM conf version number to 12.5.7
+- [BUGFIX] respect unchanged redirect
+- [CODESTYLE] Fix Codestyle
+- [FEATURE] Add Reasons Modal to Redirects
+- [FEATURE] Add event for filtering redirects in redirects module
+- [FEATURE] Add event for editing module template
+
 12.5.6:
 
 - [META] Set the EM conf version number to 12.5.6
