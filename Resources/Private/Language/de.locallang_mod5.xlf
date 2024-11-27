@@ -15,6 +15,10 @@
 				<source>TYPO3 Content Publisher - Redirects</source>
 				<target state="translated">TYPO3 Content Publisher - Redirects</target>
 			</trans-unit>
+			<trans-unit id="modal.reasons.title">
+				<source>Redirect is not publishable</source>
+				<target state="translated">Redirect kann nicht publiziert werden.</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

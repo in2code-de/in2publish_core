@@ -1,6 +1,17 @@
 # In2publish Core Change Log
 
+12.5.7
+
+- [META] Set the EM conf version number to 12.5.7
+- [BUGFIX] respect unchanged redirect
+- [CODESTYLE] Fix Codestyle
+- [FEATURE] Add Reasons Modal to Redirects
+- [FEATURE] Add event for filtering redirects in redirects module
+- [FEATURE] Add event for editing module template
+
 12.5.6:
+
+- [META] Set the EM conf version number to 12.5.6
 - [TEST] Adjust PublishChangedContentTest
 - [BUGFIX] Fix publishbackgroundall dependency index
 - [BUGFIX] Fix DirtyProperties of Redirect
@@ -9,6 +20,8 @@
 - [BUGFIX] Implement suggested bugfix for duplicate key exception
 
 12.5.5:
+
+- [META] Set the EM conf version number to 12.5.5
 - [BUGFIX] Correct Response of Compare Tool
 - [BUGFIX] Make ResolverService public
 - [BUGFIX] Fix cache clear task
@@ -16,11 +29,14 @@
 - [TASK] Make search in file module case-insensitive
 
 12.5.4:
+
+- [META] Set the EM conf version number to 12.5.4
 - [BUGFIX] Enable Logging in Command on foreign
 - [BUGFIX] LogLevel is evaluated correctly
 
 12.5.3:
 
+- [META] Set the EM conf version number to 12.5.3
 - [CODESTYLE] Make qa happy
 - [BUGFIX] Add make target for installing qa tools
 - [FEATURE] Adds Support for MM-Records to excluded Tables
@@ -43,6 +59,7 @@
 
 12.5.2:
 
+- [META] Set the EM conf version number to 12.5.2
 - [DOCS] Add known issue to explain missing (orphaned) MM records in the record tree
 - [BUGFIX] Discard the table portion of a joined row if the joined record does not exist
 - [META] Exclude compile-sass from archive
@@ -50,6 +67,7 @@
 
 12.5.1:
 
+- [META] Set the EM conf version number to 12.5.1
 - [BUGFIX] Correct evaluation of publishing state
 - [BUGFIX] Fixes Databender for Redirects
 
