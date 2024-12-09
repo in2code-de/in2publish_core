@@ -9,23 +9,58 @@ use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 
+/**
+ * Testparcours in2publish_core - 24
+ */
 class UidClashTest  extends AbstractBrowserTestCase
 {
     /**
-     * Testparcours in2publish_core - 24
+     * Use Case 1
+     *
+     * Page 24 only is published in Overview Module
+     * Result as expected: Page is published, both categories are published, only the 2 mm-Records for page/category are published
      */
-    public function testRelationToCategoryCanBePublishedForNewsAndPagesWithSameUid(): void
+    public function testUseCase1(): void
     {
+        $localDriver = WebDriverFactory::createChromeDriver();
+        $foreignDriver = WebDriverFactory::createChromeDriver();
 
+        $this->publishPage76($localDriver);
+        $this->assertPage76HasBeenPublished($foreignDriver);
+        $this->assertBothCategoriesHaveBeenPublished($foreignDriver);
+    }
+
+    /**
+     * Use Case 2
+     *
+     * News folder with News 24 is published in Overview Module
+     * Result as expected: News 24 is published, Page 24 is not published, only Category 1 is published, only the news mm-Records is published
+     */
+    public function testUseCase2(): void
+    {
         $localDriver = WebDriverFactory::createChromeDriver();
         $foreignDriver = WebDriverFactory::createChromeDriver();
 
         $this->publishNews76($localDriver);
         $this->assertNews76HasBeenPublished($foreignDriver);
         $this->assertOnlyCategory1HasBeenPublished($foreignDriver);
+    }
+
+    /**
+     * Use Case 3
+     *
+     * Page 24 is published first, then News 24
+     * Result as expected: first only the page, categories and 2 page mm-records are published, then the news and the news mm-record
+     */
+    public function testUseCase3(): void
+    {
+        $localDriver = WebDriverFactory::createChromeDriver();
+        $foreignDriver = WebDriverFactory::createChromeDriver();
 
         $this->publishPage76($localDriver);
+        $this->publishNews76($localDriver);
         $this->assertPage76HasBeenPublished($foreignDriver);
+        $this->assertNews76HasBeenPublished($foreignDriver);
         $this->assertBothCategoriesHaveBeenPublished($foreignDriver);
     }
 
