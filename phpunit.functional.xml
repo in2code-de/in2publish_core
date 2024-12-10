@@ -8,7 +8,14 @@
          beStrictAboutOutputDuringTests="true"
          backupGlobals="true"
          failOnRisky="true"
-         failOnWarning="true">
+         failOnWarning="true"
+         controlGarbageCollector="true">
+    <logging>
+        <junit outputFile=".project/artifacts/functionaltests/junit.xml"/>
+        <teamcity outputFile=".project/artifacts/functionaltests/teamcity.txt"/>
+        <testdoxHtml outputFile=".project/artifacts/functionaltests/testdox.html"/>
+        <testdoxText outputFile=".project/artifacts/functionaltests/testdox.txt"/>
+    </logging>
     <testsuites>
         <testsuite name="Functional">
             <directory>Tests/Functional/</directory>
