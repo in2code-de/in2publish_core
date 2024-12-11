@@ -17,7 +17,7 @@ use function reset;
 class JoinDemandResolverTest extends FunctionalTestCase
 {
     // Read-only tests do not require a database reset
-    protected bool $initializeDatabase = false;
+    protected bool $initializeDatabase = true;
 
     public function testJoinDemandResolverResolvesMmRelation(): void
     {
