@@ -23,11 +23,17 @@ class UidClashTest  extends AbstractBrowserTestCase
     public function testUseCase1(): void
     {
         $localDriver = WebDriverFactory::createChromeDriver();
-        $foreignDriver = WebDriverFactory::createChromeDriver();
-
         $this->publishPage76($localDriver);
+
+        $localDriver->close();
+        unset($localDriver);
+
+        $foreignDriver = WebDriverFactory::createChromeDriver();
         $this->assertPage76HasBeenPublished($foreignDriver);
         $this->assertBothCategoriesHaveBeenPublished($foreignDriver);
+
+        $foreignDriver->close();
+        unset($foreignDriver);
     }
 
     /**
@@ -39,11 +45,18 @@ class UidClashTest  extends AbstractBrowserTestCase
     public function testUseCase2(): void
     {
         $localDriver = WebDriverFactory::createChromeDriver();
-        $foreignDriver = WebDriverFactory::createChromeDriver();
-
         $this->publishNews76($localDriver);
+
+        $localDriver->close();
+        unset($localDriver);
+
+        $foreignDriver = WebDriverFactory::createChromeDriver();
         $this->assertNews76HasBeenPublished($foreignDriver);
         $this->assertOnlyCategory1HasBeenPublished($foreignDriver);
+
+        $foreignDriver->close();
+        unset($foreignDriver);
+
     }
 
     /**
@@ -55,13 +68,22 @@ class UidClashTest  extends AbstractBrowserTestCase
     public function testUseCase3(): void
     {
         $localDriver = WebDriverFactory::createChromeDriver();
-        $foreignDriver = WebDriverFactory::createChromeDriver();
 
         $this->publishPage76($localDriver);
         $this->publishNews76($localDriver);
+
+        $localDriver->close();
+        unset($localDriver);
+
+        $foreignDriver = WebDriverFactory::createChromeDriver();
+
         $this->assertPage76HasBeenPublished($foreignDriver);
         $this->assertNews76HasBeenPublished($foreignDriver);
         $this->assertBothCategoriesHaveBeenPublished($foreignDriver);
+
+
+        $foreignDriver->close();
+        unset($foreignDriver);
     }
 
 
@@ -151,7 +173,7 @@ class UidClashTest  extends AbstractBrowserTestCase
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'Category 1');
             // Fix: Category 2 should not be published
-          //  self::assertPageNotContains($driver, 'Category 2');
+            self::assertPageNotContains($driver, 'Category 2');
         });
 
     }
@@ -161,6 +183,9 @@ class UidClashTest  extends AbstractBrowserTestCase
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
         TYPO3Helper::selectInPageTree($foreignDriver, ['Home']);
+
+        // Workaround
+        sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'Category 1');
