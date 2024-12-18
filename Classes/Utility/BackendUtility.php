@@ -33,6 +33,7 @@ use Doctrine\DBAL\Exception;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Service\Routing\SiteService;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
@@ -96,106 +97,105 @@ class BackendUtility
             return (int)$identifier;
         }
 
-        // get id from ?combined_identifier=1:/xyz/abcd
-        // This works around a bug in TYPO3 Core when using Extbase Backend Modules in file context
-        // @see ExtbaseModuleSanitizeParameterMiddleware.php
-        if (null !== ($getCombinedIdentifier = GeneralUtility::_GP('combined_identifier'))) {
-            return $getCombinedIdentifier;
-        }
-
-        // get id from ?id=123
-        if (null !== ($getId = GeneralUtility::_GP('id'))) {
-            return is_numeric($getId) ? (int)$getId : $getId;
-        }
-
-        // get id from AJAX request
-        if (null !== ($pageId = GeneralUtility::_GP('pageId'))) {
-            return (int)$pageId;
-        }
-
-        // get id from ?cmd[pages][123][delete]=1
-        if (
-            null !== ($cmd = GeneralUtility::_GP('cmd'))
-            && isset($cmd['pages'])
-            && is_array($cmd['pages'])
-        ) {
-            /** @noinspection LoopWhichDoesNotLoopInspection */
-            foreach (array_keys($cmd['pages']) as $pid) {
-                return (int)$pid;
-            }
-        }
-
-        // get id from ?popViewId=123
-        if (null !== ($popViewId = GeneralUtility::_GP('popViewId'))) {
-            return (int)$popViewId;
-        }
-
-        // get id from ?redirect=script.php?param1=a&id=123&param2=2
-        if (null !== ($redirect = GeneralUtility::_GP('redirect'))) {
-            $urlParts = parse_url($redirect);
-            if (!empty($urlParts['query']) && stripos($urlParts['query'], 'id=') !== false) {
-                parse_str($urlParts['query'], $parameters);
-                if (!empty($parameters['id'])) {
-                    return (int)$parameters['id'];
-                }
-            }
-        }
-
         $localConnection = DatabaseUtility::buildLocalDatabaseConnection();
         if (null === $localConnection) {
             return 0;
         }
         $tableNames = $localConnection->createSchemaManager()->listTableNames();
 
-        // get id from record ?data[tt_content][13]=foo
-        $data = GeneralUtility::_GP('data');
-        if (
-            is_array($data)
-            && in_array(key($data), $tableNames, true)
-        ) {
-            $table = key($data);
+
+        $request = $GLOBALS['TYPO3_REQUEST'];
+        if ($request instanceof ServerRequestInterface) {
+            // get id from ?combined_identifier=1:/xyz/abcd
+            $getCombinedIdentifier = $request->getParsedBody()['combined_identifier']
+                ?? $request->getQueryParams()['combined_identifier']
+                ?? null;
+
+            if (null !== $getCombinedIdentifier) {
+                return $getCombinedIdentifier;
+            }
+
+            // get id from AJAX request
+            $pageId = $request->getParsedBody()['pageId']
+                ?? $request->getQueryParams()['pageId']
+                ?? null;
+
+            if (null !== $pageId) {
+                return (int)$pageId;
+            }
+
+            // get id from ?id=123
+            $getId = $request->getParsedBody()['id']
+                ?? $request->getQueryParams()['id']
+                ?? null;
+
+            if (null !== $getId) {
+                return is_numeric($getId) ? (int)$getId : $getId;
+            }
+
+            // get id from ?cmd[pages][123][delete]=1
+            $cmd = $request->getParsedBody()['cmd']
+                ?? $request->getQueryParams()['cmd']
+                ?? null;
+
             if (
-                is_array($data[$table])
-                && is_string(key($data[$table]))
-                && is_array(current($data[$table]))
-                && array_key_exists('pid', current($data[$table]))
-                && 0 === strpos(key($data[$table]), 'NEW_')
+                null !== $cmd
+                && isset($cmd['pages'])
+                && is_array($cmd['pages'])
             ) {
-                return (int)current($data[$table])['pid'];
-            }
-            if (is_array($data[$table]) && MathUtility::canBeInterpretedAsFloat(key($data[$table]))) {
-                $query = $localConnection->createQueryBuilder();
-                $query->getRestrictions()->removeAll();
-                $result = $query->select('pid')
-                                ->from($table)
-                                ->where($query->expr()->eq('uid', (int)key($data[$table])))
-                                ->setMaxResults(1)
-                                ->executeQuery()
-                                ->fetchAssociative();
-                if (false !== $result && isset($result['pid'])) {
-                    return (int)$result['pid'];
+                /** @noinspection LoopWhichDoesNotLoopInspection */
+                foreach (array_keys($cmd['pages']) as $pid) {
+                    return (int)$pid;
                 }
             }
-        }
 
-        // get id from rollback ?element=tt_content:42
-        if (null !== ($rollbackFields = GeneralUtility::_GP('element')) && is_string($rollbackFields)) {
-            $rollbackData = explode(':', $rollbackFields);
-            if (count($rollbackData) > 1 && in_array($rollbackData[0], $tableNames)) {
-                if ($rollbackData[0] === 'pages') {
-                    return (int)$rollbackData[1];
+            // get id from ?popViewId=123
+            $popViewId = $request->getParsedBody()['popViewId']
+                ?? $request->getQueryParams()['popViewId']
+                ?? null;
+
+            if (null !== $popViewId) {
+                return (int)$popViewId;
+            }
+
+            // get id from ?redirect=script.php?param1=a&id=123&param2=2
+            $redirect = $request->getParsedBody()['redirect']
+                ?? $request->getQueryParams()['redirect']
+                ?? null;
+
+            if (null !== $redirect) {
+                $urlParts = parse_url($redirect);
+                if (!empty($urlParts['query']) && stripos($urlParts['query'], 'id=') !== false) {
+                    parse_str($urlParts['query'], $parameters);
+                    if (!empty($parameters['id'])) {
+                        return (int)$parameters['id'];
+                    }
                 }
+            }
 
-                $query = $localConnection->createQueryBuilder();
-                $query->getRestrictions()->removeAll();
-                $result = $query->select('pid')
-                                ->from($rollbackData[0])
-                                ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
-                                ->setMaxResults(1)
-                                ->executeQuery()
-                                ->fetchAssociative();
-                if (false !== $result && isset($result['pid'])) {
-                    return (int)$result['pid'];
+            // get id from rollback ?element=tt_content:42
+            $rollbackFields = $request->getParsedBody()['element']
+                ?? $request->getQueryParams()['element']
+                ?? null;
+
+            if (null !== $rollbackFields && is_string($rollbackFields)) {
+                $rollbackData = explode(':', $rollbackFields);
+                if (count($rollbackData) > 1 && in_array($rollbackData[0], $tableNames)) {
+                    if ($rollbackData[0] === 'pages') {
+                        return (int)$rollbackData[1];
+                    }
+
+                    $query = $localConnection->createQueryBuilder();
+                    $query->getRestrictions()->removeAll();
+                    $result = $query->select('pid')
+                                    ->from($rollbackData[0])
+                                    ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
+                                    ->setMaxResults(1)
+                                    ->executeQuery()
+                                    ->fetchAssociative();
+                    if (false !== $result && isset($result['pid'])) {
+                        return (int)$result['pid'];
+                    }
                 }
             }
         }
@@ -219,6 +219,7 @@ class BackendUtility
         return 0;
     }
 
+
     /**
      * Please don't blame me for this.
      *
@@ -235,9 +236,9 @@ class BackendUtility
         }
         $excludeDokTypes = [
             PageRepository::DOKTYPE_SPACER,
-            PageRepository::DOKTYPE_RECYCLER,
-            PageRepository::DOKTYPE_SYSFOLDER,
+            PageRepository::DOKTYPE_SYSFOLDER
         ];
+
         if (
             'pages' === $table
             && array_key_exists('doktype', $row)
@@ -427,7 +428,7 @@ class BackendUtility
      */
     protected static function getPageRepositoryPageCacheIdentifier(Site $site, int $language, int $pageUid): string
     {
-        // Construct everything needed to build the cache identifier used for the PageRepository cache
+        // Construct everything needed to build the cache identifier used for the PageRepository cache_GP
         $siteLanguage = $site->getLanguageById($language);
         $context = clone GeneralUtility::makeInstance(Context::class);
         $context->setAspect('language', LanguageAspectFactory::createFromSiteLanguage($siteLanguage));
