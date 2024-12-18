@@ -92,8 +92,8 @@ class RecordController extends ActionController
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
         $this->actualInjectPageRenderer($pageRenderer);
-        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
-        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendEnhancements');
+        $this->pageRenderer->loadJavaScriptModule('TYPO3/CMS/In2publishCore/BackendModule');
+        $this->pageRenderer->loadJavaScriptModule('TYPO3/CMS/In2publishCore/BackendEnhancements');
         $this->pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
             'stylesheet',
