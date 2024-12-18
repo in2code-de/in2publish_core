@@ -122,8 +122,8 @@ services:
       - ./:/app/
       - /dev/shm:/dev/shm
     ports:
-      - ${SELENIUM_NODE_CHROME_VNC_PORT:-14320}:5900
-      - ${SELENIUM_NODE_CHROME_NOVNC_PORT:-14330}:7900
+      - ${SELENIUM_NODE_CHROME_VNC_PORT:-13320}:5900
+      - ${SELENIUM_NODE_CHROME_NOVNC_PORT:-13330}:7900
 
   selenium-node-firefox:
     image: ${SELENIUM_NODE_CHROME_IMAGE:-selenium/node-firefox}
@@ -139,8 +139,8 @@ services:
       - ./:/app/
       - /dev/shm:/dev/shm
     ports:
-      - ${SELENIUM_NODE_FIREFOX_VNC_PORT:-14321}:5900
-      - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-14331}:7900
+      - ${SELENIUM_NODE_FIREFOX_VNC_PORT:-13321}:5900
+      - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-13331}:7900
 
 volumes:
   mysql-data:
