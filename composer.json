@@ -37,12 +37,12 @@
 	"type": "typo3-cms-extension",
 	"license": "GPL-3.0-or-later",
 	"require": {
-		"php": "^7.4 || ^8.0",
+		"php": ">= 8.2.0 <= 8.4.99",
 		"ext-json": "*",
 		"ext-pdo": "*",
 		"ext-zip": "*",
-		"typo3/cms-core": "^11.5 || ^12.4",
-		"symfony/yaml": "^v5.4 || ^v6.3"
+		"typo3/cms-core": "^13.4",
+		"symfony/yaml": "^7.1"
 	},
 	"autoload": {
 		"psr-4": {
@@ -61,10 +61,6 @@
 		"sort-packages": true
 	},
 	"extra": {
-		"branch-alias": {
-			"dev-develop": "12.5.x-dev",
-			"dev-master": "12.5.x-dev"
-		},
 		"typo3/cms": {
 			"extension-key": "in2publish_core"
 		}
