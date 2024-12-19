@@ -428,7 +428,7 @@ class BackendUtility
      */
     protected static function getPageRepositoryPageCacheIdentifier(Site $site, int $language, int $pageUid): string
     {
-        // Construct everything needed to build the cache identifier used for the PageRepository cache_GP
+        // Construct everything needed to build the cache identifier used for the PageRepository cache
         $siteLanguage = $site->getLanguageById($language);
         $context = clone GeneralUtility::makeInstance(Context::class);
         $context->setAspect('language', LanguageAspectFactory::createFromSiteLanguage($siteLanguage));
