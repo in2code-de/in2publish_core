@@ -40,9 +40,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function func_get_args;
 
-use const In2code\In2publishCore\TYPO3_V11;
-use const In2code\In2publishCore\TYPO3_V12;
-
 class PublishItemProvider extends AbstractProvider
 {
     protected $itemsConfiguration = [
@@ -74,12 +71,9 @@ class PublishItemProvider extends AbstractProvider
 
     public function addItems(array $items): array
     {
-        // In TYPO3 v12 item providers are registered automatically. The explicit config check is required.
-        if (TYPO3_V12) {
-            $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-            if (!$configContainer->get('features.contextMenuPublishEntry.enable')) {
-                return $items;
-            }
+        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+        if (!$configContainer->get('features.contextMenuPublishEntry.enable')) {
+            return $items;
         }
         if (!$this->permissionService->isUserAllowedToPublish()) {
             return $items;
@@ -105,11 +99,7 @@ class PublishItemProvider extends AbstractProvider
                 ['id' => $this->identifier],
             );
             $attributes['data-publish-url'] = $publishUrl;
-            if (TYPO3_V11) {
-                $attributes['data-callback-module'] = 'TYPO3/CMS/In2publishCore/ContextMenuPublishEntry';
-            } else {
-                $attributes['data-callback-module'] = '@in2code/in2publish_core/context-menu-actions';
-            }
+            $attributes['data-callback-module'] = '@in2code/in2publish_core/context-menu-actions';
         }
         return $attributes;
     }

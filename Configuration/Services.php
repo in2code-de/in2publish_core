@@ -16,8 +16,6 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use TYPO3\CMS\Core\DependencyInjection\PublicServicePass;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use const In2code\In2publishCore\TYPO3_V11;
-
 return static function (ContainerConfigurator $configurator, ContainerBuilder $builder): void {
     $configurator->import('Component/*/Services.php');
     $configurator->import('Features/*/Services.php');
@@ -38,11 +36,8 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
     $pageTypeServiceDefinition->setShared(true);
     $pageTypeServiceDefinition->setPublic(true);
 
-    if (TYPO3_V11) {
-        $pageTypeServiceDefinition->setClass(LegacyPageTypeService::class);
-    } else {
-        $pageTypeServiceDefinition->setClass(PageTypeRegistryService::class);
-    }
+    $pageTypeServiceDefinition->setClass(PageTypeRegistryService::class);
+
     $builder->setDefinition(PageTypeService::class, $pageTypeServiceDefinition);
 
     $builder->registerForAutoconfiguration(TestCaseInterface::class)

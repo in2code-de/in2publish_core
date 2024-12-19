@@ -52,7 +52,6 @@ use function ob_get_level;
 use function strlen;
 use function time;
 
-use const In2code\In2publishCore\TYPO3_V11;
 use const JSON_THROW_ON_ERROR;
 
 class SystemInformationExportController extends AbstractAdminToolsController
@@ -132,12 +131,7 @@ class SystemInformationExportController extends AbstractAdminToolsController
     public function sysInfoUploadAction(): ResponseInterface
     {
         try {
-            if (TYPO3_V11) {
-                /** @var array $file */
-                $fileName = $this->request->getArgument('jsonFile')['tmp_name'];
-            } else {
-                $fileName = !empty($this->request->getUploadedFiles()['jsonFile']) ? $this->request->getUploadedFiles()['jsonFile']->getTemporaryFileName() : null;
-            }
+            $fileName = !empty($this->request->getUploadedFiles()['jsonFile']) ? $this->request->getUploadedFiles()['jsonFile']->getTemporaryFileName() : null;
         } catch (NoSuchArgumentException $e) {
             $this->addFlashMessage(
                 LocalizationUtility::translate(

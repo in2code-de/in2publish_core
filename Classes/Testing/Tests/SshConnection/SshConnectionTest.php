@@ -40,8 +40,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_diff;
 use function preg_match;
 
-use const In2code\In2publishCore\TYPO3_V11;
-
 class SshConnectionTest implements TestCaseInterface
 {
     use ConfigContainerInjection;
@@ -110,9 +108,6 @@ class SshConnectionTest implements TestCaseInterface
                 'typo3',
                 'index.php',
             ];
-            if (TYPO3_V11) {
-                $requiredNames[] = 'typo3conf';
-            }
 
             if (!empty(array_diff($requiredNames, $documentRootFiles))) {
                 return new TestResult('ssh_connection.foreign_document_root_wrong', TestResult::ERROR);

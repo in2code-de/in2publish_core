@@ -38,8 +38,6 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function ucfirst;
 
-use const In2code\In2publishCore\TYPO3_V11;
-
 class ModuleShortcutButton extends ShortcutButton
 {
     public function setRequest(ServerRequestInterface $request): void
@@ -48,18 +46,12 @@ class ModuleShortcutButton extends ShortcutButton
         $route = $request->getAttribute('route');
         $arguments = $request->getQueryParams();
         $pageId = $request->getParsedBody()['id'] ?? $request->getQueryParams()['id'] ?? null;
-
-        if (TYPO3_V11) {
-            $modConf = $route->getOption('moduleConfiguration');
-            $displayName = LocalizationUtility::translate($modConf['labels'] . ':mlang_tabs_tab');
-        } else {
-            /**
-             * @noinspection PhpUndefinedClassInspection
-             * @var ExtbaseModule $module
-             */
-            $module = $route->getOption('module');
-            $displayName = LocalizationUtility::translate($module->getTitle());
-        }
+        /**
+         * @noinspection PhpUndefinedClassInspection
+         * @var ExtbaseModule $module
+         */
+        $module = $route->getOption('module');
+        $displayName = LocalizationUtility::translate($module->getTitle());
 
         if (null !== $pageId) {
             if (0 === $pageId) {
