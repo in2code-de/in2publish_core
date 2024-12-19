@@ -55,7 +55,7 @@ class EnvironmentService implements SingletonInterface
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectPackageManager(PackageManager $packageManager): void
+    public function __construct(\TYPO3\CMS\Core\Package\PackageManager $packageManager)
     {
         $this->packageManager = $packageManager;
     }

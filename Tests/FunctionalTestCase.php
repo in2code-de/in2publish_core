@@ -202,7 +202,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
             $errors[] = $process->getErrorOutput();
             if (!$process->isSuccessful()) {
                 throw new Exception(
-                    'Error while setup: ' . $process->getOutput() . "\n" . $process->getErrorOutput(),
+                    'Error while setup: ' . $process->getOutput() . "\n" . $process->getErrorOutput(), 7218854885,
                 );
             }
         }

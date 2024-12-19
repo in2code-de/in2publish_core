@@ -50,14 +50,10 @@ class TaskRepository
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectTaskFactory(TaskFactory $taskFactory): void
-    {
-        $this->taskFactory = $taskFactory;
-    }
-
-    public function __construct()
+    public function __construct(\In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Factory\TaskFactory $taskFactory)
     {
         $this->creationDate = (new DateTime('now'))->format('Y-m-d H:i:s');
+        $this->taskFactory = $taskFactory;
     }
 
     public function add(AbstractTask $task): void
@@ -94,10 +90,7 @@ class TaskRepository
             $formattedExecutionBegin = $query->createNamedParameter($executionBegin->format('Y-m-d H:i:s'));
             $predicates = $query->expr()->like('execution_begin', $formattedExecutionBegin);
         } else {
-            $predicates = $query->expr()->orX(
-                $query->expr()->isNull('execution_begin'),
-                $query->expr()->like('execution_begin', $query->createNamedParameter('0000-00-00 00:00:00')),
-            );
+            $predicates = $query->expr()->or($query->expr()->isNull('execution_begin'), $query->expr()->like('execution_begin', $query->createNamedParameter('0000-00-00 00:00:00')));
         }
 
         $taskObjects = [];

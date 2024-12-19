@@ -24,7 +24,7 @@ class SimpleStopwatch implements SingletonInterface, LoggerAwareInterface
     public function start(): void
     {
         if (null !== $this->startTime) {
-            throw new StopwatchAlreadyStartedException($this->startTime);
+            throw new StopwatchAlreadyStartedException($this->startTime, 2793128360);
         }
         $this->startTime = microtime(true);
     }

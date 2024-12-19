@@ -46,7 +46,7 @@ class ForeignDatabaseTest implements TestCaseInterface
 
     protected ConnectionFactory $connectionFactory;
 
-    public function injectConnectionFactory(ConnectionFactory $connectionFactory): void
+    public function __construct(\In2code\In2publishCore\Factory\ConnectionFactory $connectionFactory)
     {
         $this->connectionFactory = $connectionFactory;
     }

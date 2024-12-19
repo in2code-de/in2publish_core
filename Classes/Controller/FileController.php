@@ -104,7 +104,7 @@ class FileController extends ActionController
             parse_str($uri->getQuery(), $queryParts);
             $queryParts['id'] = $e->getRootLevelCombinedIdentifier();
             $uri = $uri->withQuery(http_build_query($queryParts));
-            $this->redirectToUri($uri);
+            return $this->redirectToUri($uri);
         }
 
         if (null !== $recordTree) {
@@ -139,8 +139,8 @@ class FileController extends ActionController
             $this->publisherService->publish($publishingContext);
             if (!$skipNotification) {
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$combinedIdentifier]),
-                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core'),
+                    LocalizationUtility::translate('file_publishing.folder', 'In2publishCore', [$combinedIdentifier]),
+                    LocalizationUtility::translate('file_publishing.success', 'In2publishCore'),
                 );
             }
         } catch (Throwable $exception) {
@@ -148,11 +148,11 @@ class FileController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
                         'file_publishing.failure.folder',
-                        'in2publish_core',
+                        'In2publishCore',
                         [$combinedIdentifier],
                     ),
-                    LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-                    AbstractMessage::ERROR,
+                    LocalizationUtility::translate('file_publishing.failure', 'In2publishCore'),
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
                 );
             }
         }
@@ -175,10 +175,10 @@ class FileController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
                         'file_publishing.file',
-                        'in2publish_core',
+                        'In2publishCore',
                         [$combinedIdentifier],
                     ),
-                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core'),
+                    LocalizationUtility::translate('file_publishing.success', 'In2publishCore'),
                 );
             }
         } catch (Throwable $e) {
@@ -186,12 +186,12 @@ class FileController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
                         'file_publishing.failure.file',
-                        'in2publish_core',
+                        'In2publishCore',
                         [$combinedIdentifier],
                     )
                     . $e->getMessage(),
-                    LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-                    AbstractMessage::ERROR,
+                    LocalizationUtility::translate('file_publishing.failure', 'In2publishCore'),
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
                 );
             }
         }
@@ -200,7 +200,7 @@ class FileController extends ActionController
             $failures = $this->failureCollector->getFailures();
             if (!empty($failures)) {
                 $message = '"' . implode('"; "', array_keys($failures)) . '"';
-                $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core');
+                $title = LocalizationUtility::translate('record_publishing_failure', 'In2publishCore');
                 $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
                 $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
                 $this->addFlashMessage($message, $title, $severity);

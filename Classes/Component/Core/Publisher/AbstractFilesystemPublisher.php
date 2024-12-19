@@ -57,8 +57,8 @@ abstract class AbstractFilesystemPublisher implements Publisher, TransactionalPu
             $configuration = json_encode($instruction->getConfiguration(), JSON_THROW_ON_ERROR);
             $data[] = [
                 'request_token' => $requestToken,
-                'crdate' => $GLOBALS['EXEC_TIME'],
-                'tstamp' => $GLOBALS['EXEC_TIME'],
+                'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
                 'instruction' => $class,
                 'configuration' => $configuration,
             ];
@@ -72,7 +72,7 @@ abstract class AbstractFilesystemPublisher implements Publisher, TransactionalPu
         $request = new RemoteCommandRequest('in2publish_core:core:falpublisher', [], [implode(',', $requestTokens)]);
         $response = $this->remoteCommandDispatcher->dispatch($request);
         if (!$response->isSuccessful()) {
-            throw new FalPublisherExecutionFailedException($response);
+            throw new FalPublisherExecutionFailedException($response, 1818232345);
         }
     }
 }

@@ -58,7 +58,7 @@ class ExecuteCommand extends Command implements LoggerAwareInterface
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectEnvelopeDispatcher(EnvelopeDispatcher $envelopeDispatcher): void
+    public function __construct(\In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher $envelopeDispatcher)
     {
         $this->envelopeDispatcher = $envelopeDispatcher;
     }

@@ -92,7 +92,7 @@ abstract class AbstractBrowserTestCase extends TestCase
             $errors[] = $process->getErrorOutput();
             if (!$process->isSuccessful()) {
                 throw new Exception(
-                    'Error while setup: ' . $process->getOutput() . "\n" . $process->getErrorOutput(),
+                    'Error while setup: ' . $process->getOutput() . "\n" . $process->getErrorOutput(), 4061840895,
                 );
             }
         }

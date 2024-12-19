@@ -85,7 +85,7 @@ class RedirectController extends ActionController
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectSysRedirectRepo(SysRedirectRepository $sysRedirectRepo): void
+    public function __construct(\In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository $sysRedirectRepo)
     {
         $this->sysRedirectRepo = $sysRedirectRepo;
     }
@@ -180,9 +180,9 @@ class RedirectController extends ActionController
             $this->addFlashMessage(
                 'No redirect has been selected for publishing',
                 'Skipping publishing',
-                AbstractMessage::NOTICE,
+                \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::NOTICE,
             );
-            $this->redirect('list');
+            return $this->redirect('list');
         }
 
         $recordTree = new RecordTree();
@@ -215,7 +215,7 @@ class RedirectController extends ActionController
     {
         $redirectDto = $this->sysRedirectRepo->findLocalRawByUid($redirect);
         if (null === $redirectDto) {
-            $this->redirect('list');
+            return $this->redirect('list');
         }
 
         if ($this->request->getMethod() === 'POST') {

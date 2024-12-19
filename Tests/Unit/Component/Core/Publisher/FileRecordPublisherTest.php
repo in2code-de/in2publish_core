@@ -63,8 +63,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => $GLOBALS['EXEC_TIME'],
-                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => DeleteFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -96,8 +96,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => $GLOBALS['EXEC_TIME'],
-                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => AddFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -138,8 +138,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => $GLOBALS['EXEC_TIME'],
-                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => MoveFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -172,8 +172,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => $GLOBALS['EXEC_TIME'],
-                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => MoveFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -206,8 +206,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => $GLOBALS['EXEC_TIME'],
-                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => ReplaceAndRenameFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -241,8 +241,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => $GLOBALS['EXEC_TIME'],
-                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => ReplaceFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,

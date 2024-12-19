@@ -49,13 +49,13 @@ class ToolsController extends AbstractAdminToolsController
 
         $messages = [];
         foreach ($testStates as $testState) {
-            $messages[] = LocalizationUtility::translate('test_state_error.' . $testState, 'in2publish_core');
+            $messages[] = LocalizationUtility::translate('test_state_error.' . $testState, 'In2publishCore');
         }
         if (!empty($messages)) {
             $this->addFlashMessage(
                 implode(PHP_EOL, $messages),
-                LocalizationUtility::translate('test_state_error', 'in2publish_core'),
-                AbstractMessage::ERROR,
+                LocalizationUtility::translate('test_state_error', 'In2publishCore'),
+                \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
             );
         }
 

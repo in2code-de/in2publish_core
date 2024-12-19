@@ -73,7 +73,7 @@ class CompareDatabaseToolController extends ActionController
     public function compareAction(ComparisonRequest $comparisonRequest = null): ResponseInterface
     {
         if (null === $comparisonRequest) {
-            $this->redirect('index');
+            return $this->redirect('index');
         }
         $allowedTables = $this->getAllNonExcludedTables();
         $requestedTables = $comparisonRequest->getTables();
@@ -204,15 +204,15 @@ class CompareDatabaseToolController extends ActionController
             $this->addFlashMessage(
                 LocalizationUtility::translate(
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.record_missing',
-                    'in2publish_core'
+                    'In2publishCore'
                 ),
                 LocalizationUtility::translate(
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.error',
-                    'in2publish_core'
+                    'In2publishCore'
                 ),
-                AbstractMessage::ERROR,
+                \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
             );
-            $this->redirect('index');
+            return $this->redirect('index');
         }
 
         if ($expected === 'only_foreign') {
@@ -220,15 +220,15 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.exists_on_foreign',
-                        'in2publish_core'
+                        'In2publishCore'
                     ),
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.error',
-                        'in2publish_core'
+                        'In2publishCore'
                     ),
-                    AbstractMessage::ERROR,
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
                 );
-                $this->redirect('index');
+                return $this->redirect('index');
             }
             $foreignQuery = $this->foreignDatabase->createQueryBuilder();
             $foreignQuery->delete($table)
@@ -238,12 +238,12 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.deleted_from_foreign',
-                        'in2publish_core',
+                        'In2publishCore',
                         [$table, $uid],
                     ),
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.success',
-                        'in2publish_core'
+                        'In2publishCore'
                     ),
                 );
             }
@@ -254,15 +254,15 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.exists_on_local',
-                        'in2publish_core'
+                        'In2publishCore'
                     ),
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.error',
-                        'in2publish_core'
+                        'In2publishCore'
                     ),
-                    AbstractMessage::ERROR,
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
                 );
-                $this->redirect('index');
+                return $this->redirect('index');
             }
             $foreignQuery = $this->foreignDatabase->createQueryBuilder();
             $foreignQuery->insert($table)
@@ -272,12 +272,12 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.transferred_to_foreign',
-                        'in2publish_core',
+                        'In2publishCore',
                         [$table, $uid],
                     ),
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.success',
-                        'in2publish_core'
+                        'In2publishCore'
                     ),
                 );
             }
@@ -288,15 +288,15 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.does_not_exists_on_both',
-                        'in2publish_core',
+                        'In2publishCore',
                     ),
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.error',
-                        'in2publish_core'
+                        'In2publishCore'
                     ),
-                    AbstractMessage::ERROR,
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
                 );
-                $this->redirect('index');
+                return $this->redirect('index');
             }
             $foreignQuery = $this->foreignDatabase->createQueryBuilder();
             $foreignQuery->update($table);
@@ -311,12 +311,12 @@ class CompareDatabaseToolController extends ActionController
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.updated_on_foreign',
-                        'in2publish_core',
+                        'In2publishCore',
                         [$table, $uid],
                     ),
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.success',
-                        'in2publish_core'
+                        'In2publishCore'
                     ),
                 );
             }

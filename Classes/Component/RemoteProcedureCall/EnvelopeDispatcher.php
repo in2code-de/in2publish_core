@@ -82,7 +82,7 @@ class EnvelopeDispatcher
     {
         $storage = $this->resourceFactory->getStorageObject($request['storage']);
         if (!$storage->isOnline()) {
-            throw new StorageIsOfflineException((int)$request['storage']);
+            throw new StorageIsOfflineException((int)$request['storage'], 4307401617);
         }
         $driverReflection = new ReflectionProperty(get_class($storage), 'driver');
         $driverReflection->setAccessible(true);

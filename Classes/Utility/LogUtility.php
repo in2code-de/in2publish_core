@@ -36,23 +36,23 @@ class LogUtility
     {
         switch (LogLevel::getInternalName($logLevel)) {
             case LogLevel::DEBUG:
-                $severity = AbstractMessage::NOTICE;
+                $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::NOTICE;
                 break;
             case LogLevel::INFO:
-                $severity = AbstractMessage::OK;
+                $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK;
                 break;
             case LogLevel::NOTICE:
-                $severity = AbstractMessage::INFO;
+                $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO;
                 break;
             case LogLevel::WARNING:
-                $severity = AbstractMessage::WARNING;
+                $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::WARNING;
                 break;
             case LogLevel::ERROR:
             case LogLevel::CRITICAL:
             case LogLevel::ALERT:
             case LogLevel::EMERGENCY:
             default:
-                $severity = AbstractMessage::ERROR;
+                $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR;
                 break;
         }
         return $severity;

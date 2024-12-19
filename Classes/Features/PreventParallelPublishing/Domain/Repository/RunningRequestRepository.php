@@ -48,7 +48,7 @@ class RunningRequestRepository
             'record_id' => $recordId,
             'table_name' => $tableName,
             'request_token' => $token,
-            'timestamp_begin' => $GLOBALS['EXEC_TIME'],
+            'timestamp_begin' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
         ];
     }
 

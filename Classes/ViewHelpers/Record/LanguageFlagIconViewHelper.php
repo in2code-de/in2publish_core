@@ -47,18 +47,13 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
     protected TranslationConfigurationProvider $translationConfigurationProvider;
     protected BackendUserAuthentication $backendUser;
 
-    public function __construct()
+    public function __construct(\TYPO3\CMS\Backend\Configuration\TranslationConfigurationProvider $translationConfigurationProvider)
     {
         $this->backendUser = $GLOBALS['BE_USER'];
-    }
-
     /**
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectTranslationConfigurationProvider(
-        TranslationConfigurationProvider $translationConfigurationProvider
-    ): void {
         $this->translationConfigurationProvider = $translationConfigurationProvider;
     }
 

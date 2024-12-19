@@ -53,7 +53,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectConfigContainer(ConfigContainer $configContainer): void
+    public function __construct(\In2code\In2publishCore\Component\ConfigContainer\ConfigContainer $keepEnvelopes)
     {
         // Type cast this value because this class is also used on foreign and there's no such setting.
         $this->keepEnvelopes = (bool)$configContainer->get('debug.keepEnvelopes');

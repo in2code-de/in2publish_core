@@ -24,7 +24,7 @@ class FalDriverService
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectDriverRegistry(DriverRegistry $driverRegistry): void
+    public function __construct(\TYPO3\CMS\Core\Resource\Driver\DriverRegistry $driverRegistry)
     {
         $this->driverRegistry = $driverRegistry;
     }

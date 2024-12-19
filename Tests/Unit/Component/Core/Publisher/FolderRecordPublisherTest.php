@@ -59,8 +59,8 @@ class FolderRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => $GLOBALS['EXEC_TIME'],
-                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => DeleteFolderInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -92,8 +92,8 @@ class FolderRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => $GLOBALS['EXEC_TIME'],
-                    'tstamp' => $GLOBALS['EXEC_TIME'],
+                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => AddFolderInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,

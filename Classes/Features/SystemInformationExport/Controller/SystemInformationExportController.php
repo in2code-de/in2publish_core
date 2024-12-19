@@ -62,7 +62,7 @@ class SystemInformationExportController extends AbstractAdminToolsController
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectSystemInformationExportService(SystemInformationExportService $sysInfoExportService): void
+    public function __construct(\In2code\In2publishCore\Features\SystemInformationExport\Service\SystemInformationExportService $sysInfoExportService)
     {
         $this->sysInfoExportService = $sysInfoExportService;
     }
@@ -97,7 +97,7 @@ class SystemInformationExportController extends AbstractAdminToolsController
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.decode.json_error',
                     ),
-                    AbstractMessage::ERROR,
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
                 );
             }
         }
@@ -138,7 +138,7 @@ class SystemInformationExportController extends AbstractAdminToolsController
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.upload.error',
                 ),
                 '',
-                AbstractMessage::ERROR,
+                \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
             );
             return new ForwardResponse('sysInfoIndex');
         }

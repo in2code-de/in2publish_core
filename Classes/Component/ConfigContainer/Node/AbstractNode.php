@@ -125,7 +125,7 @@ abstract class AbstractNode implements Node
             } elseif (is_array($this->default) && is_array($node->default)) {
                 $this->default = $this->mergeArrays($this->default, $node->default);
             } else {
-                throw new In2publishCoreException('Can not merge properties');
+                throw new In2publishCoreException('Can not merge properties', 4831975042);
             }
         }
         foreach ($node->getNodePath('') as $key => $newNode) {

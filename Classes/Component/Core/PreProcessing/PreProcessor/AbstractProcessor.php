@@ -27,7 +27,7 @@ abstract class AbstractProcessor implements TcaPreProcessor
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectContainer(ContainerInterface $container): void
+    public function __construct(\Psr\Container\ContainerInterface $container)
     {
         $this->container = $container;
     }
@@ -63,7 +63,7 @@ abstract class AbstractProcessor implements TcaPreProcessor
     public function getType(): string
     {
         if (!isset($this->type)) {
-            throw new MissingPreProcessorTypeException($this);
+            throw new MissingPreProcessorTypeException($this, 6254937462);
         }
         return $this->type;
     }

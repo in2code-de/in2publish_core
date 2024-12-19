@@ -63,9 +63,9 @@ class FileProvider implements ProviderServiceInterface, LoggerAwareInterface
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectExtensionConfiguration(ExtensionConfiguration $extensionConfiguration): void
+    public function __construct(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration $extConf)
     {
-        $this->extConf = $extensionConfiguration->get('in2publish_core');
+        $this->extConf = $extConf->get('in2publish_core');
     }
 
     public function isAvailable(): bool

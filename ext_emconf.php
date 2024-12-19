@@ -11,7 +11,6 @@ $EM_CONF[$_EXTKEY] = [
     'category' => 'plugin',
     'version' => '12.5.7',
     'state' => 'stable',
-    'clearCacheOnLoad' => true,
     'author' => 'Alex Kellner, Oliver Eglseder, Thomas Scheibitz, Stefan Busemann',
     'author_email' => 'service@in2code.de',
     'author_company' => 'in2code.de',

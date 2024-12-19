@@ -44,7 +44,7 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
     protected SiteService $siteService;
     protected $tagName = 'a';
 
-    public function injectSiteService(SiteService $siteService): void
+    public function __construct(\In2code\In2publishCore\Service\Routing\SiteService $siteService)
     {
         $this->siteService = $siteService;
     }

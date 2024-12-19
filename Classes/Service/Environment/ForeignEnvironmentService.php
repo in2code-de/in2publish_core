@@ -71,7 +71,7 @@ class ForeignEnvironmentService implements LoggerAwareInterface
                         'output' => $response->getOutput(),
                     ],
                 );
-                throw new CacheableValueCanNotBeGeneratedException('');
+                throw new CacheableValueCanNotBeGeneratedException('', 3705038309);
             }
 
             $encodedDbInit = 'IiI=';

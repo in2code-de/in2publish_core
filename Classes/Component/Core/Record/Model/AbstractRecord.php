@@ -97,7 +97,7 @@ abstract class AbstractRecord implements Record
             case Record::FOREIGN:
                 return $this->foreignProps;
         }
-        throw new LogicException("Side $side is unknown");
+        throw new LogicException("Side $side is unknown", 7470106618);
     }
 
     public function addChild(Record $record): void
@@ -141,7 +141,7 @@ abstract class AbstractRecord implements Record
     public function setTranslationParent(Record $translationParent): void
     {
         if (null !== $this->translationParent) {
-            throw new LogicException('Can not add more than one translation parent');
+            throw new LogicException('Can not add more than one translation parent', 2232766893);
         }
         $this->translationParent = $translationParent;
     }

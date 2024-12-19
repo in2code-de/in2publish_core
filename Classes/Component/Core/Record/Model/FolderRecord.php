@@ -33,7 +33,7 @@ class FolderRecord extends AbstractRecord
 
     public function getForeignIdentificationProps(): array
     {
-        throw new LogicException('NOT IMPLEMENTED');
+        throw new LogicException('NOT IMPLEMENTED', 3424165576);
         return $this->getId();
     }
 

@@ -64,7 +64,7 @@ class SaveAndPublishButton extends AbstractControl implements ButtonInterface
     public function render(): string
     {
         $icon = $this->iconFactory->getIcon('actions-document-synchronize', Icon::SIZE_SMALL)->render();
-        $label = htmlspecialchars(LocalizationUtility::translate('save_and_publish', 'in2publish_core'));
+        $label = htmlspecialchars(LocalizationUtility::translate('save_and_publish', 'In2publishCore'));
         return <<<HTML
 <button name="_saveandpublish" class="btn btn-default btn-sm " value="1" title="Save" form="EditDocumentController">$icon $label</button>
 HTML;

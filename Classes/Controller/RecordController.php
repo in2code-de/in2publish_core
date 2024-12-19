@@ -120,14 +120,14 @@ class RecordController extends ActionController
         $menuRegistry = $this->moduleTemplate->getDocHeaderComponent()->getMenuRegistry();
         $menu = $menuRegistry->makeMenu();
         $menu->setIdentifier('depth');
-        $menu->setLabel(LocalizationUtility::translate('m1.page_recursion', 'in2publish_core'));
+        $menu->setLabel(LocalizationUtility::translate('m1.page_recursion', 'In2publishCore'));
         for ($i = 0; $i <= 10; $i++) {
             $menuItem = $menu->makeMenuItem();
             $menuItem->setActive($i === $data['pageRecursionLimit']);
             if ($i > 1) {
-                $title = LocalizationUtility::translate('m1.page_recursion.depths', 'in2publish_core', [$i]);
+                $title = LocalizationUtility::translate('m1.page_recursion.depths', 'In2publishCore', [$i]);
             } else {
-                $title = LocalizationUtility::translate('m1.page_recursion.depth', 'in2publish_core', [$i]);
+                $title = LocalizationUtility::translate('m1.page_recursion.depth', 'In2publishCore', [$i]);
             }
             $menuItem->setTitle($title);
             $menuItem->setHref($this->uriBuilder->uriFor('index', ['pageRecursionLimit' => $i]));
@@ -218,11 +218,11 @@ class RecordController extends ActionController
         }
         if (empty($failures)) {
             $message = '';
-            $title = LocalizationUtility::translate('record_published', 'in2publish_core', [$executionTime]);
-            $severity = AbstractMessage::OK;
+            $title = LocalizationUtility::translate('record_published', 'In2publishCore', [$executionTime]);
+            $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK;
         } else {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
-            $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core', [$executionTime]);
+            $title = LocalizationUtility::translate('record_publishing_failure', 'In2publishCore', [$executionTime]);
             $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
             $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
         }

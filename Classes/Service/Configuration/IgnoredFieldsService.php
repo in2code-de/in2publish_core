@@ -47,7 +47,7 @@ class IgnoredFieldsService
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectConfigContainer(ConfigContainer $configContainer): void
+    public function __construct(\In2code\In2publishCore\Component\ConfigContainer\ConfigContainer $configContainer)
     {
         $this->ignoredFields = $configContainer->get('ignoredFields');
     }

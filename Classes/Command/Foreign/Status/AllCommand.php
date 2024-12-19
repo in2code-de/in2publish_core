@@ -43,9 +43,9 @@ class AllCommand extends Command
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectCommandRegistry(CommandRegistry $commandRegistry): void
+    public function __construct(\TYPO3\CMS\Core\Console\CommandRegistry $cmdRegistry)
     {
-        $this->cmdRegistry = $commandRegistry;
+        $this->cmdRegistry = $cmdRegistry;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

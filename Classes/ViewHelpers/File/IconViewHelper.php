@@ -49,7 +49,7 @@ class IconViewHelper extends AbstractViewHelper
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectIconRegistry(IconRegistry $iconRegistry): void
+    public function __construct(\TYPO3\CMS\Core\Imaging\IconRegistry $iconRegistry)
     {
         $this->iconRegistry = $iconRegistry;
     }

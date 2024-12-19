@@ -56,7 +56,7 @@ class RecordFactory
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectDatabaseRecordFactoryFactory(DatabaseRecordFactoryFactory $databaseRecordFactoryFactory): void
+    public function __construct(\In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory $databaseRecordFactoryFactory)
     {
         $this->databaseRecordFactoryFactory = $databaseRecordFactoryFactory;
     }

@@ -65,7 +65,7 @@ class PublisherCollection implements ReversiblePublisher, TransactionalPublisher
             }
         }
 
-        throw new PublisherNotFoundException($record);
+        throw new PublisherNotFoundException($record, 4303904258);
     }
 
     public function finish(): void

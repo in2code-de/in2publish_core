@@ -48,17 +48,13 @@ class RunningRequestService implements SingletonInterface
     protected array $registeredRecords = [];
     protected bool $shutdownFunctionRegistered = false;
 
-    public function __construct()
+    public function __construct(\In2code\In2publishCore\Features\PreventParallelPublishing\Domain\Repository\RunningRequestRepository $runningRequestRepository)
     {
         $this->requestToken = bin2hex(random_bytes(16));
-    }
-
     /**
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectRunningRequestRepository(RunningRequestRepository $runningRequestRepository): void
-    {
         $this->runningRequestRepository = $runningRequestRepository;
     }
 

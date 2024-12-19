@@ -100,7 +100,7 @@ class PublishPageAjaxController
         }
 
         $lArgs = !empty($content['lArgs']) ? $content['lArgs'] : null;
-        $content['message'] = LocalizationUtility::translate($content['label'], 'in2publish_core', $lArgs);
+        $content['message'] = LocalizationUtility::translate($content['label'], 'In2publishCore', $lArgs);
         $response->getBody()->write(json_encode($content, JSON_THROW_ON_ERROR));
 
         return $response->withHeader('Content-Type', 'application/json');

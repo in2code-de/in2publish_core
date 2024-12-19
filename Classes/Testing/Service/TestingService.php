@@ -43,7 +43,7 @@ class TestingService
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function injectTestCaseService(TestCaseService $testCaseService): void
+    public function __construct(\In2code\In2publishCore\Testing\Service\TestCaseService $testCaseService)
     {
         $this->testCaseService = $testCaseService;
     }

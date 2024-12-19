@@ -38,11 +38,11 @@ class TestLabelLocalizer
     public static function translate(string $key, array $arguments = null): string
     {
         if (0 === strpos($key, 'LLL')) {
-            $label = (string)LocalizationUtility::translate($key, 'in2publish_core', $arguments);
+            $label = (string)LocalizationUtility::translate($key, 'In2publishCore', $arguments);
         } else {
             $label = (string)LocalizationUtility::translate(
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:' . $key,
-                'in2publish_core',
+                'In2publishCore',
                 $arguments,
             );
         }
