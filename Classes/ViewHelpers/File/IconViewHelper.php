@@ -67,7 +67,7 @@ class IconViewHelper extends AbstractViewHelper
 
         $iconIdentifier = $this->getIconIdentifier($record);
 
-        return $this->iconFactory->getIcon($iconIdentifier, Icon::SIZE_SMALL)->render();
+        return $this->iconFactory->getIcon($iconIdentifier, \TYPO3\CMS\Core\Imaging\IconSize::SMALL)->render();
     }
 
     protected function getIconIdentifier(Record $record): ?string

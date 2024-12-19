@@ -56,10 +56,10 @@ class FalDriverService
         $driver->setStorageUid($storage['uid']);
 
         $capabilities =
-            ($storage['is_browsable'] ?? null ? ResourceStorageInterface::CAPABILITY_BROWSABLE : 0)
-            | ($storage['is_public'] ?? null ? ResourceStorageInterface::CAPABILITY_PUBLIC : 0)
-            | ($storage['is_writable'] ?? null ? ResourceStorageInterface::CAPABILITY_WRITABLE : 0)
-            | ResourceStorageInterface::CAPABILITY_HIERARCHICAL_IDENTIFIERS;
+            ($storage['is_browsable'] ?? null ? \TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_BROWSABLE : 0)
+            | ($storage['is_public'] ?? null ? \TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_PUBLIC : 0)
+            | ($storage['is_writable'] ?? null ? \TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_WRITABLE : 0)
+            | \TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_HIERARCHICAL_IDENTIFIERS;
         $driver->mergeConfigurationCapabilities($capabilities);
         $driver->processConfiguration();
         $driver->initialize();

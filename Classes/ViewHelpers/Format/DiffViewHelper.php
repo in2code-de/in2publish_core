@@ -13,8 +13,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 class DiffViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
-
     protected $escapeOutput = false;
     private const ARG_OLD = 'old';
     private const ARG_NEW = 'new';
@@ -28,16 +26,13 @@ class DiffViewHelper extends AbstractViewHelper
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public static function renderStatic(
-        array $arguments,
-        Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ): string {
+    public function render(): string
+    {
         $diffUtility = GeneralUtility::makeInstance(DiffUtility::class);
         $diffUtility->stripTags = false;
         return $diffUtility->makeDiffDisplay(
-            (string)$arguments[self::ARG_OLD],
-            (string)$arguments[self::ARG_NEW],
+            (string)$this->arguments[self::ARG_OLD],
+            (string)$this->arguments[self::ARG_NEW],
         );
     }
 }

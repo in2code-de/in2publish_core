@@ -75,7 +75,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
 
         $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
         if (null === $languageField) {
-            return $this->iconFactory->getIcon('actions-pencil', Icon::SIZE_SMALL)->render();
+            return $this->iconFactory->getIcon('actions-pencil', \TYPO3\CMS\Core\Imaging\IconSize::SMALL)->render();
         }
 
         $systemLanguages = array_filter(
@@ -88,12 +88,12 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
 
         $systemLanguage = $systemLanguages[$language] ?? null;
         if (null === $systemLanguage) {
-            return $this->iconFactory->getIcon('flags-multiple', Icon::SIZE_SMALL, 'overlay-edit')->render();
+            return $this->iconFactory->getIcon('flags-multiple', \TYPO3\CMS\Core\Imaging\IconSize::SMALL, 'overlay-edit')->render();
         }
 
         return $this->iconFactory->getIcon(
             $systemLanguage['flagIcon'],
-            Icon::SIZE_SMALL,
+            \TYPO3\CMS\Core\Imaging\IconSize::SMALL,
             $overlay,
         )->render();
     }

@@ -13,8 +13,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 class TableRowLabelViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
-
     public function initializeArguments(): void
     {
         $this->registerArgument('table', 'string', 'The row\'s table', true);
@@ -24,16 +22,11 @@ class TableRowLabelViewHelper extends AbstractViewHelper
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public static function renderStatic(
-        array $arguments,
-        Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
+    public function render()
+    {
         $tcaService = GeneralUtility::makeInstance(TcaService::class);
-
-        $table = (string)$arguments['table'];
-        $row = (array)$arguments['row'];
-
+        $table = (string)$this->arguments['table'];
+        $row = (array)$this->arguments['row'];
         return $tcaService->getRecordLabel($row, $table);
     }
 }
