@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core;
 
+use In2code\In2publish\Features\Workflow\AutoState\DatamapProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 use function array_keys;
@@ -28,6 +29,11 @@ class RecordIndex
             $this->recordings[$recordingName]->addRecord($record);
         }
         $this->records->addRecord($record);
+    }
+
+    public function removeRecordByTableAndIdentifier(string $table, int $identifier): void
+    {
+        $this->records->removeRecordByTableAndIdentifier($table, $identifier);
     }
 
     /**
