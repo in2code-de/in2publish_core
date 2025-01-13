@@ -63,7 +63,7 @@ trait ControllerModuleTemplate
         return parent::processRequest($request);
     }
 
-    protected function render(): ResponseInterface
+    protected function render(): string
     {
         $docHeader = $this->moduleTemplate->getDocHeaderComponent();
         $buttonBar = $docHeader->getButtonBar();
@@ -79,6 +79,6 @@ trait ControllerModuleTemplate
         );
         $this->eventDispatcher->dispatch($event);
 
-        return $this->moduleTemplate->renderResponse();
+        return $this->moduleTemplate->render();
     }
 }
