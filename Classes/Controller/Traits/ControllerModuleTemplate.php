@@ -63,22 +63,7 @@ trait ControllerModuleTemplate
         return parent::processRequest($request);
     }
 
-    protected function htmlResponse(string $html = null): ResponseInterface
-    {
-        return $this->responseFactory->createResponse()
-                                     ->withHeader('Content-Type', 'text/html; charset=utf-8')
-                                     ->withBody($this->streamFactory->createStream($html ?? $this->render()));
-    }
-
-    protected function jsonResponse(string $json = null): ResponseInterface
-    {
-        return $this->responseFactory
-            ->createResponse()
-            ->withHeader('Content-Type', 'application/json; charset=utf-8')
-            ->withBody($this->streamFactory->createStream($json ?? $this->render()));
-    }
-
-    protected function render(): string
+    protected function render(): ResponseInterface
     {
         $docHeader = $this->moduleTemplate->getDocHeaderComponent();
         $buttonBar = $docHeader->getButtonBar();
@@ -87,8 +72,6 @@ trait ControllerModuleTemplate
         $moduleShortcutButton->setRequest($this->request);
         $buttonBar->addButton($moduleShortcutButton);
 
-        $this->moduleTemplate->setContent($this->view->render());
-
         $event = new ModuleTemplateWasPreparedForRendering(
             $this->moduleTemplate,
             static::class,
@@ -96,6 +79,6 @@ trait ControllerModuleTemplate
         );
         $this->eventDispatcher->dispatch($event);
 
-        return $this->moduleTemplate->renderContent();
+        return $this->moduleTemplate->renderResponse();
     }
 }
