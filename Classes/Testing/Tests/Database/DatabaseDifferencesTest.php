@@ -99,9 +99,25 @@ class DatabaseDifferencesTest implements TestCaseInterface
 
                         if ($fieldExistsOnForeign && $fieldExistsOnLocal) {
                             foreach ($fieldProperties as $propertyType => $propertyValue) {
+                                if (is_scalar($propertyValue)) {
+                                    $localValue = (string)$propertyValue;
+                                } else {
+                                    $localValue = json_encode($propertyValue);
+                                }
+
+                                if (isset($diffOnForeign[$tableName]['fields'][$fieldName][$propertyType])) {
+                                    $foreignPropertyValue = $diffOnForeign[$tableName]['fields'][$fieldName][$propertyType];
+                                    if (is_scalar($foreignPropertyValue)) {
+                                        $foreignValue = (string)$foreignPropertyValue;
+                                    } else {
+                                        $foreignValue = json_encode($foreignPropertyValue);
+                                    }
+                                } else {
+                                    $foreignValue = 'null';
+                                }
+
                                 $fieldDifferences[] = $tableName . '.' . $fieldName . '.' . $propertyType . ': Local: '
-                                    . $propertyValue . ' Foreign: '
-                                    . $diffOnForeign[$tableName]['fields'][$fieldName][$propertyType];
+                                    . $localValue . ' Foreign: ' . $foreignValue;
                             }
                         } elseif ($fieldExistsOnForeign && !$fieldExistsOnLocal) {
                             $fieldDifferences[] = $tableName . '.' . $fieldName . ': Only exists on foreign';
