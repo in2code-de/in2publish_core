@@ -39,7 +39,7 @@ class DatabaseSchemaService implements SingletonInterface
     public function getColumnNames(string $table): array
     {
         if (!isset($this->columns[$table])) {
-            $columns = $this->localDatabase->getSchemaManager()->listTableColumns($table);
+            $columns = $this->localDatabase->getSchemaInformation()->introspectTable($table)->getColumns();
             foreach ($columns as $column) {
                 $this->columns[$table][] = $column->getName();
             }
@@ -51,7 +51,7 @@ class DatabaseSchemaService implements SingletonInterface
     public function getTableNames(): array
     {
         if (!isset($this->tables)) {
-            $this->tables = $this->localDatabase->getSchemaManager()->listTableNames();
+            $this->tables = $this->localDatabase->getSchemaInformation()->listTableNames();
             $this->infoChanged = true;
         }
         return $this->tables;

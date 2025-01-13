@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use TYPO3\CMS\Core\Database\Schema\SchemaInformation;
 
 class DatabaseSchemaExporter implements SystemInformationExporter
 {
@@ -46,8 +47,9 @@ class DatabaseSchemaExporter implements SystemInformationExporter
     {
         $schema = [];
         foreach (['local' => $this->localDatabase, 'foreign' => $this->foreignDatabase] as $side => $database) {
-            $schemaManager = $database->getSchemaManager();
-            foreach ($schemaManager->listTables() as $table) {
+            /* @var SchemaInformation */
+            $schemaInformation = $database->getSchemaInformation();
+            foreach ($schemaInformation->listTables() as $table) {
                 $schema[$side][$table->getName()]['options'] = $table->getOptions();
                 foreach ($table->getColumns() as $column) {
                     $schema[$side][$table->getName()]['columns'][$column->getName()] = $column->toArray();

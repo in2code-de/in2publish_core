@@ -56,7 +56,7 @@ class LocalDatabaseTest implements TestCaseInterface
         }
 
         $expectedTables = $this->requiredTablesDataProvider->getRequiredTables();
-        $actualTables = $localDatabase->getSchemaManager()->listTableNames();
+        $actualTables = $localDatabase->getSchemaInformation()->listTableNames();
 
         $missingTables = [];
         foreach ($expectedTables as $expectedTable) {

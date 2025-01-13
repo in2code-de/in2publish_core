@@ -64,7 +64,7 @@ class ForeignDatabaseTest implements TestCaseInterface
         }
 
         $expectedTables = $this->requiredTablesDataProvider->getRequiredTables();
-        $actualTables = $foreignDatabase->getSchemaManager()->listTableNames();
+        $actualTables = $foreignDatabase->getSchemaInformation()->listTableNames();
 
         $missingTables = [];
         foreach ($expectedTables as $expectedTable) {
