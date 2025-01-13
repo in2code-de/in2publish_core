@@ -1,11 +1,10 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-	<f:layout name="Submodule" />
+	<f:layout name="Module" />
 
-	<f:section name="Header">
+	<f:section name="Content">
+
 		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.test\')}'}" />
-	</f:section>
 
-	<f:section name="Main">
 		<div class="card">
 			<div class="card-body">
 				<div class="in2publish-messages">

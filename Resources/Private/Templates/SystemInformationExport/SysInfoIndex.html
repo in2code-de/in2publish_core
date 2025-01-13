@@ -2,13 +2,12 @@
 	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<f:layout name="Submodule" />
+	<f:layout name="Module" />
 
-	<f:section name="Header">
+	<f:section name="Content">
+
 		<f:render partial="Header" arguments="{moduleName: '{f:translate(key:\'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:moduleselector.system_info\')}'}" />
-	</f:section>
 
-	<f:section name="Main">
 		<div class="card-container">
 			<div class="card card-default card-size-medium">
 				<div class="card-body">
