@@ -52,9 +52,10 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\In2code\In2publishCore\Component\ConfigContainer\ConfigContainer $foreignVarPath)
+    public function injectConfigContainer(ConfigContainer $configContainer): void
     {
-        $this->foreignVarPath = $foreignVarPath;
+        $this->foreignVarPath = rtrim($configContainer->get('foreign.varPath'), '/');
+        $this->fileTransmissionTimeout = (int)$configContainer->get('adapter.local.fileTransmissionTimeout');
     }
 
     /**
