@@ -37,6 +37,9 @@ use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_diff;
 use function array_key_exists;
 use function array_keys;
@@ -96,9 +99,7 @@ class SiteConfigurationTest implements TestCaseInterface
                             'languageId' => $localLanguage->getLanguageId(),
                             'locale' => $localLanguage->getLocale(),
                             'flagIdentifier' => $localLanguage->getFlagIdentifier(),
-                            'twoLetterIsoCode' => $localLanguage->getTwoLetterIsoCode(),
                             'hreflang' => $localLanguage->getHreflang(),
-                            'direction' => $localLanguage->getDirection(),
                             'typo3Language' => $localLanguage->getTypo3Language(),
                             'fallbackType' => $localLanguage->getFallbackType(),
                             'fallbackLanguageIds' => json_encode(
@@ -112,9 +113,7 @@ class SiteConfigurationTest implements TestCaseInterface
                             'languageId' => $foreignLanguage->getLanguageId(),
                             'locale' => $foreignLanguage->getLocale(),
                             'flagIdentifier' => $foreignLanguage->getFlagIdentifier(),
-                            'twoLetterIsoCode' => $foreignLanguage->getTwoLetterIsoCode(),
                             'hreflang' => $foreignLanguage->getHreflang(),
-                            'direction' => $foreignLanguage->getDirection(),
                             'typo3Language' => $foreignLanguage->getTypo3Language(),
                             'fallbackType' => $foreignLanguage->getFallbackType(),
                             'fallbackLanguageIds' => json_encode(
