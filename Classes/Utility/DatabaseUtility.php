@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Utility;
  */
 
 use Doctrine\DBAL\Driver\Exception;
+use Doctrine\DBAL\ParameterType;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Features\MetricsAndDebug\Database\Logging\ContentPublisherSqlLogger;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
@@ -52,6 +53,8 @@ class DatabaseUtility
 {
     protected static ?Logger $logger = null;
     protected static ?Connection $foreignConnection = null;
+
+    protected static $FOREIGN_CONNECTION_NAME = 'in2publish_foreign';
 
     /**
      * @throws Throwable
@@ -78,9 +81,9 @@ class DatabaseUtility
                 }
 
                 /** @noinspection PhpInternalEntityUsedInspection */
-                if (!in_array('in2publish_foreign', $connectionPool->getConnectionNames(), true)) {
+                if (!in_array(self::$FOREIGN_CONNECTION_NAME, $connectionPool->getConnectionNames(), true)) {
                     $default = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'];
-                    $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign'] = [
+                    $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections'][self::$FOREIGN_CONNECTION_NAME] = [
                         'dbname' => $configuration['name'],
                         'driver' => 'mysqli',
                         'host' => $configuration['hostname'],
@@ -91,17 +94,12 @@ class DatabaseUtility
                         'tableoptions' => $default['tableoptions'] ?? [],
                     ];
                 }
-                $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign']['initCommands'] = $initCommands;
+                $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections'][self::$FOREIGN_CONNECTION_NAME]['initCommands'] = $initCommands;
 
                 try {
-                    $foreignConnection = $connectionPool->getConnectionByName('in2publish_foreign');
-                    foreach ($foreignConnection->getEventManager()->getAllListeners() as $event => $listeners) {
-                        foreach ($listeners as $listener) {
-                            $foreignConnection->getEventManager()->removeEventListener($event, $listener);
-                        }
-                    }
+                    $foreignConnection = $connectionPool->getConnectionByName(self::$FOREIGN_CONNECTION_NAME);
                     static::$foreignConnection = $foreignConnection;
-                    $foreignConnection->connect();
+                    // TODO: restore removal of event listeners in v13
                 } catch (Throwable $e) {
                     static::$logger->critical('Can not connect to foreign database', ['exception' => $e]);
                     static::$foreignConnection = null;
@@ -194,7 +192,7 @@ class DatabaseUtility
                 ->select('uid')
                 ->from('pages')
                 ->where(
-                    $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($id, PDO::PARAM_INT)),
+                    $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($id, ParameterType::INTEGER)),
                     $queryBuilder->expr()->eq('sys_language_uid', 0),
                 )
                 ->orderBy('uid');
