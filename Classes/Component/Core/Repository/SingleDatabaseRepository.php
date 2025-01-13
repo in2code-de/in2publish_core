@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Repository;
 
-use Doctrine\DBAL\Connection as DbalConnection;
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Driver\Exception;
+use Doctrine\DBAL\Exception;
 use In2code\In2publishCore\Component\Core\Service\Database\DatabaseSchemaServiceInjection;
+use JsonException;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
 
@@ -38,7 +37,6 @@ class SingleDatabaseRepository
     }
 
     /**
-     * @throws DBALException
      * @throws Exception
      */
     public function findByProperty(
@@ -54,7 +52,7 @@ class SingleDatabaseRepository
               ->where(
                   $query->expr()->in(
                       $property,
-                      $query->createNamedParameter($values, DbalConnection::PARAM_STR_ARRAY),
+                      $query->createNamedParameter($values, Connection::PARAM_STR_ARRAY),
                   ),
               );
         if (!empty($andWhere)) {
@@ -79,9 +77,9 @@ class SingleDatabaseRepository
     }
 
     /**
-     * @throws DBALException
-     * @throws Exception
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @throws Exception
+     * @throws JsonException
      */
     public function findByPropertyWithJoin(
         string $mmTable,
@@ -226,7 +224,7 @@ class SingleDatabaseRepository
               ->where(
                   $query->expr()->in(
                       $property,
-                      $query->createNamedParameter($values, DbalConnection::PARAM_STR_ARRAY),
+                      $query->createNamedParameter($values, Connection::PARAM_STR_ARRAY),
                   ),
               );
 
