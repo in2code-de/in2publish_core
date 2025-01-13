@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\CommonInjection;
 
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 
 /**
@@ -20,6 +21,6 @@ trait ForeignDatabaseReconnectedInjection
     {
         $this->foreignDatabase = clone $foreignDatabase;
         $this->foreignDatabase->close();
-        $this->foreignDatabase->connect();
+        DatabaseUtility::buildForeignDatabaseConnection();
     }
 }
