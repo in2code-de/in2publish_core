@@ -156,11 +156,13 @@ class RecordController extends ActionController
         } catch (Throwable $exception) {
             $foreignDbAvailable = false;
         }
-        $this->view->assign('localDatabaseConnectionAvailable', $localDbAvailable);
-        $this->view->assign('foreignDatabaseConnectionAvailable', $foreignDbAvailable);
-        $this->view->assign('publishingAvailable', $localDbAvailable && $foreignDbAvailable);
 
-        $this->view->assign('recordTree', $recordTree);
+        $this->moduleTemplate->assignMultiple([
+            'recordTree' => $recordTree,
+            'localDatabaseConnectionAvailable' => $localDbAvailable,
+            'foreignDatabaseConnectionAvailable' => $foreignDbAvailable,
+            'publishingAvailable' => $localDbAvailable && $foreignDbAvailable,
+        ]);
         return $this->htmlResponse();
     }
 

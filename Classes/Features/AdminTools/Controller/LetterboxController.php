@@ -39,7 +39,9 @@ class LetterboxController extends AbstractAdminToolsController
 
     public function indexAction(): ResponseInterface
     {
-        $this->view->assign('canFlush', $this->letterbox->hasUnAnsweredEnvelopes());
+        $this->moduleTemplate->assignMultiple([
+            'canFlush' => $this->letterbox->hasUnAnsweredEnvelopes(),
+        ]);
         return $this->htmlResponse();
     }
 

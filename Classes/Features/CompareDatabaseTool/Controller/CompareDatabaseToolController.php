@@ -61,7 +61,9 @@ class CompareDatabaseToolController extends ActionController
     {
         $tables = $this->getAllNonExcludedTables();
         $tables = array_intersect($tables, array_keys($GLOBALS['TCA']));
-        $this->view->assign('tables', array_combine($tables, $tables));
+        $this->moduleTemplate->assignMultiple([
+            'tables' => array_combine($tables, $tables)
+        ]);
         return $this->htmlResponse();
     }
 
@@ -171,7 +173,10 @@ class CompareDatabaseToolController extends ActionController
                 $differences[$table][$place] = $values;
             }
         }
-        $this->view->assign('differences', $differences);
+
+        $this->moduleTemplate->assignMultiple([
+            'differences' => $differences,
+        ]);
         return $this->htmlResponse();
     }
 

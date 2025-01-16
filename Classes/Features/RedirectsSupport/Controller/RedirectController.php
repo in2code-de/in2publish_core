@@ -161,7 +161,7 @@ class RedirectController extends ActionController
 
         $paginator = new ArrayPaginator($event->getRedirects(), $page, 15);
         $pagination = new SimplePagination($paginator);
-        $this->view->assignMultiple(
+        $this->moduleTemplate->assignMultiple(
             [
                 'paginator' => $paginator,
                 'pagination' => $pagination,
@@ -243,8 +243,10 @@ class RedirectController extends ActionController
             $identifier = $site->getIdentifier();
             $siteOptions[$identifier] = $identifier . ' (' . $site->getBase() . ')';
         }
-        $this->view->assign('redirect', $redirectDto);
-        $this->view->assign('siteOptions', $siteOptions);
+        $this->moduleTemplate->assignMultiple([
+            'redirect' => $redirectDto,
+            'siteOptions' => $siteOptions
+        ]);
 
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
         $buttonBar->addButton(new BackButton($this->iconFactory, $this->uriBuilder));

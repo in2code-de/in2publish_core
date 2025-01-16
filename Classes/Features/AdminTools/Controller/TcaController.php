@@ -38,8 +38,10 @@ class TcaController extends AbstractAdminToolsController
 
     public function indexAction(): ResponseInterface
     {
-        $this->view->assign('incompatibleTca', $this->cachedTcaPreProcessingService->getIncompatibleTcaParts());
-        $this->view->assign('compatibleTca', $this->cachedTcaPreProcessingService->getCompatibleTcaParts());
+        $this->moduleTemplate->assignMultiple([
+            'incompatibleTca' => $this->cachedTcaPreProcessingService->getIncompatibleTcaParts(),
+            'compatibleTca' => $this->cachedTcaPreProcessingService->getCompatibleTcaParts()
+        ]);
 
         return $this->htmlResponse();
     }

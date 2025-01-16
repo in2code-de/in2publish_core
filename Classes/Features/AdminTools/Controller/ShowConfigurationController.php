@@ -49,10 +49,13 @@ class ShowConfigurationController extends AbstractAdminToolsController
         if (null !== $emulatePage) {
             $_POST['id'] = $emulatePage;
         }
-        $this->view->assign('containerDump', $this->configContainerDumper->dump($this->configContainer));
-        $this->view->assign('fullConfig', $this->configContainer->get());
-        $this->view->assign('globalConfig', $this->configContainer->getContextFreeConfig());
-        $this->view->assign('emulatePage', $emulatePage);
+
+        $this->moduleTemplate->assignMultiple([
+            'containerDump' => $this->configContainerDumper->dump($this->configContainer),
+            'fullConfig' => $this->configContainer->get(),
+            'globalConfig' => $this->configContainer->getContextFreeConfig(),
+            'emulatePage' => $emulatePage
+        ]);
         return $this->htmlResponse();
     }
 }

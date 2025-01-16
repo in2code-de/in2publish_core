@@ -18,9 +18,12 @@ trait CommonViewVariables
 
     protected function callActionMethod(RequestInterface $request): ResponseInterface
     {
-        $this->view->assign('extensionVersion', $this->extensionService->getExtensionVersion('in2publish_core'));
-        $this->view->assign('config', $this->configContainer->get());
-        $this->view->assign('testStatus', $this->environmentService->getTestStatus());
+        $this->moduleTemplate->assignMultiple([
+            'extensionVersion' => $this->extensionService->getExtensionVersion('in2publish_core'),
+            'config' => $this->configContainer->get(),
+            'testStatus' => $this->environmentService->getTestStatus(),
+        ]);
+
         return parent::callActionMethod($request);
     }
 }

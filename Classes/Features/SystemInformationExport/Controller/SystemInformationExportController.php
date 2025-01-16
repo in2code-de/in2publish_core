@@ -75,8 +75,11 @@ class SystemInformationExportController extends AbstractAdminToolsController
     public function sysInfoShowAction(): ResponseInterface
     {
         $info = $this->sysInfoExportService->getSystemInformation();
-        $this->view->assign('info', $info);
-        $this->view->assign('infoJson', json_encode($info, JSON_THROW_ON_ERROR));
+
+        $this->moduleTemplate->assignMultiple([
+            'info' => $info,
+            'infoJson' => json_encode($info, JSON_THROW_ON_ERROR)
+        ]);
         return $this->htmlResponse();
     }
 
@@ -85,7 +88,9 @@ class SystemInformationExportController extends AbstractAdminToolsController
         if (!empty($json)) {
             $info = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
             if (is_array($info)) {
-                $this->view->assign('info', $info);
+                $this->moduleTemplate->assignMultiple([
+                    'info' => $info
+                ]);
             } else {
                 $args = [json_last_error(), json_last_error_msg()];
                 $this->addFlashMessage(
@@ -101,7 +106,9 @@ class SystemInformationExportController extends AbstractAdminToolsController
                 );
             }
         }
-        $this->view->assign('infoJson', $json);
+        $this->moduleTemplate->assignMultiple([
+            'infoJson' => json_encode($info, JSON_THROW_ON_ERROR)
+        ]);
         return $this->htmlResponse();
     }
 

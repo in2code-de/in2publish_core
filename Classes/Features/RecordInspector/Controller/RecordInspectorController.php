@@ -24,16 +24,18 @@ class RecordInspectorController extends AbstractAdminToolsController
     public function indexAction(): ResponseInterface
     {
         $tables = array_keys($GLOBALS['TCA'] ?? []);
-        $this->view->assign(
-            'classifications',
-            array_merge(
-                [
-                    FileRecord::CLASSIFICATION => FileRecord::CLASSIFICATION,
-                    FolderRecord::CLASSIFICATION => FolderRecord::CLASSIFICATION,
-                ],
-                array_combine($tables, $tables),
-            ),
+        $classifications = array_merge(
+            [
+                FileRecord::CLASSIFICATION => FileRecord::CLASSIFICATION,
+                FolderRecord::CLASSIFICATION => FolderRecord::CLASSIFICATION,
+            ],
+            array_combine($tables, $tables),
         );
+
+        $this->moduleTemplate->assignMultiple([
+            'classifications' => $classifications,
+        ]);
+
         return $this->htmlResponse();
     }
 
@@ -47,7 +49,9 @@ class RecordInspectorController extends AbstractAdminToolsController
             $request = new RecordTreeBuildRequest($classification, (int)$identifier, 1);
             $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
         }
-        $this->view->assign('recordTree', $recordTree);
+        $this->moduleTemplate->assignMultiple([
+            'recordTree' => $recordTree
+        ]);
         return $this->htmlResponse();
     }
 }
