@@ -55,12 +55,21 @@ class FalDriverService
         $driver = $this->getDriverObject($storage['driver'], $storageConfiguration);
         $driver->setStorageUid($storage['uid']);
 
-        $capabilities =
-            ($storage['is_browsable'] ?? null ? \TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_BROWSABLE : 0)
-            | ($storage['is_public'] ?? null ? \TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_PUBLIC : 0)
-            | ($storage['is_writable'] ?? null ? \TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_WRITABLE : 0)
-            | \TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_HIERARCHICAL_IDENTIFIERS;
+        $capabilities = new \TYPO3\CMS\Core\Resource\Capabilities();
+
+        if ($storage['is_browsable'] ?? null) {
+            $capabilities->addCapabilities(\TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_BROWSABLE);
+        }
+        if ($storage['is_public'] ?? null) {
+            $capabilities->addCapabilities(\TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_PUBLIC);
+        }
+        if ($storage['is_writable'] ?? null) {
+            $capabilities->addCapabilities(\TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_WRITABLE);
+        }
+        $capabilities->addCapabilities(\TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_HIERARCHICAL_IDENTIFIERS);
+
         $driver->mergeConfigurationCapabilities($capabilities);
+
         $driver->processConfiguration();
         $driver->initialize();
         return $driver;
