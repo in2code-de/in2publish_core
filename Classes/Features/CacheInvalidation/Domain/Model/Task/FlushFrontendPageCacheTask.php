@@ -55,6 +55,8 @@ class FlushFrontendPageCacheTask extends AbstractTask
     {
         $dataHandler = $this->getDataHandler();
         $commands = GeneralUtility::trimExplode(',', $this->configuration['pid'], true);
+        // TODO: find an alternative solution to reverted commit  tf7bed554f1896dfc8e4921e07e6557247e832fd8o
+        // https://github.com/in2code-de/in2publish_core/pull/122
         foreach ($commands as $command) {
             $dataHandler->clear_cacheCmd($command);
             $this->addMessage('Cleared frontend cache with configuration clearCacheCmd=' . $command);
