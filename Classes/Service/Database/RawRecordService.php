@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Service\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\ParameterType;
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
@@ -87,7 +88,7 @@ class RawRecordService implements SingletonInterface
         $query->getRestrictions()->removeAll();
         $query->select('*')
               ->from($table)
-              ->where($query->expr()->eq('uid', $query->createNamedParameter($uid, PDO::PARAM_INT)))
+              ->where($query->expr()->eq('uid', $query->createNamedParameter($uid, ParameterType::INTEGER)))
               ->setMaxResults(1);
         $statement = $query->executeQuery();
         $result = $statement->fetchAssociative();
