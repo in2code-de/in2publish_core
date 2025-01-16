@@ -60,6 +60,7 @@ class ExecuteCommand extends Command implements LoggerAwareInterface
      */
     public function __construct(\In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher $envelopeDispatcher)
     {
+        parent::__construct();
         $this->envelopeDispatcher = $envelopeDispatcher;
     }
 
