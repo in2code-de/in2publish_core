@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
 use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
 use In2code\In2publishCore\Service\Environment\EnvironmentServiceInjection;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function implode;
@@ -70,10 +69,11 @@ class ToolsController extends AbstractAdminToolsController
 
         $event = new CreatedDefaultHelpLabels($supports);
         $this->eventDispatcher->dispatch($event);
-        $supports = $event->getSupports();
 
-        $this->view->assign('supports', $supports);
-        $this->view->assign('tools', $this->toolsRegistry->getEntries());
+        $this->moduleTemplate->assignMultiple([
+            'supports' =>  $event->getSupports(),
+            'tools' => $this->toolsRegistry->getEntries()
+        ]);
         return $this->htmlResponse();
     }
 }
