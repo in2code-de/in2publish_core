@@ -52,9 +52,11 @@ class SelectResolver extends AbstractResolver
             $additionalWhere = $matches['where'];
         }
 
-        $splitValues = GeneralUtility::trimExplode(',', $value);
-        foreach ($splitValues as $splitValue) {
-            $demands->addDemand(new SelectDemand($this->foreignTable, $additionalWhere, 'uid', $splitValue, $record));
+        if (is_string($value)) {
+            $splitValues = GeneralUtility::trimExplode(',', $value);
+            foreach ($splitValues as $splitValue) {
+                $demands->addDemand(new SelectDemand($this->foreignTable, $additionalWhere, 'uid', $splitValue, $record));
+            }
         }
     }
 

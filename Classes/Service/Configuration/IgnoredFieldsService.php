@@ -73,10 +73,12 @@ class IgnoredFieldsService
                         if ($ignoredCtrl === 'versioningWS' && $ignoredCtrlFieldNames) {
                             $ignoredCtrlFieldNames = 't3ver_oid,t3ver_wsid,t3ver_state,t3ver_stage';
                         }
-                        $ignoredCtrlFields = GeneralUtility::trimExplode(',', $ignoredCtrlFieldNames);
 
-                        foreach ($ignoredCtrlFields as $ignoredCtrlField) {
-                            $tableIgnoredFields[] = $ignoredCtrlField;
+                        if (is_string($ignoredCtrlFieldNames)) {
+                            $ignoredCtrlFields = GeneralUtility::trimExplode(',', $ignoredCtrlFieldNames);
+                            foreach ($ignoredCtrlFields as $ignoredCtrlField) {
+                                $tableIgnoredFields[] = $ignoredCtrlField;
+                            }
                         }
                     }
                 }
