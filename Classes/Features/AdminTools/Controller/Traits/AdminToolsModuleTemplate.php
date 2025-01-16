@@ -33,6 +33,7 @@ use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Features\AdminTools\Backend\Button\AdminToolButton;
 use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
@@ -60,7 +61,7 @@ trait AdminToolsModuleTemplate
         $this->toolsRegistry = $toolsRegistry;
     }
 
-    protected function render(): string
+    protected function render(): ResponseInterface
     {
         $this->moduleTemplate->setModuleClass('tx_in2publishcore_admintools');
         $docHeader = $this->moduleTemplate->getDocHeaderComponent();

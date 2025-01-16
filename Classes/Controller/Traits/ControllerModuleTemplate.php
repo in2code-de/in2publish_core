@@ -36,6 +36,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
+use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
@@ -63,7 +64,13 @@ trait ControllerModuleTemplate
         return parent::processRequest($request);
     }
 
-    protected function render(): string
+    protected function htmlResponse(string $html = null): ResponseInterface
+    {
+        return $this->render();
+    }
+
+
+    protected function render(): ResponseInterface
     {
         $docHeader = $this->moduleTemplate->getDocHeaderComponent();
         $buttonBar = $docHeader->getButtonBar();
@@ -79,6 +86,6 @@ trait ControllerModuleTemplate
         );
         $this->eventDispatcher->dispatch($event);
 
-        return $this->moduleTemplate->render();
+        return $this->moduleTemplate->renderResponse($this->request->getControllerName() . '/' . ucfirst($this->request->getControllerActionName()));
     }
 }
