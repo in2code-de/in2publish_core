@@ -56,22 +56,7 @@ class FlushFrontendPageCacheTask extends AbstractTask
         $dataHandler = $this->getDataHandler();
         $commands = GeneralUtility::trimExplode(',', $this->configuration['pid'], true);
         foreach ($commands as $command) {
-            // This is the same method ultimately called as if we changed the
-            // DataBase via DataHandler. This means it is also the same logic
-            // used as the backend.
-            // This is @internal. However, it does more processing than
-            // any public api.
-            $dataHandler->registerRecordIdForPageCacheClearing(
-                'pages',
-                $command,
-            );
-        }
-
-        // We want to call $dataHandler->processClearCacheQueue().
-        // That function is protected, so we have to do it indirectly.
-        $dataHandler->process_cmdmap();
-
-        foreach ($commands as $command) {
+            $dataHandler->clear_cacheCmd($command);
             $this->addMessage('Cleared frontend cache with configuration clearCacheCmd=' . $command);
         }
         return true;
