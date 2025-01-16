@@ -45,7 +45,6 @@ class In2publishCoreDefiner implements DefinerServiceInterface
     protected array $defaultIgnoredTables = [
         'be_groups',
         'be_users',
-        'cache_treelist',
         'sys_history',
         'sys_log',
         'tx_extensionmanager_domain_model_extension',
