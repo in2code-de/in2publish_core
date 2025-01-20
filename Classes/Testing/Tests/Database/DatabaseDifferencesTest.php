@@ -168,12 +168,12 @@ class DatabaseDifferencesTest implements TestCaseInterface
             }
 
             foreach ($diffOnForeign as $tableName => $fieldArray) {
-                if (is_array($fieldArray['fields'])) {
-                    foreach (array_keys($fieldArray['fields']) as $fieldOnlyOnForeign) {
-                        $fieldDifferences[] = $tableName . '.' . $fieldOnlyOnForeign . ': Only exists on foreign';
+                if (isset($fieldArray['fields']) && is_array($fieldArray['fields'])) {
+                    foreach (array_keys($fieldArray['fields']) as $fieldOnlyOnLocal) {
+                        $fieldDifferences[] = $tableName . '.' . $fieldOnlyOnLocal . ': Only exists on local';
                     }
                 }
-                if (is_array($fieldArray['fields']) && isset($fieldArray['table'])) {
+                if (isset($fieldArray['fields'], $fieldArray['table']) && is_array($fieldArray['fields'])) {
                     foreach (array_keys($fieldArray['table']) as $propOnlyOnForeign) {
                         $fieldDifferences[] = 'Table property ' . $tableName . '.' . $propOnlyOnForeign
                             . ': Only exists on foreign';
@@ -181,16 +181,18 @@ class DatabaseDifferencesTest implements TestCaseInterface
                 }
             }
 
-            return new TestResult(
-                'database.field_differences',
-                TestResult::ERROR,
-                array_merge(
-                    ['database.different_fields'],
-                    $fieldDifferences,
-                    ['database.different_tables'],
-                    $tableDifferences,
-                ),
-            );
+            if (!empty($fieldDifferences) || !empty($tableDifferences)) {
+                return new TestResult(
+                    'database.field_differences',
+                    TestResult::ERROR,
+                    array_merge(
+                        ['database.different_fields'],
+                        $fieldDifferences,
+                        ['database.different_tables'],
+                        $tableDifferences,
+                    ),
+                );
+            }
         }
 
         return new TestResult('database.no_differences');
