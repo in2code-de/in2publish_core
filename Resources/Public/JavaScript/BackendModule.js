@@ -29,8 +29,11 @@ class In2publishCoreModule {
 			this.setupFilterListeners();
 			this.setupClearableInputs();
 		} else {
-			this.setFilterForPageView();
-			this.filterButtonsListener();
+			const changedElement = document.querySelector('.in2publish-icon-status-changed');
+			if (changedElement) {
+				this.setFilterForPageView();
+				this.filterButtonsListener();
+			}
 		}
 	}
 
@@ -49,7 +52,11 @@ class In2publishCoreModule {
 			this.hideOrShowElements(document.querySelectorAll('.in2publish-stagelisting__item--moved'), this.movedFilter);
 			this.hideOrShowElements(document.querySelectorAll('.in2publish-stagelisting__item--unchanged'), this.unchangedFilter);
 		} else {
-			document.querySelectorAll('.in2publish-stagelisting__item').forEach(el => el.style.display = 'block');
+			document.querySelectorAll('.in2publish-stagelisting__item').forEach(el => {
+				if (el) {
+					el.style.display = 'block';
+				}
+			});
 		}
 	}
 
@@ -60,13 +67,17 @@ class In2publishCoreModule {
 
 	static toggleDirtyPropertiesListContainer(event) {
 		const target = event.currentTarget;
+		if (!target) return;
+
 		const row = target.closest('.in2publish-stagelisting__item');
+		if (!row) return;
+
 		const dirtyPropertiesContainer = row.querySelector('.in2publish-stagelisting__dropdown');
+		if (!dirtyPropertiesContainer) return;
 
 		dirtyPropertiesContainer.classList.toggle('in2publish-stagelisting__dropdown--close');
 		dirtyPropertiesContainer.classList.toggle('in2publish-stagelisting__dropdown--open');
 
-		// Add display toggle
 		if (dirtyPropertiesContainer.classList.contains('in2publish-stagelisting__dropdown--open')) {
 			dirtyPropertiesContainer.style.display = 'block';
 		} else {
@@ -75,11 +86,15 @@ class In2publishCoreModule {
 	}
 
 	static openOrCloseStageListingDropdownContainer(container) {
+		if (!container) return;
+
 		if (container.classList.contains('in2publish-stagelisting__dropdown--close')) {
 			document.querySelectorAll('.in2publish-stagelisting__dropdown--open').forEach(el => {
-				el.classList.remove('in2publish-stagelisting__dropdown--open');
-				el.classList.add('in2publish-stagelisting__dropdown--close');
-				el.style.display = 'none';
+				if (el) {
+					el.classList.remove('in2publish-stagelisting__dropdown--open');
+					el.classList.add('in2publish-stagelisting__dropdown--close');
+					el.style.display = 'none';
+				}
 			});
 			container.classList.remove('in2publish-stagelisting__dropdown--close');
 			container.classList.add('in2publish-stagelisting__dropdown--open');
@@ -92,46 +107,52 @@ class In2publishCoreModule {
 	}
 
 	static setFilterForPageView() {
-		this.changedFilter = document.querySelector('.in2publish-icon-status-changed')
-			.classList.contains('in2publish-functions-bar--active');
-		this.addedFilter = document.querySelector('.in2publish-icon-status-added')
-			.classList.contains('in2publish-functions-bar--active');
-		this.deletedFilter = document.querySelector('.in2publish-icon-status-deleted')
-			.classList.contains('in2publish-functions-bar--active');
-		this.movedFilter = document.querySelector('.in2publish-icon-status-moved')
-			.classList.contains('in2publish-functions-bar--active');
+		const statusElements = {
+			changed: document.querySelector('.in2publish-icon-status-changed'),
+			added: document.querySelector('.in2publish-icon-status-added'),
+			deleted: document.querySelector('.in2publish-icon-status-deleted'),
+			moved: document.querySelector('.in2publish-icon-status-moved')
+		};
+
+		this.changedFilter = statusElements.changed?.classList.contains('in2publish-functions-bar--active') || false;
+		this.addedFilter = statusElements.added?.classList.contains('in2publish-functions-bar--active') || false;
+		this.deletedFilter = statusElements.deleted?.classList.contains('in2publish-functions-bar--active') || false;
+		this.movedFilter = statusElements.moved?.classList.contains('in2publish-functions-bar--active') || false;
 
 		if (this.changedFilter || this.addedFilter || this.deletedFilter || this.movedFilter) {
-			document.querySelectorAll('.in2publish-stagelisting__item--unchanged')
-				.forEach(el => el.parentElement.style.display = 'none');
-			this.hideOrShowElements(
-				Array.from(document.querySelectorAll('.in2publish-stagelisting__item--changed'))
-					.map(el => el.parentElement),
-				this.changedFilter
-			);
-			this.hideOrShowElements(
-				Array.from(document.querySelectorAll('.in2publish-stagelisting__item--added'))
-					.map(el => el.parentElement),
-				this.addedFilter
-			);
-			this.hideOrShowElements(
-				Array.from(document.querySelectorAll('.in2publish-stagelisting__item--deleted'))
-					.map(el => el.parentElement),
-				this.deletedFilter
-			);
-			this.hideOrShowElements(
-				Array.from(document.querySelectorAll('.in2publish-stagelisting__item--moved'))
-					.map(el => el.parentElement),
-				this.movedFilter
-			);
+			const unchangedElements = document.querySelectorAll('.in2publish-stagelisting__item--unchanged');
+			unchangedElements.forEach(el => {
+				if (el?.parentElement) {
+					el.parentElement.style.display = 'none';
+				}
+			});
+
+			this.processFilteredElements('.in2publish-stagelisting__item--changed', this.changedFilter);
+			this.processFilteredElements('.in2publish-stagelisting__item--added', this.addedFilter);
+			this.processFilteredElements('.in2publish-stagelisting__item--deleted', this.deletedFilter);
+			this.processFilteredElements('.in2publish-stagelisting__item--moved', this.movedFilter);
 		} else {
-			document.querySelectorAll('.in2publish-stagelisting__item')
-				.forEach(el => el.parentElement.style.display = 'block');
+			document.querySelectorAll('.in2publish-stagelisting__item').forEach(el => {
+				if (el?.parentElement) {
+					el.parentElement.style.display = 'block';
+				}
+			});
 		}
+	}
+
+	static processFilteredElements(selector, filterStatus) {
+		const elements = document.querySelectorAll(selector);
+		elements.forEach(el => {
+			if (el?.parentElement) {
+				this.hideOrShowElements([el.parentElement], filterStatus);
+			}
+		});
 	}
 
 	static hideOrShowElements(elements, status) {
 		elements.forEach(element => {
+			if (!element) return;
+
 			if (status) {
 				element.style.display = 'block';
 				this.showParentElements(element);
@@ -142,6 +163,8 @@ class In2publishCoreModule {
 	}
 
 	static showParentElements(element) {
+		if (!element) return;
+
 		const parentElement = element.parentElement?.closest('ul')?.previousElementSibling?.closest('.in2publish-stagelisting__item')?.parentElement;
 		if (parentElement) {
 			parentElement.style.display = 'block';
@@ -151,10 +174,17 @@ class In2publishCoreModule {
 
 	static filterButtonsListener() {
 		document.querySelectorAll('*[data-action-toggle-filter-status]').forEach(element => {
+			if (!element) return;
+
 			element.addEventListener('click', (e) => {
 				e.preventDefault();
 				element.classList.toggle('in2publish-functions-bar--active');
-				fetch(element.getAttribute('href'));
+
+				const href = element.getAttribute('href');
+				if (href) {
+					fetch(href);
+				}
+
 				In2publishCoreModule.setFilterForPageView();
 			});
 		});
@@ -163,15 +193,23 @@ class In2publishCoreModule {
 	static setupFilterListeners() {
 		const filters = document.querySelectorAll('.js-in2publish-filter');
 
-		Array.from(filters).forEach(filter => {
+		filters.forEach(filter => {
+			if (!filter) return;
+
 			filter.addEventListener('click', event => {
 				const input = event.currentTarget;
+				if (!input) return;
+
 				input.disabled = true;
-				fetch(input.getAttribute('data-href'))
-					.then(response => response.json())
-					.finally(() => {
-						setTimeout(() => input.disabled = false, 100);
-					});
+				const dataHref = input.getAttribute('data-href');
+
+				if (dataHref) {
+					fetch(dataHref)
+						.then(response => response.json())
+						.finally(() => {
+							setTimeout(() => input.disabled = false, 100);
+						});
+				}
 
 				this.filterItemsByStatus();
 			});
@@ -180,12 +218,16 @@ class In2publishCoreModule {
 		const searchForm = document.querySelector('.js-form-search');
 		if (searchForm) {
 			new DebounceEvent('input', event => {
+				if (!event.target) return;
+
 				const searchValue = event.target.value.toLowerCase();
 				const elements = document.querySelectorAll('.in2publish-stagelisting__item');
 
-				Array.from(elements).forEach(item => {
+				elements.forEach(item => {
+					if (!item) return;
+
 					if (searchValue !== '') {
-						const searchable = item.getAttribute('data-searchable').toLowerCase();
+						const searchable = item.getAttribute('data-searchable')?.toLowerCase() || '';
 						item.classList.toggle('d-none', !searchable.includes(searchValue));
 					} else {
 						item.classList.remove('d-none');
@@ -197,15 +239,23 @@ class In2publishCoreModule {
 			if (searchFormClear) {
 				searchFormClear.addEventListener('click', () => {
 					document.querySelectorAll('.in2publish-stagelisting__item')
-						.forEach(item => item.classList.remove('d-none'));
+						.forEach(item => {
+							if (item) {
+								item.classList.remove('d-none');
+							}
+						});
 				});
 			}
 		}
 	}
 
 	static setupClearableInputs() {
-		Array.from(document.querySelectorAll('.t3js-clearable'))
-			.forEach(input => input.clearable());
+		const clearableInputs = document.querySelectorAll('.t3js-clearable');
+		clearableInputs.forEach(input => {
+			if (input && typeof input.clearable === 'function') {
+				input.clearable();
+			}
+		});
 	}
 }
 
