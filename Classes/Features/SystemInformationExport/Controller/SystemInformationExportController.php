@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Controller;
 use In2code\In2publishCore\Features\AdminTools\Controller\AbstractAdminToolsController;
 use In2code\In2publishCore\Features\SystemInformationExport\Service\SystemInformationExportService;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -62,7 +62,7 @@ class SystemInformationExportController extends AbstractAdminToolsController
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\In2code\In2publishCore\Features\SystemInformationExport\Service\SystemInformationExportService $sysInfoExportService)
+    public function __construct(SystemInformationExportService $sysInfoExportService)
     {
         $this->sysInfoExportService = $sysInfoExportService;
     }
@@ -78,7 +78,7 @@ class SystemInformationExportController extends AbstractAdminToolsController
 
         $this->moduleTemplate->assignMultiple([
             'info' => $info,
-            'infoJson' => json_encode($info, JSON_THROW_ON_ERROR)
+            'infoJson' => json_encode($info, JSON_THROW_ON_ERROR),
         ]);
         return $this->htmlResponse();
     }
@@ -89,7 +89,7 @@ class SystemInformationExportController extends AbstractAdminToolsController
             $info = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
             if (is_array($info)) {
                 $this->moduleTemplate->assignMultiple([
-                    'info' => $info
+                    'info' => $info,
                 ]);
             } else {
                 $args = [json_last_error(), json_last_error_msg()];
@@ -102,12 +102,12 @@ class SystemInformationExportController extends AbstractAdminToolsController
                     LocalizationUtility::translate(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.decode.json_error',
                     ),
-                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
+                    ContextualFeedbackSeverity::ERROR,
                 );
             }
         }
         $this->moduleTemplate->assignMultiple([
-            'infoJson' => json_encode($info, JSON_THROW_ON_ERROR)
+            'infoJson' => json_encode($info, JSON_THROW_ON_ERROR),
         ]);
         return $this->htmlResponse();
     }
@@ -145,7 +145,7 @@ class SystemInformationExportController extends AbstractAdminToolsController
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:system_info.upload.error',
                 ),
                 '',
-                \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
+                ContextualFeedbackSeverity::ERROR,
             );
             return new ForwardResponse('sysInfoIndex');
         }

@@ -31,7 +31,7 @@ use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use TYPO3\CMS\Backend\Configuration\TranslationConfigurationProvider;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Imaging\Icon;
+use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function array_filter;
@@ -47,13 +47,13 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
     protected TranslationConfigurationProvider $translationConfigurationProvider;
     protected BackendUserAuthentication $backendUser;
 
-    public function __construct(\TYPO3\CMS\Backend\Configuration\TranslationConfigurationProvider $translationConfigurationProvider)
+    public function __construct(TranslationConfigurationProvider $translationConfigurationProvider)
     {
         $this->backendUser = $GLOBALS['BE_USER'];
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
+        /**
+         * @codeCoverageIgnore
+         * @noinspection PhpUnused
+         */
         $this->translationConfigurationProvider = $translationConfigurationProvider;
     }
 
@@ -75,7 +75,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
 
         $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
         if (null === $languageField) {
-            return $this->iconFactory->getIcon('actions-pencil', \TYPO3\CMS\Core\Imaging\IconSize::SMALL)->render();
+            return $this->iconFactory->getIcon('actions-pencil', IconSize::SMALL)->render();
         }
 
         $systemLanguages = array_filter(
@@ -88,12 +88,12 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
 
         $systemLanguage = $systemLanguages[$language] ?? null;
         if (null === $systemLanguage) {
-            return $this->iconFactory->getIcon('flags-multiple', \TYPO3\CMS\Core\Imaging\IconSize::SMALL, 'overlay-edit')->render();
+            return $this->iconFactory->getIcon('flags-multiple', IconSize::SMALL, 'overlay-edit')->render();
         }
 
         return $this->iconFactory->getIcon(
             $systemLanguage['flagIcon'],
-            \TYPO3\CMS\Core\Imaging\IconSize::SMALL,
+            IconSize::SMALL,
             $overlay,
         )->render();
     }

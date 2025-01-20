@@ -54,7 +54,7 @@ class ShowConfigurationController extends AbstractAdminToolsController
             'containerDump' => $this->configContainerDumper->dump($this->configContainer),
             'fullConfig' => $this->configContainer->get(),
             'globalConfig' => $this->configContainer->getContextFreeConfig(),
-            'emulatePage' => $emulatePage
+            'emulatePage' => $emulatePage,
         ]);
         return $this->htmlResponse();
     }

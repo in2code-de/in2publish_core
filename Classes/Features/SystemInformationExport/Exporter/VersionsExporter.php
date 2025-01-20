@@ -45,7 +45,7 @@ class VersionsExporter implements SystemInformationExporter
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\TYPO3\CMS\Core\Database\ConnectionPool $connectionPool)
+    public function __construct(ConnectionPool $connectionPool)
     {
         $this->connectionPool = $connectionPool;
     }

@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\ViewHelpers\Tca;
 
-use Closure;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 class TableRowLabelViewHelper extends AbstractViewHelper
 {

@@ -8,6 +8,8 @@ use In2code\In2publishCore\CommonInjection\ForeignDatabaseReconnectedInjection;
 use In2code\In2publishCore\Component\Core\Publisher\Exception\FalPublisherExecutionFailedException;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function bin2hex;
 use function get_class;
@@ -57,8 +59,8 @@ abstract class AbstractFilesystemPublisher implements Publisher, TransactionalPu
             $configuration = json_encode($instruction->getConfiguration(), JSON_THROW_ON_ERROR);
             $data[] = [
                 'request_token' => $requestToken,
-                'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
-                'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                'crdate' => GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                'tstamp' => GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('date', 'timestamp'),
                 'instruction' => $class,
                 'configuration' => $configuration,
             ];

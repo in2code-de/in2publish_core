@@ -36,7 +36,7 @@ use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonReq
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -62,7 +62,7 @@ class CompareDatabaseToolController extends ActionController
         $tables = $this->getAllNonExcludedTables();
         $tables = array_intersect($tables, array_keys($GLOBALS['TCA']));
         $this->moduleTemplate->assignMultiple([
-            'tables' => array_combine($tables, $tables)
+            'tables' => array_combine($tables, $tables),
         ]);
         return $this->htmlResponse();
     }
@@ -215,7 +215,7 @@ class CompareDatabaseToolController extends ActionController
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.error',
                     'In2publishCore'
                 ),
-                \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
+                ContextualFeedbackSeverity::ERROR,
             );
             return $this->redirect('index');
         }
@@ -231,7 +231,7 @@ class CompareDatabaseToolController extends ActionController
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.error',
                         'In2publishCore'
                     ),
-                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
+                    ContextualFeedbackSeverity::ERROR,
                 );
                 return $this->redirect('index');
             }
@@ -265,7 +265,7 @@ class CompareDatabaseToolController extends ActionController
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.error',
                         'In2publishCore'
                     ),
-                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
+                    ContextualFeedbackSeverity::ERROR,
                 );
                 return $this->redirect('index');
             }
@@ -299,7 +299,7 @@ class CompareDatabaseToolController extends ActionController
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf:compare_database.transfer.error',
                         'In2publishCore'
                     ),
-                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
+                    ContextualFeedbackSeverity::ERROR,
                 );
                 return $this->redirect('index');
             }

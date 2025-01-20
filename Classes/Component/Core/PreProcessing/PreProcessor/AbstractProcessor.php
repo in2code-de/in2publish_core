@@ -27,7 +27,7 @@ abstract class AbstractProcessor implements TcaPreProcessor
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\Psr\Container\ContainerInterface $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }

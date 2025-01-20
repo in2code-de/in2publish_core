@@ -20,7 +20,7 @@ class RelevantTablesService
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\In2code\In2publishCore\Component\Core\Service\Database\TableContentService $tableContentService)
+    public function __construct(TableContentService $tableContentService)
     {
         $this->tableContentService = $tableContentService;
     }

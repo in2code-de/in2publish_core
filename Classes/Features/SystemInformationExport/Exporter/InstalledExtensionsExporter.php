@@ -39,7 +39,7 @@ class InstalledExtensionsExporter implements SystemInformationExporter
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\TYPO3\CMS\Extensionmanager\Utility\ListUtility $listUtility)
+    public function __construct(ListUtility $listUtility)
     {
         $this->listUtility = $listUtility;
     }

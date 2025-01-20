@@ -31,6 +31,8 @@ namespace In2code\In2publishCore\Features\PreventParallelPublishing\Domain\Repos
  */
 
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RunningRequestRepository
 {
@@ -48,7 +50,7 @@ class RunningRequestRepository
             'record_id' => $recordId,
             'table_name' => $tableName,
             'request_token' => $token,
-            'timestamp_begin' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+            'timestamp_begin' => GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('date', 'timestamp'),
         ];
     }
 

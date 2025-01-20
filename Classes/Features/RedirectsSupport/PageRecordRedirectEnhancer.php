@@ -48,7 +48,7 @@ class PageRecordRedirectEnhancer
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\TYPO3\CMS\Core\LinkHandling\LinkService $linkService)
+    public function __construct(LinkService $linkService)
     {
         $this->linkService = $linkService;
     }

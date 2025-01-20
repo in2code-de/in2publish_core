@@ -119,7 +119,7 @@ class Filter
             $where[] = 'target LIKE ' . $database->quote('%' . $this->target . '%');
         }
         if (null !== $this->code) {
-            $where[] = 'target_statuscode = ' . $database->quote((string) $this->code);
+            $where[] = 'target_statuscode = ' . $database->quote((string)$this->code);
         }
         if (null !== $this->association) {
             if ('present' === $this->association) {

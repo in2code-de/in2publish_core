@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
 use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
 use In2code\In2publishCore\Service\Environment\EnvironmentServiceInjection;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function implode;
@@ -54,7 +55,7 @@ class ToolsController extends AbstractAdminToolsController
             $this->addFlashMessage(
                 implode(PHP_EOL, $messages),
                 LocalizationUtility::translate('test_state_error', 'In2publishCore'),
-                \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR,
+                ContextualFeedbackSeverity::ERROR,
             );
         }
 
@@ -72,7 +73,7 @@ class ToolsController extends AbstractAdminToolsController
 
         $this->moduleTemplate->assignMultiple([
             'supports' =>  $event->getSupports(),
-            'tools' => $this->toolsRegistry->getEntries()
+            'tools' => $this->toolsRegistry->getEntries(),
         ]);
         return $this->htmlResponse();
     }

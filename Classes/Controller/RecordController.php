@@ -52,8 +52,8 @@ use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -92,8 +92,10 @@ class RecordController extends ActionController
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
         $this->actualInjectPageRenderer($pageRenderer);
-        $this->pageRenderer->loadJavaScriptModule('TYPO3/CMS/In2publishCore/BackendModule');
-        $this->pageRenderer->loadJavaScriptModule('TYPO3/CMS/In2publishCore/BackendEnhancements');
+
+        $this->pageRenderer->loadJavaScriptModule('@in2code/in2publish_core/backend-module.js');
+        $this->pageRenderer->loadJavaScriptModule('@in2code/in2publish_core/backend-enhancements.js');
+
         $this->pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
             'stylesheet',
@@ -221,7 +223,7 @@ class RecordController extends ActionController
         if (empty($failures)) {
             $message = '';
             $title = LocalizationUtility::translate('record_published', 'In2publishCore', [$executionTime]);
-            $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK;
+            $severity = ContextualFeedbackSeverity::OK;
         } else {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
             $title = LocalizationUtility::translate('record_publishing_failure', 'In2publishCore', [$executionTime]);

@@ -34,7 +34,7 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\TYPO3\CMS\Core\Http\StreamFactory $streamFactory)
+    public function __construct(StreamFactory $streamFactory)
     {
         $this->streamFactory = $streamFactory;
     }

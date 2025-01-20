@@ -56,7 +56,7 @@ class TestController extends AbstractAdminToolsController
 
         $this->environmentService->setTestResult($success);
         $this->moduleTemplate->assignMultiple([
-            'testingResults' => $testingResults
+            'testingResults' => $testingResults,
         ]);
         return $this->htmlResponse();
     }

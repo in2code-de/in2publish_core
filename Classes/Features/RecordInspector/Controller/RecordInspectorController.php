@@ -50,7 +50,7 @@ class RecordInspectorController extends AbstractAdminToolsController
             $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
         }
         $this->moduleTemplate->assignMultiple([
-            'recordTree' => $recordTree
+            'recordTree' => $recordTree,
         ]);
         return $this->htmlResponse();
     }

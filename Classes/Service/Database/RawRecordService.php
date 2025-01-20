@@ -34,7 +34,6 @@ use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\In2publishCoreException;
-use PDO;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function is_array;

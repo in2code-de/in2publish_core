@@ -43,7 +43,7 @@ class AllCommand extends Command
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\TYPO3\CMS\Core\Console\CommandRegistry $cmdRegistry)
+    public function __construct(CommandRegistry $cmdRegistry)
     {
         parent::__construct();
         $this->cmdRegistry = $cmdRegistry;

@@ -40,7 +40,7 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\In2code\In2publishCore\Service\TableConfiguration\LabelService $labelService)
+    public function __construct(LabelService $labelService)
     {
         $this->labelService = $labelService;
     }

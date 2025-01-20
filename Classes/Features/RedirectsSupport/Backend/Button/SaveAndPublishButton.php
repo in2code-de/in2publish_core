@@ -31,8 +31,8 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Backend\Button;
 
 use TYPO3\CMS\Backend\Template\Components\AbstractControl;
 use TYPO3\CMS\Backend\Template\Components\Buttons\ButtonInterface;
-use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function htmlspecialchars;
@@ -63,7 +63,7 @@ class SaveAndPublishButton extends AbstractControl implements ButtonInterface
 
     public function render(): string
     {
-        $icon = $this->iconFactory->getIcon('actions-document-synchronize', \TYPO3\CMS\Core\Imaging\IconSize::SMALL)->render();
+        $icon = $this->iconFactory->getIcon('actions-document-synchronize', IconSize::SMALL)->render();
         $label = htmlspecialchars(LocalizationUtility::translate('save_and_publish', 'In2publishCore'));
         return <<<HTML
 <button name="_saveandpublish" class="btn btn-default btn-sm " value="1" title="Save" form="EditDocumentController">$icon $label</button>

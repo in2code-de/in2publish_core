@@ -60,13 +60,11 @@ use function in_array;
 use function is_array;
 use function is_numeric;
 use function is_string;
-use function key;
 use function md5;
 use function parse_str;
 use function parse_url;
 use function rtrim;
 use function stripos;
-use function strpos;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Maybe refactor this into a service with ordered strategies.
@@ -102,7 +100,6 @@ class BackendUtility
             return 0;
         }
         $tableNames = $localConnection->createSchemaManager()->listTableNames();
-
 
         $request = $GLOBALS['TYPO3_REQUEST'];
         if ($request instanceof ServerRequestInterface) {
@@ -219,7 +216,6 @@ class BackendUtility
         return 0;
     }
 
-
     /**
      * Please don't blame me for this.
      *
@@ -236,7 +232,7 @@ class BackendUtility
         }
         $excludeDokTypes = [
             PageRepository::DOKTYPE_SPACER,
-            PageRepository::DOKTYPE_SYSFOLDER
+            PageRepository::DOKTYPE_SYSFOLDER,
         ];
 
         if (

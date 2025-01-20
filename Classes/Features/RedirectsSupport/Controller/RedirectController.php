@@ -50,10 +50,10 @@ use In2code\In2publishCore\Features\RedirectsSupport\Event\RedirectsWereFiltered
 use In2code\In2publishCore\Service\ForeignSiteFinderInjection;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -85,7 +85,7 @@ class RedirectController extends ActionController
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository $sysRedirectRepo)
+    public function __construct(SysRedirectRepository $sysRedirectRepo)
     {
         $this->sysRedirectRepo = $sysRedirectRepo;
     }
@@ -180,7 +180,7 @@ class RedirectController extends ActionController
             $this->addFlashMessage(
                 'No redirect has been selected for publishing',
                 'Skipping publishing',
-                \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::NOTICE,
+                ContextualFeedbackSeverity::NOTICE,
             );
             return $this->redirect('list');
         }
@@ -245,7 +245,7 @@ class RedirectController extends ActionController
         }
         $this->moduleTemplate->assignMultiple([
             'redirect' => $redirectDto,
-            'siteOptions' => $siteOptions
+            'siteOptions' => $siteOptions,
         ]);
 
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();

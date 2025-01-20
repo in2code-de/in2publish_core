@@ -34,7 +34,6 @@ use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Features\MetricsAndDebug\Database\Logging\ContentPublisherSqlLogger;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use LogicException;
-use PDO;
 use Throwable;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Database\Connection;

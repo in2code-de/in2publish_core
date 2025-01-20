@@ -50,7 +50,7 @@ class TaskRepository
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Factory\TaskFactory $taskFactory)
+    public function __construct(TaskFactory $taskFactory)
     {
         $this->creationDate = (new DateTime('now'))->format('Y-m-d H:i:s');
         $this->taskFactory = $taskFactory;

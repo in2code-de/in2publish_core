@@ -31,8 +31,8 @@ use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\Record\Model\StorageRootFolderRecord;
-use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
+use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function explode;
@@ -49,7 +49,7 @@ class IconViewHelper extends AbstractViewHelper
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\TYPO3\CMS\Core\Imaging\IconRegistry $iconRegistry)
+    public function __construct(IconRegistry $iconRegistry)
     {
         $this->iconRegistry = $iconRegistry;
     }
@@ -67,7 +67,7 @@ class IconViewHelper extends AbstractViewHelper
 
         $iconIdentifier = $this->getIconIdentifier($record);
 
-        return $this->iconFactory->getIcon($iconIdentifier, \TYPO3\CMS\Core\Imaging\IconSize::SMALL)->render();
+        return $this->iconFactory->getIcon($iconIdentifier, IconSize::SMALL)->render();
     }
 
     protected function getIconIdentifier(Record $record): ?string

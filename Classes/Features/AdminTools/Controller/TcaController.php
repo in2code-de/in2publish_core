@@ -40,7 +40,7 @@ class TcaController extends AbstractAdminToolsController
     {
         $this->moduleTemplate->assignMultiple([
             'incompatibleTca' => $this->cachedTcaPreProcessingService->getIncompatibleTcaParts(),
-            'compatibleTca' => $this->cachedTcaPreProcessingService->getCompatibleTcaParts()
+            'compatibleTca' => $this->cachedTcaPreProcessingService->getCompatibleTcaParts(),
         ]);
 
         return $this->htmlResponse();

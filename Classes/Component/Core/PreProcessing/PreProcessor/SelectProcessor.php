@@ -11,7 +11,6 @@ use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectStandaloneMmResolver;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 
-use function array_filter;
 use function array_key_exists;
 use function implode;
 

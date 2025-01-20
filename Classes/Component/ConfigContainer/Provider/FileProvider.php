@@ -63,7 +63,7 @@ class FileProvider implements ProviderServiceInterface, LoggerAwareInterface
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration $extConf)
+    public function __construct(ExtensionConfiguration $extConf)
     {
         $this->extConf = $extConf->get('in2publish_core');
     }

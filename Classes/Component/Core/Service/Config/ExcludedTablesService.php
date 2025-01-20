@@ -23,7 +23,7 @@ class ExcludedTablesService
      * @noinspection PhpUnused
      */
     public function injectConfigContainer(
-        \In2code\In2publishCore\Component\ConfigContainer\ConfigContainer $configContainer
+        ConfigContainer $configContainer
     ): void {
         $this->excludeRelatedTables = $configContainer->get('excludeRelatedTables');
     }

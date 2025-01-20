@@ -7,9 +7,9 @@ namespace In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Servic
 use In2code\In2publishCore\CommonInjection\FlexFormServiceInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Resource\Capabilities;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Driver\DriverRegistry;
-use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FalDriverService
@@ -24,7 +24,7 @@ class FalDriverService
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\TYPO3\CMS\Core\Resource\Driver\DriverRegistry $driverRegistry)
+    public function __construct(DriverRegistry $driverRegistry)
     {
         $this->driverRegistry = $driverRegistry;
     }
@@ -55,18 +55,18 @@ class FalDriverService
         $driver = $this->getDriverObject($storage['driver'], $storageConfiguration);
         $driver->setStorageUid($storage['uid']);
 
-        $capabilities = new \TYPO3\CMS\Core\Resource\Capabilities();
+        $capabilities = new Capabilities();
 
         if ($storage['is_browsable'] ?? null) {
-            $capabilities->addCapabilities(\TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_BROWSABLE);
+            $capabilities->addCapabilities(Capabilities::CAPABILITY_BROWSABLE);
         }
         if ($storage['is_public'] ?? null) {
-            $capabilities->addCapabilities(\TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_PUBLIC);
+            $capabilities->addCapabilities(Capabilities::CAPABILITY_PUBLIC);
         }
         if ($storage['is_writable'] ?? null) {
-            $capabilities->addCapabilities(\TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_WRITABLE);
+            $capabilities->addCapabilities(Capabilities::CAPABILITY_WRITABLE);
         }
-        $capabilities->addCapabilities(\TYPO3\CMS\Core\Resource\Capabilities::CAPABILITY_HIERARCHICAL_IDENTIFIERS);
+        $capabilities->addCapabilities(Capabilities::CAPABILITY_HIERARCHICAL_IDENTIFIERS);
 
         $driver->mergeConfigurationCapabilities($capabilities);
 

@@ -72,7 +72,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      * @codeCoverageIgnore
      * @noinspection PhpUnused
      */
-    public function __construct(\In2code\In2publishCore\Service\Environment\ForeignEnvironmentService $foreignEnvironmentService)
+    public function __construct(ForeignEnvironmentService $foreignEnvironmentService)
     {
         $this->foreignEnvironmentService = $foreignEnvironmentService;
     }

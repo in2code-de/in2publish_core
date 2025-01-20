@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\ViewHelpers\Format;
 
-use Closure;
 use TYPO3\CMS\Core\Utility\DiffUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 class DiffViewHelper extends AbstractViewHelper
 {

@@ -28,7 +28,7 @@ namespace In2code\In2publishCore\Utility;
  */
 
 use TYPO3\CMS\Core\Log\LogLevel;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 
 class LogUtility
 {
@@ -36,23 +36,23 @@ class LogUtility
     {
         switch (LogLevel::getInternalName($logLevel)) {
             case LogLevel::DEBUG:
-                $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::NOTICE;
+                $severity = ContextualFeedbackSeverity::NOTICE;
                 break;
             case LogLevel::INFO:
-                $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK;
+                $severity = ContextualFeedbackSeverity::OK;
                 break;
             case LogLevel::NOTICE:
-                $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO;
+                $severity = ContextualFeedbackSeverity::INFO;
                 break;
             case LogLevel::WARNING:
-                $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::WARNING;
+                $severity = ContextualFeedbackSeverity::WARNING;
                 break;
             case LogLevel::ERROR:
             case LogLevel::CRITICAL:
             case LogLevel::ALERT:
             case LogLevel::EMERGENCY:
             default:
-                $severity = \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR;
+                $severity = ContextualFeedbackSeverity::ERROR;
                 break;
         }
         return $severity;
