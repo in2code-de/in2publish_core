@@ -55,7 +55,7 @@ HTML;
             '',
             false,
         );
-        $pageRenderer->loadJavaScriptModule('TYPO3/CMS/In2publishCore/LoadingOverlay');
+        $pageRenderer->loadJavaScriptModule('@in2code/in2publish_core/loading-overlay.js');
         $pageRenderer->addInlineLanguageLabelFile('EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf');
 
         $response = $handler->handle($request);
