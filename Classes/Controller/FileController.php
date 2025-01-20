@@ -39,6 +39,7 @@ use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
+use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
@@ -65,15 +66,16 @@ use const JSON_THROW_ON_ERROR;
  */
 class FileController extends ActionController
 {
-    use ControllerFilterStatus;
-    use DeactivateErrorFlashMessage;
     use CommonViewVariables;
+    use ControllerFilterStatus;
+    use ControllerModuleTemplate;
+    use DeactivateErrorFlashMessage;
+    use DefaultFalFinderInjection;
+    use FailureCollectorInjection;
+    use ModuleTemplateFactoryInjection;
     use PageRendererInjection {
         injectPageRenderer as actualInjectPageRenderer;
     }
-    use DefaultFalFinderInjection;
-    use ModuleTemplateFactoryInjection;
-    use FailureCollectorInjection;
     use PublisherServiceInjection;
 
     /**
@@ -107,10 +109,12 @@ class FileController extends ActionController
             return $this->redirectToUri($uri);
         }
 
-        if (null !== $recordTree) {
-            $this->view->assign('recordTree', $recordTree);
-            $this->view->assign('publishingAvailable', true);
-        }
+
+        $this->moduleTemplate->assignMultiple([
+            'recordTree' => $recordTree,
+            'publishingAvailable' => true,
+        ]);
+
 
         $this->pageRenderer->loadJavaScriptModule('@typo3/backend/modal.js');
         $this->pageRenderer->addInlineLanguageLabelFile(
@@ -118,9 +122,9 @@ class FileController extends ActionController
         );
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
-        $moduleTemplate->setContent($this->view->render());
+
         /** @see packages/in2publish_core/Resources/Private/Templates/File/Index.html */
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        return $this->htmlResponse();
     }
 
     /**

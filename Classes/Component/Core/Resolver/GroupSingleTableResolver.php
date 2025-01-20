@@ -18,6 +18,8 @@ class GroupSingleTableResolver extends AbstractResolver
 {
     protected string $column;
     protected string $foreignTable;
+    private const VALUE_SEPARATOR = ',';
+    private const TABLE_SEPARATOR = '_';
 
     public function configure(string $column, string $foreignTable): void
     {
@@ -35,20 +37,34 @@ class GroupSingleTableResolver extends AbstractResolver
         $localValue = $record->getLocalProps()[$this->column] ?? '';
         $foreignValue = $record->getForeignProps()[$this->column] ?? '';
 
-        $localEntries = GeneralUtility::trimExplode(',', $localValue, true);
-        $foreignEntries = GeneralUtility::trimExplode(',', $foreignValue, true);
+        $localEntries = is_string($localValue)
+            ? GeneralUtility::trimExplode(self::VALUE_SEPARATOR, $localValue, true)
+            : [];
+        $foreignEntries = is_string($foreignValue)
+            ? GeneralUtility::trimExplode(self::VALUE_SEPARATOR, $foreignValue, true)
+            : [];
 
         $values = array_filter(array_merge($localEntries, $foreignEntries));
         foreach ($values as $value) {
-            if ((string)$value !== (string)(int)$value) {
-                $position = strrpos($value, '_');
-                $table = substr($value, 0, $position);
-                if ($table !== $this->foreignTable) {
-                    continue;
-                }
-                $value = substr($value, $position + 1);
+            if ((string)$value === (string)(int)$value) {
+                $demands->addDemand(
+                    new SelectDemand($this->foreignTable, '', 'uid', $value, $record)
+                );
+                continue;
             }
-            $demands->addDemand(new SelectDemand($this->foreignTable, '', 'uid', $value, $record));
+
+            $position = strrpos($value, self::TABLE_SEPARATOR);
+            if ($position === false) {
+                continue;
+            }
+
+            $table = substr($value, 0, $position);
+            if ($table !== $this->foreignTable) {
+                continue;
+            }
+
+            $id = substr($value, $position + 1);
+            $demands->addDemand(new SelectDemand($this->foreignTable, '', 'uid', $id, $record));
         }
     }
 }

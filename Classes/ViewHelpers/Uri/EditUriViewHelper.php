@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Uri;
 
 use Closure;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -22,6 +25,7 @@ class EditUriViewHelper extends AbstractViewHelper
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @throws RouteNotFoundException
      */
     public static function renderStatic(
         array $arguments,
@@ -29,10 +33,18 @@ class EditUriViewHelper extends AbstractViewHelper
         RenderingContextInterface $renderingContext
     ): string {
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+
+        $returnUrl = '';
+        if ($request instanceof ServerRequestInterface
+            && ApplicationType::fromRequest($request)->isBackend()
+        ) {
+            $returnUrl = (string)$request->getUri();
+        }
 
         return (string)$uriBuilder->buildUriFromRoute('record_edit', [
             'edit[' . $arguments['tableName'] . '][' . $arguments['uid'] . ']' => 'edit',
-            'returnUrl' => GeneralUtility::linkThisScript(),
+            'returnUrl' => $returnUrl,
         ]);
     }
 }
