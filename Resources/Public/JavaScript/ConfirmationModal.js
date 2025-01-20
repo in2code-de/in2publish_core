@@ -4,7 +4,7 @@
  * Module: @in2code/in2publish_core/confirmation-modal.js
  */
 import Modal from '@typo3/backend/modal.js';
-import LoadingOverlay from '@typo3/backend/modal.js';
+import LoadingOverlay from '@in2code/in2publish_core/loading-overlay.js';
 
 class ConfirmationModal {
 
