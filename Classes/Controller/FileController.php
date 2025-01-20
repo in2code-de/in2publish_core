@@ -83,7 +83,7 @@ class FileController extends ActionController
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
         $this->actualInjectPageRenderer($pageRenderer);
-        $this->pageRenderer->loadJavaScriptModule('TYPO3/CMS/In2publishCore/BackendModule');
+        $this->pageRenderer->loadJavaScriptModule('@in2code/in2publish_core/backend-module.js');
         $this->pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
             'stylesheet',
@@ -112,8 +112,7 @@ class FileController extends ActionController
             $this->view->assign('publishingAvailable', true);
         }
 
-        $this->pageRenderer->loadJavaScriptModule('TYPO3/CMS/Backend/Tooltip');
-        $this->pageRenderer->loadJavaScriptModule('TYPO3/CMS/Backend/Modal');
+        $this->pageRenderer->loadJavaScriptModule('@typo3/backend/modal.js');
         $this->pageRenderer->addInlineLanguageLabelFile(
             'EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf',
         );
