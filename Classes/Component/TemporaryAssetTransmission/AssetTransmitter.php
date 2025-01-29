@@ -72,7 +72,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
 
         if (!file_exists($source)) {
             $this->logger->error('File does not exist', ['source' => $source]);
-            throw new FileMissingException($source, 3239271462);
+            throw new FileMissingException($source);
         }
 
         $identifierHash = hash('sha1', $source);

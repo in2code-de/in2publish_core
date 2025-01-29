@@ -74,7 +74,7 @@ abstract class AbstractFilesystemPublisher implements Publisher, TransactionalPu
         $request = new RemoteCommandRequest('in2publish_core:core:falpublisher', [], [implode(',', $requestTokens)]);
         $response = $this->remoteCommandDispatcher->dispatch($request);
         if (!$response->isSuccessful()) {
-            throw new FalPublisherExecutionFailedException($response, 1818232345);
+            throw new FalPublisherExecutionFailedException($response);
         }
     }
 }

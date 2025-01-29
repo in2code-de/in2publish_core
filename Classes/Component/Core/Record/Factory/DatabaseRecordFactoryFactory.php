@@ -30,6 +30,6 @@ class DatabaseRecordFactoryFactory
                 }
             }
         }
-        throw new MissingDatabaseRecordFactoryException($table, 2448336290);
+        throw new MissingDatabaseRecordFactoryException($table);
     }
 }
