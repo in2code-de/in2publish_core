@@ -13,6 +13,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\Resolver\FlexResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
+use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
@@ -30,7 +31,7 @@ class FlexProcessorTest extends UnitTestCase
      */
     public function testFlexProcessorRejectsTcaWithoutDefaultValueOrDsPointerField(): void
     {
-        $flexProcessor = new FlexProcessor();
+        $flexProcessor = new FlexProcessor($this->createMock(Container::class));
         $processingResult = $flexProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'flex',
         ]);
@@ -43,17 +44,17 @@ class FlexProcessorTest extends UnitTestCase
      */
     public function testTcaWithTwoSheetsIsResolved(): void
     {
-        $flexProcessor = new FlexProcessor();
 
         // mock dependencies
         $flexResolver = $this->createMock(FlexResolver::class);
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($flexResolver);
+        $flexProcessor = new FlexProcessor($container);
+
         $flexFormTools = $this->createMock(FlexFormTools::class);
         $flexFormFlatteningService = $this->createMock(FlexFormFlatteningService::class);
         $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
 
-        $flexProcessor->injectContainer($container);
         $flexProcessor->injectFlexFormTools($flexFormTools);
         $flexProcessor->injectFlexFormFlatteningService($flexFormFlatteningService);
         $flexProcessor->injectTcaPreProcessingService($tcaPreProcessingService);
@@ -89,12 +90,11 @@ class FlexProcessorTest extends UnitTestCase
             'dataStructureKey' => 'foo_pi2,baz',
         ]);
 
-        $flexProcessor = new FlexProcessor();
-
         $flexResolver = $this->createMock(FlexResolver::class);
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($flexResolver);
         $flexFormTools = $this->createMock(FlexFormTools::class);
+        $flexProcessor = new FlexProcessor($container);
 
         $flexFormTools->expects($this->exactly(2))->method('parseDataStructureByIdentifier');
         $flexFormFlatteningService = $this->createMock(FlexFormFlatteningService::class);
@@ -107,7 +107,6 @@ class FlexProcessorTest extends UnitTestCase
         $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $tcaPreProcessingService->expects($this->exactly(2))->method('preProcessTcaColumns');
 
-        $flexProcessor->injectContainer($container);
         $flexProcessor->injectFlexFormTools($flexFormTools);
         $flexProcessor->injectFlexFormFlatteningService($flexFormFlatteningService);
         $flexProcessor->injectTcaPreProcessingService($tcaPreProcessingService);
@@ -132,8 +131,6 @@ class FlexProcessorTest extends UnitTestCase
     public function testFlexProcessorResolvesDemandForFlexFormFields(): void
     {
         $databaseRecord = new DatabaseRecord('tableNameFoo', 1, ['fieldNameBar' => 1], [], []);
-
-        $flexProcessor = new FlexProcessor();
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
         $flexFormTools->method('getDataStructureIdentifier')->willReturn(
@@ -215,7 +212,7 @@ class FlexProcessorTest extends UnitTestCase
         $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $tcaPreProcessingService->method('getCompatibleTcaParts')->willReturn($compatibleTcaParts);
 
-        $flexProcessor->injectContainer($container);
+        $flexProcessor = new FlexProcessor($container);
         $flexProcessor->injectFlexFormTools($flexFormTools);
         $flexProcessor->injectFlexFormFlatteningService($flexFormFlatteningService);
         $flexProcessor->injectTcaPreProcessingService($tcaPreProcessingService);

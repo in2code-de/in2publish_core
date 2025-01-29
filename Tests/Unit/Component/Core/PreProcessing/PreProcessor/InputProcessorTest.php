@@ -23,8 +23,7 @@ class InputProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
-        $inputProcessor = new InputProcessor();
-        $inputProcessor->injectContainer($container);
+        $inputProcessor = new InputProcessor($container);
         $processingResult = $inputProcessor->process(
             'tableNameFoo',
             'fieldNameBar',
@@ -38,7 +37,7 @@ class InputProcessorTest extends UnitTestCase
      */
     public function testInputProcessorIgnoresFieldsWithoutSupportedSoftref(): void
     {
-        $inputProcessor = new InputProcessor();
+        $inputProcessor = new InputProcessor($this->createMock(Container::class));
         $processingResult = $inputProcessor->process(
             'tableNameFoo',
             'fieldNameBar',
@@ -56,7 +55,7 @@ class InputProcessorTest extends UnitTestCase
      */
     public function testInputProcessorIgnoresFieldsWithoutSoftref(): void
     {
-        $inputProcessor = new InputProcessor();
+        $inputProcessor = new InputProcessor($this->createMock(Container::class));
         $processingResult = $inputProcessor->process('tableNameFoo', 'fieldNameBar', []);
         $this->assertFalse($processingResult->isCompatible());
     }

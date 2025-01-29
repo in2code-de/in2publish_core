@@ -29,8 +29,7 @@ class TextProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
-        $textProcessor = new TextProcessor();
-        $textProcessor->injectContainer($container);
+        $textProcessor = new TextProcessor($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => true,
@@ -55,8 +54,7 @@ class TextProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
-        $textProcessor = new TextProcessor();
-        $textProcessor->injectContainer($container);
+        $textProcessor = new TextProcessor($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => true,
@@ -87,8 +85,7 @@ class TextProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
-        $textProcessor = new TextProcessor();
-        $textProcessor->injectContainer($container);
+        $textProcessor = new TextProcessor($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => true,
@@ -117,8 +114,7 @@ class TextProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
-        $textProcessor = new TextProcessor();
-        $textProcessor->injectContainer($container);
+        $textProcessor = new TextProcessor($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => true,
@@ -147,8 +143,7 @@ class TextProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
-        $textProcessor = new TextProcessor();
-        $textProcessor->injectContainer($container);
+        $textProcessor = new TextProcessor($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => true,
@@ -175,8 +170,7 @@ class TextProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
-        $textProcessor = new TextProcessor();
-        $textProcessor->injectContainer($container);
+        $textProcessor = new TextProcessor($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
         ]);
@@ -193,8 +187,7 @@ class TextProcessorTest extends UnitTestCase
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
-        $textProcessor = new TextProcessor();
-        $textProcessor->injectContainer($container);
+        $textProcessor = new TextProcessor($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => false,

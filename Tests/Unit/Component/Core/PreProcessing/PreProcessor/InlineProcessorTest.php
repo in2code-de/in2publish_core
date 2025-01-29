@@ -26,13 +26,12 @@ class InlineProcessorTest extends UnitTestCase
     {
         $tca = ['type' => 'inline', 'foreign_table' => 'table_foo', 'symmetric_field' => 'foo'];
 
-        $inlineProcessor = new InlineProcessor();
+        $inlineResolver = $this->createMock(StaticJoinResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($inlineResolver);
+        $inlineProcessor = new InlineProcessor($container);
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $inlineProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
-        $container = $this->createMock(Container::class);
-        $inlineResolver = $this->createMock(StaticJoinResolver::class);
-        $container->method('get')->willReturn($inlineResolver);
-        $inlineProcessor->injectContainer($container);
 
         $excludedTablesService = $this->createMock(ExcludedTablesService::class);
         $excludedTablesService->method('isExcludedTable')->willReturn(false);
@@ -55,13 +54,12 @@ class InlineProcessorTest extends UnitTestCase
     {
         $tca = ['type' => 'inline'];
 
-        $inlineProcessor = new InlineProcessor();
-        $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
-        $inlineProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
-        $container = $this->createMock(Container::class);
         $inlineResolver = $this->createMock(StaticJoinResolver::class);
+        $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($inlineResolver);
-        $inlineProcessor->injectContainer($container);
+        $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $inlineProcessor = new InlineProcessor($container);
+        $inlineProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
 
         $processingResult = $inlineProcessor->process('table_bar', 'field_bar', $tca);
         $this->assertFalse($processingResult->isCompatible());
@@ -82,13 +80,12 @@ class InlineProcessorTest extends UnitTestCase
             'foreign_table_field' => 'foreign_table_field_foo',
         ];
 
-        $inlineProcessor = new InlineProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
-        $inlineProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
-        $container = $this->createMock(Container::class);
         $inlineResolver = $this->createMock(InlineSelectResolver::class);
+        $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($inlineResolver);
-        $inlineProcessor->injectContainer($container);
+        $inlineProcessor = new InlineProcessor($container);
+        $inlineProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
 
         $excludedTablesService = $this->createMock(ExcludedTablesService::class);
         $excludedTablesService->method('isExcludedTable')->willReturn(false);
@@ -135,7 +132,6 @@ class InlineProcessorTest extends UnitTestCase
             ],
         ];
 
-        $inlineProcessor = new InlineProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $tcaMarkerService->expects($this->exactly(3))
                          ->method('escapeMarkedIdentifier')
@@ -145,11 +141,12 @@ class InlineProcessorTest extends UnitTestCase
                              'foreign_match_field1 = "foreign_match_value1" AND foreign_match_field2 = "foreign_match_value2"',
                          );
 
-        $inlineProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
-        $container = $this->createMock(Container::class);
         $inlineResolver = $this->createMock(InlineMultiValueResolver::class);
+        $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($inlineResolver);
-        $inlineProcessor->injectContainer($container);
+        $inlineProcessor = new InlineProcessor($container);
+        $inlineProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
+
 
         $excludedTablesService = $this->createMock(ExcludedTablesService::class);
         $excludedTablesService->method('isExcludedTable')->willReturn(false);
