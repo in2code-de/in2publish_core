@@ -34,7 +34,7 @@ class RecordFactoryTest extends UnitTestCase
      */
     public function testCreateRootTreeRecord(): void
     {
-        $recordFactory = new RecordFactory();
+        $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
 
         $recordIndex = $this->createMock(RecordIndex::class);
         $recordIndex->expects($this->once())->method('addRecord');
@@ -56,14 +56,14 @@ class RecordFactoryTest extends UnitTestCase
      */
     public function testDatabaseRecordIsCreatedAndAddedToRecordIndex(): void
     {
-        $recordFactory = new RecordFactory();
+        $databaseRecordFactoryFactory = $this->createMock(DatabaseRecordFactoryFactory::class);
+        $recordFactory = new RecordFactory($databaseRecordFactoryFactory);
 
         $table = 'table_foo';
 
         $ignoreFieldsService = $this->createMock(IgnoredFieldsService::class);
         $ignoreFieldsService->expects($this->once())->method('getIgnoredFields')->with($table)->willReturn([]);
 
-        $databaseRecordFactoryFactory = $this->createMock(DatabaseRecordFactoryFactory::class);
         $databaseRecordFactoryFactory->expects($this->once())
                                      ->method('createFactoryForTable')
                                      ->with($table)
@@ -76,7 +76,6 @@ class RecordFactoryTest extends UnitTestCase
         $eventDispatcher->expects($this->exactly(2))->method('dispatch');
 
         $recordFactory->injectIgnoredFieldsService($ignoreFieldsService);
-        $recordFactory->injectDatabaseRecordFactoryFactory($databaseRecordFactoryFactory);
         $recordFactory->injectEventDispatcher($eventDispatcher);
         $recordFactory->injectRecordIndex($recordIndex);
 
@@ -95,7 +94,8 @@ class RecordFactoryTest extends UnitTestCase
      */
     public function testDatabaseRecordIsNotCreatedAndAddedToRecordIndexIfItShouldBeIgnored(): void
     {
-        $recordFactory = new RecordFactory();
+        $databaseRecordFactoryFactory = $this->createMock(DatabaseRecordFactoryFactory::class);
+        $recordFactory = new RecordFactory($databaseRecordFactoryFactory);
 
         $table = 'table_foo';
 
@@ -122,7 +122,6 @@ class RecordFactoryTest extends UnitTestCase
         $eventDispatcher = new EventDispatcher($listenerProvider);
 
         $recordFactory->injectIgnoredFieldsService($ignoreFieldsService);
-        $recordFactory->injectDatabaseRecordFactoryFactory($databaseRecordFactoryFactory);
         $recordFactory->injectEventDispatcher($eventDispatcher);
 
         $record = $recordFactory->createDatabaseRecord($table, 1, ['ignored_field' => 'bar'], []);
@@ -135,7 +134,7 @@ class RecordFactoryTest extends UnitTestCase
      */
     public function testMmRecordIsCreatedAndAddedToRecordIndex(): void
     {
-        $recordFactory = new RecordFactory();
+        $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
 
         $table = 'mm_table';
 
@@ -160,7 +159,7 @@ class RecordFactoryTest extends UnitTestCase
      */
     public function testFileRecordIsCreatedAndAddedToRecordIndex(): void
     {
-        $recordFactory = new RecordFactory();
+        $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
 
         $recordIndex = $this->createMock(RecordIndex::class);
         $recordIndex->expects($this->once())->method('addRecord');
@@ -187,7 +186,7 @@ class RecordFactoryTest extends UnitTestCase
      */
     public function testFolderRecordIsCreatedAndAddedToRecordIndex(): void
     {
-        $recordFactory = new RecordFactory();
+        $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
 
         $recordIndex = $this->createMock(RecordIndex::class);
         $recordIndex->expects($this->once())->method('addRecord');
