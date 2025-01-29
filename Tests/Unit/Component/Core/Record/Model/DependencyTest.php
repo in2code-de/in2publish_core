@@ -365,8 +365,6 @@ class DependencyTest extends UnitTestCase
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(false);
         $dataHandler = $this->createMock(DataHandler::class);
         $dataHandler->BE_USER = $backendUser;
-        // Assert the following method is not called to insure the test is correct
-        $dataHandler->expects($this->never())->method('tableReadOnly');
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
 
@@ -401,8 +399,7 @@ class DependencyTest extends UnitTestCase
         $backendUser->expects($this->once())->method('checkLanguageAccess')->with(1)->willReturn(true);
         $dataHandler = $this->createMock(DataHandler::class);
         $dataHandler->BE_USER = $backendUser;
-        $dataHandler->expects($this->once())->method('tableReadOnly')->willReturn(true);
-        // Assert the following method is not called to insure the test is correct
+        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = true;
         $dataHandler->expects($this->never())->method('checkModifyAccessList');
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
@@ -440,7 +437,7 @@ class DependencyTest extends UnitTestCase
         $backendUser->expects($this->once())->method('checkLanguageAccess')->with(1)->willReturn(true);
         $dataHandler = $this->createMock(DataHandler::class);
         $dataHandler->BE_USER = $backendUser;
-        $dataHandler->expects($this->once())->method('tableReadOnly')->willReturn(false);
+        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->expects($this->once())->method('checkModifyAccessList')->willReturn(false);
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
@@ -477,12 +474,12 @@ class DependencyTest extends UnitTestCase
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
         $dataHandler = $this->createMock(DataHandler::class);
         $dataHandler->BE_USER = $backendUser;
-        $dataHandler->method('tableReadOnly')->willReturn(false);
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
         $dataHandler->method('isInWebMount')->willReturn(true);
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
 
+        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
 
         $translatedRecord = new DatabaseRecord(
@@ -516,7 +513,7 @@ class DependencyTest extends UnitTestCase
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
         $dataHandler = $this->createMock(DataHandler::class);
         $dataHandler->BE_USER = $backendUser;
-        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
         $dataHandler->method('isInWebMount')->willReturn(true);
 
@@ -556,7 +553,7 @@ class DependencyTest extends UnitTestCase
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
         $dataHandler = $this->createMock(DataHandler::class);
         $dataHandler->BE_USER = $backendUser;
-        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
         $dataHandler->method('isInWebMount')->willReturn(true);
 
@@ -597,7 +594,7 @@ class DependencyTest extends UnitTestCase
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
         $dataHandler = $this->createMock(DataHandler::class);
         $dataHandler->BE_USER = $backendUser;
-        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
         $dataHandler->method('isInWebMount')->willReturn(true);
 
@@ -637,7 +634,7 @@ class DependencyTest extends UnitTestCase
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
         $dataHandler = $this->createMock(DataHandler::class);
         $dataHandler->BE_USER = $backendUser;
-        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
         $dataHandler->method('isInWebMount')->willReturn(false);
 
@@ -676,7 +673,7 @@ class DependencyTest extends UnitTestCase
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
         $dataHandler = $this->createMock(DataHandler::class);
         $dataHandler->BE_USER = $backendUser;
-        $dataHandler->method('tableReadOnly')->willReturn(false);
+        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
         $dataHandler->method('isInWebMount')->willReturn(false);
 

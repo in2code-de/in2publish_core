@@ -34,8 +34,8 @@ class FolderRecordTest extends UnitTestCase
         );
         $this->assertSame([], $folderRecord->getForeignProps());
         $this->assertSame(FolderRecord::CLASSIFICATION, $folderRecord->getClassification());
-
-        $this->expectExceptionObject(new LogicException('NOT IMPLEMENTED'));
+        $this->expectExceptionCode(3424165576);
+        $this->expectExceptionMessage('NOT IMPLEMENTED');
         $folderRecord->getForeignIdentificationProps();
     }
 
