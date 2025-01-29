@@ -154,7 +154,7 @@ class RecordFactory
         return null !== $deleteField
             && array_key_exists($deleteField, $record->getLocalProps())
             && $record->getLocalProps()[$deleteField]
-            && !count(array_diff($record->getLocalProps(), $record->getForeignProps()));
+            && !count(array_diff_assoc($record->getLocalProps(), $record->getForeignProps()));
     }
 
     protected function isRemovedAndDeletedRecord(Record $record): bool
