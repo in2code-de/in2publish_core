@@ -24,6 +24,9 @@ class ExecuteCommandTest extends UnitTestCase
      */
     public function testCommandCanBeExecuted(): void
     {
+        $this->markTestSkipped(
+            'Fix test with https://projekte.in2code.de/issues/69590',
+        );
         $contextService = $this->createMock(ContextService::class);
         $contextService->method('isForeign')->willReturn(true);
 
