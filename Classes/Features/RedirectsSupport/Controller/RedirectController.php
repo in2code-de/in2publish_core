@@ -250,7 +250,7 @@ class RedirectController extends ActionController
 
         $this->moduleTemplate->assignMultiple([
             'redirect' => $redirectDto,
-            'siteOptions' => $siteOptions
+            'siteOptions' => $siteOptions,
         ]);
 
         return $this->htmlResponse();

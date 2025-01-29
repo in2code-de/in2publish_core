@@ -109,12 +109,10 @@ class FileController extends ActionController
             return $this->redirectToUri($uri);
         }
 
-
         $this->moduleTemplate->assignMultiple([
             'recordTree' => $recordTree,
             'publishingAvailable' => true,
         ]);
-
 
         $this->pageRenderer->loadJavaScriptModule('@typo3/backend/modal.js');
         $this->pageRenderer->addInlineLanguageLabelFile(
