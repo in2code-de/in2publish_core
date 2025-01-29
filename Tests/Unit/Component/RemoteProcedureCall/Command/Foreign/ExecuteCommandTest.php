@@ -38,10 +38,11 @@ class ExecuteCommandTest extends UnitTestCase
         $input = new ArrayInput(['uid' => '16']);
         $output = new BufferedOutput();
 
-        $command = new ExecuteCommand();
+        $envelopeDispatcher = $this->createMock(EnvelopeDispatcher::class);
+        $command = new ExecuteCommand($envelopeDispatcher);
         $command->injectContextService($contextService);
         $command->injectLetterbox($letterbox);
-        $command->injectEnvelopeDispatcher($envelopeDispatcher);
+        $command->setLogger($this->createMock(\Psr\Log\LoggerInterface::class));
 
         $code = $command->run($input, $output);
 
