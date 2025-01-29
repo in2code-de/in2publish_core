@@ -24,10 +24,8 @@ class DatabaseSchemaServiceTest extends UnitTestCase
     public function testInjectCachePopulatesColumnsAndTables(): void
     {
         $localDatbase = $this->createMock(Connection::class);
-        $localDatbase->expects($this->never())->method('getSchemaManager');
-        if (method_exists(Connection::class, 'createSchemaManager')) {
-            $localDatbase->expects($this->never())->method('createSchemaManager');
-        }
+
+        $localDatbase->expects($this->never())->method('getSchemaInformation');
 
         $cacheData = [
             'columns' => [

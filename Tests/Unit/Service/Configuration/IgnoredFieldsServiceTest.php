@@ -24,8 +24,7 @@ class IgnoredFieldsServiceTest extends UnitTestCase
             ],
         ]);
 
-        $service = new IgnoredFieldsService();
-        $service->injectConfigContainer($configContainerMock);
+        $service = new IgnoredFieldsService($configContainerMock);
 
         $ignoredFields = $service->getIgnoredFields('foo');
 
@@ -50,8 +49,7 @@ class IgnoredFieldsServiceTest extends UnitTestCase
             ],
         ]);
 
-        $service = new IgnoredFieldsService();
-        $service->injectConfigContainer($configContainerMock);
+        $service = new IgnoredFieldsService($configContainerMock);
 
         $GLOBALS['TCA']['foo']['ctrl']['tstamp'] = 'timestamp';
         $GLOBALS['TCA']['foo']['ctrl']['versioningWS'] = true;
