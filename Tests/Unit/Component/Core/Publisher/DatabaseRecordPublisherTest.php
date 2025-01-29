@@ -10,6 +10,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Database\Connection;
 
 /**
@@ -40,12 +41,11 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     public function testPublishInsertsAddedRecords()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);
         $foreignDatabase->expects($this->once())->method('insert')->with(
             'tx_in2publishcore_domain_model_test',
             ['foo' => 'bar'],
         );
-        $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $addedRecord = $this->createMock(DatabaseRecord::class);
         $addedRecord->method('getLocalProps')->willReturn(['foo' => 'bar']);
@@ -61,12 +61,11 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     public function testPublishDeletesRemovedRecords()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);
         $foreignDatabase->expects($this->once())->method('delete')->with(
             'tx_in2publishcore_domain_model_test',
             ['foo' => 'bar'],
         );
-        $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $addedRecord = $this->createMock(DatabaseRecord::class);
         $addedRecord->method('getForeignIdentificationProps')->willReturn(['foo' => 'bar']);
@@ -82,12 +81,11 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     public function testPublishUpdatesChangedRecords()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);
         $foreignDatabase->expects($this->once())->method('update')->with(
             'tx_in2publishcore_domain_model_test',
             ['prop1' => 'localValue', 'prop2' => 'localValue'],
         );
-        $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $addedRecord = $this->createMock(DatabaseRecord::class);
         $addedRecord->method('getLocalProps')->willReturn(['prop1' => 'localValue', 'prop2' => 'localValue']);
@@ -104,11 +102,10 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     public function testFinishCommitsDatabaseChanges()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);;
         $foreignDatabase->method('isTransactionActive')->willReturn(true);
 
         $foreignDatabase->expects($this->once())->method('commit');
-        $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $databaseRecordPublisher->finish();
     }
@@ -119,12 +116,24 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     public function testCancelRollsBackDatabaseChanges()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);
         $foreignDatabase->method('isTransactionActive')->willReturn(true);
-
         $foreignDatabase->expects($this->once())->method('rollBack');
-        $databaseRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $databaseRecordPublisher->cancel();
+    }
+
+    /**
+     * @param DatabaseRecordPublisher $databaseRecordPublisher
+     * @return void
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    protected function getForeignDatabaseMock(DatabaseRecordPublisher $databaseRecordPublisher): MockObject
+    {
+        $foreignDatabase = $this->createMock(Connection::class);
+        $reflection = new \ReflectionProperty(DatabaseRecordPublisher::class, 'foreignDatabase');
+        $reflection->setAccessible(true);
+        $reflection->setValue($databaseRecordPublisher, $foreignDatabase);
+        return $foreignDatabase;
     }
 }
