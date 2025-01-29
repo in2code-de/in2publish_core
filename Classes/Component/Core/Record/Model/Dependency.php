@@ -226,7 +226,7 @@ class Dependency
             }
             if ($record instanceof AbstractDatabaseRecord) {
                 $table = $record->getClassification();
-                if ($dataHandler->tableReadOnly($table)) {
+                if ($GLOBALS['TCA'][$table]['ctrl']['readOnly'] ?? false) {
                     return false;
                 }
                 if (!$dataHandler->checkModifyAccessList($table)) {
