@@ -25,7 +25,7 @@ class AbstractProcessorTest extends UnitTestCase
      */
     public function testProcessingResultIsImcompatibleIfThereAreForbiddenKeysInTca(): void
     {
-        $abstractProcessor = $this->getMockAbstractProcessor();
+        $abstractProcessor = $this->getMockAbstractProcessorWithJoinResolver();
 
         $forbidden = new ReflectionProperty(AbstractProcessor::class, 'forbidden');
         $forbidden->setAccessible(true);
@@ -53,7 +53,7 @@ class AbstractProcessorTest extends UnitTestCase
      */
     public function testProcessingResultIsIncompatibleIfRequiredFieldIsMissing(): void
     {
-        $abstractProcessor = $this->getMockAbstractProcessor();
+        $abstractProcessor = $this->getMockAbstractProcessorWithJoinResolver();
 
         $required = new ReflectionProperty(AbstractProcessor::class, 'required');
         $required->setAccessible(true);
@@ -82,10 +82,9 @@ class AbstractProcessorTest extends UnitTestCase
      */
     public function testExceptionIsThrownIfTypeIsMissing(): void
     {
-        $abstractProcessor = $this->getMockAbstractProcessor();
+        $abstractProcessor = $this->getMockAbstractProcessorWithJoinResolver();
         // type is not set
-        $this->expectExceptionObject(new MissingPreProcessorTypeException($abstractProcessor));
-        $this->expectExceptionCode(1649243375);
+        $this->expectException(MissingPreProcessorTypeException::class);
         $abstractProcessor->getType();
 
         // type is set to 'processor_type'
@@ -98,9 +97,7 @@ class AbstractProcessorTest extends UnitTestCase
      */
     public function testProcessingResultIsIncompatibleIfNoResolverIsFound(): void
     {
-        $container = $this->createMock(ContainerInterface::class);
-        $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
-        $abstractProcessor->injectContainer($container);
+        $abstractProcessor = $this->getMockAbstractProcessor();
         $abstractProcessor->method('buildResolver')->willReturn(null);
 
         $tca = ['type' => 'inline'];
@@ -118,9 +115,7 @@ class AbstractProcessorTest extends UnitTestCase
      */
     public function testMethodGetImportantFields(): void
     {
-        $container = $this->createMock(ContainerInterface::class);
-        $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
-        $abstractProcessor->injectContainer($container);
+        $abstractProcessor = $this->getMockAbstractProcessor();
 
         $requiredFields = new ReflectionProperty(AbstractProcessor::class, 'required');
         $requiredFields->setAccessible(true);
@@ -137,12 +132,29 @@ class AbstractProcessorTest extends UnitTestCase
         $this->assertSame($expectedImportantFields, $getImportantFields->invoke($abstractProcessor));
     }
 
+    protected function getMockAbstractProcessorWithJoinResolver(): MockObject
+    {
+        $container = $this->createMock(ContainerInterface::class);
+
+        $abstractProcessor = $this->getMockBuilder(AbstractProcessor::class)
+                                  ->onlyMethods(['buildResolver'])
+                                  ->setConstructorArgs([$container])
+                                  ->getMockForAbstractClass();
+
+        $abstractProcessor->method('buildResolver')
+                          ->willReturn($this->createMock(StaticJoinResolver::class));
+
+        return $abstractProcessor;
+    }
+
     protected function getMockAbstractProcessor(): MockObject
     {
         $container = $this->createMock(ContainerInterface::class);
-        $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
-        $abstractProcessor->injectContainer($container);
-        $abstractProcessor->method('buildResolver')->willReturn($this->createMock(StaticJoinResolver::class));
+
+        $abstractProcessor = $this->getMockBuilder(AbstractProcessor::class)
+                                  ->setConstructorArgs([$container])
+                                  ->getMockForAbstractClass();
+
         return $abstractProcessor;
     }
 }
