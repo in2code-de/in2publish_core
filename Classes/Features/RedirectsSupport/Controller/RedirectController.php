@@ -243,14 +243,15 @@ class RedirectController extends ActionController
             $identifier = $site->getIdentifier();
             $siteOptions[$identifier] = $identifier . ' (' . $site->getBase() . ')';
         }
-        $this->moduleTemplate->assignMultiple([
-            'redirect' => $redirectDto,
-            'siteOptions' => $siteOptions,
-        ]);
 
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
         $buttonBar->addButton(new BackButton($this->iconFactory, $this->uriBuilder));
         $buttonBar->addButton(new SaveAndPublishButton($this->iconFactory));
+
+        $this->moduleTemplate->assignMultiple([
+            'redirect' => $redirectDto,
+            'siteOptions' => $siteOptions
+        ]);
 
         return $this->htmlResponse();
     }
