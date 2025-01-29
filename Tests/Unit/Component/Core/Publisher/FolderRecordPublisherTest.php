@@ -15,6 +15,7 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatc
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\Tests\Unit\Component\Core\Publisher\Constraint\IsEqualIgnoringRequestToken;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function json_encode;
@@ -54,7 +55,7 @@ class FolderRecordPublisherTest extends UnitTestCase
             (new FolderInfo(1, '/foo/bar', 'bar'))->toArray(),
         );
 
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($folderRecordPublisher);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
@@ -69,7 +70,6 @@ class FolderRecordPublisherTest extends UnitTestCase
                 ],
             ]),
         );
-        $folderRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $folderRecordPublisher->publish($deletedFolder);
         $folderRecordPublisher->finish();
@@ -87,7 +87,7 @@ class FolderRecordPublisherTest extends UnitTestCase
             [],
         );
 
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($folderRecordPublisher);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
@@ -102,7 +102,6 @@ class FolderRecordPublisherTest extends UnitTestCase
                 ],
             ]),
         );
-        $folderRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $folderRecordPublisher->publish($addedFolder);
         $folderRecordPublisher->finish();
@@ -120,5 +119,14 @@ class FolderRecordPublisherTest extends UnitTestCase
         $remoteCommandDispatcher->method('dispatch')->willReturn($remoteCommandResponse);
         $folderRecordPublisher->injectRemoteCommandDispatcher($remoteCommandDispatcher);
         return $folderRecordPublisher;
+    }
+
+    protected function getForeignDatabaseMock(FolderRecordPublisher $folderRecordPublisher): MockObject
+    {
+        $foreignDatabase = $this->createMock(Connection::class);
+        $reflection = new \ReflectionProperty(FolderRecordPublisher::class, 'foreignDatabase');
+        $reflection->setAccessible(true);
+        $reflection->setValue($folderRecordPublisher, $foreignDatabase);
+        return $foreignDatabase;
     }
 }

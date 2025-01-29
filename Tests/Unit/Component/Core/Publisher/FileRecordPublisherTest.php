@@ -8,7 +8,6 @@ use In2code\In2publishCore\Component\Core\Publisher\DatabaseRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFileInstruction;
-use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFolderInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\MoveFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceAndRenameFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceFileInstruction;
