@@ -27,7 +27,7 @@ class AllCommandTest extends UnitTestCase
         $commandRegistry = $this->createMock(CommandRegistry::class);
         $commandRegistry->method('getCommandByIdentifier')->willReturn(
             new class extends Command {
-                public function execute(InputInterface $input, OutputInterface $output)
+                public function execute(InputInterface $input, OutputInterface $output): int
                 {
                     return 0;
                 }
@@ -37,8 +37,7 @@ class AllCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new AllCommand();
-        $command->injectCommandRegistry($commandRegistry);
+        $command = new AllCommand($commandRegistry);
 
         $code = $command->run($input, $output);
 
