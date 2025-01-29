@@ -21,8 +21,6 @@ class ExtNewsRelatedProcessorTest extends UnitTestCase
      */
     public function testExtRelatedNewsProcessReturnsStaticJoinResolver(): void
     {
-        $extRelatedProcessor = new ExtNewsRelatedProcessor();
-
         $tca = [];
 
         $container = $this->createMock(ContainerInterface::class);
@@ -34,8 +32,8 @@ class ExtNewsRelatedProcessorTest extends UnitTestCase
             'uid_foreign',
         );
         $container->expects($this->once())->method('get')->willReturn($staticJoinResolver);
-        $extRelatedProcessor->injectContainer($container);
 
+        $extRelatedProcessor = new ExtNewsRelatedProcessor($container);
         $excludedTablesService = $this->createMock(ExcludedTablesService::class);
         $excludedTablesService->method('isExcludedTable')->willReturn(false);
         $extRelatedProcessor->injectExcludedTablesService($excludedTablesService);
@@ -49,7 +47,7 @@ class ExtNewsRelatedProcessorTest extends UnitTestCase
      */
     public function testGetTable(): void
     {
-        $extRelatedProcessor = new ExtNewsRelatedProcessor();
+        $extRelatedProcessor = new ExtNewsRelatedProcessor($this->createMock(ContainerInterface::class));
         $this->assertSame('tx_news_domain_model_news', $extRelatedProcessor->getTable());
     }
 
@@ -58,7 +56,7 @@ class ExtNewsRelatedProcessorTest extends UnitTestCase
      */
     public function testGetColumn(): void
     {
-        $extRelatedProcessor = new ExtNewsRelatedProcessor();
+        $extRelatedProcessor = new ExtNewsRelatedProcessor($this->createMock(ContainerInterface::class));
         $this->assertSame('related', $extRelatedProcessor->getColumn());
     }
 }
