@@ -41,8 +41,7 @@ class RunningRequestServiceTest extends FunctionalTestCase
 
         $repo = new RunningRequestRepository();
         $repo->injectLocalDatabase($connection);
-        $service = new RunningRequestService();
-        $service->injectRunningRequestRepository($repo);
+        $service = new RunningRequestService($repo);
 
         $event = new RecursiveRecordPublishingBegan($recordTree);
 
