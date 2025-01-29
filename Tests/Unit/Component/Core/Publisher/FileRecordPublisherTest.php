@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Publisher;
 
+use In2code\In2publishCore\Component\Core\Publisher\DatabaseRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFileInstruction;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFileInstruction;
@@ -19,6 +20,7 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRespons
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
 use In2code\In2publishCore\Tests\Unit\Component\Core\Publisher\Constraint\IsEqualIgnoringRequestToken;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function json_encode;
@@ -58,7 +60,7 @@ class FileRecordPublisherTest extends UnitTestCase
     {
         $fileRecordPublisher = $this->createFileRecordPublisher();
 
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($fileRecordPublisher);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
@@ -73,7 +75,6 @@ class FileRecordPublisherTest extends UnitTestCase
                 ],
             ]),
         );
-        $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $deletedFile = new FileRecord(
             [],
@@ -91,7 +92,7 @@ class FileRecordPublisherTest extends UnitTestCase
     {
         $fileRecordPublisher = $this->createFileRecordPublisher('/var/tmp/asdfasdf.tmp');
 
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($fileRecordPublisher);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
@@ -107,7 +108,6 @@ class FileRecordPublisherTest extends UnitTestCase
                 ],
             ]),
         );
-        $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $addedFile = new FileRecord(
             $this->createFileInfo('bar', 1, '23450978', '/foo'),
@@ -133,7 +133,7 @@ class FileRecordPublisherTest extends UnitTestCase
             $this->createFileInfo('bar', 1, '23149872364', '/foo'),
         );
 
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($fileRecordPublisher);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
@@ -149,7 +149,6 @@ class FileRecordPublisherTest extends UnitTestCase
                 ],
             ]),
         );
-        $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $fileRecordPublisher->publish($changedFile);
         $fileRecordPublisher->finish();
@@ -167,7 +166,7 @@ class FileRecordPublisherTest extends UnitTestCase
             $this->createFileInfo('foo', 1, '452093485', '/bar'),
         );
 
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($fileRecordPublisher);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
@@ -183,7 +182,6 @@ class FileRecordPublisherTest extends UnitTestCase
                 ],
             ]),
         );
-        $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $fileRecordPublisher->publish($movedFile);
         $fileRecordPublisher->finish();
@@ -201,7 +199,7 @@ class FileRecordPublisherTest extends UnitTestCase
             $this->createFileInfo('bar', 1, '234587', '/bar'),
         );
 
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($fileRecordPublisher);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
@@ -218,7 +216,6 @@ class FileRecordPublisherTest extends UnitTestCase
                 ],
             ]),
         );
-        $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $fileRecordPublisher->publish($movedFile);
         $fileRecordPublisher->finish();
@@ -236,7 +233,7 @@ class FileRecordPublisherTest extends UnitTestCase
             $this->createFileInfo('foo', 1, '234587', '/foo'),
         );
 
-        $foreignDatabase = $this->createMock(Connection::class);
+        $foreignDatabase = $this->getForeignDatabaseMock($fileRecordPublisher);
         $foreignDatabase->expects($this->once())->method('bulkInsert')->with(
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
@@ -252,7 +249,6 @@ class FileRecordPublisherTest extends UnitTestCase
                 ],
             ]),
         );
-        $fileRecordPublisher->injectForeignDatabase($foreignDatabase);
 
         $fileRecordPublisher->publish($movedFile);
         $fileRecordPublisher->finish();
@@ -291,5 +287,19 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->method('transmitTemporaryFile')->willReturn($temporaryFileIdentifier);
 
         return $fileRecordPublisher;
+    }
+
+    /**
+     * @param DatabaseRecordPublisher $
+     * @return void
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    protected function getForeignDatabaseMock(FileRecordPublisher $fileRecordPublisher): MockObject
+    {
+        $foreignDatabase = $this->createMock(Connection::class);
+        $reflection = new \ReflectionProperty(FileRecordPublisher::class, 'foreignDatabase');
+        $reflection->setAccessible(true);
+        $reflection->setValue($fileRecordPublisher, $foreignDatabase);
+        return $foreignDatabase;
     }
 }
