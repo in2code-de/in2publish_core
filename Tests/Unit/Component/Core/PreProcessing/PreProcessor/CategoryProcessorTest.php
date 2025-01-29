@@ -9,6 +9,7 @@ use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarke
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Database\Connection;
 
@@ -23,7 +24,8 @@ class CategoryProcessorTest extends UnitTestCase
      */
     public function testProcessResultIsCompatibleForAnyTca(): void
     {
-        $categoryProcessor = new CategoryProcessor();
+        $container = $this->createMock(ContainerInterface::class);
+        $categoryProcessor = new CategoryProcessor($container);
 
         $tca = [];
 
@@ -56,9 +58,8 @@ class CategoryProcessorTest extends UnitTestCase
             'uid_foreign',
         );
 
-        $container = $this->createMock(Container::class);
+
         $container->method('get')->willReturn($resolver);
-        $categoryProcessor->injectContainer($container);
 
         $localDatabase = $this->createMock(Connection::class);
         $localDatabase->method('quote')->willReturn('"table_foo"');
