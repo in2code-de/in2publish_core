@@ -78,6 +78,8 @@
 	},
 	"require-dev": {
 		"typo3/testing-framework": "^9.1",
-		"co-stack/mysql-loader": "dev-master"
+		"co-stack/mysql-loader": "dev-master",
+		"co-stack/process-manager": "dev-master",
+		"co-stack/stack-test": "dev-master"
 	}
 }
