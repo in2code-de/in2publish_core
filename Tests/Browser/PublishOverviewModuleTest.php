@@ -13,7 +13,7 @@ class PublishOverviewModuleTest extends AbstractBrowserTestCase
     public function testPublishOverviewModuleCanBeOpened(): void
     {
         $localDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
 
         TYPO3Helper::selectModuleByText($localDriver, 'Page');
         TYPO3Helper::selectInPageTree($localDriver, ['Home']);
