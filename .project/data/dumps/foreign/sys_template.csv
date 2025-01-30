@@ -1,6 +1,6 @@
 1	1	1700470579	1660115842	0	0	0	0	0	This is an Empty Site Package TypoScript template.\
 \
-For each website you need a TypoScript template on the main page of your website (on the top level). For better maintenance all TypoScript should be extracted into external files via @import 'EXT:site_myproject/Configuration/TypoScript/setup.typoscript'	0	Main TypoScript Rendering	1	1	EXT:fluid_styled_content/Configuration/TypoScript/,EXT:fluid_styled_content/Configuration/TypoScript/Styling/,EXT:solr/Configuration/TypoScript/Solr/,EXT:solr/Configuration/TypoScript/BootstrapCss/,EXT:solr/Configuration/TypoScript/StyleSheets/,EXT:solr/Configuration/TypoScript/Examples/IndexQueueNews/,EXT:solr/Configuration/TypoScript/Examples/IndexQueueNewsContentElements/,EXT:solr/Configuration/TypoScript/Examples/IndexQueueTtNews/,EXT:solrfal/Configuration/TypoScript/Basic,EXT:fal_securedownload/Configuration/TypoScript,EXT:news/Configuration/TypoScript		## SOLR\
+For each website you need a TypoScript template on the main page of your website (on the top level). For better maintenance all TypoScript should be extracted into external files via @import 'EXT:site_myproject/Configuration/TypoScript/setup.typoscript'	Main TypoScript Rendering	1	1	EXT:fluid_styled_content/Configuration/TypoScript/,EXT:fluid_styled_content/Configuration/TypoScript/Styling/,EXT:solr/Configuration/TypoScript/Solr/,EXT:solr/Configuration/TypoScript/BootstrapCss/,EXT:solr/Configuration/TypoScript/StyleSheets/,EXT:solr/Configuration/TypoScript/Examples/IndexQueueNews/,EXT:solr/Configuration/TypoScript/Examples/IndexQueueNewsContentElements/,EXT:solr/Configuration/TypoScript/Examples/IndexQueueTtNews/,EXT:solrfal/Configuration/TypoScript/Basic,EXT:fal_securedownload/Configuration/TypoScript,EXT:news/Configuration/TypoScript		## SOLR\
 config {\
     index_enable = 1\
 }\
@@ -30,7 +30,7 @@ page.100 {\
 }\
 \
 plugin.tx_solr.index.enableFileIndexing.storageContext = 1	\N	0	0	0
-3	69	1700037665	1700037653	0	0	0	0	256	\N	0	+ext	0	0	\N	\N	page.20 = COA\
+3	69	1700037665	1700037653	0	0	0	0	256	\N	+ext	0	0	\N	\N	page.20 = COA\
 page.20.10 = TEXT\
 page.20.10.data = date:U\
 page.20.10.strftime = %d.%m.%Y %H:%M:%S		0	0	0
