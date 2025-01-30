@@ -18,7 +18,7 @@ class PublishChangedPagePropertiesTest extends AbstractBrowserTestCase
     public function testChangedPagePropertiesCanBePublished(): void
     {
         $localDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
 
         TYPO3Helper::selectModuleByText($localDriver, 'Page');
         TYPO3Helper::selectInPageTree($localDriver, ['Home', 'EXT:in2publish_core', '1a Page properties - changed']);
@@ -47,7 +47,7 @@ class PublishChangedPagePropertiesTest extends AbstractBrowserTestCase
         unset($localDriver);
 
         $foreignDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Page');
         TYPO3Helper::selectInPageTree($foreignDriver, ['Home', 'EXT:in2publish_core', '1a Page properties - changed']);
 
