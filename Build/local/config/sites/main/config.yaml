@@ -1,4 +1,4 @@
-base: local.v12.in2publish-core.de
+base: local.v13.in2publish-core.de
 errorHandling: {  }
 languages:
   -

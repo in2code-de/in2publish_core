@@ -1,4 +1,4 @@
-base: foreign.v12.in2publish-core.de
+base: foreign.v13.in2publish-core.de
 errorHandling: {  }
 languages:
   -
