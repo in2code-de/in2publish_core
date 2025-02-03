@@ -276,7 +276,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
     {
         // Assert file on foreign
         $foreignDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases', '2d_deleted_file']);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
@@ -290,7 +290,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
         unset($foreignDriver);
 
         $localDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Files');
         TYPO3Helper::selectInFileStorageTree($localDriver, ['fileadmin', 'Testcases', '2d_deleted_file']);
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
@@ -321,7 +321,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
 
         // Assert file on foreign
         $foreignDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases', '2d_deleted_file']);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
@@ -342,7 +342,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
     {
         // Assert folder exists on foreign
         $foreignDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases', '2f_delete_folder']);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
@@ -357,7 +357,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
 
         // Assert folder is deleted and publish it
         $localDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Files');
         TYPO3Helper::selectInFileStorageTree($localDriver, ['fileadmin', 'Testcases']);
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
@@ -388,7 +388,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
 
         // Assert file on foreign
         $foreignDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases']);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
@@ -409,7 +409,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
     {
         // Assert folder exists on foreign
         $foreignDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases', '2g_moved_folder_with_file']);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
@@ -424,7 +424,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
 
         // Assert folder is deleted and publish it
         $localDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Files');
         TYPO3Helper::selectInFileStorageTree($localDriver, ['fileadmin', 'Testcases', '2g_target_folder', '2g_moved_folder_with_file']);
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
@@ -455,7 +455,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
 
         // Assert file on foreign
         $foreignDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases', '2g_target_folder', '2g_moved_folder_with_file']);
 
