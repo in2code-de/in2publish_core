@@ -89,7 +89,7 @@ class UidClashTest  extends AbstractBrowserTestCase
 
     protected function publishPage76(WebDriver $localDriver): WebDriver
     {
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
 
         TYPO3Helper::selectModuleByText($localDriver, 'Page');
         TYPO3Helper::selectInPageTree(
@@ -120,7 +120,7 @@ class UidClashTest  extends AbstractBrowserTestCase
 
     protected function publishNews76(WebDriver $localDriver): void
     {
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($localDriver, 'List');
         TYPO3Helper::selectInPageTree($localDriver, ['Home', 'News Folder']);
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');

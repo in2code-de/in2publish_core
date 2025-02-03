@@ -15,7 +15,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
     public function testTheLevelOfRecordsToShowCanBeSelected(): void
     {
         $localDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
 
         TYPO3Helper::selectInPageTree($localDriver, []);
@@ -23,7 +23,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
             $select = new Select($driver->findElement(WebDriverBy::name('depth')));
             $select->setValueByText('0 level');
 
-            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageNotContains($driver, 'Home');
             self::assertPageNotContains($driver, 'EXT:in2publish_core');
             self::assertPageNotContains($driver, '4 PageTree depth');
@@ -37,7 +37,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
             $select = new Select($driver->findElement(WebDriverBy::name('depth')));
             $select->setValueByText('1 level');
 
-            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageContains($driver, 'Home');
             self::assertPageNotContains($driver, 'EXT:in2publish_core');
             self::assertPageNotContains($driver, '4 PageTree depth');
@@ -51,7 +51,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
             $select = new Select($driver->findElement(WebDriverBy::name('depth')));
             $select->setValueByText('2 levels');
 
-            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageContains($driver, 'Home');
             self::assertPageContains($driver, 'EXT:in2publish_core');
             self::assertPageNotContains($driver, '4 PageTree depth');
@@ -65,7 +65,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
             $select = new Select($driver->findElement(WebDriverBy::name('depth')));
             $select->setValueByText('3 levels');
 
-            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageContains($driver, 'Home');
             self::assertPageContains($driver, 'EXT:in2publish_core');
             self::assertPageContains($driver, '4 PageTree depth');
@@ -79,7 +79,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
             $select = new Select($driver->findElement(WebDriverBy::name('depth')));
             $select->setValueByText('4 levels');
 
-            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageContains($driver, 'Home');
             self::assertPageContains($driver, 'EXT:in2publish_core');
             self::assertPageContains($driver, '4 PageTree depth');
@@ -93,7 +93,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
             $select = new Select($driver->findElement(WebDriverBy::name('depth')));
             $select->setValueByText('5 levels');
 
-            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageContains($driver, 'Home');
             self::assertPageContains($driver, 'EXT:in2publish_core');
             self::assertPageContains($driver, '4 PageTree depth');
@@ -107,7 +107,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
             $select = new Select($driver->findElement(WebDriverBy::name('depth')));
             $select->setValueByText('6 levels');
 
-            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageContains($driver, 'Home');
             self::assertPageContains($driver, 'EXT:in2publish_core');
             self::assertPageContains($driver, '4 PageTree depth');
@@ -121,7 +121,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
             $select = new Select($driver->findElement(WebDriverBy::name('depth')));
             $select->setValueByText('7 levels');
 
-            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageContains($driver, 'Home');
             self::assertPageContains($driver, 'EXT:in2publish_core');
             self::assertPageContains($driver, '4 PageTree depth');
@@ -138,7 +138,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
     public function testRecordTreeStartsWithSelectedPage(): void
     {
         $localDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
@@ -150,7 +150,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageContains($driver, 'Home');
             self::assertPageNotContains($driver, 'EXT:in2publish_core');
             self::assertPageNotContains($driver, '4 PageTree depth');
@@ -164,7 +164,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            self::assertPageNotContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageNotContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageContains($driver, 'Home');
             self::assertPageContains($driver, 'EXT:in2publish_core');
             self::assertPageNotContains($driver, '4 PageTree depth');
@@ -178,7 +178,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            self::assertPageNotContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageNotContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageNotContains($driver, 'Home');
             self::assertPageContains($driver, 'EXT:in2publish_core');
             self::assertPageContains($driver, '4 PageTree depth');
@@ -192,7 +192,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            self::assertPageNotContains($driver, '[LOCAL] CP TYPO3 v12');
+            self::assertPageNotContains($driver, '[LOCAL] CP TYPO3 v13');
             self::assertPageNotContains($driver, 'Home');
             self::assertPageNotContains($driver, 'EXT:in2publish_core');
             self::assertPageContains($driver, '4 PageTree depth');

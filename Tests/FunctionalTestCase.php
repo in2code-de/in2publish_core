@@ -133,7 +133,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
     {
         $env = [];
         $env['XDEBUG_SESSION'] = 0;
-        $env['PHP_IDE_CONFIG'] = 'serverName=local.v12.in2publish-core.de';
+        $env['PHP_IDE_CONFIG'] = 'serverName=local.v13.in2publish-core.de';
 
         $processes = [];
         $processes[] = new Process(

@@ -15,7 +15,7 @@ class BackendUserPreferencesResetTest extends AbstractBrowserTestCase
     public function testBackendUserSettingsCanBeReset(): void
     {
         $localDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
 
         $localDriver->click(WebDriverBy::cssSelector('#typo3-cms-backend-backend-toolbaritems-usertoolbaritem'));
         $localDriver->click(WebDriverBy::linkText('User Settings'));

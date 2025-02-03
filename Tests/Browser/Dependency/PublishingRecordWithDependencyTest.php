@@ -20,7 +20,7 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
         $localDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin(
             $localDriver,
-            'https://local.v12.in2publish-core.de/typo3',
+            'https://local.v13.in2publish-core.de/typo3',
             'publisher-page-tree-publish',
             'publisher-page-tree-publish',
         );

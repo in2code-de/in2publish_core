@@ -20,7 +20,7 @@ class RedirectsModuleTest extends AbstractBrowserTestCase
     public function testRedirectWithoutAssociationCanBePublished(): void
     {
         $localDriver = WebDriverFactory::createChromeDriver();
-        TYPO3Helper::backendLogin($localDriver, 'https://local.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Redirects');
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 't3://page?uid=67&_language=0');
@@ -35,7 +35,7 @@ class RedirectsModuleTest extends AbstractBrowserTestCase
             $select->setValue('main');
             $driver->click(WebDriverBy::name('_saveandpublish'));
 
-            self::assertPageContains($driver, 'Associated redirect Redirect [19] (local.v12.in2publish.de) /extin2publish/8-treatremovedanddeletedasdifference -> t3://page?uid=39&_language=0 with site main');
+            self::assertPageContains($driver, 'Associated redirect Redirect [19] (local.v13.in2publish.de) /extin2publish/8-treatremovedanddeletedasdifference -> t3://page?uid=39&_language=0 with site main');
         });
 
         $localDriver->close();
