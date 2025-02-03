@@ -92,10 +92,7 @@ class UidClashTest  extends AbstractBrowserTestCase
         TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
 
         TYPO3Helper::selectModuleByText($localDriver, 'Page');
-        TYPO3Helper::selectInPageTree(
-            $localDriver,
-            ['Home', 'EXT:in2publish_core', '24 Page with Category 1 and Category 2'],
-        );
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($localDriver, '24 Page with Category 1 and Category 2');
 
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
 
@@ -142,17 +139,17 @@ class UidClashTest  extends AbstractBrowserTestCase
 
     protected function assertPage76HasBeenPublished(WebDriver $foreignDriver): void
     {
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Page');
-        TYPO3Helper::selectInPageTree(
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence(
             $foreignDriver,
-            ['Home', 'EXT:in2publish_core', '24 Page with Category 1 and Category 2']
+            '24 Page with Category 1 and Category 2'
         );
     }
 
     protected function assertNews76HasBeenPublished(WebDriver $foreignDriver): void
     {
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
         TYPO3Helper::selectInPageTree($foreignDriver, ['Home', 'News Folder']);
 
@@ -166,7 +163,7 @@ class UidClashTest  extends AbstractBrowserTestCase
 
     private function assertOnlyCategory1HasBeenPublished(WebDriver $foreignDriver)
     {
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
         TYPO3Helper::selectInPageTree($foreignDriver, ['Home']);
 
@@ -180,7 +177,7 @@ class UidClashTest  extends AbstractBrowserTestCase
 
     private function assertBothCategoriesHaveBeenPublished(WebDriver $foreignDriver)
     {
-        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v12.in2publish-core.de/typo3', 'admin', 'password');
+        TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
         TYPO3Helper::selectInPageTree($foreignDriver, ['Home']);
 
