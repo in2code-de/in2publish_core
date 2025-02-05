@@ -1,5 +1,21 @@
 # In2publish Core Change Log
 
+12.5.8
+- [BUGFIX] Fix publishing of deleted related records
+- [BUGFIX] Remove all additional entries from RecordIndex if there is more than one entry
+- [TEST] Correct Tests for new SQL data
+- [TEST] Update dump for SingleDatabaseRepositoryTest
+- [TEST] Adjust UidClashTest
+- [TEST] Truncate tables sys_category and sys_category_record_mm before tests
+- [TEST] Add data for test case 24 to dumps
+- [BUGFIX] Correct foreign_table_where handling
+- [CLEANUP] Remove Firefox Screencast
+- [UPDATE] Remove use of deprecated action
+- [TEST] Add Logging to Unit & Functional Test Change behaviour of Garbagecollector
+- [TEST] Correct JoinDemandResolverTest
+- [TASK] Improve cache handling
+- [BUGFIX] Correct JS submit Method
+
 12.5.7
 
 - [META] Set the EM conf version number to 12.5.7
