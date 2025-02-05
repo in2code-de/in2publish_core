@@ -28,7 +28,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
 
         $rows = $singleDataRepository->findByProperty('pages', 'uid', [1, 3, 6]);
         $sortings = array_column($rows, 'sorting');
-        self::assertSame([32, 128, 512], $sortings);
+        self::assertSame([128, 512, 544], $sortings);
     }
 
     public function testFindByPropertyWithJoinReturnsJoinedRows(): void
@@ -43,13 +43,13 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
             'sys_category_record_mm',
             'sys_category',
             'uid_foreign',
-            [170, 180],
+            [77, 78],
         );
         self::assertSame([
-            '1e829e4ee2bd6fa3a73ee64c6461313b08939ee7' => [
+            '6ed754e2fa2e937739af04a069a6f6d9e96db685' => [
                 'mmtbl' => [
                     'uid_local' => 1,
-                    'uid_foreign' => 170,
+                    'uid_foreign' => 77,
                     'sorting' => 0,
                     'sorting_foreign' => 1,
                     'tablenames' => "pages",
@@ -57,9 +57,9 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                 ],
                 'table' => [
                     'uid' => 1,
-                    'pid' => 168,
-                    'tstamp' => 1660120355,
-                    'crdate' => 1660120355,
+                    'pid' => 1,
+                    'tstamp' => 1730129770,
+                    'crdate' => 1730129770,
                     'deleted' => 0,
                     'hidden' => 0,
                     'starttime' => 0,
@@ -68,14 +68,14 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                     'description' => "",
                     'sys_language_uid' => 0,
                     'l10n_parent' => 0,
-                    'l10n_state' => null,
+                    'l10n_state' => '"NULL"',
                     't3_origuid' => 0,
                     'l10n_diffsource' => "",
                     't3ver_oid' => 0,
                     't3ver_wsid' => 0,
                     't3ver_state' => 0,
                     't3ver_stage' => 0,
-                    'title' => "Styleguide Demo Category",
+                    'title' => '"Category 1"',
                     'items' => 0,
                     'parent' => 0,
                     'fe_group' => "0",
@@ -85,42 +85,42 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                     'import_id' => "",
                     'import_source' => "",
                     'seo_title' => "",
-                    'seo_description' => null,
+                    'seo_description' => '',
                     'seo_headline' => "",
-                    'seo_text' => null,
-                    'slug' => "styleguide-demo-category",
+                    'seo_text' => '',
+                    'slug' => '"category-1"',
                 ],
             ],
-            '427137b54c066f401f490c1af0aea53e5ed70536' => [
+            'a991a8cbb167889a955eecbdba10bb99a9d8ec4d' => [
                 'mmtbl' => [
-                    'uid_local' => 1,
-                    'uid_foreign' => 180,
+                    'uid_local' => 2,
+                    'uid_foreign' => 78,
                     'sorting' => 0,
                     'sorting_foreign' => 1,
                     'tablenames' => "pages",
                     'fieldname' => "categories",
                 ],
                 'table' => [
-                    'uid' => 1,
-                    'pid' => 168,
-                    'tstamp' => 1660120355,
-                    'crdate' => 1660120355,
+                    'uid' => 2,
+                    'pid' => 1,
+                    'tstamp' => 1730129781,
+                    'crdate' => 1730129781,
                     'deleted' => 0,
                     'hidden' => 0,
                     'starttime' => 0,
                     'endtime' => 0,
-                    'sorting' => 256,
+                    'sorting' => 512,
                     'description' => "",
                     'sys_language_uid' => 0,
                     'l10n_parent' => 0,
-                    'l10n_state' => null,
+                    'l10n_state' => '"NULL"',
                     't3_origuid' => 0,
                     'l10n_diffsource' => "",
                     't3ver_oid' => 0,
                     't3ver_wsid' => 0,
                     't3ver_state' => 0,
                     't3ver_stage' => 0,
-                    'title' => "Styleguide Demo Category",
+                    'title' => '"Category 2"',
                     'items' => 0,
                     'parent' => 0,
                     'fe_group' => "0",
@@ -130,10 +130,10 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                     'import_id' => "",
                     'import_source' => "",
                     'seo_title' => "",
-                    'seo_description' => null,
+                    'seo_description' => '',
                     'seo_headline' => "",
-                    'seo_text' => null,
-                    'slug' => "styleguide-demo-category",
+                    'seo_text' => '',
+                    'slug' => '"category-2"',
                 ],
             ],
         ], $rows);

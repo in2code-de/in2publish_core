@@ -128,7 +128,7 @@ define(['TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/In2publishCore/LoadingOverlay'], f
                 if (target.getAttribute("type") === "submit") {
                     if (target.hasAttribute("form")) {
                         const targetForm = target.getAttribute("form")
-                        document.getElementById(targetForm).submit()
+                        document.getElementById(targetForm).requestSubmit()
                     } else {
                         target.dispatchEvent(event)
                     }

@@ -9,6 +9,12 @@
          backupGlobals="true"
          failOnRisky="true"
          failOnWarning="true">
+    <logging>
+        <junit outputFile=".project/artifacts/unittests/junit.xml"/>
+        <teamcity outputFile=".project/artifacts/unittests/teamcity.txt"/>
+        <testdoxHtml outputFile=".project/artifacts/unittests/testdox.html"/>
+        <testdoxText outputFile=".project/artifacts/unittests/testdox.txt"/>
+    </logging>
     <testsuites>
         <testsuite name="Unit">
             <directory>Tests/Unit/</directory>

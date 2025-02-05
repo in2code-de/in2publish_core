@@ -17,15 +17,15 @@ use function reset;
 class JoinDemandResolverTest extends FunctionalTestCase
 {
     // Read-only tests do not require a database reset
-    protected bool $initializeDatabase = false;
+    protected bool $initializeDatabase = true;
 
     public function testJoinDemandResolverResolvesMmRelation(): void
     {
-        $pageRecord = new DatabaseRecord('pages', 170, ['uid' => 170], ['uid' => 170], []);
+        $pageRecord = new DatabaseRecord('pages', 77, ['uid' => 77], ['uid' => 77], []);
 
         $demands = new DemandsCollection();
         $demands->addDemand(
-            new JoinDemand('sys_category_record_mm', 'sys_category', '', 'uid_foreign', 170, $pageRecord),
+            new JoinDemand('sys_category_record_mm', 'sys_category', '', 'uid_foreign', 77, $pageRecord),
         );
         $recordCollection = new RecordCollection();
 
@@ -37,7 +37,7 @@ class JoinDemandResolverTest extends FunctionalTestCase
         $sysCategoryParents = $sysCategoryRecord->getParents();
         self::assertCount(1, $sysCategoryParents);
         $sysCategoryMmRecord = reset($sysCategoryParents);
-        self::assertSame('1e829e4ee2bd6fa3a73ee64c6461313b08939ee7', $sysCategoryMmRecord->getId());
+        self::assertSame('6ed754e2fa2e937739af04a069a6f6d9e96db685', $sysCategoryMmRecord->getId());
         $mmParents = $sysCategoryMmRecord->getParents();
         self::assertCount(1, $mmParents);
         $mmParent = reset($mmParents);
