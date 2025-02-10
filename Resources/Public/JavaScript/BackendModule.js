@@ -54,7 +54,7 @@ class In2publishCoreModule {
 		} else {
 			document.querySelectorAll('.in2publish-stagelisting__item').forEach(el => {
 				if (el) {
-					el.style.display = 'block';
+					el.style.display = 'table-row';
 				}
 			});
 		}
