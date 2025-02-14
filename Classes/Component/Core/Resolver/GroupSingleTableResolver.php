@@ -37,12 +37,8 @@ class GroupSingleTableResolver extends AbstractResolver
         $localValue = $record->getLocalProps()[$this->column] ?? '';
         $foreignValue = $record->getForeignProps()[$this->column] ?? '';
 
-        $localEntries = is_string($localValue)
-            ? GeneralUtility::trimExplode(self::VALUE_SEPARATOR, $localValue, true)
-            : [];
-        $foreignEntries = is_string($foreignValue)
-            ? GeneralUtility::trimExplode(self::VALUE_SEPARATOR, $foreignValue, true)
-            : [];
+        $localEntries = GeneralUtility::trimExplode(self::VALUE_SEPARATOR, (string)$localValue, true);
+        $foreignEntries = GeneralUtility::trimExplode(self::VALUE_SEPARATOR, (string)$foreignValue, true);
 
         $values = array_filter(array_merge($localEntries, $foreignEntries));
         foreach ($values as $value) {
