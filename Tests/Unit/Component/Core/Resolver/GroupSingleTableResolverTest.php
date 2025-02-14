@@ -53,6 +53,8 @@ class GroupSingleTableResolverTest extends UnitTestCase
         $resolver->configure('group_field', 'tt_content');
 
         $demands = new DemandsCollection();
+        // Covers Bugfix https://projekte.in2code.de/issues/69665
+        // group_field may contain a comma separated list of values or integers
         $record = new DatabaseRecord(
             'some_table',
             1,
