@@ -42,6 +42,12 @@ jobs:
       - name: Show me what's docker
         run: ls -la /var/run/docker.sock
 
+      - name: Setup packages2 directory for CI
+        run: |
+          cd ..
+          mkdir packages2
+          cd in2publish_core
+
       - name: Composer Local
         run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install
 

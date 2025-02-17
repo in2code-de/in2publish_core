@@ -4,7 +4,7 @@ services:
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
-      - ../:/packages2/:cached
+      - ../:/packages2/
     env_file:
       - .env
     environment:
@@ -27,7 +27,7 @@ services:
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
-      - ../:/packages2/:cached
+      - ../:/packages2/
       - /var/run/docker.sock:/var/run/docker.sock
       - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
     env_file:
@@ -45,7 +45,7 @@ services:
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
-      - ../:/packages2/:cached
+      - ../:/packages2/
     env_file:
       - .env
     environment:
@@ -60,7 +60,6 @@ services:
   foreign-php:
     build:
       context: .project/docker/foreign-php
-        - ../:/packages2/:cached
       dockerfile: Dockerfile
       args:
         USER_ID: ${USER_ID:-1000}
@@ -68,6 +67,7 @@ services:
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
+      - ../:/packages2/
     env_file:
       - .env
     environment:
