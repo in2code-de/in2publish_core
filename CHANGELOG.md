@@ -1,6 +1,11 @@
 # In2publish Core Change Log
 
+12.5.9:
+- [META] Set the EM conf version number to 12.5.9
+- [BUGFIX] Avoid trailing AND when additionalWhere is empty
+
 12.5.8
+- [META] Set the EM conf version number to 12.5.8
 - [BUGFIX] Fix publishing of deleted related records
 - [BUGFIX] Remove all additional entries from RecordIndex if there is more than one entry
 - [TEST] Correct Tests for new SQL data
