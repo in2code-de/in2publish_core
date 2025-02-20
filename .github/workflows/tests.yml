@@ -15,107 +15,111 @@ jobs:
 #        php: [ '7.4', '8.0' ]
 #        minMax: [ 'composerInstallMin', 'composerInstallMax' ]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Add local env vars
-        run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env; echo "HOST_PWD=$(pwd)" >> .env; cat .env
-
-      - name: Copy docker compose file for CI
-        run: cp .project/docker/docker-compose.ci.yaml docker-compose.yaml
-
-      - name: Docker Compose
-        run: docker compose up -d
-
-      - name: Show me what's up
-        run: docker compose ps
-
-      - name: Show me what's defined
-        run: printenv
-
-      - name: Show me what's defined inside
-        run: docker compose exec local-php printenv
-
-      - name: Show me what's there
-        run: ls -la
-
-      - name: Show me what's docker
-        run: ls -la /var/run/docker.sock
-
-      - name: Set up Composer cache directory
+      - name: Test GitLab API access
         run: |
-          docker exec -u root in2publish_core-local-php-1 mkdir -p /tmp/composer/cache
-          docker exec -u root in2publish_core-local-php-1 chown -R www-data:www-data /tmp/composer
-          docker exec -u root in2publish_core-local-php-1 chmod -R 777 /tmp/composer
-
-      - name: Configure Composer Authentication
-        run: |
-          echo "{\"http-basic\":{\"gitlab.in2code.de/api/v4/group/40/-/packages/composer\":{\"username\":\"${{ secrets.GITLAB_AUTH_USERNAME }}\",\"password\":\"${{ secrets.GITLAB_AUTH_TOKEN }}\"}}}" > auth.json
-          docker cp auth.json in2publish_core-local-php-1:/app/auth.json
-          docker cp auth.json in2publish_core-foreign-php-1:/app/auth.json
-
-      - name: Verify auth.json
-        run: |
-          docker exec in2publish_core-local-php-1 cat /app/auth.json
-
-      - name: Composer Local
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install
-
-      - name: Composer Foreign
-        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 composer install
-
-      - name: Wait for Database
-        run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
-
-      - name: TYPO3 Setup Local
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
-
-      - name: TYPO3 Setup Foreign
-        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
-
-      - name: Restore site configurations after setup
-        run: git checkout Build/local/config/sites/main/config.yaml && git checkout Build/foreign/config/sites/main/config.yaml
-
-      - name: Restore DB Local
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
-
-      - name: Restore DB Foreign
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
-
-      - name: Show me what's up 2
-        run: docker compose ps
-
-      - name: Unit Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
-        if: always()
-
-      - name: Functional Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
-        if: always()
-
-      - name: Acceptance Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
-        if: always()
-
-      - name: Show me what's up 3
-        run: docker compose ps
-        if: always()
-
-      - name: Show me what's logged
-        run: docker compose logs
-        if: always()
-
-      - name: Shut down to finish video recording
-        run: docker compose down
-        if: always()
-
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-artifacts
-          path: |
-            .project/artifacts
+          curl -I -u "${{ secrets.GITLAB_AUTH_USERNAME }}:${{ secrets.GITLAB_AUTH_TOKEN }}" https://gitlab.in2code.de/api/v4/group/40/-/packages/composer/packages.json
+          
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Add local env vars
+#        run: echo "USER_ID=$(id -u)" >> .env; echo "GROUP_ID=$(id -g)" >> .env; echo "HOST_PWD=$(pwd)" >> .env; cat .env
+#
+#      - name: Copy docker compose file for CI
+#        run: cp .project/docker/docker-compose.ci.yaml docker-compose.yaml
+#
+#      - name: Docker Compose
+#        run: docker compose up -d
+#
+#      - name: Show me what's up
+#        run: docker compose ps
+#
+#      - name: Show me what's defined
+#        run: printenv
+#
+#      - name: Show me what's defined inside
+#        run: docker compose exec local-php printenv
+#
+#      - name: Show me what's there
+#        run: ls -la
+#
+#      - name: Show me what's docker
+#        run: ls -la /var/run/docker.sock
+#
+#      - name: Set up Composer cache directory
+#        run: |
+#          docker exec -u root in2publish_core-local-php-1 mkdir -p /tmp/composer/cache
+#          docker exec -u root in2publish_core-local-php-1 chown -R www-data:www-data /tmp/composer
+#          docker exec -u root in2publish_core-local-php-1 chmod -R 777 /tmp/composer
+#
+#      - name: Configure Composer Authentication
+#        run: |
+#          echo "{\"http-basic\":{\"gitlab.in2code.de/api/v4/group/40/-/packages/composer\":{\"username\":\"${{ secrets.GITLAB_AUTH_USERNAME }}\",\"password\":\"${{ secrets.GITLAB_AUTH_TOKEN }}\"}}}" > auth.json
+#          docker cp auth.json in2publish_core-local-php-1:/app/auth.json
+#          docker cp auth.json in2publish_core-foreign-php-1:/app/auth.json
+#
+#      - name: Verify auth.json
+#        run: |
+#          docker exec in2publish_core-local-php-1 cat /app/auth.json
+#
+#      - name: Composer Local
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install
+#
+#      - name: Composer Foreign
+#        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 composer install
+#
+#      - name: Wait for Database
+#        run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
+#
+#      - name: TYPO3 Setup Local
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
+#
+#      - name: TYPO3 Setup Foreign
+#        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+#
+#      - name: Restore site configurations after setup
+#        run: git checkout Build/local/config/sites/main/config.yaml && git checkout Build/foreign/config/sites/main/config.yaml
+#
+#      - name: Restore DB Local
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
+#
+#      - name: Restore DB Foreign
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
+#
+#      - name: Show me what's up 2
+#        run: docker compose ps
+#
+#      - name: Unit Tests
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
+#        if: always()
+#
+#      - name: Functional Tests
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
+#        if: always()
+#
+#      - name: Acceptance Tests
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
+#        if: always()
+#
+#      - name: Show me what's up 3
+#        run: docker compose ps
+#        if: always()
+#
+#      - name: Show me what's logged
+#        run: docker compose logs
+#        if: always()
+#
+#      - name: Shut down to finish video recording
+#        run: docker compose down
+#        if: always()
+#
+#      - name: Upload test artifacts
+#        uses: actions/upload-artifact@v4
+#        if: always()
+#        with:
+#          name: test-artifacts
+#          path: |
+#            .project/artifacts
 
 #      - name: Composer validate
 #        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerValidate
