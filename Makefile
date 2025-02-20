@@ -182,6 +182,16 @@ composer-install:
 	docker compose exec -u app local-php composer install
 	docker compose exec -u app foreign-php composer install
 
+## login to the local-php container
+login-local-php:
+	echo "$(EMOJI_robot) Logging into local-php"
+	docker compose exec local-php bash
+
+## login to the foreign-php container
+login-foreign-php:
+	echo "$(EMOJI_robot) Logging into foreign-php"
+	docker compose exec foreign-php bash
+
 ## Install all phars required with phive
 .phive-install:
 	mkdir -p ~/.phive/
