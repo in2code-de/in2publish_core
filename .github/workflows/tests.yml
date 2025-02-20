@@ -46,16 +46,22 @@ jobs:
         run: |
           docker exec -u root in2publish_core-local-php-1 git config --global --add safe.directory /app
           docker exec -u root in2publish_core-local-php-1 git config --global --add safe.directory /app/Build/local
+          docker exec -u root in2publish_core-foreign-php-1 git config --global --add safe.directory /app
+          docker exec -u root in2publish_core-foreign-php-1 git config --global --add safe.directory /app/Build/foreign
 
       - name: Set up composer home directory
         run: |
           docker exec -u root in2publish_core-local-php-1 mkdir -p /tmp/composer
           docker exec -u root in2publish_core-local-php-1 chmod -R 777 /tmp/composer
           docker exec -u root in2publish_core-local-php-1 chown -R $(id -u):$(id -g) /tmp/composer
+          docker exec -u root in2publish_core-foreign-php-1 mkdir -p /tmp/composer
+          docker exec -u root in2publish_core-foreign-php-1 chmod -R 777 /tmp/composer
+          docker exec -u root in2publish_core-foreign-php-1 chown -R $(id -u):$(id -g) /tmp/composer
 
       - name: Configure Composer Authentication
         run: |
           docker exec -e COMPOSER_HOME=/tmp/composer in2publish_core-local-php-1 composer config --auth http-basic.gitlab.in2code.de "${{ secrets.GITLAB_AUTH_USERNAME }}" "${{ secrets.GITLAB_AUTH_TOKEN }}"
+          docker exec -e COMPOSER_HOME=/tmp/composer in2publish_core-foreign-php-1 composer config --auth http-basic.gitlab.in2code.de "${{ secrets.GITLAB_AUTH_USERNAME }}" "${{ secrets.GITLAB_AUTH_TOKEN }}"
 
       - name: Composer Local
         run: |
