@@ -49,9 +49,10 @@ jobs:
           cd in2publish_core
 
       - name: Configure Composer Authentication
-        run: echo "{\"http-basic\":{\"gitlab.in2code.de\":{\"username\":\"${{ secrets.GITLAB_AUTH_USERNAME }}\",\"password\":\"${{ secrets.GITLAB_AUTH_TOKEN }}\"}}}" > auth.json
-            docker cp auth.json in2publish_core-local-php-1:/app/auth.json
-            docker cp auth.json in2publish_core-foreign-php-1:/app/auth.json
+        run: |
+          echo "{\"http-basic\":{\"gitlab.in2code.de\":{\"username\":\"${{ secrets.GITLAB_AUTH_USERNAME }}\",\"password\":\"${{ secrets.GITLAB_AUTH_TOKEN }}\"}}}" > auth.json
+          docker cp auth.json in2publish_core-local-php-1:/app/auth.json
+          docker cp auth.json in2publish_core-foreign-php-1:/app/auth.json
 
       - name: Composer Local
         run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install
