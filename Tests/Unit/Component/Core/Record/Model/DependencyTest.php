@@ -8,6 +8,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Dependency;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
+use In2code\In2publishCore\Tests\Unit\TestDataHandler;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -397,7 +398,10 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->expects($this->once())->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
+                            ->disableOriginalConstructor()
+                            ->onlyMethods(['checkModifyAccessList'])
+                            ->getMock();
         $dataHandler->BE_USER = $backendUser;
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = true;
         $dataHandler->expects($this->never())->method('checkModifyAccessList');
@@ -435,7 +439,10 @@ class DependencyTest extends UnitTestCase
         // Expect one invocation to ensure that it is not invoked after checkModifyAccessList()
         $backendUser->expects($this->once())->method('isAdmin')->willReturn(false);
         $backendUser->expects($this->once())->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
+                            ->disableOriginalConstructor()
+                            ->onlyMethods(['checkModifyAccessList'])
+                            ->getMock();
         $dataHandler->BE_USER = $backendUser;
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->expects($this->once())->method('checkModifyAccessList')->willReturn(false);
@@ -472,7 +479,10 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
+                            ->disableOriginalConstructor()
+                            ->onlyMethods(['checkModifyAccessList', 'isInWebMount'])
+                            ->getMock();
         $dataHandler->BE_USER = $backendUser;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
         $dataHandler->method('isInWebMount')->willReturn(true);
@@ -511,7 +521,10 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
+                            ->disableOriginalConstructor()
+                            ->onlyMethods(['checkModifyAccessList', 'isInWebMount'])
+                            ->getMock();
         $dataHandler->BE_USER = $backendUser;
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
@@ -551,7 +564,10 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
+                            ->disableOriginalConstructor()
+                            ->onlyMethods(['checkModifyAccessList','isInWebMount'])
+                            ->getMock();
         $dataHandler->BE_USER = $backendUser;
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
@@ -592,7 +608,10 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
+                            ->disableOriginalConstructor()
+                            ->onlyMethods(['checkModifyAccessList', 'isInWebMount'])
+                            ->getMock();
         $dataHandler->BE_USER = $backendUser;
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
@@ -632,7 +651,10 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
+                            ->disableOriginalConstructor()
+                            ->onlyMethods(['checkModifyAccessList', 'isInWebMount'])
+                            ->getMock();
         $dataHandler->BE_USER = $backendUser;
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
@@ -671,7 +693,10 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
+                            ->disableOriginalConstructor()
+                            ->onlyMethods(['checkModifyAccessList', 'isInWebMount'])
+                            ->getMock();
         $dataHandler->BE_USER = $backendUser;
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $dataHandler->method('checkModifyAccessList')->willReturn(true);
