@@ -42,12 +42,6 @@ jobs:
       - name: Show me what's docker
         run: ls -la /var/run/docker.sock
 
-      - name: Setup packages2 directory for CI
-        run: |
-          cd ..
-          mkdir packages2
-          cd in2publish_core
-
       - name: Set up Composer cache directory
         run: |
           docker exec -u root in2publish_core-local-php-1 mkdir -p /tmp/composer/cache
@@ -56,7 +50,7 @@ jobs:
 
       - name: Configure Composer Authentication
         run: |
-          echo "{\"http-basic\":{\"gitlab.in2code.de\":{\"username\":\"${{ secrets.GITLAB_AUTH_USERNAME }}\",\"password\":\"${{ secrets.GITLAB_AUTH_TOKEN }}\"}}}" > auth.json
+          echo "{\"http-basic\":{\"gitlab.in2code.de/api/v4/group/40/-/packages/composer\":{\"username\":\"${{ secrets.GITLAB_AUTH_USERNAME }}\",\"password\":\"${{ secrets.GITLAB_AUTH_TOKEN }}\"}}}" > auth.json
           docker cp auth.json in2publish_core-local-php-1:/app/auth.json
           docker cp auth.json in2publish_core-foreign-php-1:/app/auth.json
 
