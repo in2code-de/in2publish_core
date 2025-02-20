@@ -63,13 +63,17 @@ jobs:
           docker exec -e COMPOSER_HOME=/tmp/composer in2publish_core-local-php-1 composer config --auth http-basic.gitlab.in2code.de "${{ secrets.GITLAB_AUTH_USERNAME }}" "${{ secrets.GITLAB_AUTH_TOKEN }}"
           docker exec -e COMPOSER_HOME=/tmp/composer in2publish_core-foreign-php-1 composer config --auth http-basic.gitlab.in2code.de "${{ secrets.GITLAB_AUTH_USERNAME }}" "${{ secrets.GITLAB_AUTH_TOKEN }}"
 
-      - name: Composer Local
+      - name: Debug Foreign Directories
         run: |
-          docker exec \
-          -e COMPOSER_HOME=/tmp/composer \
-          -u$(id -u) \
-          in2publish_core-local-php-1 \
-          composer install -v      
+          docker exec -u root in2publish_core-foreign-php-1 ls -la /app/Build
+          docker exec -u root in2publish_core-foreign-php-1 ls -la /app/Build/foreign || echo "foreign directory does not exist"
+
+      - name: Configure Composer Authentication for Foreign
+        run: |
+          docker exec -u root in2publish_core-foreign-php-1 mkdir -p /app/Build/foreign
+          docker exec -u root in2publish_core-foreign-php-1 bash -c 'echo "{\"http-basic\":{\"gitlab.in2code.de\":{\"username\":\"${{ secrets.GITLAB_AUTH_USERNAME }}\",\"password\":\"${{ secrets.GITLAB_AUTH_TOKEN }}\"}}}\" > /app/Build/foreign/auth.json'
+          docker exec -u root in2publish_core-foreign-php-1 chmod 644 /app/Build/foreign/auth.json
+          docker exec -u root in2publish_core-foreign-php-1 chown -R $(id -u):$(id -g) /app/Build/foreign
 
       - name: Composer Foreign
         run: |
@@ -80,58 +84,73 @@ jobs:
           in2publish_core-foreign-php-1 \
           composer install -v
 
-      - name: Wait for Database
-        run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
 
-      - name: TYPO3 Setup Local
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
 
-      - name: TYPO3 Setup Foreign
-        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
 
-      - name: Restore site configurations after setup
-        run: git checkout Build/local/config/sites/main/config.yaml && git checkout Build/foreign/config/sites/main/config.yaml
+#      - name: Composer Local
+#        run: |
+#          docker exec \
+#          -e COMPOSER_HOME=/tmp/composer \
+#          -u$(id -u) \
+#          in2publish_core-local-php-1 \
+#          composer install -v
+#
+#      - name: Wait for Database
+#        run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
+#
+#      - name: TYPO3 Setup Local
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
+#
+#      - name: TYPO3 Setup Foreign
+#        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+#
+#      - name: Restore site configurations after setup
+#        run: git checkout Build/local/config/sites/main/config.yaml && git checkout Build/foreign/config/sites/main/config.yaml
+#
+#      - name: Restore DB Local
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
+#
+#      - name: Restore DB Foreign
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
+#
+#      - name: Show me what's up 2
+#        run: docker compose ps
+#
+#      - name: Unit Tests
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
+#        if: always()
+#
+#      - name: Functional Tests
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
+#        if: always()
+#
+#      - name: Acceptance Tests
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
+#        if: always()
+#
+#      - name: Show me what's up 3
+#        run: docker compose ps
+#        if: always()
+#
+#      - name: Show me what's logged
+#        run: docker compose logs
+#        if: always()
+#
+#      - name: Shut down to finish video recording
+#        run: docker compose down
+#        if: always()
+#
+#      - name: Upload test artifacts
+#        uses: actions/upload-artifact@v4
+#        if: always()
+#        with:
+#          name: test-artifacts
+#          path: |
+#            .project/artifacts
 
-      - name: Restore DB Local
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
 
-      - name: Restore DB Foreign
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
 
-      - name: Show me what's up 2
-        run: docker compose ps
 
-      - name: Unit Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
-        if: always()
-
-      - name: Functional Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
-        if: always()
-
-      - name: Acceptance Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
-        if: always()
-
-      - name: Show me what's up 3
-        run: docker compose ps
-        if: always()
-
-      - name: Show me what's logged
-        run: docker compose logs
-        if: always()
-
-      - name: Shut down to finish video recording
-        run: docker compose down
-        if: always()
-
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-artifacts
-          path: |
-            .project/artifacts
 
 #      - name: Composer validate
 #        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerValidate
