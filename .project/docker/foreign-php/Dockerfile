@@ -14,9 +14,6 @@ RUN chown -R $USER_ID:$GROUP_ID /home/app/
 RUN chmod 600 /home/app/.ssh/authorized_keys \
     && apt-get update \
 	&& apt-get install -y --no-install-recommends openssh-server \
-    && apt-get install -y --no-install-recommends libssh2-1-dev \
-    && pecl install ssh2-1.3.1 \
-    && docker-php-ext-enable ssh2 \
 	&& docker-php-ext-install exif \
 	&& mkdir /run/sshd/ \
 	&& ssh-keygen -A \

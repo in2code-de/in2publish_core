@@ -75,9 +75,10 @@ jobs:
         run: |
           docker exec \
           -e COMPOSER_HOME=/tmp/composer \
+          -e COMPOSER_AUTH='{"gitlab-oauth": {"${{ secrets.GITLAB_AUTH_USERNAME }}"": "${{ secrets.GITLAB_AUTH_TOKEN }}"}}' \
           -u$(id -u) \
           in2publish_core-foreign-php-1 \
-          composer install -v  
+          composer install -v
 
       - name: Wait for Database
         run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
