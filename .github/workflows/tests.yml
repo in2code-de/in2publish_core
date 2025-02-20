@@ -50,30 +50,14 @@ jobs:
 
       - name: Configure Composer Authentication
         run: |
-          echo "{
-            \"http-basic\": {
-              \"gitlab.in2code.de\": {
-                \"username\": \"${{ secrets.GITLAB_AUTH_USERNAME }}\",
-                \"password\": \"${{ secrets.GITLAB_AUTH_TOKEN }}\"
-              },
-              \"gitlab.in2code.de/api/v4/group/40/-/packages/composer\": {
-                \"username\": \"${{ secrets.GITLAB_AUTH_USERNAME }}\",
-                \"password\": \"${{ secrets.GITLAB_AUTH_TOKEN }}\"
-              }
-            }
-          }" > auth.json
-          docker cp auth.json in2publish_core-local-php-1:/app/auth.json
-          docker cp auth.json in2publish_core-foreign-php-1:/app/auth.json
-
-      - name: Verify auth.json
-        run: |
-          docker exec in2publish_core-local-php-1 cat /app/auth.json
+          docker exec -u root in2publish_core-local-php-1 composer config --auth --global http-basic.gitlab.in2code.de "${{ secrets.GITLAB_AUTH_USERNAME }}" "${{ secrets.GITLAB_AUTH_TOKEN }}"
+          docker exec -u root in2publish_core-local-php-1 composer config --auth --global repositories.gitlab.in2code.de '{"type": "composer", "url": "https://gitlab.in2code.de/api/v4/group/40/-/packages/composer"}'
 
       - name: Composer Local
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install -v
 
       - name: Composer Foreign
-        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 composer install
+        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 composer install -v
 
       - name: Wait for Database
         run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
