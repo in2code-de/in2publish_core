@@ -15,6 +15,10 @@
 			"url": "/packages/*"
 		},
 		{
+			"type": "composer",
+			"url": "https://gitlab.in2code.de/api/v4/group/40/-/packages/composer/packages.json"
+		},
+		{
 			"type": "path",
 			"url": "/packages2/*"
 		}
