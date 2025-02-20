@@ -65,63 +65,66 @@ jobs:
           in2publish_core-local-php-1 \
           composer install -v      
 
-#
-#
-#      - name: Composer Foreign
-#        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 composer install -v
-#
-#      - name: Wait for Database
-#        run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
-#
-#      - name: TYPO3 Setup Local
-#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
-#
-#      - name: TYPO3 Setup Foreign
-#        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
-#
-#      - name: Restore site configurations after setup
-#        run: git checkout Build/local/config/sites/main/config.yaml && git checkout Build/foreign/config/sites/main/config.yaml
-#
-#      - name: Restore DB Local
-#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
-#
-#      - name: Restore DB Foreign
-#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
-#
-#      - name: Show me what's up 2
-#        run: docker compose ps
-#
-#      - name: Unit Tests
-#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
-#        if: always()
-#
-#      - name: Functional Tests
-#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
-#        if: always()
-#
-#      - name: Acceptance Tests
-#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
-#        if: always()
-#
-#      - name: Show me what's up 3
-#        run: docker compose ps
-#        if: always()
-#
-#      - name: Show me what's logged
-#        run: docker compose logs
-#        if: always()
-#
-#      - name: Shut down to finish video recording
-#        run: docker compose down
-#        if: always()
-#
-#      - name: Upload test artifacts
-#        uses: actions/upload-artifact@v4
-#        if: always()
-#        with:
-#          name: test-artifacts
-#          path: |
-#            .project/artifacts
+      - name: Composer Foreign
+        run: |
+          docker exec \
+          -e COMPOSER_HOME=/tmp/composer \
+          -u$(id -u) \
+          in2publish_core-foreign-php-1 \
+          composer install -v  
+
+      - name: Wait for Database
+        run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
+
+      - name: TYPO3 Setup Local
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
+
+      - name: TYPO3 Setup Foreign
+        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+
+      - name: Restore site configurations after setup
+        run: git checkout Build/local/config/sites/main/config.yaml && git checkout Build/foreign/config/sites/main/config.yaml
+
+      - name: Restore DB Local
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
+
+      - name: Restore DB Foreign
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
+
+      - name: Show me what's up 2
+        run: docker compose ps
+
+      - name: Unit Tests
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
+        if: always()
+
+      - name: Functional Tests
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
+        if: always()
+
+      - name: Acceptance Tests
+        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
+        if: always()
+
+      - name: Show me what's up 3
+        run: docker compose ps
+        if: always()
+
+      - name: Show me what's logged
+        run: docker compose logs
+        if: always()
+
+      - name: Shut down to finish video recording
+        run: docker compose down
+        if: always()
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-artifacts
+          path: |
+            .project/artifacts
 
 #      - name: Composer validate
 #        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerValidate
