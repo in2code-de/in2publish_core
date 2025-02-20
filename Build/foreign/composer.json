@@ -9,20 +9,16 @@
 			"email": "oliver.eglseder@in2code.de"
 		}
 	],
-	"repositories": [
-		{
+	"repositories": {
+		"0": {
 			"type": "path",
 			"url": "/packages/*"
 		},
-		{
+		"1": {
 			"type": "composer",
 			"url": "https://gitlab.in2code.de/api/v4/group/40/-/packages/composer/packages.json"
-		},
-		{
-			"type": "path",
-			"url": "/packages2/*"
 		}
-	],
+	},
 	"require": {
 		"php": ">= 8.2.0 <= 8.4.99",
 		"ext-json": "*",
@@ -82,6 +78,11 @@
 	"extra": {
 		"typo3/cms": {
 			"web-dir": "public"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"In2code\\In2publishCore\\Tests\\": "/app/Tests/"
 		}
 	},
 	"require-dev": {
