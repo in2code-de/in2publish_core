@@ -212,14 +212,14 @@ class Dependency
      * $this->selectedRecords) are ignored silently. It is intended, that $this->selectedRecords->are() returns empty if
      * there are no records in it.
      */
-    public function isReachable(DataHandler $dataHandler): bool
+    public function isReachable(): bool
     {
-        $beUser = $dataHandler->BE_USER;
+        $beUser = $GLOBALS['BE_USER'];
         if ($beUser->isAdmin()) {
             return true;
         }
 
-        return $this->selectedRecords->are(static function (Record $record) use ($beUser, $dataHandler): bool {
+        return $this->selectedRecords->are(static function (Record $record) use ($beUser): bool {
             $language = $record->getLanguage();
             if (!$beUser->checkLanguageAccess($language)) {
                 return false;
@@ -229,10 +229,11 @@ class Dependency
                 if ($GLOBALS['TCA'][$table]['ctrl']['readOnly'] ?? false) {
                     return false;
                 }
-                $backendUser = $GLOBALS['BE_USER'];
-                if (!$backendUser->check('tables_modify', $table)) {
+
+                if (!$beUser->check('tables_modify', $table)) {
                     return false;
                 }
+
                 $pid = $record->getProp('pid');
                 if (
                     (
@@ -252,7 +253,7 @@ class Dependency
                 if (
                     null !== $pid
                     && !($GLOBALS['TCA'][$table]['ctrl']['security']['ignoreWebMountRestriction'] ?? false)
-                    && !$dataHandler->isInWebMount($pid)
+                    && !$beUser->isInWebMount($pid)
                 ) {
                     return false;
                 }

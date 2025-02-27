@@ -429,7 +429,7 @@ abstract class AbstractRecord implements Record
         /** @var Dependency $dependency */
         foreach ($allDependencies as $dependency) {
             if (!$dependency->isFulfilled() && !$dependency->canBeFulfilledBy($this)) {
-                if (!$dependency->isReachable($dataHandler)) {
+                if (!$dependency->isReachable()) {
                     continue;
                 }
                 return false;
