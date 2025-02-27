@@ -28,6 +28,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
         TYPO3Helper::selectModuleByText($localDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($localDriver, ['fileadmin', 'Testcases', '2e_missing_folder']);
 
+        // Right-click on the folder in the file tree
         TYPO3Helper::selectInFileStorageTree(
             $localDriver,
             ['fileadmin', 'Testcases', '2e_missing_folder'],
@@ -36,8 +37,13 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             },
         );
 
-        $localDriver->wait()->until(ElementIsVisible::resolve(WebDriverBy::cssSelector('[data-callback-action="uploadFile"]')));
-        $localDriver->click(WebDriverBy::cssSelector('[data-callback-action="uploadFile"]'));
+        // Wait for the context menu to appear in the main document
+        $localDriver->wait(10, 500)->until(
+            ElementIsVisible::resolve(WebDriverBy::cssSelector('.context-menu-item[data-contextmenu-id="root_upload"]'))
+        );
+
+        // Click the upload button in the context menu
+        $localDriver->click(WebDriverBy::cssSelector('.context-menu-item[data-contextmenu-id="root_upload"]'));
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $file = '/app/Tests/Browser/files/carson-masterson-1540698-unsplash.jpg';
@@ -135,14 +141,20 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
                     '[data-filelist-identifier="1:/Testcases/2b_published_file/bds-photo-1523151-unsplash.jpg"]',
                 ),
             );
-            $driver->wait()->until(ElementIsVisible::resolve(WebDriverBy::cssSelector('[data-callback-action="renameFile"]')));
-            $driver->click(WebDriverBy::cssSelector('[data-callback-action="renameFile"]'));
         });
+
+
+        $localDriver->wait(5, 500)->until(
+            ElementIsVisible::resolve(WebDriverBy::cssSelector('.context-menu-item[data-contextmenu-id="root_rename"]'))
+        );
+
+        $localDriver->click(WebDriverBy::cssSelector('.context-menu-item[data-contextmenu-id="root_rename"]'));
+
         TYPO3Helper::waitUntilModalIsOpen($localDriver);
         $localDriver->submitForm(WebDriverBy::xpath('//typo3-backend-modal/div[contains(@class, "modal")]//form'), [
             'name' => 'renamed-1523151-unsplash.jpg',
         ]);
-        // Refresh in other browsers
+
         TYPO3Helper::selectModuleByText($localDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($localDriver, ['fileadmin', 'Testcases', '2b_published_file']);
         TYPO3Helper::waitUntilContentIFrameIsLoaded($localDriver);
@@ -154,6 +166,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
                 ),
             );
         });
+
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Files');
         TYPO3Helper::selectInFileStorageTree($localDriver, ['fileadmin', 'Testcases', '2b_published_file']);
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
