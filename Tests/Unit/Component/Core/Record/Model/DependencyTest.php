@@ -8,7 +8,6 @@ use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Dependency;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
-use In2code\In2publishCore\Tests\Unit\TestDataHandler;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -309,8 +308,7 @@ class DependencyTest extends UnitTestCase
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(true);
-        $dataHandler = $this->createMock(DataHandler::class);
-        $dataHandler->BE_USER = $backendUser;
+        $GLOBALS['BE_USER'] = $backendUser;
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
         $blockingRecord = new DatabaseRecord('bar', 2, ['uid' => 2], [], []);
@@ -325,7 +323,7 @@ class DependencyTest extends UnitTestCase
         $recordCollection = new RecordCollection([$record, $blockingRecord]);
         $dependency->fulfill($recordCollection);
         self::assertFalse($dependency->isFulfilled());
-        self::assertTrue($dependency->isReachable($dataHandler));
+        self::assertTrue($dependency->isReachable());
     }
 
     /**
@@ -338,8 +336,7 @@ class DependencyTest extends UnitTestCase
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
-        $dataHandler = $this->createMock(DataHandler::class);
-        $dataHandler->BE_USER = $backendUser;
+        $GLOBALS['BE_USER'] = $backendUser;
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
         $dependency = new Dependency(
@@ -353,7 +350,7 @@ class DependencyTest extends UnitTestCase
         $recordCollection = new RecordCollection([$record]);
         $dependency->fulfill($recordCollection);
         self::assertFalse($dependency->isFulfilled());
-        self::assertTrue($dependency->isReachable($dataHandler));
+        self::assertTrue($dependency->isReachable());
     }
 
     /**
@@ -364,8 +361,7 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(false);
-        $dataHandler = $this->createMock(DataHandler::class);
-        $dataHandler->BE_USER = $backendUser;
+        $GLOBALS['BE_USER'] = $backendUser;
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
 
@@ -387,7 +383,7 @@ class DependencyTest extends UnitTestCase
         );
         $recordCollection = new RecordCollection([$record, $translatedRecord]);
         $dependency->fulfill($recordCollection);
-        self::assertFalse($dependency->isReachable($dataHandler));
+        self::assertFalse($dependency->isReachable());
     }
 
     /**
@@ -398,13 +394,9 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->expects($this->once())->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
-                            ->disableOriginalConstructor()
-                            ->onlyMethods(['checkModifyAccessList'])
-                            ->getMock();
-        $dataHandler->BE_USER = $backendUser;
+        $GLOBALS['BE_USER'] = $backendUser;
+
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = true;
-        $dataHandler->expects($this->never())->method('checkModifyAccessList');
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
 
@@ -427,7 +419,7 @@ class DependencyTest extends UnitTestCase
         );
         $recordCollection = new RecordCollection([$record, $translatedRecord]);
         $dependency->fulfill($recordCollection);
-        self::assertFalse($dependency->isReachable($dataHandler));
+        self::assertFalse($dependency->isReachable());
     }
 
     /**
@@ -435,17 +427,12 @@ class DependencyTest extends UnitTestCase
      */
     public function testIsReachableReturnsFalseIfEditorIsNotAllowedToAccessTheTargetTable(): void
     {
+        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         // Expect one invocation to ensure that it is not invoked after checkModifyAccessList()
         $backendUser->expects($this->once())->method('isAdmin')->willReturn(false);
         $backendUser->expects($this->once())->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
-                            ->disableOriginalConstructor()
-                            ->onlyMethods(['checkModifyAccessList'])
-                            ->getMock();
-        $dataHandler->BE_USER = $backendUser;
-        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
-        $dataHandler->expects($this->once())->method('checkModifyAccessList')->willReturn(false);
+        $GLOBALS['BE_USER'] = $backendUser;
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
 
@@ -468,7 +455,7 @@ class DependencyTest extends UnitTestCase
         );
         $recordCollection = new RecordCollection([$record, $translatedRecord]);
         $dependency->fulfill($recordCollection);
-        self::assertFalse($dependency->isReachable($dataHandler));
+        self::assertFalse($dependency->isReachable());
     }
 
     /**
@@ -476,16 +463,14 @@ class DependencyTest extends UnitTestCase
      */
     public function testIsReachableReturnsTrueIfRequiredRecordIsOkay(): void
     {
+        // Create the backend user mock that allows access
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
-                            ->disableOriginalConstructor()
-                            ->onlyMethods(['checkModifyAccessList', 'isInWebMount'])
-                            ->getMock();
-        $dataHandler->BE_USER = $backendUser;
-        $dataHandler->method('checkModifyAccessList')->willReturn(true);
-        $dataHandler->method('isInWebMount')->willReturn(true);
+        $backendUser->method('check')->with('tables_modify', 'bar')->willReturn(true);
+        $backendUser->method('isInWebMount')->with(1)->willReturn(true);
+
+        $GLOBALS['BE_USER'] = $backendUser;
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
 
@@ -509,9 +494,9 @@ class DependencyTest extends UnitTestCase
         );
         $recordCollection = new RecordCollection([$record, $translatedRecord]);
         $dependency->fulfill($recordCollection);
-        self::assertTrue($dependency->isReachable($dataHandler));
-    }
 
+        self::assertTrue($dependency->isReachable());
+    }
     /**
      * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
      * @covers ::isReachable
@@ -521,14 +506,9 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
-                            ->disableOriginalConstructor()
-                            ->onlyMethods(['checkModifyAccessList', 'isInWebMount'])
-                            ->getMock();
-        $dataHandler->BE_USER = $backendUser;
+        $GLOBALS['BE_USER'] = $backendUser;
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
-        $dataHandler->method('checkModifyAccessList')->willReturn(true);
-        $dataHandler->method('isInWebMount')->willReturn(true);
+
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
 
@@ -552,7 +532,7 @@ class DependencyTest extends UnitTestCase
         );
         $recordCollection = new RecordCollection([$record, $translatedRecord]);
         $dependency->fulfill($recordCollection);
-        self::assertFalse($dependency->isReachable($dataHandler));
+        self::assertFalse($dependency->isReachable());
     }
 
     /**
@@ -564,21 +544,42 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
-                            ->disableOriginalConstructor()
-                            ->onlyMethods(['checkModifyAccessList','isInWebMount'])
-                            ->getMock();
-        $dataHandler->BE_USER = $backendUser;
-        $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
-        $dataHandler->method('checkModifyAccessList')->willReturn(true);
-        $dataHandler->method('isInWebMount')->willReturn(true);
+        $backendUser->method('check')->willReturn(true);
+        $backendUser->method('isInWebMount')->willReturn(true);
 
-        $record = new DatabaseRecord('foo', 1, [], [], []);
+        $GLOBALS['BE_USER'] = $backendUser;
 
-        $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
-        $GLOBALS['TCA']['bar']['ctrl']['rootLevel'] = 1;
-        $GLOBALS['TCA']['bar']['ctrl']['security']['ignoreRootLevelRestriction'] = true;
+        unset($GLOBALS['TCA']['foo']);
+        unset($GLOBALS['TCA']['bar']);
 
+        // Set up TCA with all needed values
+        $GLOBALS['TCA']['foo'] = [
+            'ctrl' => [
+                'readOnly' => false,
+            ]
+        ];
+
+        $GLOBALS['TCA']['bar'] = [
+            'ctrl' => [
+                'readOnly' => false,
+                'languageField' => 'language',
+                'rootLevel' => 1,
+                'security' => [
+                    'ignoreRootLevelRestriction' => true,
+                ]
+            ]
+        ];
+
+        // Parent record is NOT at root level (pid > 0)
+        $record = new DatabaseRecord(
+            'foo',
+            1,
+            ['pid' => 5, 'language' => 0],
+            ['pid' => 5, 'language' => 0],
+            []
+        );
+
+        // Dependent record IS at root level (pid = 0)
         $translatedRecord = new DatabaseRecord(
             'bar',
             2,
@@ -586,6 +587,7 @@ class DependencyTest extends UnitTestCase
             ['uid' => 2, 'pid' => 0, 'language' => 1],
             [],
         );
+
         $dependency = new Dependency(
             $record,
             'bar',
@@ -594,9 +596,11 @@ class DependencyTest extends UnitTestCase
             'Require bar 2',
             static fn(string $string): string => $string,
         );
+
         $recordCollection = new RecordCollection([$record, $translatedRecord]);
         $dependency->fulfill($recordCollection);
-        self::assertTrue($dependency->isReachable($dataHandler));
+
+        self::assertTrue($dependency->isReachable());
     }
 
     /**
@@ -608,14 +612,8 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
-                            ->disableOriginalConstructor()
-                            ->onlyMethods(['checkModifyAccessList', 'isInWebMount'])
-                            ->getMock();
-        $dataHandler->BE_USER = $backendUser;
+        $GLOBALS['BE_USER'] = $backendUser;
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
-        $dataHandler->method('checkModifyAccessList')->willReturn(true);
-        $dataHandler->method('isInWebMount')->willReturn(true);
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
 
@@ -639,7 +637,7 @@ class DependencyTest extends UnitTestCase
         );
         $recordCollection = new RecordCollection([$record, $translatedRecord]);
         $dependency->fulfill($recordCollection);
-        self::assertFalse($dependency->isReachable($dataHandler));
+        self::assertFalse($dependency->isReachable());
     }
 
     /**
@@ -651,14 +649,12 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
-                            ->disableOriginalConstructor()
-                            ->onlyMethods(['checkModifyAccessList', 'isInWebMount'])
-                            ->getMock();
-        $dataHandler->BE_USER = $backendUser;
+        $backendUser->method('check')->with('tables_modify', 'bar')->willReturn(true);
+        $backendUser->method('isInWebMount')->with(1)->willReturn(false);
+
+        $GLOBALS['BE_USER'] = $backendUser;
+
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
-        $dataHandler->method('checkModifyAccessList')->willReturn(true);
-        $dataHandler->method('isInWebMount')->willReturn(false);
 
         $record = new DatabaseRecord('foo', 1, [], [], []);
 
@@ -681,9 +677,13 @@ class DependencyTest extends UnitTestCase
         );
         $recordCollection = new RecordCollection([$record, $translatedRecord]);
         $dependency->fulfill($recordCollection);
-        self::assertFalse($dependency->isReachable($dataHandler));
+        self::assertFalse($dependency->isReachable());
     }
 
+    /**
+     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
+     * @covers ::isReachable
+     */
     /**
      * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
      * @covers ::isReachable
@@ -693,19 +693,15 @@ class DependencyTest extends UnitTestCase
         $backendUser = $this->createMock(BackendUserAuthentication::class);
         $backendUser->method('isAdmin')->willReturn(false);
         $backendUser->method('checkLanguageAccess')->with(1)->willReturn(true);
-        $dataHandler = $this->getMockBuilder(TestDataHandler::class)
-                            ->disableOriginalConstructor()
-                            ->onlyMethods(['checkModifyAccessList', 'isInWebMount'])
-                            ->getMock();
-        $dataHandler->BE_USER = $backendUser;
+        $backendUser->method('check')->with('tables_modify', 'bar')->willReturn(true);
+        $backendUser->method('isInWebMount')->with(1)->willReturn(false);
+
+        $GLOBALS['BE_USER'] = $backendUser;
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
-        $dataHandler->method('checkModifyAccessList')->willReturn(true);
-        $dataHandler->method('isInWebMount')->willReturn(false);
-
-        $record = new DatabaseRecord('foo', 1, [], [], []);
-
         $GLOBALS['TCA']['bar']['ctrl']['languageField'] = 'language';
         $GLOBALS['TCA']['bar']['ctrl']['security']['ignoreWebMountRestriction'] = true;
+
+        $record = new DatabaseRecord('foo', 1, ['pid' => 1], ['pid' => 1], []);
 
         $translatedRecord = new DatabaseRecord(
             'bar',
@@ -714,6 +710,7 @@ class DependencyTest extends UnitTestCase
             ['uid' => 2, 'pid' => 1, 'language' => 1],
             [],
         );
+
         $dependency = new Dependency(
             $record,
             'bar',
@@ -722,8 +719,10 @@ class DependencyTest extends UnitTestCase
             'Require bar 2',
             static fn(string $string): string => $string,
         );
+
         $recordCollection = new RecordCollection([$record, $translatedRecord]);
         $dependency->fulfill($recordCollection);
-        self::assertTrue($dependency->isReachable($dataHandler));
+
+        self::assertTrue($dependency->isReachable());
     }
 }
