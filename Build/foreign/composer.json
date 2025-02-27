@@ -13,6 +13,14 @@
 		"0": {
 			"type": "path",
 			"url": "/packages/*"
+		},
+		"1": {
+			"type": "vcs",
+			"url": "https://gitlab.com/tinzog/stack-test"
+		},
+		"2": {
+			"type": "vcs",
+			"url": "https://gitlab.com/tinzog/mysql-loader"
 		}
 	},
 	"require": {
