@@ -9,16 +9,20 @@
 			"email": "oliver.eglseder@in2code.de"
 		}
 	],
-	"repositories": [
-		{
+	"repositories": {
+		"0": {
 			"type": "path",
 			"url": "/packages/*"
 		},
-		{
-			"type": "path",
-			"url": "/packages2/*"
+		"1": {
+			"type": "vcs",
+			"url": "https://gitlab.com/tinzog/stack-test"
+		},
+		"2": {
+			"type": "vcs",
+			"url": "https://gitlab.com/tinzog/mysql-loader"
 		}
-	],
+	},
 	"require": {
 		"php": ">= 8.2.0 <= 8.4.99",
 		"ext-json": "*",
