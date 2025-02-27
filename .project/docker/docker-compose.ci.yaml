@@ -33,7 +33,7 @@ services:
     environment:
       IN2PUBLISH_CONTEXT: Local
       TYPO3_INSTALL_DB_DBNAME: local
-      TYPO3_INSTALL_SITE_NAME: "[LOCAL] CP TYPO3 v12"
+      TYPO3_INSTALL_SITE_NAME: "[LOCAL] CP TYPO3 v13"
       TYPO3_INSTALL_SITE_BASE_URL: ${HOST_LOCAL}
       HOST_PWD: $PWD
     working_dir: /app/Build/local/
@@ -69,7 +69,7 @@ services:
     environment:
       IN2PUBLISH_CONTEXT: Foreign
       TYPO3_INSTALL_DB_DBNAME: foreign
-      TYPO3_INSTALL_SITE_NAME: "[FOREIGN] CP TYPO3 v12"
+      TYPO3_INSTALL_SITE_NAME: "[FOREIGN] CP TYPO3 v13"
       TYPO3_INSTALL_SITE_BASE_URL: ${HOST_FOREIGN}
     working_dir: /app/Build/foreign/
 
