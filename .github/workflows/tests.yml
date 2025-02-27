@@ -42,6 +42,11 @@ jobs:
       - name: Show me what's docker
         run: ls -la /var/run/docker.sock
 
+      - name: Prepare Composer config for CI
+        run: |
+          cat composer.json | jq 'del(.repositories[] | select(.url == "/packages2/*"))' > composer.ci.json
+          mv composer.ci.json composer.json
+
       - name: Composer Local
         run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install
 
