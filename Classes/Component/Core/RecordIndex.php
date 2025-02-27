@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core;
 
-use In2code\In2publish\Features\Workflow\AutoState\DatamapProcessor;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 use function array_keys;

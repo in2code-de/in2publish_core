@@ -8,7 +8,6 @@ use Closure;
 use In2code\In2publishCore\Component\Core\Reason\Reason;
 use In2code\In2publishCore\Component\Core\Reason\Reasons;
 use In2code\In2publishCore\Component\Core\RecordCollection;
-use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 use function array_keys;
 use function count;
