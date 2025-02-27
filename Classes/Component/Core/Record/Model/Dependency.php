@@ -229,7 +229,8 @@ class Dependency
                 if ($GLOBALS['TCA'][$table]['ctrl']['readOnly'] ?? false) {
                     return false;
                 }
-                if (!$dataHandler->checkModifyAccessList($table)) {
+                $backendUser = $GLOBALS['BE_USER'];
+                if (!$backendUser->check('tables_modify', $table)) {
                     return false;
                 }
                 $pid = $record->getProp('pid');
