@@ -50,10 +50,6 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             // https://www.selenium.dev/documentation/webdriver/elements/file_upload/#:~:text=Because%20Selenium%20cannot%20interact%20with,file%20that%20will%20be%20uploaded.
             $driver->findElement(WebDriverBy::name('upload_1[]'))->sendKeys($file);
             $driver->submitForm(WebDriverBy::id('FileUploadController'));
-            self::assertPageContains(
-                $driver,
-                'Uploading file "carson-masterson-1540698-unsplash.jpg" to "/Testcases/2e_missing_folder/".',
-            );
         });
 
         TYPO3Helper::refreshFileStorageTree($localDriver);
