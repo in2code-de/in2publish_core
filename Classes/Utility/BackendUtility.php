@@ -30,9 +30,11 @@ namespace In2code\In2publishCore\Utility;
 
 use Closure;
 use Doctrine\DBAL\Exception;
+use In2code\In2publishCore\Event\NoPageIdFoundEvent;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Service\Routing\SiteService;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\UriInterface;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
@@ -216,7 +218,13 @@ class BackendUtility
             }
         }
 
-        return 0;
+        $pageIdentifier = 0;
+        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcherInterface::class);
+        $event = new NoPageIdFoundEvent($identifier, $table, $pageIdentifier);
+        $eventDispatcher->dispatch($event);
+        $pageIdentifier = $event->getPageIdentifier();
+
+        return $pageIdentifier;
     }
 
     /**
