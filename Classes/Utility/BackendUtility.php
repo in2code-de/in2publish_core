@@ -101,7 +101,8 @@ class BackendUtility
         }
         $tableNames = $localConnection->createSchemaManager()->listTableNames();
 
-        $request = $GLOBALS['TYPO3_REQUEST'];
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+
         if ($request instanceof ServerRequestInterface) {
             // get id from ?combined_identifier=1:/xyz/abcd
             $getCombinedIdentifier = $request->getParsedBody()['combined_identifier']
