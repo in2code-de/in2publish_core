@@ -13,21 +13,13 @@ class FolderProcessor extends AbstractProcessor
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
-        if ($this->excludedTablesService->isExcludedTable('sys_file_reference')) {
-            return ['The table sys_file_reference is excluded from publishing'];
-        }
-        return [];
+        return [
+            'The type "folder" is not supported by the system',
+        ];
     }
 
     protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver
     {
-        $foreignTable = 'sys_file_reference';
-
-        $resolver = $this->container->get(GroupSingleTableResolver::class);
-        $resolver->configure(
-            $foreignTable,
-            $column
-        );
-        return $resolver;
+        return null;
     }
 }
