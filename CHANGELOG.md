@@ -1,5 +1,126 @@
 # In2publish Core Change Log
 
+13.0.0
+
+- [META] Set the EM conf version number to 13.0.0
+- [DOCS] Update Changelog.md
+- [TEST] Fix RedirectsModuleTest
+- [BUGFIX] Display FlashMessages and Footer in RedirectsModule
+- [FEATURE] Change Folder PreProcessor
+- [WIP] FolderProcessor
+- [BUGFIX] Use Module template in PublishRedirects module
+- [BUGFIX] Fix exception in ComparisonModule if in2publish is installed
+- [TEST] Remove assertion failing in gitlab pipeline
+- [CLEANUP] Remove unused imports
+- [TEST] Fix DependencyTest
+- [TASK] Remove DataHandler from Dependency:isReachable
+- [UPGRADE] Replace protected method call of DataHandler
+- [TEST] Fix PublishFilesModuleTest
+- [CI] Remove task for preparing composer config
+- [CI] Use own forks of co-stack packages for testing
+- [CI] Remove packages2 path in composer repositories
+- [CI] Adjust workflows.yml to remove non-existent path packages2 for ci
+- [DEV] Adjust site name to v13
+- [TEST] Fix unit tests
+- [BUGFIX] Avoid trailing AND when additionalWhere is empty
+- [BUGFIX] Fix publishing of deleted related records
+- [COMMENT] Add comment to GroupSingleTableResolverTest
+- [TEST] Add acceptance test for testcase 1e
+- [TEST] Add GroupSingleTableResolverTest
+- [BUGFIX] Fix GroupSingleTableResolver for values which are not strings
+- [BUGFIX] Fix RecordList layout Content section being wrongly nested
+- [BUGFIX] Fix default visibility state not breaking file table layouts
+- [TEST] Fix BackendUserPreferencesResetTest
+- [TEST] Adjust dumps for RedirectsModuleTest
+- [BUGFIX] Remove all additional entries from RecordIndex if there is more than one entry
+- [CLEANUP] Remove unused Layout File.html
+- [TEST] Fix PublishFilesModuleTest
+- [TEST] Adjust dumps for testing
+- [DEV] Adjust site name for local development
+- [TEST] Fix UidClashTest
+- [TASK] Use TYPO3 backend module layout in OverviewModule and PublishFilesModule instead of custom layouts
+- [TEST] Eliminate error message Undefined global variable $EXEC_TIME
+- [TEST] Eliminate error message Undefined global variable $EXEC_TIME
+- [TEST] Fix SingleDatabaseRepositoryTest
+- [TEST] Adjust dumps in order to fix functional tests
+- [TEST] Fix GroupProcessorTest
+- [TEST] Change TYPO3 version number in tests
+- [CLEANUP] Remove unused constants.php
+- [TEST] Fix PublishTranslationTest
+- [TEST] Fix PublishOverviewModuleTest
+- [TEST] Fix PublishChangedPagePropertiesTest
+- [TEST] Fix PublishChangedContentTest
+- [DEV] Adjust host names for local development in .env file
+- [DEV] Use forked co-stack packages for in2publish_core testing
+- [TEST] Fix Foreign ExecuteCommandTest
+- [DEV] Update dumps for local development and testing
+- [DEV] Remove cache_treelist from excluded_tables
+- [DEV] Adjust ports for local development
+- [TEST] Fix RunningRequestServiceTest
+- [TEST] Install co-stack packages missing for the functional tests
+- [TEST] Mark only failing Unit test as skipped
+- [TEST] Fix FunctionalTestsBootstrap
+- [WIP] Fix ExecuteCommandTest
+- [TEST] Fix FileRecordPublisherTest and FolderRecordPublisherTest
+- [TEST] Fix FileRecordPublisherTest
+- [TEST] Fix BackendUtilityTest
+- [TEST] Fix more UnitTests
+- [TEST] Fix DependencyTest and FolderRecordTest
+- [TEST] Fix RecordFactoryTest
+- [TEST] Fix DatabaseRecordPublisherTest
+- [UPGRADE] Replace removed method DataHandler::tableReadOnly by check for TCA configuration
+- [BUGFIX] Fix constructor arguments for creation of custom In2publishCoreExceptions
+- [TEST] Fix tests in Folder PreProcessing/PreProcessor
+- [TEST] Fix ExtNewsRelatedProcessorTest
+- [TEST] Fix CategoryProcessorTest
+- [CODESTYLE] Fix phpcs violations
+- [TEST] Fix AbstractProcessorTest
+- [BUGFIX] Fix construction of MissingPreProcessorTypeException
+- [TEST] Fix AllCommandTest
+- [UPDATE] Restore content of redirects module
+- [DEV] Include mysql-loader for dev setup
+- [BUGFIX] Fix import for LoadingOverlay in ConfirmationModal.js
+- [BUGFIX] Eliminate TypeError in BackendModule.js
+- [UPGRADE] Eliminate errors in PublishFiles Module
+- [BUGFIX] Fix DatabaseDifferencesTest
+- [UPDATE] Update JavaScriptModules and JS files to ES6 syntax
+- [UPDATE] Update JavaScriptModules and JS files to ES6 syntax
+- [CODESTYLE] Run phpcs fixer
+- [COMMENT] Add TODO for reverted pull request 122
+- [BUGFIX] Remove changes from pull request 122
+- [BUGFIX] Call parent constructor in CompareUriViewHelper
+- [BUGFIX] Replace protected where_hide_del with value to elimate exception in Overview Module
+- [BUGFIX] Eliminate exception caused by invalid second argument for TaskExecutionFailedException
+- [TASK] Eliminate errors caused by calling trimExplode on a non-string value
+- [CLEANUP] Remove outdated table cache_treelist from ignored tables
+- [BUGFIX] Fix type error when merging Capabilities
+- [TASK] Use Doctrine DBAL ParameterType instead of PDO
+- [TASK] Call parent constructor in Commands
+- [TASK] Assign variables to module template instead of view
+- [TASK] Assign variables to module template in ToolsController
+- [UPGRADE] Render Response in ModuleTemplates render method
+- [UPGRADE] Use standard Module.html from cms-backend for rendering of backend modules
+- [UPGRADE] Remove non-existent method connection->close
+- [BUGFIX] Eliminate exception in DatabaseDifferencesTest if $propertyValue contains an object instead of a string
+- [UPGRADE] Remove DbalConnection
+- [UPGRADE] Remove twoLetterIsocode and direction from language in SiteConfigurationTest
+- [UPGRADE] Replace removed Database SchemaManager with SchemaInformation
+- [BUGFIX] Revert modification of method by TYPO3 rector
+- [BUGFIX] Remove exceptions for non-existing methods connect and getEventManager in DatabaseUtility
+- [BUGFIX] Use return value of render method instead of renderResponse method in ControllerModuleTemplate
+- [BUGFIX] Use SimplifiedExtbackendModuleTemplateAPI in ControllerModuleTemplate
+- [BUGFIX] Revert modification of method by TYPO3 rector
+- [BUGFIX] Eliminate exception when constructing ConnectionUnavailableException
+- [REFACTOR] Run typo3 rector for TYPO3 v13
+- [REFACTOR] Run typo3 rector for TYPO3 v12
+- [CLEANUP] clean up comment
+- [META] Update composer dependencies and php version
+- [UPGRADE] Remove constants required for supporting TYPO3_11 and TYPO3_12
+- [UPDATE] Remove outdated call of GeneralUtility::_GP and refactor method BackendUtility::getPageIdentifier
+- [UPGRADE] Replace removed method pageRenderer->loadRequireJsModule
+- [TEST] Change ports for local acceptance testing
+- [META] Adjust requirements for v13
+
 12.5.7
 
 - [META] Set the EM conf version number to 12.5.7
