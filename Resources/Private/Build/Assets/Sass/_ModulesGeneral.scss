@@ -78,8 +78,7 @@ div.typo3-fullDoc {
 .in2publish-backend *,
 .in2publish-backend *:before,
 .in2publish-backend *:after {
-  @include box-sizing(border-box);
-
+  box-sizing: border-box;
 }
 
 .in2publish-backend ul {
@@ -764,10 +763,18 @@ div#typo3-docbody.stopScrolling {
 .in2publish-page-group__children {
   padding: .5rem;
   padding-inline-end: 0;
+  padding-block-end: 0;
 
   .in2publish-page__col--stage-page {
     width: calc(200px - .5rem);
     max-width: calc(200px - .5rem);
+  }
+
+  @for $i from 1 through 10 {
+    .in2publish-page--level-#{$i} .in2publish-page__col--stage-page {
+      width: calc(200px - (.5rem * $i));
+      max-width: calc(200px - (.5rem * $i));
+    }
   }
 }
 
@@ -819,8 +826,31 @@ div#typo3-docbody.stopScrolling {
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+.in2publish-page__col--status,
 .in2publish-page__col--compare {
   text-align: center;
+}
+
+.in2publish-page__col--publish {
+  text-align: right;
+}
+
+.in2publish-page__col--workflow {
+  width: 150px;
+  max-width: 150px;
+
+  .in2publish__workflowrowbuttongroup {
+    width: 100%;
+    margin: 0 !important;
+  }
+}
+
+.in2publish-page__col--publish,
+.in2publish-page__col--status,
+.in2publish-page__col--compare {
+  max-width: 75px;
+  width: 75px;
 }
