@@ -177,6 +177,7 @@ define([
 	};
 
 	In2publishCoreModule.hideOrShowPages = function (pages, status) {
+		console.log(pages, status)
 		if (status) {
 			pages.each(function () {
 				var $this = $(this);
