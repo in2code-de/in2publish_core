@@ -761,7 +761,7 @@ div#typo3-docbody.stopScrolling {
 }
 
 .in2publish-page-group__children {
-  padding: .5rem;
+  padding-inline-start: 0.5rem;
   padding-inline-end: 0;
   padding-block-end: 0;
 
@@ -781,6 +781,7 @@ div#typo3-docbody.stopScrolling {
 .in2publish-page {
   background: $t3white;
   border: 1px solid $t3verylightgrey;
+  margin-block-end: 0.5rem;
 
   + .in2publish-page {
     margin-block-start: -1px;
