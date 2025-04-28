@@ -7,6 +7,8 @@
 			<f:translate key="module_m1_title">publish pages and records</f:translate>
 		</h2>
 
+		<f:render partial="Record/RecordFilter" arguments="{_all}"/>
+
 		<div class="in2publish-main">
 			<div class="in2publish-stagelisting">
 				<f:variable name="depth" value="0" />
@@ -14,9 +16,6 @@
 			</div>
 		</div>
 
-		<f:if condition="{recordTree}">
-			<f:render partial="Record/FunctionBar" arguments="{_all}" />
-		</f:if>
 		<f:alias map="{moduleName: 'record'}">
 			<f:render partial="Footer" arguments="{_all}" />
 		</f:alias>
