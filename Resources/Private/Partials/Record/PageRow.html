@@ -1,18 +1,40 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<div
-		class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive} {f:if(condition:record.removedFromLocalDatabase, then:'in2publish-stagelisting__item--removed')} {f:if(condition:record.removedFromForeignDatabase, then:'in2publish-stagelisting__item--removed')} in2publish-clearfix"
-		data-record-identifier="{record.classification}-{record.id}"
-	>
+<div class="in2publish-page in2publish-page--level-{depth}"
+	 data-record-identifier="{record.classification}-{record.id}"
+	 data-searchable="{publish:Miscellaneous.GetPropertyFromStagingDefinition(record: record, propertyName: config.view.titleField, stagingLevel: 'local', fallbackProperty: 'title')}|{publish:Miscellaneous.GetPropertyFromStagingDefinition(record: record, propertyName: config.view.titleField, stagingLevel: 'foreign', fallbackProperty: 'title')}"
+	 data-record-state="{record.stateRecursive}">
+	<div class="in2publish-page__header">
+
 		<f:comment>Left</f:comment>
 
-		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
-			<i
-				class="in2publish-icon-folder"
-				title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"
-			></i>
+		<div class="in2publish-page__col in2publish-page__col--stage-page">
+			<f:if condition="{record.state} != 'deleted' && {record.id} > 0">
+				<f:then>
+					<f:if condition="{record.localProps.doktype} < 199">
+						<f:then>
+							<publish:Link.PreviewRecord class="btn btn-default btn-sm" identifier="{record.id}" table="{record.classification}" stagingLevel="local" target="_blank">
+								<core:icon identifier="actions-eye"></core:icon>
+							</publish:Link.PreviewRecord>
+						</f:then>
+						<f:else>
+							<button class="btn btn-default btn-sm invisible pe-none">
+								<core:icon identifier="actions-eye"></core:icon>
+							</button>
+						</f:else>
+					</f:if>
+				</f:then>
+				<f:else>
+					<button class="btn btn-default btn-sm invisible pe-none">
+						<core:icon identifier="actions-eye"></core:icon>
+					</button>
+				</f:else>
+			</f:if>
+			<core:iconForRecord table="pages" row="{record.localProps}" />
 			<f:if condition="{record.language} > 0">
 				<publish:record.languageFlagIcon record="{record}" side="local"/>
 			</f:if>
@@ -22,26 +44,115 @@
 				stagingLevel="local"
 				fallbackProperty="title"
 			/>
-
-			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
-
-			<f:render partial="Record/Publishing/Decision" arguments="{record: record}" />
+		</div>
+		<div class="in2publish-page__col in2publish-page__col--stage-action">
+			<div class="btn-group">
+				<button class="btn btn-default btn-sm" data-action="opendirtypropertieslistcontainer">
+					<core:icon identifier="actions-info"></core:icon>
+				</button>
+				<f:if condition="{record.state} != 'deleted' && {record.id} > 0">
+					<f:then>
+						<be:link.editRecord class="btn btn-default btn-sm" uid="{record.id}" table="{record.classification}">
+							<core:icon identifier="actions-open"></core:icon>
+						</be:link.editRecord>
+					</f:then>
+					<f:else>
+						<button class="btn btn-default btn-sm invisible pe-none">
+							<core:icon identifier="actions-open"></core:icon>
+						</button>
+					</f:else>
+				</f:if>
+			</div>
+		</div>
+		<div class="in2publish-page__col in2publish-page__col--compare">
+			<f:if condition="{record.state} != 'added' && {record.id} > 0">
+				<f:then>
+					<f:if condition="{record.foreignProps.doktype} < 199">
+						<f:then>
+							<f:if condition="{record.state} != 'deleted' && {record.localProps.doktype} < 199">
+								<f:then>
+									<publish:uri.compareUri identifier="{record.id}" class="btn btn-default btn-sm">
+										<f:translate key="dirty_properties_preview_compare">Compare</f:translate>
+									</publish:uri.compareUri>
+								</f:then>
+								<f:else>
+									<button class="btn btn-default btn-sm invisible pe-none">
+										<f:translate key="dirty_properties_preview_compare">Compare</f:translate>
+									</button>
+								</f:else>
+							</f:if>
+						</f:then>
+						<f:else>
+							<button class="btn btn-default btn-sm invisible pe-none">
+								<f:translate key="dirty_properties_preview_compare">Compare</f:translate>
+							</button>
+						</f:else>
+					</f:if>
+				</f:then>
+				<f:else>
+					<button class="btn btn-default btn-sm invisible pe-none">
+						<f:translate key="dirty_properties_preview_compare">Compare</f:translate>
+					</button>
+				</f:else>
+			</f:if>
 		</div>
 
 		<f:comment>Right</f:comment>
 
-		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--right">
-			<i class="in2publish-icon-folder"
-			   title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"
-			></i>
+		<div class="in2publish-page__col in2publish-page__col--live-page">
+			<f:if condition="{record.state} != 'added' && {record.id} > 0">
+				<f:then>
+					<f:if condition="{record.foreignProps.doktype} < 199">
+						<f:then>
+							<f:if condition="{record.state} != 'deleted' && {record.localProps.doktype} < 199">
+								<f:then>
+									<publish:Link.PreviewRecord class="btn btn-default btn-sm" identifier="{record.id}" table="{record.classification}" stagingLevel="foreign" target="_blank">
+										<core:icon identifier="actions-eye"></core:icon>
+									</publish:Link.PreviewRecord>
+								</f:then>
+								<f:else>
+									<button class="btn btn-default btn-sm invisible pe-none">
+										<core:icon identifier="actions-eye"></core:icon>
+									</button>
+								</f:else>
+							</f:if>
+						</f:then>
+						<f:else>
+							<button class="btn btn-default btn-sm invisible pe-none">
+								<core:icon identifier="actions-eye"></core:icon>
+							</button>
+						</f:else>
+					</f:if>
+				</f:then>
+				<f:else>
+					<button class="btn btn-default btn-sm invisible pe-none">
+						<core:icon identifier="actions-eye"></core:icon>
+					</button>
+				</f:else>
+			</f:if>
+			<core:iconForRecord table="pages" row="{record.foreignProps}" />
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition
 				record="{record}"
 				propertyName="{config.view.titleField}"
 				stagingLevel="foreign" fallbackProperty="title"
 			/>
 		</div>
-
+		<div class="in2publish-page__col in2publish-page__col--status">
+				<span class="badge rounded-pill in2publish-badge--{record.stateRecursive}">
+					<f:translate key="record.state.{record.stateRecursive}.short"/>
+				</span>
+		</div>
+		<div class="in2publish-page__col in2publish-page__col--selection">
+			<a href="#" class="btn btn-default btn-sm invisible pe-none">
+				<core:icon identifier="miscellaneous-placeholder"></core:icon>
+			</a>
+		</div>
+		<div class="in2publish-page__col in2publish-page__col--publish">
+			<f:render partial="Record/Publishing/Decision" arguments="{record: record}" />
+		</div>
+	</div>
+	<div class="in2publish-page__content">
 		<f:render partial="Record/DirtyPropertiesList" arguments="{_all}"/>
 	</div>
-
+</div>
 </html>

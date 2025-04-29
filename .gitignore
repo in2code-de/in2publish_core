@@ -24,3 +24,4 @@ Build/.phpunit.result.cache
 .php-cs-fixer.cache
 composer.lock
 docker-compose.yaml
+node_modules/
