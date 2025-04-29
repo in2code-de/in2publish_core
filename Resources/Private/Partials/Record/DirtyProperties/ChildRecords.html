@@ -1,35 +1,74 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<f:comment>
-		Show children records with dirty properties
-	</f:comment>
-	<f:for each="{record.children}" key="tableName" as="relatedRecords">
-		<f:if condition="{publish:Miscellaneous.HasChangedRecords(records:relatedRecords)}">
-			<h3 title="{tableName}">
-				<publish:Tca.GetTableLabelFromLocallang tableName="{tableName}"/>
-			</h3>
-			<ul class="in2publish-stagelisting__dropdown__item__list">
-				<f:for each="{relatedRecords}" as="relatedRecord">
-					<f:if condition="{relatedRecord.changed}">
-						<li>
+<f:comment>
+	Show children records with dirty properties
+</f:comment>
+<f:for each="{record.children}" key="tableName" as="relatedRecords">
+	<f:if condition="{publish:Miscellaneous.HasChangedRecords(records:relatedRecords)}">
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th>
+					<f:if condition="{stagingLevel} == 'local'">
+						<f:then>
+							<publish:Tca.GetTableLabelFromLocallang tableName="{tableName}"/>
+						</f:then>
+						<f:else>
+									<span class="invisible">
+										<publish:Tca.GetTableLabelFromLocallang tableName="{tableName}"/>
+									</span>
+						</f:else>
+					</f:if>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			<f:for each="{relatedRecords}" as="relatedRecord">
+				<f:if condition="{relatedRecord.changed}">
+					<tr>
+						<td>
 							<f:if condition="{stagingLevel} == 'local'">
-								<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{relatedRecord.id}" table="{relatedRecord.classification}">
-									<i class="in2publish-icon-history"></i>
-								</publish:Link.RecordHistory>
-								<f:if condition="{relatedRecord.id} > 1">
-									<be:link.editRecord class="in2publish-notextdecoration" uid="{relatedRecord.id}" table="{relatedRecord.classification}">
-										<i class="in2publish-icon-edit"></i>
-									</be:link.editRecord>
-								</f:if>
+								<f:then>
+									<publish:Link.RecordHistory class="btn btn-default btn-sm" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{relatedRecord.id}" table="{relatedRecord.classification}">
+										<core:icon identifier="actions-history"></core:icon>
+									</publish:Link.RecordHistory>
+									<f:if condition="{relatedRecord.id} > 1">
+										<f:then>
+											<be:link.editRecord class="btn btn-default btn-sm" uid="{relatedRecord.id}" table="{relatedRecord.classification}">
+												<core:icon identifier="actions-pencil"></core:icon>
+											</be:link.editRecord>
+										</f:then>
+										<f:else>
+											<button class="btn btn-default btn-sm pe-none invisible">
+												<core:icon identifier="actions-pencil"></core:icon>
+											</button>
+										</f:else>
+									</f:if>
+								</f:then>
+								<f:else>
+									<f:comment>Empty button for non-local stages to match row height</f:comment>
+									<button class="btn btn-sm invisible w-0"></button>
+								</f:else>
+							</f:if>
+							<f:if condition="{stagingLevel} == 'local'">
+								<f:then>
+									<core:iconForRecord row="{relatedRecord.localProps}" table="{tableName}"></core:iconForRecord>
+								</f:then>
+								<f:else>
+									<core:iconForRecord row="{relatedRecord.foreignProps}" table="{tableName}"></core:iconForRecord>
+								</f:else>
 							</f:if>
 							<publish:Tca.GetLabelFieldFromRecord record="{relatedRecord}" stagingLevel="{stagingLevel}"/>
-						</li>
-					</f:if>
-				</f:for>
-			</ul>
-		</f:if>
-	</f:for>
+						</td>
+					</tr>
+				</f:if>
+			</f:for>
+			</tbody>
+		</table>
+	</f:if>
+</f:for>
 </html>

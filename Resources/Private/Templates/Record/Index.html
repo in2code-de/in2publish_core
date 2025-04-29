@@ -1,31 +1,23 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-	<f:layout name="Module" />
+<f:layout name="Record" />
 
-	<f:section name="Content">
-		<div class="in2publish-module">
-			<div id="typo3-inner-docbody">
-				<div class="container container-full">
-					<div class="in2publish-backend">
-						<f:flashMessages />
-						<h2 data-module="m1">
-							<f:translate key="module_main_title">Publish Content</f:translate> -
-							<f:translate key="module_m1_title">publish pages and records</f:translate>
-						</h2>
-						<div class="in2publish-main">
-							<div class="in2publish-stagelisting">
-								<f:variable name="depth" value="0" />
-								<f:render partial="Record/PageRecursion" arguments="{config: config, record: recordTree, depth: depth}" />
-							</div>
-						</div>
-						<f:if condition="{recordTree}">
-							<f:render partial="Record/FunctionBar" arguments="{_all}" />
-						</f:if>
-						<f:alias map="{moduleName: 'record'}">
-							<f:render partial="Footer" arguments="{_all}" />
-						</f:alias>
-					</div>
-				</div>
-			</div>
+<f:section name="content">
+	<h2 data-module="m1">
+		<f:translate key="module_main_title">Publish Content</f:translate> -
+		<f:translate key="module_m1_title">publish pages and records</f:translate>
+	</h2>
+
+	<f:render partial="Record/RecordFilter" arguments="{_all}"/>
+
+	<div class="in2publish-main">
+		<div class="in2publish-stagelisting">
+			<f:variable name="depth" value="0" />
+			<f:render partial="Record/PageRecursion" arguments="{config: config, record: recordTree, depth: depth}" />
 		</div>
-	</f:section>
+	</div>
+
+	<f:alias map="{moduleName: 'record'}">
+		<f:render partial="Footer" arguments="{_all}" />
+	</f:alias>
+</f:section>
 </html>
