@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Component\Core\RecordTree;
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
+use In2code\In2publishCore\Component\Core\Demand\Augmentation\LanguageAugmentation;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
@@ -19,6 +20,8 @@ use In2code\In2publishCore\Component\Core\Service\RelevantTablesServiceInjection
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Service\Configuration\PageTypeServiceInjection;
 use In2code\In2publishCore\Service\Database\RawRecordServiceInjection;
+
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_flip;
 use function array_values;
@@ -40,6 +43,9 @@ class RecordTreeBuilder
 
     public function buildRecordTree(RecordTreeBuildRequest $request): RecordTree
     {
+        $languageAugmentation = GeneralUtility::makeInstance(LanguageAugmentation::class);
+        $languageAugmentation->request = $request;
+
         $this->recordIndex->startRecordingNewRecords('buildRecordTree');
 
         $recordTree = new RecordTree([], $request);
@@ -77,6 +83,8 @@ class RecordTreeBuilder
                 $recordTree->addChild($record);
             }
         }
+
+        $languageAugmentation->request = null;
 
         return $recordTree;
     }
