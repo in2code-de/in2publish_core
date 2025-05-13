@@ -44,6 +44,7 @@ use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\StopwatchWasNotStartedException;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatchInjection;
 use In2code\In2publishCore\In2publishCoreException;
+use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
 use In2code\In2publishCore\Service\Permission\PermissionServiceInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
@@ -54,6 +55,7 @@ use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -162,7 +164,18 @@ class RecordController extends ActionController
 
     public function publishRecordAction(int $recordId): ResponseInterface
     {
-        $request = new RecordTreeBuildRequest('pages', $recordId, 0);
+        $rawRecordService = GeneralUtility::makeInstance(
+            RawRecordService::class,
+        );
+        $record = $rawRecordService->getRawRecord('pages', $recordId, 'local');
+        if (null === $record) {
+            $record = $rawRecordService->getRawRecord('pages', $recordId, 'foreign');
+        }
+        $languageUid = null;
+        if (isset($record['sys_language_uid'])) {
+            $languageUid = (int)($record['sys_language_uid'] ?? null);
+        }
+        $request = new RecordTreeBuildRequest('pages', $recordId, 0, 3, 8, [$languageUid]);
         $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
 
         $actualRecord = $recordTree->getChild('pages', $recordId);
