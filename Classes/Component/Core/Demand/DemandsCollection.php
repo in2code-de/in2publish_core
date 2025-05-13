@@ -35,4 +35,14 @@ class DemandsCollection implements Demands
     {
         return $this->demands[$type] ?? [];
     }
+
+    public function getAll(): array
+    {
+        return $this->demands;
+    }
+
+    public function setAll(array $demands): void
+    {
+        $this->demands = $demands;
+    }
 }

@@ -12,4 +12,8 @@ interface Demands extends DeprecatedDemands
     public function unsetDemand(DemandRemover $demandRemover): void;
 
     public function getDemandsByType(string $type): array;
+
+    public function getAll(): array;
+
+    public function setAll(array $demands): void;
 }

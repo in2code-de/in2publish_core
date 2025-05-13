@@ -127,12 +127,6 @@ class PublisherService
             $this->eventDispatcher->dispatch(new RecordWasPublished($record));
         }
 
-        foreach ($record->getTranslations() as $translatedRecords) {
-            foreach ($translatedRecords as $translatedRecord) {
-                $this->publishRecord($translatedRecord, $includeChildPages);
-            }
-        }
-
         foreach ($record->getChildren() as $table => $children) {
             if ('pages' === $table && !$includeChildPages) {
                 continue;
