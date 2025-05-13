@@ -8,6 +8,7 @@ use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionServiceInjection;
+use In2code\In2publishCore\Event\BeforePublishingTranslationsEvent;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecordWasPublished;
@@ -125,6 +126,17 @@ class PublisherService
             // deprecated, remove in v13
             $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));
             $this->eventDispatcher->dispatch(new RecordWasPublished($record));
+        }
+
+        $translationEvent = new BeforePublishingTranslationsEvent($record, $includeChildPages);
+        $this->eventDispatcher->dispatch($translationEvent);
+
+        if ($translationEvent->shouldProcessTranslations()) {
+            foreach ($record->getTranslations() as $translatedRecords) {
+                foreach ($translatedRecords as $translatedRecord) {
+                    $this->publishRecord($translatedRecord, $includeChildPages);
+                }
+            }
         }
 
         foreach ($record->getChildren() as $table => $children) {
