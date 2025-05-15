@@ -440,15 +440,15 @@
 				<source>Association missing</source>
 				<target>Verknüpfung fehlend</target>
 			</trans-unit>
-			<trans-unit id="filter.field.is_publishable">
+			<trans-unit id="filter.field.is_publishable" resname="filter.field.is_publishable">
 				<source>Publishing State</source>
 				<target>Veröffentlichungsstatus</target>
 			</trans-unit>
-			<trans-unit id="filter.field.is_publishable.true">
+			<trans-unit id="filter.field.is_publishable.true" resname="filter.field.is_publishable.true">
 				<source>is publishable</source>
 				<target>ist veröffentlichbar</target>
 			</trans-unit>
-			<trans-unit id="filter.field.is_publishable.false">
+			<trans-unit id="filter.field.is_publishable.false" resname="filter.field.is_publishable.false">
 				<source>is not publishable</source>
 				<target>ist nicht veröffentlichbar</target>
 			</trans-unit>

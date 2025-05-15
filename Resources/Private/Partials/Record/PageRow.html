@@ -6,6 +6,7 @@
 >
 <div class="in2publish-page in2publish-page--level-{depth}"
 	 data-record-identifier="{record.classification}-{record.id}"
+	 data-record-language="{record.localProps.sys_language_uid}|{record.foreignProps.sys_language_uid}"
 	 data-searchable="{publish:Miscellaneous.GetPropertyFromStagingDefinition(record: record, propertyName: config.view.titleField, stagingLevel: 'local', fallbackProperty: 'title')}|{publish:Miscellaneous.GetPropertyFromStagingDefinition(record: record, propertyName: config.view.titleField, stagingLevel: 'foreign', fallbackProperty: 'title')}"
 	 data-record-state="{record.stateRecursive}">
 	<div class="in2publish-page__header">
