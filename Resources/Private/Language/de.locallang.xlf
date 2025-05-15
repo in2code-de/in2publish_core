@@ -518,6 +518,10 @@
 				<source>Filter by change language</source>
 				<target>Filterung nach Sprache</target>
 			</trans-unit>
+			<trans-unit id="module_m1_filter_language.all">
+				<source>All</source>
+				<target>Alle</target>
+			</trans-unit>
 			<trans-unit id="module_m1_filter_state.all">
 				<source>All</source>
 				<target>Alle</target>

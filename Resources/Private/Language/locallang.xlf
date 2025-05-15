@@ -389,6 +389,9 @@
 			<trans-unit id="module_m1_filter_language">
 				<source>Filter by language</source>
 			</trans-unit>
+			<trans-unit id="module_m1_filter_language.all">
+				<source>All</source>
+			</trans-unit>
 			<trans-unit id="module_m1_filter_state.all">
 				<source>All</source>
 			</trans-unit>
