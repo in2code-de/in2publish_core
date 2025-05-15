@@ -281,7 +281,7 @@ class In2publishCoreModule {
 		}
 
 		languageFilter.addEventListener('change', () => {
-			In2publishCoreModule.filterItemsByLanguage(languageFilter.value);
+			this.filterItemsByLanguage(languageFilter.value);
 		})
 	}
 
