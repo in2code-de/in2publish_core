@@ -514,6 +514,30 @@
 				<source>Are you sure you want to publish the folder %s? This cannot be reversed.</source>
 				<target state="translated">Möchten Sie den Ordner %s wirklich veröffentlichen? Dies kann nicht rückgängig gemacht werden.</target>
 			</trans-unit>
+			<trans-unit id="module_m1_filter_state">
+				<source>Filter by change state</source>
+				<target>Filterung nach Änderungsstatus</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_language">
+				<source>Filter by change language</source>
+				<target>Filterung nach Sprache</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_language.all">
+				<source>All</source>
+				<target>Alle</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_state.all">
+				<source>All</source>
+				<target>Alle</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_field_level">
+				<source>Filter records by their level</source>
+				<target>Filterung nach Verschachtelungstiefe</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_field_title">
+				<source>Filter by title</source>
+				<target>Filterung nach Name</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

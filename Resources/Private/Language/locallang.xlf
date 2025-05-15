@@ -389,8 +389,14 @@
 			<trans-unit id="module_m1_filter_state">
 				<source>Filter by change state</source>
 			</trans-unit>
+			<trans-unit id="module_m1_filter_language">
+				<source>Filter by language</source>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_language.all">
+				<source>All</source>
+			</trans-unit>
 			<trans-unit id="module_m1_filter_state.all">
-				<source>Filter by change state</source>
+				<source>All</source>
 			</trans-unit>
 			<trans-unit id="module_m1_filter_field_level">
 				<source>Filter records by their level</source>
