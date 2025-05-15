@@ -22,7 +22,7 @@
 				Filter by change state
 			</f:comment>
 
-			<div class="col-sm-6">
+			<div class="col-sm-4">
 				<div class="form-group">
 					<label for="in2publish__publishfilter_state"><f:translate key="module_m1_filter_state">Filter by change state</f:translate></label>
 					<select id="in2publish__publishfilter_state" class="form-control js-in2publish-statefilter" data-workflow-filter-field="true">
@@ -39,7 +39,7 @@
 				Filter by relative level
 			</f:comment>
 
-			<div class="col-sm-6">
+			<div class="col-sm-4">
 				<div class="form-group">
 					<label for="in2publish__publishfilter_level"><f:translate key="module_m1_filter_field_level">level</f:translate></label>
 					<select id="in2publish__publishfilter_level" class="form-control js-in2publish-levelfilter" data-workflow-filter-field="true" name="relative-level">
@@ -54,6 +54,31 @@
 						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 8  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 8', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 8 }">8 levels</f:translate></option>
 						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 9  })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 9', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 9 }">9 levels</f:translate></option>
 						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 10 })}" {f:if(condition: '{moduleData.pageRecursionLimit} == 10', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 10}">10 levels</f:translate></option>
+					</select>
+				</div>
+			</div>
+
+			<f:comment>
+				Filter by change state
+			</f:comment>
+
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label for="in2publish__publishfilter_language"><f:translate key="module_m1_filter_language">Filter by language</f:translate></label>
+					<select id="in2publish__publishfilter_language" class="form-control js-in2publish-languagefilter" data-workflow-filter-field="true">
+						<option value="">
+							<f:translate key="module_m1_filter_language.all">Filter by language</f:translate>
+						</option>
+						<f:for each="{languages}" as="language">
+							<f:if condition="{language.uid} >= 0">
+								<option
+										value="{language.uid}"
+										data-icon="{core:icon(identifier: '{language.flagIcon}') -> f:format.htmlspecialchars()}"
+								>
+									{language.title}
+								</option>
+							</f:if>
+						</f:for>
 					</select>
 				</div>
 			</div>
