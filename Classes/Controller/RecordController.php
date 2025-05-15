@@ -46,6 +46,8 @@ use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatchInj
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
+use In2code\In2publishCore\Service\Language\SiteLanguageService;
+use In2code\In2publishCore\Service\Language\SiteLanguageServiceInjection;
 use In2code\In2publishCore\Service\Permission\PermissionServiceInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -86,6 +88,7 @@ class RecordController extends ActionController
     use PublisherServiceInjection;
     use PermissionServiceInjection;
     use SimpleStopwatchInjection;
+    use SiteLanguageServiceInjection;
 
     /**
      * @codeCoverageIgnore
@@ -141,9 +144,12 @@ class RecordController extends ActionController
         } catch (Throwable $exception) {
             $foreignDbAvailable = false;
         }
+        $languages = $this->siteLanguageService->getAllowedLanguages($pid);
+
         $this->view->assign('localDatabaseConnectionAvailable', $localDbAvailable);
         $this->view->assign('foreignDatabaseConnectionAvailable', $foreignDbAvailable);
         $this->view->assign('publishingAvailable', $localDbAvailable && $foreignDbAvailable);
+        $this->view->assign('languages', $languages);
 
         $this->view->assign('recordTree', $recordTree);
         $this->view->assign('moduleData', $backendUser->getModuleData('tx_in2publishcore_m1'));
