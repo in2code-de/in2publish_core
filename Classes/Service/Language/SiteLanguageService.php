@@ -29,12 +29,12 @@ namespace In2code\In2publishCore\Service\Language;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publish\Domain\Model\ContentLanguage;
 use In2code\In2publishCore\CommonInjection\BackendUserAuthenticationInjection;
 use In2code\In2publishCore\CommonInjection\SiteFinderInjection;
 use In2code\In2publishCore\CommonInjection\TranslationConfigurationProviderInjection;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
 use function array_key_exists;
 use function ksort;
@@ -52,7 +52,7 @@ class SiteLanguageService
         $this->languageService = $GLOBALS['LANG'];
     }
 
-    /** @return array<ContentLanguage> */
+    /** @return array<SiteLanguage> */
     public function getAllowedLanguages(int $pageId): array
     {
         try {
@@ -83,12 +83,7 @@ class SiteLanguageService
 
         ksort($languages);
         foreach ($languages as $index => $language) {
-            $languages[$index] = new ContentLanguage(
-                $language['uid'],
-                $language['uid'] === 0 ? $language['title'] . ' (default)' : $language['title'],
-                $language['ISOcode'] ?? '',
-                $language['flagIcon'],
-            );
+                $languages[$index] = $language;
         }
         return $languages;
     }
