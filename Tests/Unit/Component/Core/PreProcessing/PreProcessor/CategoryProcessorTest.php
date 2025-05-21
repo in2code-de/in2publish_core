@@ -9,19 +9,14 @@ use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarke
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Database\Connection;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\CategoryProcessor
- */
+#[CoversMethod(CategoryProcessor::class, 'process')]
+#[CoversMethod(CategoryProcessor::class, 'buildResolver')]
 class CategoryProcessorTest extends UnitTestCase
 {
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testProcessResultIsCompatibleForAnyTca(): void
     {
         $container = $this->createMock(ContainerInterface::class);

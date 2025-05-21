@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Publisher\Instruction
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverService;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFileInstruction;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\Resource\Driver\LocalDriver;
 
 use function file_exists;
@@ -14,14 +15,9 @@ use function file_put_contents;
 use function register_shutdown_function;
 use function unlink;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\Instruction\AddFileInstruction
- */
+#[CoversMethod(AddFileInstruction::class, 'execute')]
 class AddFileInstructionTest extends UnitTestCase
 {
-    /**
-     * @covers ::execute
-     */
     public function testExecutionCreatesFolderIfNotPresent(): void
     {
         $driver = $this->createMock(LocalDriver::class);
@@ -38,9 +34,6 @@ class AddFileInstructionTest extends UnitTestCase
         $instruction->execute($falDriverService);
     }
 
-    /**
-     * @covers ::execute
-     */
     public function testExecutionSkipsFolderCreationIfFolderIsPresent(): void
     {
         $driver = $this->createMock(LocalDriver::class);

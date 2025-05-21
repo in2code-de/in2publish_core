@@ -11,18 +11,16 @@ use In2code\In2publishCore\Component\Core\Resolver\FlexResolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 use In2code\In2publishCore\Component\Core\Service\ResolverService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Resolver\FlexResolver
- */
+#[CoversMethod(FlexResolver::class, 'getTargetTables')]
+#[CoversMethod(FlexResolver::class, 'configure')]
+#[CoversMethod(FlexResolver::class, 'resolve')]
 class FlexResolverTest extends UnitTestCase
 {
-    /**
-     * @covers ::getTargetTables
-     */
     public function testTargetTables(): void
     {
         // all tables in TCA
@@ -38,9 +36,6 @@ class FlexResolverTest extends UnitTestCase
         unset($GLOBALS['TCA']['table_bar']);
     }
 
-    /**
-     * @covers ::configure
-     */
     public function testConfigure(): void
     {
         $flexResolver = new FlexResolver();
@@ -57,9 +52,6 @@ class FlexResolverTest extends UnitTestCase
         $this->assertSame(['tca_key1' => 'tca_value1'], $processedTca->getValue($flexResolver));
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolveDoesNotResolveFileRecords()
     {
         $flexResolver = new FlexResolver();
@@ -72,9 +64,6 @@ class FlexResolverTest extends UnitTestCase
         $fileRecord->expects($this->never())->method('getForeignProps');
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolveDoesNotGetResolverOnEmptyDatabaseRecord(): void
     {
         $emptyDatabaseRecord = new DatabaseRecord('table_foo', 42, [], [], []);
@@ -104,9 +93,6 @@ class FlexResolverTest extends UnitTestCase
         $flexResolver->resolve($demands, $emptyDatabaseRecord);
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolveDelegatesResolveToItsResolvers(): void
     {
         $databaseRecord = new DatabaseRecord('table_foo', 43, ['pid' => 7, 'column_foo' => 'value_foo'], [], []);

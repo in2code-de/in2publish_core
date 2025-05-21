@@ -7,16 +7,12 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\PreProcessing\PreProc
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\InputProcessor;
 use In2code\In2publishCore\Component\Core\Resolver\TextResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Symfony\Component\DependencyInjection\Container;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\InputProcessor
- */
+#[CoversMethod(InputProcessor::class, 'additionalPreProcess')]
 class InputProcessorTest extends UnitTestCase
 {
-    /**
-     * @covers ::additionalPreProcess
-     */
     public function testInputProcessorProcessesFieldsWithTypolinkSoftref(): void
     {
         $resolver = $this->createMock(TextResolver::class);
@@ -32,9 +28,6 @@ class InputProcessorTest extends UnitTestCase
         $this->assertTrue($processingResult->isCompatible());
     }
 
-    /**
-     * @covers ::additionalPreProcess
-     */
     public function testInputProcessorIgnoresFieldsWithoutSupportedSoftref(): void
     {
         $inputProcessor = new InputProcessor($this->createMock(Container::class));
@@ -50,9 +43,6 @@ class InputProcessorTest extends UnitTestCase
         );
     }
 
-    /**
-     * @covers ::additionalPreProcess
-     */
     public function testInputProcessorIgnoresFieldsWithoutSoftref(): void
     {
         $inputProcessor = new InputProcessor($this->createMock(Container::class));

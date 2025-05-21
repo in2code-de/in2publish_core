@@ -10,25 +10,20 @@ use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 
-/**
- * @coversDefaultClass  \In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver
- */
+#[CoversMethod(SelectMmResolver::class, 'getTargetTables')]
+#[CoversMethod(SelectMmResolver::class, 'configure')]
+#[CoversMethod(SelectMmResolver::class, 'resolve')]
 class SelectMmResolverTest extends UnitTestCase
 {
-    /**
-     * @covers ::getTargetTables
-     */
     public function testGetTargetTables(): void
     {
         $selectMmResolver = $this->getConfiguredMmSelectResolver();
         $this->assertEquals(['foreignTable'], $selectMmResolver->getTargetTables());
     }
 
-    /**
-     * @covers ::configure
-     */
     public function testConfigure()
     {
         $selectMmResolver = new SelectMmResolver();
@@ -58,9 +53,6 @@ class SelectMmResolverTest extends UnitTestCase
         $this->assertEquals('selectField', $selectField->getValue($selectMmResolver));
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolve()
     {
         $selectMmResolver = $this->getConfiguredMmSelectResolver();
@@ -79,9 +71,6 @@ class SelectMmResolverTest extends UnitTestCase
         $this->assertEquals($resolvedRecord, $record);
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolveWithAdditionalWhere()
     {
         $selectMmResolver = new SelectMmResolver();

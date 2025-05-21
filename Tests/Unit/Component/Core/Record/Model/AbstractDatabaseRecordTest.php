@@ -14,6 +14,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\TtContentDatabaseRecord;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
@@ -21,14 +22,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function iterator_to_array;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\AbstractDatabaseRecord
- */
+#[CoversMethod(AbstractDatabaseRecord::class, 'calculateDependencies')]
+#[CoversMethod(AbstractDatabaseRecord::class, 'getStateRecursive')]
+#[CoversMethod(AbstractDatabaseRecord::class, 'getAllDependencies')]
 class AbstractDatabaseRecordTest extends UnitTestCase
 {
-    /**
-     * @covers ::calculateDependencies
-     */
     public function testCalculateDependenciesAddsDependencyForTranslation(): void
     {
         $localProps = $foreignProps = [
@@ -52,9 +50,6 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         self::assertSame(Dependency::REQ_ENABLECOLUMNS, $dependency->getRequirement());
     }
 
-    /**
-     * @covers ::calculateDependencies
-     */
     public function testCalculateDependenciesAddsDependenciesForParentRecord(): void
     {
         $localProps = $foreignProps = [
@@ -75,9 +70,6 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         self::assertSame(Dependency::REQ_ENABLECOLUMNS, $dependency->getRequirement());
     }
 
-    /**
-     * @covers ::calculateDependencies
-     */
     public function testGetStateRecursiveReturnsRecordStateIfRecordHasNoChildren(): void
     {
         $localProps = $foreignProps = [
@@ -89,9 +81,6 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         self::assertSame(Record::S_UNCHANGED, $state);
     }
 
-    /**
-     * @covers ::calculateDependencies
-     */
     public function testGetStateRecursiveReturnsChangedIfChangedChildIsPresent(): void
     {
         $localProps = $foreignProps = [
@@ -104,9 +93,6 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         self::assertSame(Record::S_CHANGED, $state);
     }
 
-    /**
-     * @covers ::getStateRecursive
-     */
     public function testGetStateRecursiveReturnsChangedIfChangedNestedChildIsPresent(): void
     {
         $localProps = $foreignProps = [
@@ -122,9 +108,6 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         self::assertSame(Record::S_CHANGED, $state);
     }
 
-    /**
-     * @covers ::getAllDependencies
-     */
     public function testGetAllDependenciesReturnsDependenciesOfAllChildRecords(): void
     {
         $localProps = $foreignProps = [

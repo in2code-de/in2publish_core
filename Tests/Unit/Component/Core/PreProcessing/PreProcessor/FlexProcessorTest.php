@@ -13,22 +13,19 @@ use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\Resolver\FlexResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
-use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
 
 use function json_encode;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\FlexProcessor
- */
+#[CoversMethod(FlexProcessor::class, 'additionalPreProcess')]
+#[CoversMethod(FlexProcessor::class, 'process')]
+#[CoversMethod(FlexProcessor::class, 'buildResolver')]
 class FlexProcessorTest extends UnitTestCase
 {
-    /**
-     * @covers ::additionalPreProcess
-     */
     public function testFlexProcessorRejectsTcaWithoutDefaultValueOrDsPointerField(): void
     {
         $flexProcessor = new FlexProcessor($this->createMock(Container::class));
@@ -38,10 +35,6 @@ class FlexProcessorTest extends UnitTestCase
         $this->assertFalse($processingResult->isCompatible());
     }
 
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testTcaWithTwoSheetsIsResolved(): void
     {
 
@@ -72,8 +65,6 @@ class FlexProcessorTest extends UnitTestCase
 
     /**
      * @noinspection JsonEncodingApiUsageInspection
-     * @covers ::process
-     * @covers ::buildResolver
      */
     public function testFlexProcessorDelegatesFlexFormResolvingToTcaPreProcessingService(): void
     {
@@ -125,8 +116,6 @@ class FlexProcessorTest extends UnitTestCase
 
     /**
      * @noinspection JsonEncodingApiUsageInspection
-     * @covers ::process
-     * @covers ::buildResolver
      */
     public function testFlexProcessorResolvesDemandForFlexFormFields(): void
     {

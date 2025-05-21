@@ -7,16 +7,12 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Demand;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Demand\DemandsFactory
- */
+#[CoversMethod(DemandsFactory::class, 'createDemand')]
 class DemandsFactoryTest extends TestCase
 {
-    /**
-     * @covers ::createDemand
-     */
     public function testBuildDemandReturnsDemandCollection(): void
     {
         $configContainer = $this->createMock(ConfigContainer::class);

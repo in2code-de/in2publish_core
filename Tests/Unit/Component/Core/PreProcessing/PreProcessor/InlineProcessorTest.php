@@ -11,17 +11,13 @@ use In2code\In2publishCore\Component\Core\Resolver\InlineSelectResolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Symfony\Component\DependencyInjection\Container;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\InlineProcessor
- */
+#[CoversMethod(InlineProcessor::class, 'process')]
+#[CoversMethod(InlineProcessor::class, 'buildResolver')]
 class InlineProcessorTest extends UnitTestCase
 {
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testTcaMustNotContainSymmetricField(): void
     {
         $tca = ['type' => 'inline', 'foreign_table' => 'table_foo', 'symmetric_field' => 'foo'];
@@ -46,10 +42,6 @@ class InlineProcessorTest extends UnitTestCase
         );
     }
 
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testTcaMustContainForeignTable(): void
     {
         $tca = ['type' => 'inline'];
@@ -67,10 +59,6 @@ class InlineProcessorTest extends UnitTestCase
         $this->assertSame('Must be set, there is no type "inline" without a foreign table', $reason);
     }
 
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testInlineSelectResolver(): void
     {
         $tca = [
@@ -105,10 +93,6 @@ class InlineProcessorTest extends UnitTestCase
         $this->assertInstanceOf(InlineSelectResolver::class, $inlineResolver);
     }
 
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testInlineMultiValueResolver(): void
     {
         $tca1 = [

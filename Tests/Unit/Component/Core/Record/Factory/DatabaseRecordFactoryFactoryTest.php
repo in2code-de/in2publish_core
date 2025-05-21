@@ -8,16 +8,13 @@ use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\Exception\MissingDatabaseRecordFactoryException;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory
- */
+#[CoversMethod(DatabaseRecordFactoryFactory::class, 'addFactory')]
+#[CoversMethod(DatabaseRecordFactoryFactory::class, 'createFactoryForTable')]
 class DatabaseRecordFactoryFactoryTest extends UnitTestCase
 {
-    /**
-     * @covers ::addFactory
-     */
     public function testAddFactory(): void
     {
         $factory1 = $this->createMock(DatabaseRecordFactory::class);
@@ -45,9 +42,6 @@ class DatabaseRecordFactoryFactoryTest extends UnitTestCase
         $this->assertSame($expectedFactoryOrder, $factories);
     }
 
-    /**
-     * @covers ::createFactoryForTable
-     */
     public function testCreateFactoryForTableReturnsResponsibleFactory(): void
     {
         $table = 'table_foo';
@@ -66,9 +60,6 @@ class DatabaseRecordFactoryFactoryTest extends UnitTestCase
         $this->assertSame($factory2, $createdFactory);
     }
 
-    /**
-     * @covers ::createFactoryForTable
-     */
     public function testCreateFactoryForTableThrowsExceptionIfNoFactoryIsFound(): void
     {
         $table = 'table_foo';

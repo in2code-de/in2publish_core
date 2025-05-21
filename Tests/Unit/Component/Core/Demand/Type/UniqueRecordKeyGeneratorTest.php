@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Demand\Type;
 
+use In2code\In2publishCore\Component\Core\Demand\Type\UniqueRecordKeyGenerator;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Demand\Type\UniqueRecordKeyGenerator
- */
+#[CoversMethod(UniqueRecordKeyGenerator::class, 'createUniqueRecordKey')]
 class UniqueRecordKeyGeneratorTest extends UnitTestCase
 {
-    /**
-     * @covers ::createUniqueRecordKey
-     */
     public function testUniqueRecordKeyReturnsUniqueIdentifier(): void
     {
         $record1 = $this->createMock(DatabaseRecord::class);

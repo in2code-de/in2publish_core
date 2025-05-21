@@ -6,16 +6,12 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\PreProcessing\Service
 
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\Database\Connection;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerService
- */
+#[CoversMethod(TcaEscapingMarkerService::class, 'escapeMarkedIdentifier')]
 class TcaEscapingMarkerServiceTest extends UnitTestCase
 {
-    /**
-     * @covers ::escapeMarkedIdentifier
-     */
     public function testEscapeMarkedIdentifierReplacesAllMarkersWithQuotedIdentifiers(): void
     {
         $sql = 'SELECT * FROM {#table} WHERE {#field} = {#value}';
@@ -34,9 +30,6 @@ class TcaEscapingMarkerServiceTest extends UnitTestCase
         $this->assertSame($expected, $result);
     }
 
-    /**
-     * @covers ::escapeMarkedIdentifier
-     */
     public function testEscapeMarkedIdentifierOnlyReplacesValidMarkers(): void
     {
         $sql = "SELECT * FROM '#table' WHERE {#field} = {#value}";

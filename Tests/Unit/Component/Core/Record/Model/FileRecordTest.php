@@ -7,18 +7,16 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Model;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\FileRecord
- */
+#[CoversMethod(FileRecord::class, '__construct')]
+#[CoversMethod(FileRecord::class, 'getClassification')]
+#[CoversMethod(FileRecord::class, 'getId')]
+#[CoversMethod(FileRecord::class, 'getState')]
+#[CoversMethod(FileRecord::class, 'getForeignIdentificationProps')]
+#[CoversMethod(FileRecord::class, 'calculateState')]
 class FileRecordTest extends UnitTestCase
 {
-    /**
-     * @covers ::__construct
-     * @covers ::getClassification
-     * @covers ::getId
-     * @covers ::getState
-     */
     public function testCreationOfNewFileRecord(): void
     {
         $fileRecord = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);
@@ -27,20 +25,12 @@ class FileRecordTest extends UnitTestCase
         $this->assertSame(Record::S_ADDED, $fileRecord->getState());
     }
 
-    /**
-     * @covers ::getForeignIdentificationProps
-     */
     public function testGetForeignIdentificationProps(): void
     {
         $fileRecord = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);
         $this->assertSame([], $fileRecord->getForeignIdentificationProps());
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::calculateState
-     * @covers ::getState
-     */
     public function testCalculateState(): void
     {
         $addedFileRecord = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);

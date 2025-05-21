@@ -6,16 +6,12 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\PreProcessing\Service
 
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService
- */
+#[CoversMethod(FlexFormFlatteningService::class, 'flattenFlexFormDefinition')]
+#[CoversMethod(FlexFormFlatteningService::class, 'flattenFieldFlexForm')]
 class FlexFormFlatteningServiceTest extends UnitTestCase
 {
-    /**
-     * @covers ::flattenFlexFormDefinition
-     * @covers ::flattenFieldFlexForm
-     */
     public function testFlattenFieldFlexFormDefinitionFlattensDefaultFlexForm(): void
     {
         $flexFormDefinition = [

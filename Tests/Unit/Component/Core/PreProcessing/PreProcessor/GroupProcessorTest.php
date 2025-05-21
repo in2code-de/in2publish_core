@@ -12,19 +12,16 @@ use In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionMethod;
 use Symfony\Component\DependencyInjection\Container;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\GroupProcessor
- */
+#[CoversMethod(GroupProcessor::class, 'process')]
+#[CoversMethod(GroupProcessor::class, 'buildResolver')]
+#[CoversMethod(GroupProcessor::class, 'additionalPreProcess')]
+#[CoversMethod(GroupProcessor::class, 'isSingleTable')]
 class GroupProcessorTest extends UnitTestCase
 {
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     * @covers ::additionalPreProcess
-     */
     public function testProcessRequiresAllowedFieldInTca(): void
     {
         $tca = ['type' => 'group', 'allowed' => ''];
@@ -46,11 +43,6 @@ class GroupProcessorTest extends UnitTestCase
         $groupProcessor->process('table_foo', 'field_bar', $tca);
     }
 
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     * @covers ::additionalPreProcess
-     */
     public function testProcessInternalTypeMustBeDb(): void
     {
         $GLOBALS['TCA']['table_foo'] = [];
@@ -86,11 +78,6 @@ class GroupProcessorTest extends UnitTestCase
         unset($GLOBALS['TCA']['table_foo']);
     }
 
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     * @covers ::additionalPreProcess
-     */
     public function testProcessAllowedTableMustBeInTca(): void
     {
         $GLOBALS['TCA']['table_foo'] = [];
@@ -114,10 +101,6 @@ class GroupProcessorTest extends UnitTestCase
         unset($GLOBALS['TCA']['table_foo']);
     }
 
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testTcaMustNotContainMmOppositeField(): void
     {
         $GLOBALS['TCA']['table_bar'] = [];
@@ -146,10 +129,6 @@ class GroupProcessorTest extends UnitTestCase
         unset($GLOBALS['TCA']['table_bar']);
     }
 
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testProcessingForSingleTableRelations(): void
     {
         $GLOBALS['TCA']['table_foo'] = [];
@@ -182,10 +161,6 @@ class GroupProcessorTest extends UnitTestCase
         unset($GLOBALS['TCA']['table_bar']);
     }
 
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testProcessingForMultipleTablesRelations(): void
     {
         $GLOBALS['TCA']['table_foo'] = [];
@@ -220,11 +195,6 @@ class GroupProcessorTest extends UnitTestCase
         unset($GLOBALS['TCA']['table_bar']);
     }
 
-    /**
-     * @covers ::process
-     * @covers ::additionalPreProcess
-     * @covers ::buildResolver
-     */
     public function testProcessingForAllTablesRelations(): void
     {
         $GLOBALS['TCA']['table_bar'] = [];
@@ -260,9 +230,6 @@ class GroupProcessorTest extends UnitTestCase
     }
 
     /**
-     * @covers ::process
-     * @covers ::buildResolver
-     *
      * Case 1: no MM_match_fields
      */
     public function testProcessingResultForMmTableRelations(): void
@@ -328,9 +295,6 @@ class GroupProcessorTest extends UnitTestCase
     }
 
     /**
-     * @covers ::process
-     * @covers ::buildResolver
-     *
      * Case 2a: with MM_match_fields, string match values
      */
     public function testProcessingResultForMmTableRelationsWithStringMatchFields(): void
@@ -387,9 +351,6 @@ class GroupProcessorTest extends UnitTestCase
     }
 
     /**
-     * @covers ::process
-     * @covers ::buildResolver
-     *
      * Case 2b: with MM_match_fields, integer match values
      */
     public function testProcessingResultForMmTableRelationsWithIntegerMatchFields(): void
@@ -445,9 +406,6 @@ class GroupProcessorTest extends UnitTestCase
         unset($GLOBALS['TCA']['table_bar']);
     }
 
-    /**
-     * @covers ::isSingleTable
-     */
     public function testIsSingleTable(): void
     {
         $groupProcessor = new GroupProcessor($this->createMock(Container::class));

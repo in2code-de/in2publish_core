@@ -9,16 +9,14 @@ use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver
- */
+#[CoversMethod(GroupSingleTableResolver::class, 'getTargetTables')]
+#[CoversMethod(GroupSingleTableResolver::class, 'configure')]
+#[CoversMethod(GroupSingleTableResolver::class, 'resolve')]
 class GroupSingleTableResolverTest extends UnitTestCase
 {
-    /**
-     * @covers ::getTargetTables
-     */
     public function testGetTargetTables(): void
     {
         $resolver = new GroupSingleTableResolver();
@@ -27,9 +25,6 @@ class GroupSingleTableResolverTest extends UnitTestCase
         $this->assertEquals(['foreign_table'], $resolver->getTargetTables());
     }
 
-    /**
-     * @covers ::configure
-     */
     public function testConfigure(): void
     {
         $resolver = new GroupSingleTableResolver();
@@ -44,9 +39,6 @@ class GroupSingleTableResolverTest extends UnitTestCase
         $this->assertEquals('foreign_table', $foreignTable->getValue($resolver));
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolveWithSimpleNumericValues(): void
     {
         $resolver = new GroupSingleTableResolver();
@@ -75,9 +67,6 @@ class GroupSingleTableResolverTest extends UnitTestCase
         }
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolveWithTablePrefixedValues(): void
     {
         $resolver = new GroupSingleTableResolver();
@@ -104,9 +93,6 @@ class GroupSingleTableResolverTest extends UnitTestCase
         }
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolveWithEmptyValues(): void
     {
         $resolver = new GroupSingleTableResolver();
@@ -127,9 +113,6 @@ class GroupSingleTableResolverTest extends UnitTestCase
         $this->assertEmpty($selectDemands);
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolveWithMixedValues(): void
     {
         $resolver = new GroupSingleTableResolver();

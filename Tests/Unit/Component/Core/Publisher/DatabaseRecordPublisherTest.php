@@ -10,17 +10,16 @@ use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Database\Connection;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\DatabaseRecordPublisher
- */
+#[CoversMethod(DatabaseRecordPublisher::class, 'canPublish')]
+#[CoversMethod(DatabaseRecordPublisher::class, 'publish')]
+#[CoversMethod(DatabaseRecordPublisher::class, 'finish')]
+#[CoversMethod(DatabaseRecordPublisher::class, 'cancel')]
 class DatabaseRecordPublisherTest extends UnitTestCase
 {
-    /**
-     * @covers ::canPublish
-     */
     public function testCanPublishReturnsTrueForDatabaseRecordsOnly()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
@@ -35,9 +34,6 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $this->assertFalse($databaseRecordPublisher->canPublish($fileRecord));
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishInsertsAddedRecords()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
@@ -55,9 +51,6 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $databaseRecordPublisher->publish($addedRecord);
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishDeletesRemovedRecords()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
@@ -75,9 +68,6 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $databaseRecordPublisher->publish($addedRecord);
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishUpdatesChangedRecords()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
@@ -96,9 +86,6 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $databaseRecordPublisher->publish($addedRecord);
     }
 
-    /**
-     * @covers ::finish
-     */
     public function testFinishCommitsDatabaseChanges()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
@@ -110,9 +97,6 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $databaseRecordPublisher->finish();
     }
 
-    /**
-     * @covers ::cancel
-     */
     public function testCancelRollsBackDatabaseChanges()
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();

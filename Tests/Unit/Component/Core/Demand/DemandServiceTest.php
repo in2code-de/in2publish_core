@@ -15,15 +15,11 @@ use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Service\ResolverService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Demand\DemandBuilder
- */
+#[CoversMethod(DemandBuilder::class, 'buildDemandForRecords')]
 class DemandServiceTest extends UnitTestCase
 {
-    /**
-     * @covers ::buildDemandForRecords
-     */
     public function testBuildDemandForRecordsReturnsContentOfResolverArray(): void
     {
         $demandsFactory = $this->createMock(DemandsFactory::class);
@@ -57,9 +53,6 @@ class DemandServiceTest extends UnitTestCase
         $this->assertSame($expected, $demand->getDemandsByType(SelectDemand::class));
     }
 
-    /**
-     * @covers ::buildDemandForRecords
-     */
     public function testBuildDemandForRecordsReturnsResolversOfAllRecords(): void
     {
         $demandsFactory = $this->createMock(DemandsFactory::class);

@@ -6,21 +6,17 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Service;
 
 use In2code\In2publishCore\Component\Core\Service\Database\DatabaseSchemaService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function method_exists;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Service\Database\DatabaseSchemaService
- */
+#[CoversMethod(DatabaseSchemaService::class, 'injectCache')]
+#[CoversMethod(DatabaseSchemaService::class, 'getColumnNames')]
+#[CoversMethod(DatabaseSchemaService::class, 'getTableNames')]
 class DatabaseSchemaServiceTest extends UnitTestCase
 {
-    /**
-     * @covers ::injectCache
-     * @covers ::getColumnNames
-     * @covers ::getTableNames
-     */
     public function testInjectCachePopulatesColumnsAndTables(): void
     {
         $localDatbase = $this->createMock(Connection::class);

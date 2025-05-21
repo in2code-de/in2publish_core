@@ -33,6 +33,7 @@ use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use In2code\In2publishCore\Utility\BackendUtility;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Database\Connection;
@@ -42,9 +43,9 @@ use TYPO3\CMS\Core\Database\Query\Restriction\DefaultRestrictionContainer;
 use TYPO3\CMS\Core\Http\ServerRequest;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Utility\BackendUtility
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
+#[CoversMethod(BackendUtility::class, 'getPageIdentifier')]
 class BackendUtilityTest extends UnitTestCase
 {
     protected array $rows = [];
@@ -100,17 +101,11 @@ class BackendUtilityTest extends UnitTestCase
         $this->request = null;
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsZeroIfNoPidCanBeFound(): void
     {
         $this->assertSame(0, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsPidForRollbackRequests(): void
     {
         $expectedPid = 4;
@@ -125,9 +120,6 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame($expectedPid, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsZeroIfRollbackRequestIsInvalid(): void
     {
         $request = $this->request->withQueryParams(['element' => '13']);
@@ -136,9 +128,6 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame(0, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsZeroIfRollbackRecordDoesNotExist(): void
     {
         $request = $this->request->withQueryParams(['element' => 'tt_content:13']);
@@ -147,9 +136,6 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame(0, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsPidFromRedirectParameter(): void
     {
         $request = $this->request->withQueryParams(['redirect' => 'script.php?param1=a&id=123&param2=2']);
@@ -158,9 +144,6 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame(123, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsZeroIfRedirectParameterDoesNotContainAnId(): void
     {
         $request = $this->request->withQueryParams(['redirect' => 'script.php?param1=a&param2=2']);
@@ -169,9 +152,6 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame(0, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsZeroIfRedirectIdParameterIsEmpty(): void
     {
         $request = $this->request->withQueryParams(['redirect' => 'script.php?param1=a&id=&param2=2']);
@@ -180,9 +160,6 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame(0, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsPidFromPopViewId(): void
     {
         $request = $this->request->withQueryParams(['popViewId' => '123']);
@@ -191,9 +168,6 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame(123, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsPidFromCmdParameter(): void
     {
         $request = $this->request->withQueryParams(['cmd' => ['pages' => ['6543' => ['delete' => '1']]]]);
@@ -202,9 +176,6 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame(6543, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsZeroIfCmdParameterIsEmpty(): void
     {
         $request = $this->request->withQueryParams(['cmd' => []]);
@@ -218,9 +189,6 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame(0, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsPidFromIdParameter(): void
     {
         $request = $this->request->withQueryParams(['id' => 321]);
@@ -229,9 +197,6 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame(321, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsPidFromPAjaxPageId(): void
     {
         $request = $this->request->withQueryParams(['pageId' => 321]);
@@ -240,17 +205,11 @@ class BackendUtilityTest extends UnitTestCase
         $this->assertSame(321, BackendUtility::getPageIdentifier());
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsPidFromArgumentsIfTableIsPages(): void
     {
         $this->assertSame(321, BackendUtility::getPageIdentifier(321, 'pages'));
     }
 
-    /**
-     * @covers ::getPageIdentifier
-     */
     public function testGetPageIdentifierReturnsZeroIfAnyMethodFails(): void
     {
         $this->rows = ['uid' => 321];

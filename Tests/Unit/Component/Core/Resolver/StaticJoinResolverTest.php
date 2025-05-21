@@ -9,16 +9,14 @@ use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver
- */
+#[CoversMethod(StaticJoinResolver::class, 'configure')]
+#[CoversMethod(StaticJoinResolver::class, 'getTargetTables')]
+#[CoversMethod(StaticJoinResolver::class, 'resolve')]
 class StaticJoinResolverTest extends UnitTestCase
 {
-    /**
-     * @covers ::configure
-     */
     public function testConfigure(): void
     {
         $staticJoinResolver = new StaticJoinResolver();
@@ -43,9 +41,6 @@ class StaticJoinResolverTest extends UnitTestCase
         $this->assertSame('property', $property->getValue($staticJoinResolver));
     }
 
-    /**
-     * @covers ::getTargetTables
-     */
     public function testGetTargetTables(): void
     {
         $staticJoinResolver = new StaticJoinResolver();
@@ -59,9 +54,6 @@ class StaticJoinResolverTest extends UnitTestCase
         $this->assertEquals(['joinTable'], $staticJoinResolver->getTargetTables());
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolve(): void
     {
         $staticJoinResolver = new StaticJoinResolver();

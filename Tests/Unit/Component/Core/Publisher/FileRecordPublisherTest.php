@@ -19,6 +19,7 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRespons
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
 use In2code\In2publishCore\Tests\Unit\Component\Core\Publisher\Constraint\IsEqualIgnoringRequestToken;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Database\Connection;
 
@@ -29,15 +30,11 @@ use function strrpos;
 use function substr;
 use function trim;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher
- */
+#[CoversMethod(FileRecordPublisher::class, '__construct')]
+#[CoversMethod(FileRecordPublisher::class, 'canPublish')]
+#[CoversMethod(FileRecordPublisher::class, 'publish')]
 class FileRecordPublisherTest extends UnitTestCase
 {
-    /**
-     * @covers ::__construct
-     * @covers ::canPublish
-     */
     public function testCanPublishReturnsTrueForFileRecordsOnly()
     {
         $fileRecordPublisher = new FileRecordPublisher();
@@ -52,9 +49,6 @@ class FileRecordPublisherTest extends UnitTestCase
         $this->assertFalse($fileRecordPublisher->canPublish($databaseRecord));
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishDeletesRemovedFile()
     {
         $fileRecordPublisher = $this->createFileRecordPublisher();
@@ -84,9 +78,6 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->finish();
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishTransmitsAddedRecord()
     {
         $fileRecordPublisher = $this->createFileRecordPublisher('/var/tmp/asdfasdf.tmp');
@@ -117,9 +108,6 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->finish();
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishTransmitsRenamedRecord()
     {
         $fileRecordPublisher = $this->createFileRecordPublisher();
@@ -153,9 +141,6 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->finish();
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishTransmitsMovedRecord()
     {
         $fileRecordPublisher = $this->createFileRecordPublisher();
@@ -186,9 +171,6 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->finish();
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishTransmitsReplacedFileWithNewNameRecord()
     {
         $fileRecordPublisher = $this->createFileRecordPublisher('/var/tmp/transient/sadsdas.tmp');
@@ -220,9 +202,6 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->finish();
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishTransmitsReplacedFileWithSameNameRecord()
     {
         $fileRecordPublisher = $this->createFileRecordPublisher('/var/tmp/transient/sadsdas.tmp');

@@ -7,10 +7,9 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Configuration;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Service\Configuration\IgnoredFieldsService
- */
+#[CoversClass(IgnoredFieldsService::class)]
 class IgnoredFieldsServiceTest extends UnitTestCase
 {
     public function testGetIgnoredFields(): void

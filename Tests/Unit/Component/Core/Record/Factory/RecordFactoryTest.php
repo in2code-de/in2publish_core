@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Factory;
 
-/*
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory
- */
-
 use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
@@ -20,18 +16,19 @@ use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory
- */
+#[CoversMethod(RecordFactory::class, 'createPageTreeRootRecord')]
+#[CoversMethod(RecordFactory::class, 'finishRecord')]
+#[CoversMethod(RecordFactory::class, 'createDatabaseRecord')]
+#[CoversMethod(RecordFactory::class, 'shouldIgnoreRecord')]
+#[CoversMethod(RecordFactory::class, 'createMmRecord')]
+#[CoversMethod(RecordFactory::class, 'createFileRecord')]
+#[CoversMethod(RecordFactory::class, 'createFolderRecord')]
 class RecordFactoryTest extends UnitTestCase
 {
-    /**
-     * @covers ::createPageTreeRootRecord
-     * @covers ::finishRecord
-     */
     public function testCreateRootTreeRecord(): void
     {
         $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
@@ -50,10 +47,6 @@ class RecordFactoryTest extends UnitTestCase
         $this->assertInstanceOf(PageTreeRootRecord::class, $record);
     }
 
-    /**
-     * @covers ::createDatabaseRecord
-     * @covers ::finishRecord
-     */
     public function testDatabaseRecordIsCreatedAndAddedToRecordIndex(): void
     {
         $databaseRecordFactoryFactory = $this->createMock(DatabaseRecordFactoryFactory::class);
@@ -87,11 +80,6 @@ class RecordFactoryTest extends UnitTestCase
         $this->assertInstanceOf(DatabaseRecord::class, $record);
     }
 
-    /**
-     * @covers ::createDatabaseRecord
-     * @covers ::finishRecord
-     * @covers ::shouldIgnoreRecord
-     */
     public function testDatabaseRecordIsNotCreatedAndAddedToRecordIndexIfItShouldBeIgnored(): void
     {
         $databaseRecordFactoryFactory = $this->createMock(DatabaseRecordFactoryFactory::class);
@@ -129,9 +117,6 @@ class RecordFactoryTest extends UnitTestCase
         $this->assertNull($record);
     }
 
-    /**
-     * @covers ::createMmRecord
-     */
     public function testMmRecordIsCreatedAndAddedToRecordIndex(): void
     {
         $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
@@ -152,11 +137,6 @@ class RecordFactoryTest extends UnitTestCase
         $this->assertInstanceOf(MmDatabaseRecord::class, $record);
     }
 
-    /**
-     * @covers ::createFileRecord
-     * @covers ::finishRecord
-     * @covers ::shouldIgnoreRecord
-     */
     public function testFileRecordIsCreatedAndAddedToRecordIndex(): void
     {
         $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
@@ -179,11 +159,6 @@ class RecordFactoryTest extends UnitTestCase
         $this->assertInstanceOf(FileRecord::class, $record);
     }
 
-    /**
-     * @covers ::createFolderRecord
-     * @covers ::finishRecord
-     * @covers ::shouldIgnoreRecord
-     */
     public function testFolderRecordIsCreatedAndAddedToRecordIndex(): void
     {
         $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
