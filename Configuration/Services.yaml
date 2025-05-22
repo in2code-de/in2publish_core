@@ -48,6 +48,11 @@ services:
       - name: event.listener
         identifier: 'in2publish_core_language_augmentation'
 
+  In2code\In2publishCore\Listener\DeletedUnpublishedTranslationsExistForThisPage:
+    tags:
+      - name: event.listener
+        identifier: 'in2publish_core_deleted_unpublished_translations'
+
   # Commands
 
   In2code\In2publishCore\Command\Tools\TestCommand:
