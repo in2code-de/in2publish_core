@@ -9,7 +9,6 @@ use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Demand\Type\SysRedirectDemand;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Event\DemandsWereCollected;
-use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function array_map;
@@ -18,6 +17,10 @@ use function array_unique;
 use function implode;
 use function trim;
 
+/**
+ * This event listener listens to the event DemandsWereCollected and checks if there are languages in the request.
+ * If there are, it adds a language condition to the demands.
+ */
 class LanguageAugmentation implements SingletonInterface
 {
     public ?RecordTreeBuildRequest $request = null;
