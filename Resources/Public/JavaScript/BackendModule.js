@@ -7,7 +7,8 @@ define([
 	'TYPO3/CMS/Backend/Input/Clearable',
 	'TYPO3/CMS/In2publishCore/LoadingOverlay',
 	'TYPO3/CMS/In2publishCore/ConfirmationModal',
-], function ($, DebounceEvent, Modal, LoadingOverlay, ConfirmationModal) {
+	'TYPO3/CMS/In2publishCore/InformationModal'
+], function ($, DebounceEvent, Modal, LoadingOverlay, ConfirmationModal, InformationModal) {
 	var In2publishCoreModule = {
 		isPublishFilesModule: (document.querySelector('.module[data-module-name="in2publish_core_m3"]') !== null)
 			// TYPO3 v11
