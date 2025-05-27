@@ -9,6 +9,7 @@ import Clearable from '@typo3/backend/input/clearable.js';
 import LoadingOverlay from '@in2code/in2publish_core/loading-overlay.js';
 import ConfirmationModal from '@in2code/in2publish_core/confirmation-modal.js';
 import DocumentService from '@typo3/core/document-service.js';
+import InformationModal from '@in2code/in2publish_core/information-modal.js';
 
 class In2publishCoreModule {
 	static isPublishFilesModule = (
