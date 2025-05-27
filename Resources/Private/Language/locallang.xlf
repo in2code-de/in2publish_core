@@ -377,6 +377,9 @@
 			<trans-unit id="tx_in2publishcore.modal.publish.title">
 				<source>Confirm publish</source>
 			</trans-unit>
+			<trans-unit id="tx_in2publishcore.modal.publish_disabled.title">
+				<source>Record can not be published</source>
+			</trans-unit>
 			<trans-unit id="tx_in2publishcore.modal.publish.file.text">
 				<source>Are you sure you want to publish the file %s? This cannot be reversed.</source>
 			</trans-unit>
