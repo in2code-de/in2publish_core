@@ -31,6 +31,7 @@ define([
 			In2publishCoreModule.filterButtonsListener();
 			In2publishCoreModule.addFilterDropdownListener();
 			In2publishCoreModule.addLevelFilterListener();
+			In2publishCoreModule.addLanguageFilterListener();
 			In2publishCoreModule.addSearchListener();
 		}
 	};
@@ -55,6 +56,39 @@ define([
 		levelFilter.addEventListener('change', () => {
 			window.location = levelFilter.value;
 		})
+	}
+
+	In2publishCoreModule.addLanguageFilterListener = function () {
+		const languageFilter = document.querySelector('.js-in2publish-languagefilter');
+		if (!languageFilter) {
+			return;
+		}
+
+		languageFilter.addEventListener('change', () => {
+			In2publishCoreModule.filterItemsByLanguage(languageFilter.value);
+		})
+	}
+
+	In2publishCoreModule.filterItemsByLanguage = function (languageValue) {
+		const pageRecords = document.querySelectorAll('.in2publish-page');
+
+		if (languageValue === '') {
+			// Show all records if no language is selected
+			pageRecords.forEach(function (record) {
+				record.classList.remove('d-none');
+			});
+		} else {
+			// Filter records by language
+			pageRecords.forEach(function (record) {
+				const recordLanguages = record.getAttribute('data-record-language');
+
+				if (recordLanguages && recordLanguages.split('|').includes(languageValue)) {
+					record.classList.remove('d-none');
+				} else {
+					record.classList.add('d-none');
+				}
+			});
+		}
 	}
 
 	In2publishCoreModule.addSearchListener = function () {
