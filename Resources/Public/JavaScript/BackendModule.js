@@ -36,6 +36,7 @@ class In2publishCoreModule {
 				this.filterButtonsListener();
 			}
 			this.addFilterDropdownListener();
+			this.addLanguageFilterListener();
 			this.addLevelFilterListener();
 			this.addSearchListener();
 		}
@@ -271,6 +272,39 @@ class In2publishCoreModule {
 				input.clearable();
 			}
 		});
+	}
+
+	static addLanguageFilterListener() {
+		const languageFilter = document.querySelector('.js-in2publish-languagefilter');
+		if (!languageFilter) {
+			return;
+		}
+
+		languageFilter.addEventListener('change', () => {
+			In2publishCoreModule.filterItemsByLanguage(languageFilter.value);
+		})
+	}
+
+	static filterItemsByLanguage(languageValue) {
+		const pageRecords = document.querySelectorAll('.in2publish-page');
+
+		if (languageValue === '') {
+			// Show all records if no language is selected
+			pageRecords.forEach(function (record) {
+				record.classList.remove('d-none');
+			});
+		} else {
+			// Filter records by language
+			pageRecords.forEach(function (record) {
+				const recordLanguages = record.getAttribute('data-record-language');
+
+				if (recordLanguages && recordLanguages.split('|').includes(languageValue)) {
+					record.classList.remove('d-none');
+				} else {
+					record.classList.add('d-none');
+				}
+			});
+		}
 	}
 
 	static addSearchListener() {
