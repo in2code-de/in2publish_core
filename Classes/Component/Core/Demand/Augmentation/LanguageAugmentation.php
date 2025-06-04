@@ -27,10 +27,11 @@ class LanguageAugmentation implements SingletonInterface
 
     public function __invoke(DemandsWereCollected $event): void
     {
-        $languages = $this->request->getLanguages();
-        if (null === $this->request || empty($languages)) {
+        if (null === $this->request || empty($this->request->getLanguages())) {
             return;
         }
+
+        $languages = $this->request->getLanguages();
         $demands = $event->getDemands();
         $allDemands = $demands->getAll();
 
