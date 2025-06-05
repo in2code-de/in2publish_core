@@ -19,4 +19,6 @@ interface Node
      * @return array<string, array<int|string, Record>>
      */
     public function getChildren(): array;
+
+    public function getChildPagesWithoutTranslations(): array;
 }

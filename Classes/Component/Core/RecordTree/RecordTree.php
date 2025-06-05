@@ -74,4 +74,15 @@ class RecordTree implements Node
 
         return null;
     }
+
+    public function getChildPagesWithoutTranslations(): array
+    {
+        $childPages = $this->children['pages'] ?? [];
+        foreach ($childPages as $id => $record) {
+            if ($record->getTranslationParent() !== null) {
+                unset($childPages[$id]);
+            }
+        }
+        return $childPages;
+    }
 }
