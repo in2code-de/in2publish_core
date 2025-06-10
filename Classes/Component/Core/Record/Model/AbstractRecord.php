@@ -123,13 +123,13 @@ abstract class AbstractRecord implements Record
 
     public function getChildPagesWithoutTranslations(): array
     {
-        $children = $this->children['pages'] ?? [];
-        $translatedIds = [];
-        foreach ($this->translations as $translatedRecords) {
-            $translatedIds[] = array_keys($translatedRecords);
+        $childPages = $this->children['pages'] ?? [];
+        foreach ($childPages as $id => $record) {
+            if ($record->getTranslationParent() !== null) {
+                unset($childPages[$id]);
+            }
         }
-        $translatedIds = array_flip(array_unique(array_merge([], ...$translatedIds)));
-        return array_diff_key($children, $translatedIds);
+        return $childPages;
     }
 
     public function addParent(Record $parentRecord): void
