@@ -41,7 +41,7 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, '1b.1 Header - changed');
-            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            $driver->click(WebDriverBy::cssSelector('[data-identifier="actions-arrow-right"]'));
         });
 
         // Workaround
