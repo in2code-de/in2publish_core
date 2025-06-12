@@ -404,6 +404,15 @@
 			<trans-unit id="module_m1_filter_field_title">
 				<source>Filter by title</source>
 			</trans-unit>
+			<trans-unit id="module_m1_page_stage" resname="page_stage">
+				<source>Page Stage</source>
+			</trans-unit>
+			<trans-unit id="module_m1_page_live" resname="page_live">
+				<source>Page Live</source>
+			</trans-unit>
+			<trans-unit id="module_m1_workflow" resname="workflow">
+				<source>Workflow</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

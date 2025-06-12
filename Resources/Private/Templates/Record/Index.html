@@ -10,6 +10,7 @@
 		<f:render partial="Record/RecordFilter" arguments="{_all}"/>
 
 		<div class="in2publish-main">
+			<f:render partial="Record/PageHeader" arguments="{_all}" />
 			<div class="in2publish-stagelisting">
 				<f:variable name="depth" value="0" />
 				<f:render partial="Record/PageRecursion" arguments="{config: config, record: recordTree, depth: depth}" />
