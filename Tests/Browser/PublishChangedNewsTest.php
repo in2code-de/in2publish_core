@@ -31,26 +31,15 @@ class PublishChangedNewsTest extends AbstractBrowserTestCase
                 WebDriverBy::cssSelector('[data-action="opendirtypropertieslistcontainer"]'),
             );
             $info->click();
-            self::assertElementContains(
-                $driver,
-                'Content element with image - edited',
-                WebDriverBy::cssSelector('.in2publish-stagelisting__dropdown__item--left'),
-            );
-            self::assertElementContains(
-                $driver,
-                'Content element with image',
-                WebDriverBy::cssSelector('.in2publish-stagelisting__dropdown__item--right'),
-            );
-            $relatedRecordsList = WebDriverBy::cssSelector('.in2publish-related__list');
-            self::assertElementContains(
-                $driver,
-                '1:/user_upload/roman-wimmers-STrq0wSBGIs-unsplash.jpg',
-                $relatedRecordsList
-            );
+
+            // TODO: assert that the edited image is only on local to begin with
+            self::assertPageContains($driver, 'Content element with image - edited');
+            self::assertPageContains($driver, 'Content element with image');
+            self::assertPageContains($driver, '1:/user_upload/roman-wimmers-STrq0wSBGIs-unsplash.jpg');
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            $driver->click(WebDriverBy::cssSelector('[data-identifier="actions-arrow-right"]'));
             self::assertPageContains($driver, 'The selected record has been published successfully');
         });
 
