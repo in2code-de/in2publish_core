@@ -106,7 +106,7 @@ class UidClashTest  extends AbstractBrowserTestCase
             self::assertPageContains($driver, 'TYPO3 Content Publisher - publish pages and records overview');
             self::assertElementIsVisible($driver, WebDriverBy::cssSelector('[data-record-identifier="pages-76"]'));
 
-            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            $driver->click(WebDriverBy::cssSelector('[data-identifier="actions-arrow-right"]'));
         });
 
         // Workaround
@@ -129,7 +129,7 @@ class UidClashTest  extends AbstractBrowserTestCase
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            $driver->click(WebDriverBy::cssSelector('[data-identifier="actions-arrow-right"]'));
         });
 
         // Workaround
