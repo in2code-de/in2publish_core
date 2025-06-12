@@ -28,30 +28,23 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             self::assertElementIsVisible($driver, WebDriverBy::cssSelector('[data-record-identifier="pages-72"]'));
 
             $recordRow = $driver->findElement(WebDriverBy::cssSelector('[data-record-identifier="pages-72"]'));
-            $classes = $recordRow->getAttribute('class');
-            self::assertContains('in2publish-stagelisting__item--changed', GeneralUtility::trimExplode(' ', $classes));
+            $badge = $recordRow->findElement(WebDriverBy::cssSelector('.badge'));
+            $classes = $badge->getAttribute('class');
+            self::assertContains('in2publish-badge--changed', GeneralUtility::trimExplode(' ', $classes));
 
             $recordRow = $driver->findElement(WebDriverBy::cssSelector('[data-record-identifier="pages-72"]'));
             $info = $recordRow->findElement(
                 WebDriverBy::cssSelector('[data-action="opendirtypropertieslistcontainer"]'),
             );
             $info->click();
-            self::assertElementContains(
-                $driver,
-                'Header in German - Version 3',
-                WebDriverBy::cssSelector('.in2publish-stagelisting__dropdown__item--left'),
-            );
-            self::assertElementContains(
-                $driver,
-                'Header in German - Version 2',
-                WebDriverBy::cssSelector('.in2publish-stagelisting__dropdown__item--right'),
-            );
+            self::assertPageContains($driver, 'Header in German - Version 3');
+            self::assertPageContains($driver, 'Header in German - Version 2');
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $driver->findElement(
                 WebDriverBy::xpath(
-                    '//*[@data-record-identifier="pages-72"]//*[@class="in2publish-icon-publish"]',
+                    '//*[@data-record-identifier="pages-72"]//*[@data-identifier="actions-arrow-right"]',
                 ),
             )->click();
         });
@@ -68,9 +61,10 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             self::assertElementIsVisible($driver, WebDriverBy::cssSelector('[data-record-identifier="pages-72"]'));
 
             $recordRow = $driver->findElement(WebDriverBy::cssSelector('[data-record-identifier="pages-72"]'));
-            $classes = $recordRow->getAttribute('class');
+            $badge = $recordRow->findElement(WebDriverBy::cssSelector('.badge'));
+            $classes = $badge->getAttribute('class');
             self::assertContains(
-                'in2publish-stagelisting__item--unchanged',
+                'in2publish-badge--unchanged',
                 GeneralUtility::trimExplode(' ', $classes),
             );
         });
@@ -112,30 +106,23 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             self::assertElementIsVisible($driver, WebDriverBy::cssSelector('[data-record-identifier="pages-75"]'));
 
             $recordRow = $driver->findElement(WebDriverBy::cssSelector('[data-record-identifier="pages-75"]'));
-            $classes = $recordRow->getAttribute('class');
-            self::assertContains('in2publish-stagelisting__item--changed', GeneralUtility::trimExplode(' ', $classes));
+            $badge = $recordRow->findElement(WebDriverBy::cssSelector('.badge'));
+            $classes = $badge->getAttribute('class');
+            self::assertContains('in2publish-badge--changed', GeneralUtility::trimExplode(' ', $classes));
 
             $recordRow = $driver->findElement(WebDriverBy::cssSelector('[data-record-identifier="pages-75"]'));
             $info = $recordRow->findElement(
                 WebDriverBy::cssSelector('[data-action="opendirtypropertieslistcontainer"]'),
             );
             $info->click();
-            self::assertElementContains(
-                $driver,
-                'Header in German - Version 3',
-                WebDriverBy::cssSelector('.in2publish-stagelisting__dropdown__item--left'),
-            );
-            self::assertElementContains(
-                $driver,
-                'Header in German - Version 2',
-                WebDriverBy::cssSelector('.in2publish-stagelisting__dropdown__item--right'),
-            );
+            self::assertPageContains($driver, 'Header in German - Version 3');
+            self::assertPageContains($driver, 'Header in German - Version 2');
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $driver->findElement(
                 WebDriverBy::xpath(
-                    '//*[@data-record-identifier="pages-75"]//*[@class="in2publish-icon-publish"]',
+                    '//*[@data-record-identifier="pages-75"]//*[@data-identifier="actions-arrow-right"]',
                 ),
             )->click();
         });
@@ -152,9 +139,10 @@ class PublishTranslationTest extends AbstractBrowserTestCase
             self::assertElementIsVisible($driver, WebDriverBy::cssSelector('[data-record-identifier="pages-75"]'));
 
             $recordRow = $driver->findElement(WebDriverBy::cssSelector('[data-record-identifier="pages-75"]'));
-            $classes = $recordRow->getAttribute('class');
+            $badge = $recordRow->findElement(WebDriverBy::cssSelector('.badge'));
+            $classes = $badge->getAttribute('class');
             self::assertContains(
-                'in2publish-stagelisting__item--unchanged',
+                'in2publish-badge--unchanged',
                 GeneralUtility::trimExplode(' ', $classes),
             );
         });
