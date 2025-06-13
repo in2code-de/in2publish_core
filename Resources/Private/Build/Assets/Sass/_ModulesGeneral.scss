@@ -805,7 +805,6 @@ div#typo3-docbody.stopScrolling {
   padding: .75rem 1rem;
   border-block-end: 1px solid $t3verylightgrey;
   margin-bottom: -1px;
-  background-color: $t3verylightgrey
 }
 
 .in2publish-page__content {
@@ -863,4 +862,14 @@ div#typo3-docbody.stopScrolling {
   > .in2publish-page:not(:last-child) {
     margin-block-end: 0;
   }
+}
+
+.in2publish-page__col--stage-action {
+  width: 70px;
+  min-width: 70px;
+}
+
+.in2publish-page__col--selection {
+  width: 45px;
+  min-width: 45px;
 }
