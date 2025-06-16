@@ -538,6 +538,22 @@
 				<source>Filter by title</source>
 				<target>Filterung nach Name</target>
 			</trans-unit>
+			<trans-unit id="module_m1_page_stage" resname="page_stage">
+				<source>Page Stage</source>
+				<target>Seite Stage</target>
+			</trans-unit>
+			<trans-unit id="module_m1_page_live" resname="page_live">
+				<source>Page Live</source>
+				<target>Seite Live</target>
+			</trans-unit>
+			<trans-unit id="module_m1_workflow" resname="workflow">
+				<source>Workflow</source>
+				<target>Workflow</target>
+			</trans-unit>
+			<trans-unit id="module_m1_action" resname="workflow">
+				<source>Action</source>
+				<target>Aktion</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

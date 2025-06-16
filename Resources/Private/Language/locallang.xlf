@@ -413,6 +413,9 @@
 			<trans-unit id="module_m1_workflow" resname="workflow">
 				<source>Workflow</source>
 			</trans-unit>
+			<trans-unit id="module_m1_action" resname="workflow">
+				<source>Action</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
