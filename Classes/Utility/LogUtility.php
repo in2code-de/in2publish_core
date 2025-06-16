@@ -32,7 +32,7 @@ use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 
 class LogUtility
 {
-    public static function translateLogLevelToSeverity(int $logLevel): int
+    public static function translateLogLevelToSeverity(int $logLevel): ContextualFeedbackSeverity
     {
         switch (LogLevel::getInternalName($logLevel)) {
             case LogLevel::DEBUG:
