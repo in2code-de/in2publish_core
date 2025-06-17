@@ -26,16 +26,16 @@ scheduler task with class "Table garbage collector" and table `tx_in2publishcore
 
 ## New modules on Local
 
-![Publisher Overview Module](_img/modules_publish_overview.png)\
+![Publisher Overview Module](../../_img/module_publish_overview.png)\
 _Publisher Overview Module_
 
-![Publisher Redirects Module](_img/module_publish_redirects.png)\
+![Publisher Redirects Module](../../_img/module_publish_redirects.png)\
 _Publisher Redirects Module_
 
-![Publisher Files Module](_img/module_publish_files.png)\
+![Publisher Files Module](../../_img/module_publish_files.png)\
 _Publisher Files Module_
 
-![Publisher Tools Module](_img/module_publish_tools.png)\
+![Publisher Tools Module](../../_img/module_publisher_tools.png)\
 _Publisher Tools Module_
 
 If the environment configuration is correct, then you will see these four new backend modules on the "Local" system,

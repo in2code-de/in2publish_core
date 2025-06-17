@@ -15,8 +15,6 @@ Content Publishing in TYPO3 - the easy way:
 * Future proof
 * Supports all extensions (with correct TCA)
 
-![index_publisher_screen.png](Documentation/_img/index_publisher_screen.png)
-
 ## Support
 
 This TYPO3 Extension is free to use. We as in2code and our developers highly appreciate your feedback and work hard to
@@ -45,7 +43,7 @@ TCA.
 The Enterprise Edition extends the Content Publisher with a large number of features, such as workflows to organize
 pages and individual content types in the editing process, workflow assignment, workflow email notification, workflow
 colors in the page tree, publishing permissions, limiting publishing to languages, support for Solr, EXT:
-fal_securedownload, EXT:rte_ckeditor_image, Remote Cache Control, Fire and Forget and more.
+fal_securedownload, Remote Cache Control, Multi-Select for publishing and many more.
 
 ### Questions
 
@@ -72,17 +70,32 @@ See for more details:
 
 ### Screenshots
 
-<img src="https://www.in2code.de/fileadmin/content/images/produkte/contentpublisher/content_publisher_screenshot04_prev.png" width="600" />
+![Publisher Overview Module](Documentation/_img/module_publish_overview.png)\
+_Publish Overview Module_
 
-Example overview module with details
+![Publisher Redirects Module](Documentation/_img/module_publish_redirects.png)\
+_Publish Redirects Module_
 
-<img src="https://www.in2code.de/fileadmin/content/images/produkte/contentpublisher/content_publisher_screenshot03_prev.png" width="600" />
+![Publisher Files Module](Documentation/_img/module_publish_files.png)\
+_Publish Files Module_
 
-Example workflow feature (part of the enterprise version)
+![Publisher Tools Module](Documentation/_img/module_publisher_tools.png)\
+_Publisher Tools Module_
 
-<img src="https://box.everhelper.me/attachment/915970/84725fb7-0b3e-4c40-b52e-29d7620777bb/262407-93UtQ9cPeb0NCY1e/screen.png" width="600" />
+**Enterprise Edition only:**
 
-Browser notifications after asynchronous publishing (part of the enterprise version)
+![Publish Workflow Module](Documentation/_img/module_publish_workflow.png)\
+_Publish Workflow Module_
+
+![Publisher List Module](Documentation/_img/module_list_workflow.png)\
+_Publisher Integration into List Module_
+
+![Publisher List Module](Documentation/_img/module_page_workflow.png)\
+_Publisher Integration into Page Module_
+
+![Publisher Compare_Pages Module](Documentation/_img/module_compare_pages.png)\
+_Compare Pages Module_
+
 
 ## Installation
 
