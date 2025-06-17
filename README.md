@@ -4,7 +4,6 @@
 [![Build Status](https://travis-ci.org/in2code-de/in2publish_core.svg?branch=master)](https://travis-ci.org/in2code-de/in2publish_core)
 [![Latest Unstable Version](https://poser.pugx.org/in2code/in2publish_core/v/unstable)](https://packagist.org/packages/in2code/in2publish_core)
 [![License](https://poser.pugx.org/in2code/in2publish_core/license)](https://packagist.org/packages/in2code/in2publish_core)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/606af76505674f4bb38f4a26d56b13d6)](https://www.codacy.com/gh/in2code-de/in2publish_core/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=in2code-de/in2publish_core&amp;utm_campaign=Badge_Grade)
 
 ## Introduction
 
@@ -12,7 +11,7 @@ Content Publishing in TYPO3 - the easy way:
 
 * Intuitive Use
 * High Security
-* Future proof
+* Future-proof
 * Supports all extensions (with correct TCA)
 
 ## Support
@@ -22,7 +21,8 @@ improve our extensions. To do so, in2code provides two extra days per month for 
 Freaky Friday). During these days our more than 20 developers spend their time with improvements and updates for this
 and other extensions.
 
-You can support our work [here](https://www.in2code.de/extensionsupport).
+You can support our work by joining the Early Access Program [EAP](https://www.in2code.de/agentur/typo3-extensions/early-access-programm/).
+As an EAP member you will receive access to the latest versions many of our extensions before they are publicly released.
 
 Thank you very much in advance.
 
@@ -70,31 +70,33 @@ See for more details:
 
 ### Screenshots
 
-![Publisher Overview Module](Documentation/_img/module_publish_overview.png)\
 _Publish Overview Module_
+![Publisher Overview Module](Documentation/_img/module_publish_overview.png)
 
-![Publisher Redirects Module](Documentation/_img/module_publish_redirects.png)\
 _Publish Redirects Module_
+![Publisher Redirects Module](Documentation/_img/module_publish_redirects.png)
 
-![Publisher Files Module](Documentation/_img/module_publish_files.png)\
 _Publish Files Module_
+![Publisher Files Module](Documentation/_img/module_publish_files.png)
 
-![Publisher Tools Module](Documentation/_img/module_publisher_tools.png)\
 _Publisher Tools Module_
+![Publisher Tools Module](Documentation/_img/module_publisher_tools.png)
+
 
 **Enterprise Edition only:**
 
-![Publish Workflow Module](Documentation/_img/module_publish_workflow.png)\
 _Publish Workflow Module_
+![Publish Workflow Module](Documentation/_img/module_publish_workflow.png)
 
-![Publisher List Module](Documentation/_img/module_list_workflow.png)\
 _Publisher Integration into List Module_
+![Publisher List Module](Documentation/_img/module_list_workflow.png)
 
-![Publisher List Module](Documentation/_img/module_page_workflow.png)\
 _Publisher Integration into Page Module_
+![Publisher List Module](Documentation/_img/module_page_workflow.png)
 
-![Publisher Compare_Pages Module](Documentation/_img/module_compare_pages.png)\
 _Compare Pages Module_
+![Publisher Compare_Pages Module](Documentation/_img/module_compare_pages.png)
+
 
 
 ## Installation
@@ -102,7 +104,7 @@ _Compare Pages Module_
 `composer require in2code/in2publish_core`
 
 Easy installation via composer. See documentation for a step by step manual
-* [Installation_documentation](Documentation/Admins/Installation/README.md)
+* [Installation](Documentation/Admins/Installation/README.md)
 * [Requirements And Limitations](Documentation/RequirementsAndLimitations.md)
 
 ## Documentation

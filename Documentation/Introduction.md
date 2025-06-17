@@ -39,7 +39,7 @@ Module to analyze the current setup, configuration and database content.
 
 Enterprise Edition only: Module to manage and publish workflows for pages, news or any other record type.
 
-![Backend Module Workflow (Enterprise Edition)](_img/module_workflow.png)
+![Backend Module Workflow (Enterprise Edition)](_img/module_publish_workflow.png)
 
 ### Integration in existing Page Module
 
@@ -58,8 +58,9 @@ Enterprise Edition only: Integration of the workflow states in the TYPO3 List Mo
 
 Read news about Content Publisher for TYPO3:
 
-* https://contentpublisher.in2code.de/
-* https://www.in2code.de/news/ContentPublisher.html
+* https://www.in2code.de/produkte/typo3-content-publisher
+* https://typo3.slack.com/messages/ext-in2publish (TYPO3 Slack Channel)
+* https://projekte.in2code.de/projects/in2publish-wartung/news (Redmine Project News for existing customers)
 
 The **Content Publisher for TYPO3** is a Content and File Publishing Tool for TYPO3 CMS, which aims
 for easy, intuitive and daily usage focused on editors' daily business.
