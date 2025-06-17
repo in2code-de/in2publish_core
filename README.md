@@ -102,10 +102,12 @@ _Compare Pages Module_
 `composer require in2code/in2publish_core`
 
 Easy installation via composer. See documentation for a step by step manual
+* [Installation_documentation](Documentation/Admins/Installation/README.md)
+* [Requirements And Limitations](Documentation/RequirementsAndLimitations.md)
 
 ## Documentation
 
-* [Requirements And Limitations](Documentation/RequirementsAndLimitations.md)
+* [Introduction](Documentation/Introduction.md)
 * Extension documentation: [Documentation](Documentation/README.md)
 * Community help: https://typo3.slack.com/messages/ext-in2publish/
 
@@ -115,4 +117,6 @@ See: [Changelog](CHANGELOG.md)
 
 ## Testing
 
-Hint: https://youtrack.jetbrains.com/issue/WI-74556/PHPUnit-settings-are-not-configured#focus=Comments-27-8185787.0-0
+There are many unit, functional and acceptance tests which are executed as GitHub Action on every commit.
+
+https://github.com/in2code-de/in2publish_core/actions

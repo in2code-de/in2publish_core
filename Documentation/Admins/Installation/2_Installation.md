@@ -19,10 +19,13 @@ The installation requires the following steps on both the "Local" and "Foreign" 
 
 ## Set up the Content Publisher
 
+<div id="garbage-collector-task">
 The Content Publisher requires scheduler tasks to run properly. Please head to your "Local" Backend and create a new
 scheduler task with class "Table garbage collector" and table `tx_in2publishcore_running_request` which runs once a day.
 
-![Table garbage collector for table tx_in2publishcore_running_request](_img/scheduler_table_garbage_collection.png)
+
+![Scheduler Task for Garbage Collection of in2publish requests](../Installation/_img/scheduler_task_garbage_collection.png)
+</div>
 
 ## New modules on Local
 

@@ -11,7 +11,7 @@ Please follow the instructions in order to fix any problems that are detected.
 
 ![Backend module tests](_img/module_publisher_tools_test_results.png)
 
-E.g. if you have not created the required [Table garbage collector for table tx_in2publishcore_running_request](Table garbage collector for table tx_in2publishcore_running_request), you will see a red notice
+E.g. if you have not created the required [Garbage Collector Scheduler Task](2_Installation.md#garbage-collector-task), you will see a red notice
 
 
 Hint:
