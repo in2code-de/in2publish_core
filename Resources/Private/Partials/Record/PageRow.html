@@ -148,9 +148,11 @@
 					<core:icon identifier="miscellaneous-placeholder"></core:icon>
 				</a>
 			</div>
-			<div class="in2publish-page__col in2publish-page__col--publish">
-				<f:render partial="Record/Publishing/Decision" arguments="{record: record}" />
-			</div>
+			<f:if condition="{condition:IsUserAllowedToPublish()}">
+				<div class="in2publish-page__col in2publish-page__col--publish">
+					<f:render partial="Record/Publishing/Decision" arguments="{record: record}" />
+				</div>
+			</f:if>
 		</div>
 		<div class="in2publish-page__content">
 			<f:render partial="Record/DirtyPropertiesList" arguments="{_all}"/>
