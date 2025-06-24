@@ -1,70 +1,81 @@
-'use strict'
+'use strict';
 
-define(['TYPO3/CMS/Backend/Modal'], function (Modal) {
-    'use strict'
+/**
+ * Module: @in2code/in2publish_core/information-modal.js
+ */
+import Modal from '@typo3/backend/modal.js';
 
-    class InformationModal {
+class InformationModal {
+	// Klassen-Eigenschaft mit Pfeilfunktion, um die 'this'-Bindung zu gewährleisten
+	informationModalMethod = (event) => {
+		this.handleClickInformationModal(event);
+	};
 
-        informationModalMethod = this.handleClickInformationModal.bind(this)
+	constructor() {
+		document.querySelectorAll('.js-in2publish-information-modal').forEach(element => {
+			this.registerClickHandler(element);
+		});
+	}
 
-        constructor() {
-            document.querySelectorAll('.js-in2publish-information-modal').forEach(element => this.registerClickHandler(element))
-        }
+	/**
+	 * Registriert einen Klick-Handler für Information-Modal-Elemente.
+	 * Für Elemente, die Informationen ohne Aktions-Buttons anzeigen sollen.
+	 *
+	 * Elemente mit der Klasse 'js-in2publish-information-modal' werden automatisch beim Seitenaufbau registriert.
+	 * Diese Methode kann auch für Elemente verwendet werden, die via fetch nachgeladen werden.
+	 *
+	 * @param {HTMLElement} node Das HTML-Element.
+	 */
+	registerClickHandler(node) {
+		if (node.dataset.easyModalTitle) {
+			node.addEventListener('click', this.informationModalMethod, { capture: true });
+		}
+	}
 
-        /**
-         * Register a click handler for information modal elements.
-         * Use for elements that should display information without any action buttons.
-         *
-         * If you want to register an element automatically on page load, give the element the class js-in2publish-information-modal.
-         * This method can be used to register the handler for elements loaded via fetch.
-         *
-         * @param {HTMLElement} node
-         */
-        registerClickHandler(node) {
-            if (node.dataset.easyModalTitle) {
-                node.addEventListener('click', this.informationModalMethod, {capture: true})
-            }
-        }
+	/**
+	 * Behandelt das Klick-Ereignis für das Informations-Modal.
+	 * @param {Event} event Das auslösende Event.
+	 */
+	handleClickInformationModal(event) {
+		event.preventDefault();
+		const target = event.currentTarget;
+		const severity = parseInt(target.dataset.easyModalSeverity ?? '-1', 10); // Default auf Info-Stufe
 
-        /**
-         * @param {Event} event
-         */
-        handleClickInformationModal(event) {
-            event.preventDefault()
-            const target = event.currentTarget
-            const severity = parseInt(target.dataset.easyModalSeverity ?? -1) // Default to info severity
+		Modal.confirm(
+			target.dataset.easyModalTitle,
+			target.dataset.easyModalContent ?? '',
+			severity,
+			this.getInformationModalButtons(),
+		);
+	}
 
-            Modal.confirm(
-                target.dataset.easyModalTitle,
-                target.dataset.easyModalContent ?? '',
-                severity,
-                this.getInformationModalButtons(),
-            )
-        }
+	/**
+	 * Gibt die Buttons für das Informations-Modal zurück (nur ein Schließen-Button).
+	 * @returns {Array} Ein Array mit dem Button-Objekt.
+	 */
+	getInformationModalButtons() {
+		return [
+			{
+				text: TYPO3.lang['button.close'] || 'Close',
+				btnClass: 'btn-default',
+				name: 'close',
+				active: true,
+				trigger: this.closeModal.bind(this),
+			},
+		];
+	}
 
-        /**
-         * Returns only a close button for the information modal
-         */
-        getInformationModalButtons() {
-            return [
-                {
-                    text: TYPO3.lang['button.close'] || 'Close',
-                    btnClass: 'btn-default',
-                    name: 'close',
-                    active: true,
-                    trigger: this.closeModal.bind(this)
-                }
-            ]
-        }
+	/**
+	 * Schließt das aktuell geöffnete Modal.
+	 */
+	closeModal() {
+		if (typeof Modal.currentModal?.hideModal === 'function') {
+			Modal.currentModal.hideModal();
+		} else {
+			Modal.currentModal?.trigger('modal-dismiss');
+		}
+	}
+}
 
-        closeModal() {
-            if (typeof Modal.currentModal.hideModal === "function") {
-                Modal.currentModal.hideModal()
-            } else {
-                Modal.currentModal.trigger('modal-dismiss')
-            }
-        }
-    }
-
-    return new InformationModal()
-})
+// Erstellt eine Instanz der Klasse und exportiert sie als Standard-Export.
+export default new InformationModal();
