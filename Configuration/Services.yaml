@@ -43,10 +43,10 @@ services:
     arguments: [ 'in2publish_core' ]
 
   # EventListeners
-  In2code\In2publishCore\Component\Core\Demand\Augmentation\LanguageAugmentation:
-    tags:
-      - name: event.listener
-        identifier: 'in2publish_core_language_augmentation'
+#  In2code\In2publishCore\Component\Core\Demand\Augmentation\LanguageAugmentation:
+#    tags:
+#      - name: event.listener
+#        identifier: 'in2publish_core_language_augmentation'
 
   # Commands
 
