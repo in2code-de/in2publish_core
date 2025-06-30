@@ -15,7 +15,7 @@ class StopwatchWasNotStartedException extends In2publishCoreException
     private const MESSAGE = 'The stopwatch was not started';
     public const CODE = 1658152782;
 
-    public function __construct(Throwable $previous = null)
+    public function __construct(?Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, self::CODE, $previous);
     }
