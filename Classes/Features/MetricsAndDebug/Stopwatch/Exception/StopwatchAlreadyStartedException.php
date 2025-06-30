@@ -19,10 +19,10 @@ class StopwatchAlreadyStartedException extends In2publishCoreException
     public const CODE = 1658152739;
     private float $firstStart;
 
-    public function __construct(float $firstStart, Throwable $previous = null)
+    public function __construct(float $firstStart, ?Throwable $previous = null)
     {
         $this->firstStart = $firstStart;
-        $readableDate = DateTime::createFromFormat('U.u', $firstStart)->format('Y-m-d H:i:s.u');
+        $readableDate = DateTime::createFromFormat('U.u', (string)$firstStart)->format('Y-m-d H:i:s.u');
         parent::__construct(sprintf(self::MESSAGE, $readableDate, $firstStart), self::CODE, $previous);
     }
 
