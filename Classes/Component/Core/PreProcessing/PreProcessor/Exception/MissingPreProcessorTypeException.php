@@ -20,7 +20,7 @@ class MissingPreProcessorTypeException extends In2publishCoreException
     private const MESSAGE = 'You must set $this->type in your PreProcessor %s';
     protected TcaPreProcessor $tcaPreProcessor;
 
-    public function __construct(TcaPreProcessor $tcaPreProcessor, Throwable $previous = null)
+    public function __construct(TcaPreProcessor $tcaPreProcessor, ?Throwable $previous = null)
     {
         $this->tcaPreProcessor = $tcaPreProcessor;
         parent::__construct(sprintf(self::MESSAGE, get_class($tcaPreProcessor)), self::CODE, $previous);

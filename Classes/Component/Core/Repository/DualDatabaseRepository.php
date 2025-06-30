@@ -24,7 +24,7 @@ class DualDatabaseRepository
         string $table,
         string $property,
         array $values,
-        string $andWhere = null
+        ?string $andWhere = null
     ): array {
         $localRows = $this->localRepository->findByProperty($table, $property, $values, $andWhere);
         $foreignRows = $this->foreignRepository->findByProperty($table, $property, $values, $andWhere);
@@ -41,7 +41,7 @@ class DualDatabaseRepository
         string $table,
         string $property,
         array $values,
-        string $andWhere = null
+        ?string $andWhere = null
     ): array {
         $localRows = $this->localRepository->findByPropertyWithJoin($mmTable, $table, $property, $values, $andWhere);
         $foreignRows = $this->foreignRepository->findByPropertyWithJoin(

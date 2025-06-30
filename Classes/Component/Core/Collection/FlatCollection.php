@@ -31,11 +31,7 @@ abstract class FlatCollection implements IteratorAggregate
         return array_map($closure, $this->objects);
     }
 
-    /**
-     * @param mixed $initial
-     * @return mixed
-     */
-    public function reduce(Closure $closure, $initial = null)
+    public function reduce(Closure $closure, mixed $initial = null): mixed
     {
         return array_reduce($this->objects, $closure, $initial);
     }

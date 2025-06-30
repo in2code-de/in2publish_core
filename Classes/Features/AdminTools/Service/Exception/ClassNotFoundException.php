@@ -43,7 +43,7 @@ class ClassNotFoundException extends In2publishCoreException
     public const CODE = 1642103517;
     protected string $class;
 
-    public function __construct(string $class, Throwable $previous = null)
+    public function __construct(string $class, ?Throwable $previous = null)
     {
         parent::__construct(sprintf(self::MESSAGE, $class), self::CODE, $previous);
         $this->class = $class;

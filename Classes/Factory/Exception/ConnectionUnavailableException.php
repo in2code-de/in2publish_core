@@ -43,7 +43,7 @@ class ConnectionUnavailableException extends In2publishCoreException
     public const CODE = 1631623822;
     private string $side;
 
-    public function __construct(string $side, Throwable $previous = null)
+    public function __construct(string $side, ?Throwable $previous = null)
     {
         $this->side = $side;
         parent::__construct(sprintf(self::MESSAGE, $side), self::CODE, $previous);

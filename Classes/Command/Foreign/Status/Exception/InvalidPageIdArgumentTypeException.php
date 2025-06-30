@@ -43,7 +43,7 @@ class InvalidPageIdArgumentTypeException extends In2publishCoreException
     public const CODE = 1561653002;
     protected string $pageId;
 
-    public function __construct(string $pageId, Throwable $previous = null)
+    public function __construct(string $pageId, ?Throwable $previous = null)
     {
         parent::__construct(sprintf(self::MESSAGE, $pageId), self::CODE, $previous);
         $this->pageId = $pageId;

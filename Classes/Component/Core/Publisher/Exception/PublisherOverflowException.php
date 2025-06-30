@@ -21,7 +21,7 @@ class PublisherOverflowException extends In2publishCoreException
     private Publisher $publisher;
     private int $count;
 
-    public function __construct(Publisher $publisher, int $count, Throwable $previous = null)
+    public function __construct(Publisher $publisher, int $count, ?Throwable $previous = null)
     {
         $this->publisher = $publisher;
         $this->count = $count;

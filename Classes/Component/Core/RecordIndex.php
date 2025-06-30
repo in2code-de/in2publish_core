@@ -38,7 +38,7 @@ class RecordIndex
     /**
      * @return array<Record>
      */
-    public function getRecords(string $classification = null): array
+    public function getRecords(?string $classification = null): array
     {
         return $this->records->getRecords($classification);
     }

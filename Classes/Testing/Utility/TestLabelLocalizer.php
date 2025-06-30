@@ -35,7 +35,7 @@ use function strpos;
 
 class TestLabelLocalizer
 {
-    public static function translate(string $key, array $arguments = null): string
+    public static function translate(string $key, ?array $arguments = null): string
     {
         if (0 === strpos($key, 'LLL')) {
             $label = (string)LocalizationUtility::translate($key, 'In2publishCore', $arguments);

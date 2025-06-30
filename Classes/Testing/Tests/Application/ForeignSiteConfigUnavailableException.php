@@ -42,7 +42,7 @@ class ForeignSiteConfigUnavailableException extends In2publishCoreException
     public const CODE = 1549900962;
     protected RemoteCommandResponse $response;
 
-    public function __construct(RemoteCommandResponse $response, Throwable $previous = null)
+    public function __construct(RemoteCommandResponse $response, ?Throwable $previous = null)
     {
         $this->response = $response;
         parent::__construct(static::MESSAGE, self::CODE, $previous);

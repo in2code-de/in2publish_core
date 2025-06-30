@@ -116,18 +116,13 @@ abstract class AbstractTask
         return $this;
     }
 
-    final public function setExecutionBegin(DateTime $executionBegin = null): AbstractTask
+    final public function setExecutionBegin(?DateTime $executionBegin = null): AbstractTask
     {
         $this->executionBegin = $executionBegin;
         return $this;
     }
 
-    /**
-     * @param DateTime|null $executionEnd
-     *
-     * @return AbstractTask
-     */
-    final public function setExecutionEnd(DateTime $executionEnd = null): AbstractTask
+    final public function setExecutionEnd(DateTime|null $executionEnd = null): AbstractTask
     {
         $this->executionEnd = $executionEnd;
         return $this;

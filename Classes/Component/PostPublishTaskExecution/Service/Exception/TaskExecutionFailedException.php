@@ -19,7 +19,7 @@ class TaskExecutionFailedException extends In2publishCoreException
     public const CODE = 1656947656;
     private RemoteCommandResponse $remoteCommandResponse;
 
-    public function __construct(RemoteCommandResponse $remoteCommandResponse, Throwable $previous = null)
+    public function __construct(RemoteCommandResponse $remoteCommandResponse, ?Throwable $previous = null)
     {
         parent::__construct(
             sprintf(

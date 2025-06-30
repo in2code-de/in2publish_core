@@ -41,13 +41,8 @@ class Envelope
     /** @var mixed */
     protected $response = '';
 
-    /**
-     * @param string $command
-     * @param array $request
-     * @param mixed $response
-     * @param int|null $uid
-     */
-    public function __construct(string $command, array $request = [], $response = null, int $uid = null)
+
+    public function __construct(string $command, array $request = [], mixed $response = null, int|null $uid = null)
     {
         $this->setCommand($command);
         $this->setRequest($request);

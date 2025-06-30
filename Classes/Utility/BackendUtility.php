@@ -75,9 +75,6 @@ class BackendUtility
     /**
      * Get current page uid (normally from ?id=123)
      *
-     * @param mixed $identifier
-     * @param string|null $table
-     *
      * @return int|string Returns the page ID or the folder ID when navigating in the file list
      *
      * See the class comment for more info
@@ -88,7 +85,7 @@ class BackendUtility
      * @noinspection CallableParameterUseCaseInTypeContextInspection
      * @throws Exception
      */
-    public static function getPageIdentifier($identifier = null, string $table = null)
+    public static function getPageIdentifier(mixed $identifier = null, ?string $table = null): int|string
     {
         // get id from given identifier
         if ('pages' === $table && is_numeric($identifier)) {
