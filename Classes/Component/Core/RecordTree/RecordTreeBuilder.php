@@ -190,7 +190,7 @@ class RecordTreeBuilder
     /**
      * @param RecordCollection<string, array<int|string, Record>> $recordCollection
      */
-    public function findRecordsByTca(RecordCollection $recordCollection, RecordTreeBuildRequest $request = null): void
+    public function findRecordsByTca(RecordCollection $recordCollection, ?RecordTreeBuildRequest $request = null): void
     {
         $currentRecursion = 0;
         $recursionLimit = $request !== null ? $request->getContentRecursionLimit() : 8;

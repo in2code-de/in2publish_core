@@ -15,7 +15,7 @@ class CacheableValueCanNotBeGeneratedException extends In2publishCoreException
     /**
      * @param mixed $value
      */
-    public function __construct($value, Throwable $previous = null)
+    public function __construct($value, ?Throwable $previous = null)
     {
         $this->value = $value;
         parent::__construct('', 1698857094, $previous);

@@ -18,7 +18,7 @@ class MissingDatabaseRecordFactoryException extends In2publishCoreException
     public const CODE = 1657191754;
     private string $table;
 
-    public function __construct(string $table, Throwable $previous = null)
+    public function __construct(string $table, ?Throwable $previous = null)
     {
         $this->table = $table;
         parent::__construct(sprintf(self::MESSAGE, $table), self::CODE, $previous);

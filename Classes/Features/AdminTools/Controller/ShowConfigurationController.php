@@ -44,7 +44,7 @@ class ShowConfigurationController extends AbstractAdminToolsController
         $this->configContainerDumper = $configContainerDumper;
     }
 
-    public function indexAction(int $emulatePage = null): ResponseInterface
+    public function indexAction(?int $emulatePage = null): ResponseInterface
     {
         if (null !== $emulatePage) {
             $_POST['id'] = $emulatePage;

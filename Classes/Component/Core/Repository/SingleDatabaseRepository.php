@@ -43,7 +43,7 @@ class SingleDatabaseRepository
         string $table,
         string $property,
         array $values,
-        string $andWhere = null
+        ?string $andWhere = null
     ): array {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
@@ -86,7 +86,7 @@ class SingleDatabaseRepository
         string $table,
         string $property,
         array $values,
-        string $andWhere = null
+        ?string $andWhere = null
     ): array {
         $mmColumns = $this->databaseSchemaService->getColumnNames($mmTable);
         $tableColumns = $this->databaseSchemaService->getColumnNames($table);

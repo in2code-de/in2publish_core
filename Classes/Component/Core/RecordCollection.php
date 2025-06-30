@@ -67,7 +67,7 @@ class RecordCollection implements IteratorAggregate
     /**
      * @return array<Record>
      */
-    public function getRecords(string $classification = null): array
+    public function getRecords(?string $classification = null): array
     {
         if (null === $classification) {
             return $this->records;

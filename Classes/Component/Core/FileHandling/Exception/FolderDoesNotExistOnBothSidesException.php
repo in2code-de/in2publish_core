@@ -22,7 +22,7 @@ class FolderDoesNotExistOnBothSidesException extends Exception
     public function __construct(
         string $givenCombinedIdentifier,
         string $rootLevelCombinedIdentifier,
-        Throwable $previous = null
+        ?Throwable $previous = null
     ) {
         parent::__construct(
             sprintf(self::MESSAGE, $givenCombinedIdentifier, $rootLevelCombinedIdentifier),

@@ -63,7 +63,7 @@ trait ControllerModuleTemplate
         return parent::processRequest($request);
     }
 
-    protected function htmlResponse(string $html = null): ResponseInterface
+    protected function htmlResponse(?string $html = null): ResponseInterface
     {
         return $this->render();
     }

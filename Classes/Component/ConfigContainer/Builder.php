@@ -54,13 +54,13 @@ class Builder
         return $this->nodes;
     }
 
-    public function addArray(string $name, Builder $nodes, array $default = null, array $validators = []): self
+    public function addArray(string $name, Builder $nodes, ?array $default = null, array $validators = []): self
     {
         $this->addNode(Node::T_ARRAY, $name, $default, $validators, $nodes);
         return $this;
     }
 
-    public function addStrictArray(string $name, Builder $nodes, array $default = null, array $validators = []): self
+    public function addStrictArray(string $name, Builder $nodes, ?array $default = null, array $validators = []): self
     {
         $this->addNode(Node::T_STRICT_ARRAY, $name, $default, $validators, $nodes);
         return $this;
@@ -100,13 +100,12 @@ class Builder
         return $this;
     }
 
-    /** @param string|int|bool|array|null $default */
     public function addNode(
         string $type,
         string $name,
-        $default = null,
+        string|int|bool|array|null $default = null,
         array $validators = [],
-        Builder $builder = null
+        ?Builder $builder = null
     ): self {
         if ($builder instanceof self) {
             $nodes = $builder->end();

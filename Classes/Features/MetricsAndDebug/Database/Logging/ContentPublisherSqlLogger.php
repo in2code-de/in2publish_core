@@ -36,7 +36,7 @@ class ContentPublisherSqlLogger implements SQLLogger
     protected float $start;
     protected static int $currentQuery = 0;
 
-    public function startQuery($sql, array $params = null, array $types = null)
+    public function startQuery($sql, ?array $params = null, ?array $types = null)
     {
         $this->start = hrtime(true);
         $originalBacktrace = $backtrace = debug_backtrace(0);

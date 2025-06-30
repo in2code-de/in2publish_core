@@ -18,7 +18,7 @@ class StorageIsOfflineException extends In2publishCoreException
     public const CODE = 1656411690;
     private int $storage;
 
-    public function __construct(int $storage, Throwable $previous = null)
+    public function __construct(int $storage, ?Throwable $previous = null)
     {
         $this->storage = $storage;
         parent::__construct(sprintf(self::MESSAGE, $storage), self::CODE, $previous);

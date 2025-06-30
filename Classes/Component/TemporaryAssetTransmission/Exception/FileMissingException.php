@@ -43,7 +43,7 @@ class FileMissingException extends In2publishCoreException
     protected const MESSAGE = 'The file "%s" does not exist';
     protected string $fileName;
 
-    public function __construct(string $fileName, Throwable $previous = null)
+    public function __construct(string $fileName, ?Throwable $previous = null)
     {
         parent::__construct(sprintf(self::MESSAGE, $fileName), self::CODE, $previous);
         $this->fileName = $fileName;
