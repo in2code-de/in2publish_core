@@ -31,13 +31,14 @@ namespace In2code\In2publishCore\Tests\Unit\Log\Processor;
 
 use In2code\In2publishCore\Log\Processor\BackendUserProcessor;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Psr\Log\LogLevel;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Log\LogRecord;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Log\Processor\BackendUserProcessor
- */
+#[CoversMethod(BackendUserProcessor::class, '__construct')]
+#[CoversMethod(BackendUserProcessor::class, 'getBackendUser')]
+#[CoversMethod(BackendUserProcessor::class, 'processLogRecord')]
 class BackendUserProcessorTest extends UnitTestCase
 {
     protected function setUp(): void
@@ -57,11 +58,6 @@ class BackendUserProcessorTest extends UnitTestCase
         parent::tearDown();
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::getBackendUser
-     * @covers ::processLogRecord
-     */
     public function testBackendUserProcessorAddsBackendUserUidToLogEntryData()
     {
         $expectedBeUserUid = 31;
@@ -78,11 +74,6 @@ class BackendUserProcessorTest extends UnitTestCase
         $this->assertSame(['be_user' => $expectedBeUserUid], $log->getData());
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::getBackendUser
-     * @covers ::processLogRecord
-     */
     public function testBackendUserProcessorAddsUnknownValueStringToLogEntryIfBackendUserIsKnownButHasNoId()
     {
         // preparation

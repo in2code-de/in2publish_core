@@ -47,7 +47,7 @@ class AllSitesCommandException extends In2publishCoreException
     private array $errors;
     private array $output;
 
-    public function __construct(int $code, array $errors, array $output, Throwable $previous = null)
+    public function __construct(int $code, array $errors, array $output, ?Throwable $previous = null)
     {
         $this->code = $code;
         $this->errors = $errors;

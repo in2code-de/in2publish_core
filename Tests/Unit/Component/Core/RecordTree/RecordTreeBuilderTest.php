@@ -20,18 +20,17 @@ use In2code\In2publishCore\Component\Core\Service\RelevantTablesService;
 use In2code\In2publishCore\Service\Configuration\PageTypeService;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder
- */
+#[CoversMethod(RecordTreeBuilder::class, 'findRecordsByTca')]
+#[CoversMethod(RecordTreeBuilder::class, 'findAllRecordsOnPages')]
+#[CoversMethod(RecordTreeBuilder::class, 'buildRecordTree')]
+#[CoversMethod(RecordTreeBuilder::class, 'findRequestedRecordWithTranslations')]
 class RecordTreeBuilderTest extends UnitTestCase
 {
-    /**
-     * @covers ::findRecordsByTca
-     */
     public function testFindRecordsByTca(): void
     {
         $recordTreeBuilder = new RecordTreeBuilder();
@@ -50,9 +49,6 @@ class RecordTreeBuilderTest extends UnitTestCase
         $recordTreeBuilder->findRecordsByTca($recordCollection);
     }
 
-    /**
-     * @covers ::findAllRecordsOnPages
-     */
     public function testFindAllRecordsOnPages(): void
     {
         // arrange
@@ -98,10 +94,6 @@ class RecordTreeBuilderTest extends UnitTestCase
         $this->assertEquals($fooRecord, $fooRecordsInCollection[33]);
     }
 
-    /**
-     * @covers ::buildRecordTree
-     * @covers ::findRequestedRecordWithTranslations
-     */
     public function testBuildRecordTreeForRootRecord(): void
     {
         $recordTreeBuilder = new RecordTreeBuilder();

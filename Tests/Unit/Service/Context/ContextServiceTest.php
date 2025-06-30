@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Context;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use LogicException;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Core\Environment;
@@ -39,10 +40,14 @@ use TYPO3\CMS\Core\Core\Environment;
 use function putenv;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Service\Context\ContextService
- *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
+#[CoversMethod(ContextService::class, '__construct')]
+#[CoversMethod(ContextService::class, 'determineContext')]
+#[CoversMethod(ContextService::class, 'getContext')]
+#[CoversMethod(ContextService::class, 'isLocal')]
+#[CoversMethod(ContextService::class, 'isForeign')]
+#[CoversMethod(ContextService::class, 'isContextDefined')]
 class ContextServiceTest extends UnitTestCase
 {
     private function setRedirectedIn2publishContext($value): void
@@ -79,11 +84,6 @@ class ContextServiceTest extends UnitTestCase
         $environmentReflection->setValue(Environment::class, $applicationContext);
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::determineContext
-     * @covers ::getContext
-     */
     public function testDefaultContextIsForeign(): void
     {
         $this->setIn2publishContext(null);
@@ -92,11 +92,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertSame(ContextService::FOREIGN, $contextService->getContext());
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::determineContext
-     * @covers ::getContext
-     */
     public function testContextIsDeterminedByEnvironmentVariable()
     {
         $this->setIn2publishContext(ContextService::LOCAL);
@@ -105,10 +100,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertSame(ContextService::LOCAL, $contextService->getContext());
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::determineContext
-     */
     public function testUnsupportedContextWillThrowAnExceptionIfApplicationContextIsNotProduction()
     {
         $this->setIn2publishContext('Wrong');
@@ -121,10 +112,6 @@ class ContextServiceTest extends UnitTestCase
         new ContextService();
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::determineContext
-     */
     public function testUnsupportedContextResultsInDefaultContextIfApplicationContextIsProduction()
     {
         $this->setIn2publishContext('Wrong');
@@ -134,9 +121,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertSame(ContextService::FOREIGN, $contextService->getContext());
     }
 
-    /**
-     * @covers ::isLocal
-     */
     public function testIsLocalReturnsTrueIfIn2publishContextIsLocal()
     {
         $this->setIn2publishContext(ContextService::LOCAL);
@@ -145,9 +129,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isLocal());
     }
 
-    /**
-     * @covers ::isLocal
-     */
     public function testIsLocalReturnsFalseIfIn2publishContextIsNotLocal()
     {
         $this->setIn2publishContext(ContextService::FOREIGN);
@@ -156,9 +137,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertFalse($contextService->isLocal());
     }
 
-    /**
-     * @covers ::isForeign
-     */
     public function testIsForeignReturnsTrueIfIn2publishContextIsForeign()
     {
         $this->setIn2publishContext(ContextService::FOREIGN);
@@ -167,9 +145,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isForeign());
     }
 
-    /**
-     * @covers ::isForeign
-     */
     public function testIsForeignReturnsFalseIfIn2publishContextIsLocal()
     {
         $this->setIn2publishContext(ContextService::LOCAL);
@@ -178,9 +153,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertFalse($contextService->isForeign());
     }
 
-    /**
-     * @covers ::isContextDefined
-     */
     public function testIsContextDefinedReturnsFalseIfContextIsNotDefined()
     {
         $this->setIn2publishContext(null);
@@ -189,9 +161,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertFalse($contextService->isContextDefined());
     }
 
-    /**
-     * @covers ::isContextDefined
-     */
     public function testIsContextDefinedReturnsTrueIfContextIsDefined()
     {
         $this->setIn2publishContext(ContextService::LOCAL);
@@ -200,9 +169,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isContextDefined());
     }
 
-    /**
-     * @covers ::isContextDefined
-     */
     public function testRedirectContextAlsoDefinesContext()
     {
         $this->setRedirectedIn2publishContext(ContextService::LOCAL);
@@ -211,9 +177,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isContextDefined());
     }
 
-    /**
-     * @covers ::isLocal
-     */
     public function testIsLocalReturnsTrueIfRedirectIn2publishContextIsLocal()
     {
         $this->setRedirectedIn2publishContext(ContextService::LOCAL);
@@ -222,9 +185,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isLocal());
     }
 
-    /**
-     * @covers ::isForeign
-     */
     public function testIsForeignReturnsTrueIfRedirectIn2publishContextIsForeign()
     {
         $this->setRedirectedIn2publishContext(ContextService::FOREIGN);
@@ -233,9 +193,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isForeign());
     }
 
-    /**
-     * @covers ::isLocal
-     */
     public function testIsLocalReturnsFalseIfRedirectIn2publishContextIsForeign()
     {
         $this->setRedirectedIn2publishContext(ContextService::FOREIGN);
@@ -244,9 +201,6 @@ class ContextServiceTest extends UnitTestCase
         $this->assertFalse($contextService->isLocal());
     }
 
-    /**
-     * @covers ::isForeign
-     */
     public function testIsForeignReturnsFalseIfRedirectIn2publishContextIsLocal()
     {
         $this->setRedirectedIn2publishContext(ContextService::LOCAL);

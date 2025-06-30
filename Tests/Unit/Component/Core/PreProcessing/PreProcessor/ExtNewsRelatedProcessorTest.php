@@ -8,17 +8,18 @@ use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\ExtNewsRela
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\ExtNewsRelatedProcessor
  */
+#[CoversMethod(ExtNewsRelatedProcessor::class, 'process')]
+#[CoversMethod(ExtNewsRelatedProcessor::class, 'buildResolver')]
+#[CoversMethod(ExtNewsRelatedProcessor::class, 'getTable')]
+#[CoversMethod(ExtNewsRelatedProcessor::class, 'getColumn')]
 class ExtNewsRelatedProcessorTest extends UnitTestCase
 {
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testExtRelatedNewsProcessReturnsStaticJoinResolver(): void
     {
         $tca = [];
@@ -42,18 +43,12 @@ class ExtNewsRelatedProcessorTest extends UnitTestCase
         $this->assertTrue($result->isCompatible());
     }
 
-    /**
-     * @covers ::getTable
-     */
     public function testGetTable(): void
     {
         $extRelatedProcessor = new ExtNewsRelatedProcessor($this->createMock(ContainerInterface::class));
         $this->assertSame('tx_news_domain_model_news', $extRelatedProcessor->getTable());
     }
 
-    /**
-     * @covers ::getColumn
-     */
     public function testGetColumn(): void
     {
         $extRelatedProcessor = new ExtNewsRelatedProcessor($this->createMock(ContainerInterface::class));

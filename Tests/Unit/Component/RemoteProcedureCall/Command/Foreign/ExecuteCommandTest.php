@@ -10,17 +10,15 @@ use In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\RemoteProcedureCall\Command\Foreign\ExecuteCommand
- */
+#[CoversMethod(ExecuteCommand::class, 'execute')]
 class ExecuteCommandTest extends UnitTestCase
 {
     /**
-     * @ticket https://projekte.in2code.de/issues/51213
-     * @covers ::execute
+     * ticket https://projekte.in2code.de/issues/51213
      */
     public function testCommandCanBeExecuted(): void
     {

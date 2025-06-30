@@ -7,21 +7,19 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Model;
 use In2code\In2publishCore\Component\Core\Record\Model\Dependency;
 use In2code\In2publishCore\Component\Core\Record\Model\TtContentDatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\TtContentDatabaseRecord
- */
+#[CoversMethod(TtContentDatabaseRecord::class, '__construct')]
+#[CoversMethod(TtContentDatabaseRecord::class, 'getId')]
+#[CoversMethod(TtContentDatabaseRecord::class, 'getClassification')]
+#[CoversMethod(TtContentDatabaseRecord::class, 'getLocalProps')]
+#[CoversMethod(TtContentDatabaseRecord::class, 'getForeignProps')]
+#[CoversMethod(TtContentDatabaseRecord::class, 'getDependencies')]
+#[CoversMethod(TtContentDatabaseRecord::class, 'calculateDependencies')]
+#[CoversMethod(TtContentDatabaseRecord::class, 'calculateShortcutDependencies')]
 class TtContentDatabaseRecordTest extends UnitTestCase
 {
-    /**
-     * @covers ::__construct
-     * @covers ::getId
-     * @covers ::getClassification
-     * @covers ::getLocalProps
-     * @covers ::getForeignProps
-     * @covers ::getDependencies
-     */
     public function testConstructor(): void
     {
         $ttContentDatabaseRecord = new TtContentDatabaseRecord(
@@ -43,10 +41,6 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         $this->assertSame(['prop3' => 'value3'], $reflectionProperty->getValue($ttContentDatabaseRecord));
     }
 
-    /**
-     * @covers ::calculateDependencies
-     * @covers ::calculateShortcutDependencies
-     */
     public function testCalculateDependenciesCorrectlyResolvesDependencies(): void
     {
         $ttContentDatabaseRecord = new TtContentDatabaseRecord(
@@ -83,10 +77,6 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         $this->assertSame(['uid' => '1'], $recordWithinDependencyLevel2->getProperties());
     }
 
-    /**
-     * @covers ::calculateDependencies
-     * @covers ::calculateShortcutDependencies
-     */
     public function testCorrectNumberOfDependenciesIsCalculated(): void
     {
         $ttContentDatabaseRecord0 = new TtContentDatabaseRecord(
@@ -127,10 +117,6 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         $this->assertSame(6, count($ttContentDatabaseRecord6->calculateDependencies()));
     }
 
-    /**
-     * @covers ::calculateDependencies
-     * @covers ::calculateShortcutDependencies
-     */
     public function testNoDependencyIsFoundIfNoValidShortcutIsFound(): void
     {
         $ttContentDatabaseRecord1 = new TtContentDatabaseRecord(

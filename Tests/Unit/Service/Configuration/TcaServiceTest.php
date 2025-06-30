@@ -31,15 +31,12 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Configuration;
 
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Service\Configuration\TcaService
- */
+#[CoversMethod(TcaService::class, 'getTableLabel')]
+#[CoversMethod(TcaService::class, 'isHiddenRootTable')]
 class TcaServiceTest extends UnitTestCase
 {
-    /**
-     * @covers ::getTableLabel
-     */
     public function testGetTableLabelReturnsUpperCaseFirstTableNameIfTitleFieldIsNotSet(): void
     {
         $this->setTca([]);
@@ -48,9 +45,6 @@ class TcaServiceTest extends UnitTestCase
         $this->assertSame('Foo', $tcaService->getTableLabel('foo'));
     }
 
-    /**
-     * @covers ::isHiddenRootTable
-     */
     public function testIsHiddenRootTableReturnsTrueForInvisibleTablesPossibleOnRoot(): void
     {
         $this->setTca(['table' => ['ctrl' => ['hideTable' => true, 'rootLevel' => 1]]]);
@@ -62,9 +56,6 @@ class TcaServiceTest extends UnitTestCase
         $this->assertTrue($tcaService->isHiddenRootTable('table'));
     }
 
-    /**
-     * @covers ::isHiddenRootTable
-     */
     public function testIsHiddenRootTableReturnsFalseForVisibleOrPagesOnlyTables(): void
     {
         $this->setTca(['table' => ['ctrl' => ['hideTable' => false, 'rootLevel' => 1]]]);

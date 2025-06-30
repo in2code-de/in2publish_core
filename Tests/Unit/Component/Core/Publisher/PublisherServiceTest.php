@@ -18,18 +18,18 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\PublisherService
  */
+#[CoversMethod(PublisherService::class, 'publish')]
+#[CoversMethod(PublisherService::class, 'publishRecordTree')]
+#[CoversMethod(PublisherService::class, 'publishRecord')]
+#[CoversMethod(PublisherService::class, 'addPublisher')]
 class PublisherServiceTest extends UnitTestCase
 {
-    /**
-     * @covers ::publish
-     * @covers ::publishRecordTree
-     * @covers ::publishRecord
-     */
     public function testPublishRecordTreePublishesAllUnchangedRecordsInTree(): void
     {
         $publisherService = new PublisherService();
@@ -48,11 +48,6 @@ class PublisherServiceTest extends UnitTestCase
         $publisherService->publish($publishingContext);
     }
 
-    /**
-     * @covers ::publish
-     * @covers ::publishRecordTree
-     * @covers ::publishRecord
-     */
     public function testPublishRecordTreePublishesChildRecordsWithoutPages(): void
     {
         $publisherService = new PublisherService();
@@ -71,10 +66,6 @@ class PublisherServiceTest extends UnitTestCase
         $publisherService->publish($publishingContext);
     }
 
-    /**
-     * @covers ::publish
-     * @covers ::publishRecordTree
-     */
     public function testCancelIsCalledWhenExceptionIsThrownDuringPublishing(): void
     {
         $publisherService = new PublisherService();
@@ -93,11 +84,6 @@ class PublisherServiceTest extends UnitTestCase
         $publisherService->publish($publishingContext);
     }
 
-    /**
-     * @covers ::publish
-     * @covers ::addPublisher
-     * @covers ::publishRecordTree
-     */
     public function testCancelAndReverseAreCalledWhenExceptionIsThrownDuringFinish(): void
     {
         $publisherService = new PublisherService();

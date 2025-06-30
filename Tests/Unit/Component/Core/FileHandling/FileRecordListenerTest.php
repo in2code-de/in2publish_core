@@ -12,16 +12,14 @@ use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Event\RecordWasCreated;
 use In2code\In2publishCore\Features\ResolveFilesForIndices\EventListener\FileRecordListener;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Features\ResolveFilesForIndices\EventListener\FileRecordListener
- */
+#[CoversMethod(FileRecordListener::class, 'onRecordRelationsWereResolved')]
+#[CoversMethod(FileRecordListener::class, 'onRecordWasCreated')]
+
 class FileRecordListenerTest extends UnitTestCase
 {
-    /**
-     * @covers ::onRecordRelationsWereResolved
-     */
     public function testOnRecordRelationsWereResolvedAddsAndResolvesOneFileDemandPerFile(): void
     {
         $fileRecordListener = new FileRecordListener();
@@ -49,9 +47,6 @@ class FileRecordListenerTest extends UnitTestCase
         $fileRecordListener->onRecordRelationsWereResolved();
     }
 
-    /**
-     * @covers ::onRecordWasCreated
-     */
     public function testOnRecordWasCreatedAddsSysFileRecordToFileRecords(): void
     {
         $fileRecordListener = new FileRecordListener();

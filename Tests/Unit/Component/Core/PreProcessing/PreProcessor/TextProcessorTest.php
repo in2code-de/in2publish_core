@@ -10,19 +10,16 @@ use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\TextResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Depends;
 use Symfony\Component\DependencyInjection\Container;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\TextProcessor
- */
+#[CoversMethod(TextProcessor::class, 'process')]
+#[CoversMethod(TextProcessor::class, 'additionalPreProcess')]
+#[CoversMethod(TextProcessor::class, 'getImportantFields')]
+#[CoversMethod(TextProcessor::class, 'buildResolver')]
 class TextProcessorTest extends UnitTestCase
 {
-    /**
-     * @covers ::process
-     * @covers ::additionalPreProcess
-     * @covers ::getImportantFields
-     * @covers ::buildResolver
-     */
     public function testTextProcessorReturnsResolverForTextColumnWithEnableRichtext(): void
     {
         $resolver = $this->createMock(TextResolver::class);
@@ -43,11 +40,7 @@ class TextProcessorTest extends UnitTestCase
         $this->assertInstanceOf(Resolver::class, $value['resolver']);
     }
 
-    /**
-     * @depends testTextProcessorReturnsResolverForTextColumnWithEnableRichtext
-     * @covers ::process
-     * @covers ::buildResolver
-     */
+    #[Depends('testTextProcessorReturnsResolverForTextColumnWithEnableRichtext')]
     public function testTextProcessorClosureResolvesDemandForTypo3PageUrns(): void
     {
         $resolver = $this->createMock(TextResolver::class);
@@ -74,11 +67,7 @@ class TextProcessorTest extends UnitTestCase
         $this->assertInstanceOf(TextResolver::class, $resolver);
     }
 
-    /**
-     * @depends testTextProcessorReturnsResolverForTextColumnWithEnableRichtext
-     * @covers ::process
-     * @covers ::buildResolver
-     */
+    #[Depends('testTextProcessorReturnsResolverForTextColumnWithEnableRichtext')]
     public function testTextProcessorClosureResolvesDemandForTypo3FileUrns(): void
     {
         $resolver = $this->createMock(TextResolver::class);
@@ -103,11 +92,7 @@ class TextProcessorTest extends UnitTestCase
         $this->assertInstanceOf(TextResolver::class, $resolver);
     }
 
-    /**
-     * @depends testTextProcessorReturnsResolverForTextColumnWithEnableRichtext
-     * @covers ::process
-     * @covers ::buildResolver
-     */
+    #[Depends('testTextProcessorReturnsResolverForTextColumnWithEnableRichtext')]
     public function testTextProcessorClosureResolvesEmptyDemandWhenNoTextContainsNoValidUrl(): void
     {
         $resolver = $this->createMock(TextResolver::class);
@@ -132,11 +117,7 @@ class TextProcessorTest extends UnitTestCase
         $this->assertInstanceOf(TextResolver::class, $resolver);
     }
 
-    /**
-     * @depends testTextProcessorReturnsResolverForTextColumnWithEnableRichtext
-     * @covers ::process
-     * @covers ::buildResolver
-     */
+    #[Depends('testTextProcessorReturnsResolverForTextColumnWithEnableRichtext')]
     public function testTextProcessorClosureResolvesDemandForDifferentLocalAndForeignValues(): void
     {
         $resolver = $this->createMock(TextResolver::class);
@@ -161,9 +142,6 @@ class TextProcessorTest extends UnitTestCase
         $this->assertInstanceOf(TextResolver::class, $resolver);
     }
 
-    /**
-     * @covers ::process
-     */
     public function testTextProcessorReturnsIncompatibleResultWhenRichtextFieldIsMissing(): void
     {
         $resolver = $this->createMock(TextResolver::class);
@@ -178,9 +156,6 @@ class TextProcessorTest extends UnitTestCase
         $this->assertFalse($processingResult->isCompatible());
     }
 
-    /**
-     * @covers ::process
-     */
     public function testTextProcessorReturnsIncompatibleResultWhenRichtextFieldIsFalse(): void
     {
         $resolver = $this->createMock(TextResolver::class);

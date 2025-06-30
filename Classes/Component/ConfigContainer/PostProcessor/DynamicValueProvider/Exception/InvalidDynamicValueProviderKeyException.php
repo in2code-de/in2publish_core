@@ -43,7 +43,7 @@ class InvalidDynamicValueProviderKeyException extends In2publishCoreException
     public const CODE = 1595409903;
     protected string $providerKey;
 
-    public function __construct(string $providerKey, Throwable $previous = null)
+    public function __construct(string $providerKey, ?Throwable $previous = null)
     {
         parent::__construct(sprintf(self::MESSAGE, $providerKey), self::CODE, $previous);
         $this->providerKey = $providerKey;

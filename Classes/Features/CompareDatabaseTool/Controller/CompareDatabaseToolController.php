@@ -72,7 +72,7 @@ class CompareDatabaseToolController extends ActionController
      * @SuppressWarnings(PHPMD.NPathComplexity) PR welcome
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength) PR welcome
      */
-    public function compareAction(ComparisonRequest $comparisonRequest = null): ResponseInterface
+    public function compareAction(?ComparisonRequest $comparisonRequest = null): ResponseInterface
     {
         if (null === $comparisonRequest) {
             return $this->redirect('index');

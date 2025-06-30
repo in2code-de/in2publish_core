@@ -6,19 +6,16 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\RecordTree;
 
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest
- */
+#[CoversMethod(RecordTreeBuildRequest::class, '__construct')]
+#[CoversMethod(RecordTreeBuildRequest::class, 'getTable')]
+#[CoversMethod(RecordTreeBuildRequest::class, 'getId')]
+#[CoversMethod(RecordTreeBuildRequest::class, 'withId')]
+#[CoversMethod(RecordTreeBuildRequest::class, 'getPageRecursionLimit')]
+#[CoversMethod(RecordTreeBuildRequest::class, 'getDependencyRecursionLimit')]
 class RecordTreeBuildRequestTest extends UnitTestCase
 {
-    /**
-     * @covers ::__construct
-     * @covers ::getTable
-     * @covers ::getId
-     * @covers ::getPageRecursionLimit
-     * @covers ::getDependencyRecursionLimit
-     */
     public function testConstructor(): void
     {
         $recordTreeBuildRequest = new RecordTreeBuildRequest('table_foo', 1, 3, 5);
@@ -28,9 +25,6 @@ class RecordTreeBuildRequestTest extends UnitTestCase
         $this->assertSame(5, $recordTreeBuildRequest->getDependencyRecursionLimit());
     }
 
-    /**
-     * @covers ::withId
-     */
     public function testWithId(): void
     {
         $recordTreeBuildRequest = new RecordTreeBuildRequest('table_foo', 1, 3, 5);

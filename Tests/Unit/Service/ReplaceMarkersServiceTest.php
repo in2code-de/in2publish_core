@@ -33,6 +33,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -42,12 +43,13 @@ use TYPO3\CMS\Core\Site\SiteFinder;
  * @coversDefaultClass \In2code\In2publishCore\Service\ReplaceMarkersService
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
+#[CoversMethod(ReplaceMarkersService::class, 'replaceMarkers')]
+#[CoversMethod(ReplaceMarkersService::class, 'replacePageTsConfigMarkers')]
+#[CoversMethod(ReplaceMarkersService::class, 'replaceSiteMarker')]
+#[CoversMethod(ReplaceMarkersService::class, 'quoteParsedSiteConfiguration')]
+#[CoversMethod(ReplaceMarkersService::class, 'replaceRecFieldMarker')]
 class ReplaceMarkersServiceTest extends UnitTestCase
 {
-    /**
-     * @covers ::replaceMarkers
-     * @covers ::replacePageTsConfigMarkers
-     */
     public function testReplaceMarkerServiceSupportsPageTsConfigId(): void
     {
         $record = $this->getRecordStub('tx_unit_test_table');
@@ -83,10 +85,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         self::assertSame('foo 52 bar', $replacement);
     }
 
-    /**
-     * @covers ::replaceMarkers
-     * @covers ::replacePageTsConfigMarkers
-     */
     public function testReplaceMarkerServiceSupportsPageTsConfigIdList(): void
     {
         $record = $this->getRecordStub('tx_unit_test_table');
@@ -122,10 +120,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         self::assertSame('foo 52,11,9 bar', $replacement);
     }
 
-    /**
-     * @covers ::replaceSiteMarker
-     * @covers ::quoteParsedSiteConfiguration
-     */
     public function testReplaceSiteMarker(): void
     {
         $record = $this->getRecordStub('tx_unit_test_table');
@@ -166,9 +160,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         self::assertSame('1 \'test\' \'string1\',\'string2\',\'foo1\',\'foo2\' 0', $replacement);
     }
 
-    /**
-     * @covers ::replaceRecFieldMarker
-     */
     public function testReplaceRecFieldMarkerPrefersLocalValue(): void
     {
         $record = new DatabaseRecord(
@@ -194,9 +185,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         self::assertSame('AAAA "bar" BBBB', $replacement);
     }
 
-    /**
-     * @covers ::replaceRecFieldMarker
-     */
     public function testReplaceRecFieldMarkerUsesForeignAsFallback(): void
     {
         $record = new DatabaseRecord(
@@ -279,8 +267,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $this->assertSame('AAA ###STORAGE_PID### CCC', $replacement);
     }
 
-    /**
-     */
     public function testReplaceFlexFormFieldMarkers(): void
     {
         self::markTestSkipped('FlexFormFieldMarkers rely on static methods from TYPO3 which can not be mocked.');

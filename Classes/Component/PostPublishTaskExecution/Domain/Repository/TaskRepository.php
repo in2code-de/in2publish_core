@@ -77,11 +77,9 @@ class TaskRepository
      * NULL: finds all Tasks which were not executed
      * DateTime: finds all Tasks which were executed on the given Time
      *
-     * @param DateTime|null $executionBegin
-     *
      * @return AbstractTask[]
      */
-    public function findByExecutionBegin(DateTime $executionBegin = null): array
+    public function findByExecutionBegin(DateTime|null $executionBegin = null): array
     {
         $query = $this->databaseOfForeign->createQueryBuilder();
         $query->getRestrictions()->removeAll();

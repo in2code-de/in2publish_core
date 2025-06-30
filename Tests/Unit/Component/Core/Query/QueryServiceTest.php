@@ -13,17 +13,13 @@ use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepository;
 use In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver
- */
+#[CoversMethod(SelectDemandResolver::class, 'resolveSelectDemand')]
+#[CoversMethod(SelectDemandResolver::class, 'findMissingRecordsByUid')]
 class QueryServiceTest extends TestCase
 {
-    /**
-     * @covers ::resolveSelectDemand
-     * @covers ::findMissingRecordsByUid
-     */
     public function testSelectDemandWithOnlyLocalRowsWillQueryForRowsMissingFromForeign(): void
     {
         $dualDatabaseRepository = $this->createMock(DualDatabaseRepository::class);
@@ -51,7 +47,7 @@ class QueryServiceTest extends TestCase
         $recordFactory = $this->createMock(RecordFactory::class);
         $recordIndex = $this->createMock(RecordIndex::class);
 
-        $queryService = $this->createTestProxy(SelectDemandResolver::class);
+        $queryService = new SelectDemandResolver();
         $queryService->injectDualDatabaseRepository($dualDatabaseRepository);
         $queryService->injectForeignSingleDatabaseRepository($foreignSingleDatabaseRepository);
         $queryService->injectLocalSingleDatabaseRepository($localSingleDatabaseRepository);
@@ -68,10 +64,6 @@ class QueryServiceTest extends TestCase
         $queryService->resolveDemand($demands, $recordCollection);
     }
 
-    /**
-     * @covers ::resolveSelectDemand
-     * @covers ::findMissingRecordsByUid
-     */
     public function testSelectDemandWithOnlyLocalRowsWillNotQueryForMissingForeignRowsWhenPropertyIsUid(): void
     {
         $dualDatabaseRepository = $this->createMock(DualDatabaseRepository::class);
@@ -96,7 +88,7 @@ class QueryServiceTest extends TestCase
         $recordFactory = $this->createMock(RecordFactory::class);
         $recordIndex = $this->createMock(RecordIndex::class);
 
-        $queryService = $this->createTestProxy(SelectDemandResolver::class);
+        $queryService = new SelectDemandResolver();
         $queryService->injectDualDatabaseRepository($dualDatabaseRepository);
         $queryService->injectForeignSingleDatabaseRepository($foreignSingleDatabaseRepository);
         $queryService->injectLocalSingleDatabaseRepository($localSingleDatabaseRepository);
@@ -113,10 +105,6 @@ class QueryServiceTest extends TestCase
         $queryService->resolveDemand($demands, $recordCollection);
     }
 
-    /**
-     * @covers ::resolveSelectDemand
-     * @covers ::findMissingRecordsByUid
-     */
     public function testSelectDemandWithOnlyForeignRowsWillQueryForRowsMissingFromLocal(): void
     {
         $dualDatabaseRepository = $this->createMock(DualDatabaseRepository::class);
@@ -145,7 +133,7 @@ class QueryServiceTest extends TestCase
         $recordFactory = $this->createMock(RecordFactory::class);
         $recordIndex = $this->createMock(RecordIndex::class);
 
-        $queryService = $this->createTestProxy(SelectDemandResolver::class);
+        $queryService = new SelectDemandResolver();
         $queryService->injectDualDatabaseRepository($dualDatabaseRepository);
         $queryService->injectForeignSingleDatabaseRepository($foreignSingleDatabaseRepository);
         $queryService->injectLocalSingleDatabaseRepository($localSingleDatabaseRepository);
@@ -162,10 +150,6 @@ class QueryServiceTest extends TestCase
         $queryService->resolveDemand($demands, $recordCollection);
     }
 
-    /**
-     * @covers ::resolveSelectDemand
-     * @covers ::findMissingRecordsByUid
-     */
     public function testSelectDemandWithOnlyForeignRowsWillNotQueryForMissingLocalRowsWhenPropertyIsUid(): void
     {
         $dualDatabaseRepository = $this->createMock(DualDatabaseRepository::class);
@@ -190,7 +174,7 @@ class QueryServiceTest extends TestCase
         $recordFactory = $this->createMock(RecordFactory::class);
         $recordIndex = $this->createMock(RecordIndex::class);
 
-        $queryService = $this->createTestProxy(SelectDemandResolver::class);
+        $queryService = new SelectDemandResolver();
         $queryService->injectDualDatabaseRepository($dualDatabaseRepository);
         $queryService->injectForeignSingleDatabaseRepository($foreignSingleDatabaseRepository);
         $queryService->injectLocalSingleDatabaseRepository($localSingleDatabaseRepository);
@@ -207,10 +191,6 @@ class QueryServiceTest extends TestCase
         $queryService->resolveDemand($demands, $recordCollection);
     }
 
-    /**
-     * @covers ::resolveSelectDemand
-     * @covers ::findMissingRecordsByUid
-     */
     public function testSelectDemandWithOnlyForeignRowsWillFindLocalRowsByUid(): void
     {
         $record = $this->createMock(DatabaseRecord::class);

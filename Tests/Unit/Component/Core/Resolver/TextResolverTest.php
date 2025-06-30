@@ -9,16 +9,14 @@ use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\TextResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Resolver\TextResolver
- */
+#[CoversMethod(TextResolver::class, 'findRelationsInText')]
+#[CoversMethod(TextResolver::class, 'getTargetTables')]
+#[CoversMethod(TextResolver::class, 'resolve')]
 class TextResolverTest extends UnitTestCase
 {
-    /**
-     * @covers ::getTargetTables
-     */
     public function testTargetTables(): void
     {
         $textResolver = new TextResolver();
@@ -26,10 +24,6 @@ class TextResolverTest extends UnitTestCase
         $this->assertSame($expectedTargetTables, $textResolver->getTargetTables());
     }
 
-    /**
-     * @covers ::resolve
-     * @covers ::findRelationsInText
-     */
     public function testResolverFindsFileRelations(): void
     {
         $textResolver = new TextResolver();

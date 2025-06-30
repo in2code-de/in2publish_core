@@ -19,7 +19,7 @@ class PublisherNotFoundException extends In2publishCoreException
     public const CODE = 1657192684;
     private Record $record;
 
-    public function __construct(Record $record, Throwable $previous = null)
+    public function __construct(Record $record, ?Throwable $previous = null)
     {
         $this->record = $record;
         parent::__construct(

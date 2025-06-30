@@ -31,16 +31,13 @@ namespace In2code\In2publishCore\Tests\Unit\Utility;
 
 use In2code\In2publishCore\Tests\UnitTestCase;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Utility\ConfigurationUtility
- */
+#[CoversMethod(ConfigurationUtility::class, 'mergeConfiguration')]
 class ConfigurationUtilityTest extends UnitTestCase
 {
-    /**
-     * @test
-     * @covers ::mergeConfiguration()
-     */
+    #[Test]
     public function addsNewKeyValues()
     {
         $value1 = 'lorem';
@@ -71,10 +68,7 @@ class ConfigurationUtilityTest extends UnitTestCase
         $this->assertArrayHasKey('bar', $result);
     }
 
-    /**
-     * @test
-     * @covers ::mergeConfiguration()
-     */
+    #[Test]
     public function overwritesValuesOfAlphanumericKeys()
     {
         $value1 = 'lorem';
@@ -104,10 +98,7 @@ class ConfigurationUtilityTest extends UnitTestCase
         $this->assertSame($expectedResult, $result);
     }
 
-    /**
-     * @test
-     * @covers ::mergeConfiguration()
-     */
+    #[Test]
     public function doesNotOverwriteButAddsValuesOfNumericKeys()
     {
         $value1 = 'lorem';
@@ -141,10 +132,7 @@ class ConfigurationUtilityTest extends UnitTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @test
-     * @covers ::mergeConfiguration()
-     */
+    #[Test]
     public function doesOverwriteNumericKeysOfDefinitionArrays()
     {
         $original = [
@@ -183,10 +171,7 @@ class ConfigurationUtilityTest extends UnitTestCase
         $this->assertSame($expectedResult, $result);
     }
 
-    /**
-     * @test
-     * @covers ::mergeConfiguration()
-     */
+    #[Test]
     public function canMergeNestedArraysRecursively()
     {
         $value1 = 'lorem';
@@ -242,10 +227,7 @@ class ConfigurationUtilityTest extends UnitTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @test
-     * @covers ::mergeConfiguration()
-     */
+    #[Test]
     public function sortsValuesByDefinedOrder()
     {
         $original = [
@@ -272,10 +254,7 @@ class ConfigurationUtilityTest extends UnitTestCase
         $this->assertSame($expectedResult, $result);
     }
 
-    /**
-     * @test
-     * @covers ::mergeConfiguration()
-     */
+    #[Test]
     public function valuesAreRemovedIfTheValueIsUnset()
     {
         $original = [

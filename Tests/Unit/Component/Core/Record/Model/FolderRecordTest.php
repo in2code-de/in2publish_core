@@ -8,21 +8,18 @@ use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\Folder
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
-use LogicException;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\FolderRecord
- */
+#[CoversMethod(FolderRecord::class, '__construct')]
+#[CoversMethod(FolderRecord::class, 'getClassification')]
+#[CoversMethod(FolderRecord::class, 'getId')]
+#[CoversMethod(FolderRecord::class, 'getLocalProps')]
+#[CoversMethod(FolderRecord::class, 'getForeignProps')]
+#[CoversMethod(FolderRecord::class, 'getForeignIdentificationProps')]
+#[CoversMethod(FolderRecord::class, 'getState')]
+#[CoversMethod(FolderRecord::class, 'calculateState')]
 class FolderRecordTest extends UnitTestCase
 {
-    /**
-     * @covers ::__construct
-     * @covers ::getClassification
-     * @covers ::getId
-     * @covers ::getLocalProps
-     * @covers ::getForeignProps
-     * @covers ::getForeignIdentificationProps
-     */
     public function testConstructor(): void
     {
         $folderRecord = new FolderRecord((new FolderInfo(42, 'folder_name', 'blala'))->toArray(), []);
@@ -39,10 +36,6 @@ class FolderRecordTest extends UnitTestCase
         $folderRecord->getForeignIdentificationProps();
     }
 
-    /**
-     * @covers ::getState
-     * @covers ::calculateState
-     */
     public function testCalculateState(): void
     {
         $props = (new FolderInfo(42, 'folder_name', 'blala'))->toArray();

@@ -9,17 +9,13 @@ use In2code\In2publishCore\Component\Core\Record\Iterator\RecordIterator;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Iterator\RecordIterator
- */
+#[CoversMethod(RecordIterator::class, 'recurse')]
+#[CoversMethod(RecordIterator::class, 'recurseRecords')]
+#[CoversMethod(RecordIterator::class, 'callClosure')]
 class RecordIteratorTest extends UnitTestCase
 {
-    /**
-     * @covers ::recurse
-     * @covers ::recurseRecords
-     * @covers ::callClosure
-     */
     public function testStopIterationWillImmediatelyStopTheProcess(): void
     {
         $child1 = new DatabaseRecord('bar', 1, [], [], []);
@@ -42,11 +38,6 @@ class RecordIteratorTest extends UnitTestCase
         $this->assertSame(1, $count);
     }
 
-    /**
-     * @covers ::recurse
-     * @covers ::recurseRecords
-     * @covers ::callClosure
-     */
     public function testRecurseWillVisitEachRecordOnlyOnce(): void
     {
         $child1 = new DatabaseRecord('bar', 1, [], [], []);

@@ -12,20 +12,19 @@ use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 use In2code\In2publishCore\Component\Core\Service\Config\ExcludedTablesService;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
 use ReflectionMethod;
 use Symfony\Component\DependencyInjection\Container;
 
 use function array_merge;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\SelectProcessor
- */
+#[CoversMethod(SelectProcessor::class, 'process')]
+#[CoversMethod(SelectProcessor::class, 'buildResolver')]
+#[CoversMethod(SelectProcessor::class, 'isSysCategoryField')]
 class SelectProcessorTest extends UnitTestCase
 {
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testSelectProcessorReturnsCompatibleResultForCompatibleColumn(): void
     {
         $resolver = $this->createMock(SelectResolver::class);
@@ -58,11 +57,8 @@ class SelectProcessorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @depends      testSelectProcessorReturnsCompatibleResultForCompatibleColumn
-     * @dataProvider forbiddenTcaDataProvider
-     * @covers ::process
-     */
+    #[DataProvider('forbiddenTcaDataProvider')]
+    #[Depends('testSelectProcessorReturnsCompatibleResultForCompatibleColumn')]
     public function testSelectProcessorFlagsColumnsWithForbiddenTcaAsIncompatible(array $tca): void
     {
         $tca = array_merge($tca, ['type' => 'select', 'foreign_table' => 'tableNameBeng']);
@@ -76,10 +72,6 @@ class SelectProcessorTest extends UnitTestCase
         $this->assertFalse($processingResult->isCompatible());
     }
 
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     */
     public function testSelectProcessorFiltersTca(): void
     {
         $tca = [
@@ -120,11 +112,7 @@ class SelectProcessorTest extends UnitTestCase
         $this->assertSame($processorTca, $processingResult->getValue()['tca']);
     }
 
-    /**
-     * @depends testSelectProcessorReturnsCompatibleResultForCompatibleColumn
-     * @covers ::process
-     * @covers ::buildResolver
-     */
+    #[Depends('testSelectProcessorReturnsCompatibleResultForCompatibleColumn')]
     public function testSelectProcessorCreatesDemandForSimpleRelation(): void
     {
         $tca = [
@@ -157,11 +145,7 @@ class SelectProcessorTest extends UnitTestCase
         $this->assertInstanceOf(SelectResolver::class, $resolver);
     }
 
-    /**
-     * @depends testSelectProcessorReturnsCompatibleResultForCompatibleColumn
-     * @covers ::process
-     * @covers ::buildResolver
-     */
+    #[Depends('testSelectProcessorReturnsCompatibleResultForCompatibleColumn')]
     public function testSelectProcessorCreatesDemandForMMRelation(): void
     {
         $tca = [
@@ -198,10 +182,7 @@ class SelectProcessorTest extends UnitTestCase
         $this->assertInstanceOf(SelectMmResolver::class, $resolver);
     }
 
-    /**
-     * @covers ::isSysCategoryField
-     * @dataProvider isSysCategoryFieldDataProvider
-     */
+    #[DataProvider('isSysCategoryFieldDataProvider')]
     public function testIsSysCategoryField($config, $expectation): void
     {
         $selectProcessor = new SelectProcessor($this->createMock(Container::class));

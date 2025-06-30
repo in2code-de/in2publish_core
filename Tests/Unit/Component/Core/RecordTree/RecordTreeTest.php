@@ -7,20 +7,16 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\RecordTree;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\RecordTree\RecordTree
- */
+#[CoversMethod(RecordTree::class, '__construct')]
+#[CoversMethod(RecordTree::class, 'addChild')]
+#[CoversMethod(RecordTree::class, 'getChildren')]
+#[CoversMethod(RecordTree::class, 'getChild')]
+#[CoversMethod(RecordTree::class, 'getClassification')]
+#[CoversMethod(RecordTree::class, 'getId')]
 class RecordTreeTest extends UnitTestCase
 {
-    /**
-     * @covers ::__construct
-     * @covers ::addChild
-     * @covers ::getChildren
-     * @covers ::getChild
-     * @covers ::getClassification
-     * @covers ::getId
-     */
     public function testRecordTree(): void
     {
         $record1 = $this->createMock(DatabaseRecord::class);

@@ -1,5 +1,26 @@
 # In2publish Core Change Log
 
+13.0.1
+
+- [META] Set the EM conf version number to 13.0.1
+- [DOCS] Update Changelog.md
+- [TASK] Disable event listener limiting the publishing of languages to selected languages
+- [BUGFIX] Fix type errors in StopwatchAlreadyStartedException
+- [BUGFIX] Fix implicit nullable parameter declarations
+- [DEV] exclude acceptance tests from gitlab workflows
+- [BUGFIX] Replace in2publish ContentLanguage with SiteLanguage in SiteLanguageService
+- [REFACTOR] Move SiteLanguageServie from EXT:in2publish to EXT:in2publish_core
+- [TASK] Provide event to decide if translations should be included in publishing
+- [FEATURE] Add event listener language augmentation limiting the publishing to the selected languages
+- [DEV] update foreign sys_file dump file
+- [DEV] fix sys_file dump file
+- [DEV] update sys_file creation_date and modification_date
+- [BUGFIX] Fix return type of translateLogLevelToSeverity
+- [GIT] update github workflow testsuite image
+- [BUGFIX] replace f:image with default img tag
+- [TEST] resolve phpunit deprecations
+- [META] Add branch alias for v13
+
 13.0.0
 
 - [META] Set the EM conf version number to 13.0.0

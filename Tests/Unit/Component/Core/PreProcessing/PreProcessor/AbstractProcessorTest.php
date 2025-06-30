@@ -8,21 +8,17 @@ use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractPro
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\Exception\MissingPreProcessorTypeException;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
 use ReflectionMethod;
 use ReflectionProperty;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor
- */
+#[CoversMethod(AbstractProcessor::class, 'process')]
+#[CoversMethod(AbstractProcessor::class, 'buildResolver')]
+#[CoversMethod(AbstractProcessor::class, 'getImportantFields')]
 class AbstractProcessorTest extends UnitTestCase
 {
-    /**
-     * @covers ::process
-     * @covers ::buildResolver
-     * @covers ::getImportantFields
-     */
     public function testProcessingResultIsImcompatibleIfThereAreForbiddenKeysInTca(): void
     {
         $abstractProcessor = $this->getMockAbstractProcessorWithJoinResolver();
@@ -48,9 +44,6 @@ class AbstractProcessorTest extends UnitTestCase
         $this->assertSame('second_reason', $reason);
     }
 
-    /**
-     * @covers ::process
-     */
     public function testProcessingResultIsIncompatibleIfRequiredFieldIsMissing(): void
     {
         $abstractProcessor = $this->getMockAbstractProcessorWithJoinResolver();
@@ -77,9 +70,6 @@ class AbstractProcessorTest extends UnitTestCase
         $this->assertSame('Key 1 is required', $reason);
     }
 
-    /**
-     * @covers ::process
-     */
     public function testExceptionIsThrownIfTypeIsMissing(): void
     {
         $abstractProcessor = $this->getMockAbstractProcessorWithJoinResolver();
@@ -92,9 +82,6 @@ class AbstractProcessorTest extends UnitTestCase
         $this->assertSame('processor_type', $abstractProcessor->getType());
     }
 
-    /**
-     * @covers ::process
-     */
     public function testProcessingResultIsIncompatibleIfNoResolverIsFound(): void
     {
         $abstractProcessor = $this->getMockAbstractProcessor();
@@ -110,9 +97,6 @@ class AbstractProcessorTest extends UnitTestCase
         );
     }
 
-    /**
-     * @covers ::getImportantFields
-     */
     public function testMethodGetImportantFields(): void
     {
         $abstractProcessor = $this->getMockAbstractProcessor();
@@ -139,7 +123,7 @@ class AbstractProcessorTest extends UnitTestCase
         $abstractProcessor = $this->getMockBuilder(AbstractProcessor::class)
                                   ->onlyMethods(['buildResolver'])
                                   ->setConstructorArgs([$container])
-                                  ->getMockForAbstractClass();
+                                  ->getMock();
 
         $abstractProcessor->method('buildResolver')
                           ->willReturn($this->createMock(StaticJoinResolver::class));
@@ -152,8 +136,9 @@ class AbstractProcessorTest extends UnitTestCase
         $container = $this->createMock(ContainerInterface::class);
 
         $abstractProcessor = $this->getMockBuilder(AbstractProcessor::class)
+                                  ->onlyMethods(['buildResolver'])
                                   ->setConstructorArgs([$container])
-                                  ->getMockForAbstractClass();
+                                  ->getMock();
 
         return $abstractProcessor;
     }

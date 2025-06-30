@@ -8,21 +8,25 @@ use Exception;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
+use PHPUnit\Framework\Attributes\CoversMethod;
 use function bin2hex;
 use function random_bytes;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord
- */
+#[CoversMethod(DatabaseRecord::class, '__construct')]
+#[CoversMethod(DatabaseRecord::class, 'getId')]
+#[CoversMethod(DatabaseRecord::class, 'getLocalProps')]
+#[CoversMethod(DatabaseRecord::class, 'getForeignProps')]
+#[CoversMethod(DatabaseRecord::class, 'addChild')]
+#[CoversMethod(DatabaseRecord::class, 'addParent')]
+#[CoversMethod(DatabaseRecord::class, 'getChildren')]
+#[CoversMethod(DatabaseRecord::class, 'getParents')]
+#[CoversMethod(DatabaseRecord::class, 'getProp')]
+#[CoversMethod(DatabaseRecord::class, 'getPageId')]
 class TcaPreProcessorRegistryTest extends UnitTestCase
 {
     /**
      * @return void
      * @throws Exception
-     * @covers ::__construct
-     * @covers ::getId
-     * @covers ::getLocalProps
-     * @covers ::getForeignProps
      */
     public function testDatabaseRecordCanBeInstantiated(): void
     {
@@ -52,10 +56,6 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
 
     /**
      * @return void
-     * @covers ::addChild
-     * @covers ::addParent
-     * @covers ::getChildren
-     * @covers ::getParents
      */
     public function testRecordCanBeAddedAsChild(): void
     {
@@ -68,9 +68,6 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
         $this->assertSame([$parent], $child->getParents());
     }
 
-    /**
-     * @covers ::getProp
-     */
     public function testGetPropReturnsValueWithFallback(): void
     {
         $record = new DatabaseRecord('foo', 1, ['bar' => 'beng'], ['boo' => 'bang'], []);
@@ -82,7 +79,6 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
 
     /**
      * @return void
-     * @covers ::getPageId
      */
     public function testGetPageIdReturnsIdOfPage(): void
     {
@@ -95,7 +91,6 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
 
     /**
      * @return void
-     * @covers ::getPageId
      */
     public function testGetPageIdReturnsUidOfDefaultLanguageIfTranslated(): void
     {
@@ -125,7 +120,6 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
 
     /**
      * @return void
-     * @covers ::getPageId
      */
     public function testGetPageIdOnOtherTableThanPagesReturnsPid(): void
     {

@@ -11,17 +11,19 @@ use In2code\In2publishCore\Component\Core\Demand\Type\FileDemand;
 use In2code\In2publishCore\Component\Core\Demand\Type\JoinDemand;
 use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Demand\DemandsCollection
- */
+#[CoversMethod(DemandsCollection::class, 'addSelect')]
+#[CoversMethod(DemandsCollection::class, 'getSelect')]
+#[CoversMethod(DemandsCollection::class, 'addJoin')]
+#[CoversMethod(DemandsCollection::class, 'getJoin')]
+#[CoversMethod(DemandsCollection::class, 'addFile')]
+#[CoversMethod(DemandsCollection::class, 'getFiles')]
+#[CoversMethod(DemandsCollection::class, 'unsetSelect')]
+#[CoversMethod(DemandsCollection::class, 'unsetJoin')]
 class DemandsCollectionTest extends TestCase
 {
-    /**
-     * @covers ::addSelect
-     * @covers ::getSelect
-     */
     public function testAddSelectAddsUniqueSelect(): void
     {
         $record1 = $this->createMock(DatabaseRecord::class);
@@ -44,10 +46,6 @@ class DemandsCollectionTest extends TestCase
         $this->assertSame($expected, $demands->getDemandsByType(SelectDemand::class));
     }
 
-    /**
-     * @covers ::addJoin
-     * @covers ::getJoin
-     */
     public function testAddSelectAddsUniqueJoin(): void
     {
         $record1 = $this->createMock(DatabaseRecord::class);
@@ -70,10 +68,6 @@ class DemandsCollectionTest extends TestCase
         $this->assertSame($expected, $demands->getDemandsByType(JoinDemand::class));
     }
 
-    /**
-     * @covers ::addFile
-     * @covers ::getFiles
-     */
     public function testAddSelectAddsUniqueFiles(): void
     {
         $record1 = $this->createMock(DatabaseRecord::class);
@@ -96,11 +90,6 @@ class DemandsCollectionTest extends TestCase
         $this->assertSame($expected, $demands->getDemandsByType(FileDemand::class));
     }
 
-    /**
-     * @covers ::addSelect
-     * @covers ::unsetSelect
-     * @covers ::getSelect
-     */
     public function testUnsetSelectRemovesEntryAndEmptyParents(): void
     {
         $record1 = $this->createMock(DatabaseRecord::class);
@@ -115,11 +104,6 @@ class DemandsCollectionTest extends TestCase
         $this->assertSame([], $demands->getDemandsByType(SelectDemand::class));
     }
 
-    /**
-     * @covers ::addJoin
-     * @covers ::unsetJoin
-     * @covers ::getJoin
-     */
     public function testUnsetJoinRemovesEntryAndEmptyParents(): void
     {
         $record1 = $this->createMock(DatabaseRecord::class);

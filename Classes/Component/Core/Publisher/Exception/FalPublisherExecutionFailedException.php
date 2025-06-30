@@ -19,7 +19,7 @@ class FalPublisherExecutionFailedException extends In2publishCoreException
     public const CODE = 1657191896;
     private RemoteCommandResponse $response;
 
-    public function __construct(RemoteCommandResponse $response, Throwable $previous = null)
+    public function __construct(RemoteCommandResponse $response, ?Throwable $previous = null)
     {
         $this->response = $response;
         parent::__construct(

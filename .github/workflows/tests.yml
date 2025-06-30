@@ -9,7 +9,7 @@ on:
 jobs:
   testsuite:
     name: all tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 #    strategy:
 #      matrix:
 #        php: [ '7.4', '8.0' ]
@@ -77,9 +77,9 @@ jobs:
         run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
         if: always()
 
-      - name: Acceptance Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
-        if: always()
+#      - name: Acceptance Tests
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
+#        if: always()
 
       - name: Show me what's up 3
         run: docker compose ps

@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Tests\Unit\Command\Foreign\Status;
 
 use In2code\In2publishCore\Command\Foreign\Status\AllCommand;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,14 +14,11 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Console\CommandRegistry;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\AllCommand
- */
+#[CoversMethod(AllCommand::class, 'execute')]
 class AllCommandTest extends UnitTestCase
 {
     /**
-     * @ticket https://projekte.in2code.de/issues/51213
-     * @covers ::execute
+     * ticket https://projekte.in2code.de/issues/51213
      */
     public function testCommandCanBeExecuted(): void
     {

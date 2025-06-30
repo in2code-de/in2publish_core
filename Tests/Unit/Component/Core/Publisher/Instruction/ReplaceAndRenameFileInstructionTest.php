@@ -7,16 +7,12 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Publisher\Instruction
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverService;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceAndRenameFileInstruction;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\Resource\Driver\LocalDriver;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceAndRenameFileInstruction
- */
+#[CoversMethod(ReplaceAndRenameFileInstruction::class, 'execute')]
 class ReplaceAndRenameFileInstructionTest extends UnitTestCase
 {
-    /**
-     * @covers ::execute
-     */
     public function testExecutionRenamesAndReplacesFile(): void
     {
         $driver = $this->createMock(LocalDriver::class);

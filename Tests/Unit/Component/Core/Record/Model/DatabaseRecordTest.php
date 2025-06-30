@@ -8,19 +8,23 @@ use Exception;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
+use PHPUnit\Framework\Attributes\CoversMethod;
 use function bin2hex;
 use function random_bytes;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord
- */
+#[CoversMethod(DatabaseRecord::class, '__construct')]
+#[CoversMethod(DatabaseRecord::class, 'getId')]
+#[CoversMethod(DatabaseRecord::class, 'addChild')]
+#[CoversMethod(DatabaseRecord::class, 'getClassification')]
+#[CoversMethod(DatabaseRecord::class, 'addParent')]
+#[CoversMethod(DatabaseRecord::class, 'getChildren')]
+#[CoversMethod(DatabaseRecord::class, 'getParents')]
+#[CoversMethod(DatabaseRecord::class, 'getProp')]
+#[CoversMethod(DatabaseRecord::class, 'getPageId')]
 class DatabaseRecordTest extends UnitTestCase
 {
     /**
-     * @return void
      * @throws Exception
-     * @covers ::__construct
-     * @covers ::getId
      */
     public function testDatabaseRecordCanBeInstantiated(): void
     {
@@ -48,15 +52,6 @@ class DatabaseRecordTest extends UnitTestCase
         $this->assertSame($foreignFields, $actualForeignFields);
     }
 
-    /**
-     * @return void
-     * @covers ::addChild
-     * @covers ::getClassification
-     * @covers ::getId
-     * @covers ::addParent
-     * @covers ::getChildren
-     * @covers ::getParents
-     */
     public function testRecordCanBeAddedAsChild(): void
     {
         $parent = new DatabaseRecord('foo', 1, [], [], []);
@@ -68,9 +63,6 @@ class DatabaseRecordTest extends UnitTestCase
         $this->assertSame([$parent], $child->getParents());
     }
 
-    /**
-     * @covers ::getProp
-     */
     public function testGetPropReturnsValueWithFallback(): void
     {
         $record = new DatabaseRecord('foo', 1, ['bar' => 'beng'], ['boo' => 'bang'], []);
@@ -80,9 +72,6 @@ class DatabaseRecordTest extends UnitTestCase
         $this->assertNull($record->getProp('foo'));
     }
 
-    /**
-     * @covers ::getPageId
-     */
     public function testGetPageIdReturnsIdOfPage(): void
     {
         $record = new DatabaseRecord('pages', 1, [], [], []);
@@ -92,9 +81,6 @@ class DatabaseRecordTest extends UnitTestCase
         $this->assertSame(1, $actual);
     }
 
-    /**
-     * @covers ::getPageId
-     */
     public function testGetPageIdReturnsUidOfDefaultLanguageIfTranslated(): void
     {
         $GLOBALS['TCA']['pages']['ctrl']['languageField'] = 'language';
@@ -121,9 +107,6 @@ class DatabaseRecordTest extends UnitTestCase
         $this->assertSame(5, $actual);
     }
 
-    /**
-     * @covers ::getPageId
-     */
     public function testGetPageIdOnOtherTableThanPagesReturnsPid(): void
     {
         $record = new DatabaseRecord('foo', 1, ['pid' => 2], ['pid' => 2], []);

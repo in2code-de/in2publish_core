@@ -15,20 +15,17 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatc
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\Tests\Unit\Component\Core\Publisher\Constraint\IsEqualIgnoringRequestToken;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function json_encode;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\FolderRecordPublisher
- */
+#[CoversMethod(FolderRecordPublisher::class, '__construct')]
+#[CoversMethod(FolderRecordPublisher::class, 'canPublish')]
+#[CoversMethod(FolderRecordPublisher::class, 'publish')]
 class FolderRecordPublisherTest extends UnitTestCase
 {
-    /**
-     * @covers ::__construct
-     * @covers ::canPublish
-     */
     public function testCanPublishReturnsTrueForFileRecordsOnly()
     {
         $folderRecordPublisher = new FolderRecordPublisher();
@@ -43,9 +40,6 @@ class FolderRecordPublisherTest extends UnitTestCase
         $this->assertFalse($folderRecordPublisher->canPublish($databaseRecord));
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishRemovesDeletedFolder()
     {
         $folderRecordPublisher = $this->createFolderRecordPublisher();
@@ -75,9 +69,6 @@ class FolderRecordPublisherTest extends UnitTestCase
         $folderRecordPublisher->finish();
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishAddsAddedFolder()
     {
         $folderRecordPublisher = $this->createFolderRecordPublisher();

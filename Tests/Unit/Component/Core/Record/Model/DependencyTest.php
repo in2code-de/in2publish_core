@@ -9,19 +9,22 @@ use In2code\In2publishCore\Component\Core\Record\Model\Dependency;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Depends;
 use ReflectionMethod;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\DataHandling\DataHandler;
 
-/**
- * @coversDefaultClass Dependency
- */
+#[CoversMethod(Dependency::class, '__construct')]
+#[CoversMethod(Dependency::class, 'addSupersedingDependency')]
+#[CoversMethod(Dependency::class, 'getPropertiesAsUidOrString')]
+#[CoversMethod(Dependency::class, 'fulfill')]
+#[CoversMethod(Dependency::class, 'recordMatchesRequirements')]
+#[CoversMethod(Dependency::class, 'areSupersededDependenciesFulfilled')]
+#[CoversMethod(Dependency::class, 'isSupersededByUnfulfilledDependency')]
+#[CoversMethod(Dependency::class, 'isReachable')]
 class DependencyTest extends UnitTestCase
 {
-    /**
-     * @covers ::__construct
-     */
     public function testDependencyCanBeInstantiated(): void
     {
         self::assertInstanceOf(
@@ -39,9 +42,6 @@ class DependencyTest extends UnitTestCase
         );
     }
 
-    /**
-     * @covers ::addSupersedingDependency
-     */
     public function testSupersedingDependencyCanBeAdded(): void
     {
         $dependency = new Dependency(
@@ -73,9 +73,6 @@ class DependencyTest extends UnitTestCase
         );
     }
 
-    /**
-     * @covers ::getPropertiesAsUidOrString
-     */
     public function testGetPropertiesAsUidOrString(): void
     {
         $dependency = new Dependency(
@@ -110,10 +107,6 @@ class DependencyTest extends UnitTestCase
         );
     }
 
-    /**
-     * @covers ::fulfill
-     * @covers ::recordMatchesRequirements
-     */
     public function testFulfillReturnsFalseIfRecordDoesNotExist(): void
     {
         // arrange
@@ -148,10 +141,6 @@ class DependencyTest extends UnitTestCase
         self::assertSame($expectedReasonLabel, $actualLabel);
     }
 
-    /**
-     * @covers ::fulfill
-     * @covers ::recordMatchesRequirements
-     */
     public function testFulfillReturnsTrueIfRecordIsUnchangedAndRequirementIsFullyPublished(): void
     {
         // arrange
@@ -184,10 +173,6 @@ class DependencyTest extends UnitTestCase
         self::assertTrue($reasons->isEmpty());
     }
 
-    /**
-     * @covers ::fulfill
-     * @covers ::recordMatchesRequirements
-     */
     public function testFulfillReturnsFalse(): void
     {
         // arrange
@@ -226,10 +211,6 @@ class DependencyTest extends UnitTestCase
         self::assertSame($expectedReasonLabel, $actualLabel);
     }
 
-    /**
-     * @covers ::areSupersededDependenciesFulfilled
-     * @covers ::isSupersededByUnfulfilledDependency
-     */
     public function testAreSupersededDependenciesFulfilled(): void
     {
         // arrange
@@ -301,9 +282,6 @@ class DependencyTest extends UnitTestCase
         self::assertTrue($dependencyWithUnfulfilledDependencies->isSupersededByUnfulfilledDependency());
     }
 
-    /**
-     * @covers ::isReachable
-     */
     public function testIsReachableReturnsTrueForAdmins(): void
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
@@ -329,8 +307,6 @@ class DependencyTest extends UnitTestCase
     /**
      * Dependencies to non-existent records will be dropped.
      * @see Dependency::isReachable
-     *
-     * @covers ::isReachable
      */
     public function testIsReachableReturnsTrueIfRecordDoesNotExist(): void
     {
@@ -353,9 +329,6 @@ class DependencyTest extends UnitTestCase
         self::assertTrue($dependency->isReachable());
     }
 
-    /**
-     * @covers ::isReachable
-     */
     public function testIsReachableReturnsFalseIfEditorHasNoLanguageAccess(): void
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
@@ -386,9 +359,6 @@ class DependencyTest extends UnitTestCase
         self::assertFalse($dependency->isReachable());
     }
 
-    /**
-     * @covers ::isReachable
-     */
     public function testIsReachableReturnsFalseIfTableIsReadonly(): void
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
@@ -422,9 +392,6 @@ class DependencyTest extends UnitTestCase
         self::assertFalse($dependency->isReachable());
     }
 
-    /**
-     * @covers ::isReachable
-     */
     public function testIsReachableReturnsFalseIfEditorIsNotAllowedToAccessTheTargetTable(): void
     {
         $GLOBALS['TCA']['bar']['ctrl']['readOnly'] = false;
@@ -458,9 +425,6 @@ class DependencyTest extends UnitTestCase
         self::assertFalse($dependency->isReachable());
     }
 
-    /**
-     * @covers ::isReachable
-     */
     public function testIsReachableReturnsTrueIfRequiredRecordIsOkay(): void
     {
         // Create the backend user mock that allows access
@@ -497,10 +461,8 @@ class DependencyTest extends UnitTestCase
 
         self::assertTrue($dependency->isReachable());
     }
-    /**
-     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
-     * @covers ::isReachable
-     */
+
+    #[Depends('testIsReachableReturnsTrueIfRequiredRecordIsOkay')]
     public function testIsReachableReturnsFalseIfRecordIsOnRootLevel(): void
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
@@ -535,10 +497,7 @@ class DependencyTest extends UnitTestCase
         self::assertFalse($dependency->isReachable());
     }
 
-    /**
-     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
-     * @covers ::isReachable
-     */
+    #[Depends('testIsReachableReturnsTrueIfRequiredRecordIsOkay')]
     public function testIsReachableReturnsTrueIfRecordIsOnRootLevelButRestrictionIsIgnored(): void
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
@@ -603,10 +562,7 @@ class DependencyTest extends UnitTestCase
         self::assertTrue($dependency->isReachable());
     }
 
-    /**
-     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
-     * @covers ::isReachable
-     */
+    #[Depends('testIsReachableReturnsTrueIfRequiredRecordIsOkay')]
     public function testIsReachableReturnsFalseIfRecordTableIsEditLocked(): void
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
@@ -640,10 +596,7 @@ class DependencyTest extends UnitTestCase
         self::assertFalse($dependency->isReachable());
     }
 
-    /**
-     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
-     * @covers ::isReachable
-     */
+    #[Depends('testIsReachableReturnsTrueIfRequiredRecordIsOkay')]
     public function testIsReachableReturnsFalseIfRecordIsNotInWebMount(): void
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
@@ -680,14 +633,7 @@ class DependencyTest extends UnitTestCase
         self::assertFalse($dependency->isReachable());
     }
 
-    /**
-     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
-     * @covers ::isReachable
-     */
-    /**
-     * @depends testIsReachableReturnsTrueIfRequiredRecordIsOkay
-     * @covers ::isReachable
-     */
+    #[Depends('testIsReachableReturnsTrueIfRequiredRecordIsOkay')]
     public function testIsReachableReturnsTrueIfRecordIsNotInWebMountButRestrictionIsIgnored(): void
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);

@@ -16,19 +16,15 @@ use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
+use PHPUnit\Framework\Attributes\CoversMethod;
 use function bin2hex;
 use function hash;
 use function random_bytes;
 use function sha1;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\FileDemandResolver
- */
+#[CoversMethod(FileDemandResolver::class, 'resolveDemand')]
 class FileDemandResolverTest extends UnitTestCase
 {
-    /**
-     * @covers ::resolveDemand
-     */
     public function testResolveDemand(): void
     {
         $fileDemandResolver = new FileDemandResolver();

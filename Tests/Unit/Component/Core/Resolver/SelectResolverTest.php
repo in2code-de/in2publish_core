@@ -10,16 +10,14 @@ use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 use In2code\In2publishCore\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Resolver\SelectResolver
- */
+#[CoversMethod(SelectResolver::class, 'getTargetTables')]
+#[CoversMethod(SelectResolver::class, 'configure')]
+#[CoversMethod(SelectResolver::class, 'resolve')]
 class SelectResolverTest extends UnitTestCase
 {
-    /**
-     * @covers ::getTargetTables
-     */
     public function testGetTargetTables(): void
     {
         $selectResolver = new SelectResolver();
@@ -35,9 +33,6 @@ class SelectResolverTest extends UnitTestCase
         $this->assertEquals(['foreignTable_foo'], $selectResolver->getTargetTables());
     }
 
-    /**
-     * @covers ::configure
-     */
     public function testConfigure(): void
     {
         $selectResolver = new SelectResolver();
@@ -59,9 +54,6 @@ class SelectResolverTest extends UnitTestCase
         $this->assertEquals('foreignTableWhere_foo', $foreignTableWhere->getValue($selectResolver));
     }
 
-    /**
-     * @covers ::resolve
-     */
     public function testResolve(): void
     {
         $selectResolver = new SelectResolver();

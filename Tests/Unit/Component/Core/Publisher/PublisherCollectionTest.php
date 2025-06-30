@@ -15,16 +15,16 @@ use In2code\In2publishCore\Component\Core\Publisher\TransactionalPublisher;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\PublisherCollection
- */
+#[CoversMethod(PublisherCollection::class, 'addPublisher')]
+#[CoversMethod(PublisherCollection::class, 'publish')]
+#[CoversMethod(PublisherCollection::class, 'cancel')]
+#[CoversMethod(PublisherCollection::class, 'reverse')]
+#[CoversMethod(PublisherCollection::class, 'finish')]
 class PublisherCollectionTest extends UnitTestCase
 {
-    /**
-     * @covers ::addPublisher
-     */
     public function testAddPublisherAddsPublisher()
     {
         $publisherCollection = new PublisherCollection();
@@ -45,9 +45,6 @@ class PublisherCollectionTest extends UnitTestCase
         }
     }
 
-    /**
-     * @covers ::addPublisher
-     */
     public function testAddPublisherSortsPublishersCorrectly(): void
     {
         $publisherCollection = new PublisherCollection();
@@ -78,9 +75,6 @@ class PublisherCollectionTest extends UnitTestCase
         $this->assertGreaterThan($arrayKeyFinishablePublisher, $arrayKeyTransactionalPublisher);
     }
 
-    /**
-     * @covers ::publish
-     */
     public function testPublishIsCalledByTheFirstPublisherThatCanPublishARecord()
     {
         $publisherCollection = new PublisherCollection();
@@ -110,9 +104,6 @@ class PublisherCollectionTest extends UnitTestCase
         $publisherCollection->publish($dbRecord);
     }
 
-    /**
-     * @covers ::cancel
-     */
     public function testCancelIsCalledByTransactionalPublishers()
     {
         $publisherCollection = new PublisherCollection();
@@ -137,9 +128,6 @@ class PublisherCollectionTest extends UnitTestCase
         }
     }
 
-    /**
-     * @covers ::reverse
-     */
     public function testReverseIsCalledByReversiblePublishers()
     {
         $publisherCollection = new PublisherCollection();
@@ -164,9 +152,6 @@ class PublisherCollectionTest extends UnitTestCase
         }
     }
 
-    /**
-     * @covers ::finish
-     */
     public function testFinishIsCalledByFinishablePublishers()
     {
         $publisherCollection = new PublisherCollection();

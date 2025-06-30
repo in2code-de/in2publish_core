@@ -7,17 +7,14 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Factory;
 use In2code\In2publishCore\Component\Core\Record\Factory\TtContentDatabaseRecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Model\TtContentDatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Factory\TtContentDatabaseRecordFactory
- */
+#[CoversMethod(TtContentDatabaseRecordFactory::class, 'getPriority')]
+#[CoversMethod(TtContentDatabaseRecordFactory::class, 'isResponsible')]
+#[CoversMethod(TtContentDatabaseRecordFactory::class, 'createDatabaseRecord')]
 class TfContentDatabaseRecordFactoryTest extends UnitTestCase
 {
-    /**
-     * @covers ::getPriority
-     * @covers ::isResponsible
-     */
     public function testConstructor(): void
     {
         $databaseRecordFactoryFactory = new TtContentDatabaseRecordFactory();
@@ -27,9 +24,6 @@ class TfContentDatabaseRecordFactoryTest extends UnitTestCase
         $this->assertFalse($databaseRecordFactoryFactory->isResponsible('table_foo'));
     }
 
-    /**
-     * @covers ::createDatabaseRecord
-     */
     public function testCreateDatabaseRecordCreatesValidTtContentDatabaseRecord(): void
     {
         $databaseRecordFactoryFactory = new TtContentDatabaseRecordFactory();

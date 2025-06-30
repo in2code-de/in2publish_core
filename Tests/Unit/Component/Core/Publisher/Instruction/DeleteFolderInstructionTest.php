@@ -7,16 +7,12 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Publisher\Instruction
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverService;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFolderInstruction;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\Resource\Driver\LocalDriver;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\Instruction\DeleteFolderInstruction
- */
+#[CoversMethod(DeleteFolderInstruction::class, 'execute')]
 class DeleteFolderInstructionTest extends UnitTestCase
 {
-    /**
-     * @covers ::execute
-     */
     public function testExecutionCreatesFolder(): void
     {
         $driver = $this->createMock(LocalDriver::class);

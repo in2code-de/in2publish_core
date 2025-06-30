@@ -5,15 +5,11 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Model;
 use In2code\In2publishCore\Component\Core\Record\Model\PageTreeRootRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\PageTreeRootRecord
- */
+#[CoversMethod(PageTreeRootRecord::class, '__construct')]
 class PageTreeRootRecordTest extends UnitTestCase
 {
-    /**
-     * @covers ::__construct
-     */
     public function testAssumptionsAboutPageTreeRootRecord(): void
     {
         $record = new PageTreeRootRecord();

@@ -56,7 +56,7 @@ class MissingRequiredAttributesException extends In2publishCoreException
         string $tagName,
         array $requiredAttributes,
         array $missingRequiredKeys,
-        Throwable $previous = null
+        ?Throwable $previous = null
     ) {
         $this->serviceName = $serviceName;
         $this->tagName = $tagName;

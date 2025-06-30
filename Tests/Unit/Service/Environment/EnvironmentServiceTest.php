@@ -32,6 +32,8 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Environment;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Registry;
@@ -43,12 +45,11 @@ use function sha1;
 /**
  * @coversDefaultClass \In2code\In2publishCore\Service\Environment\EnvironmentService
  */
+#[CoversMethod(EnvironmentService::class, 'setTestResult')]
+#[CoversMethod(EnvironmentService::class, 'getPackagesHash')]
+#[CoversMethod(EnvironmentService::class, 'getTestStatus')]
 class EnvironmentServiceTest extends UnitTestCase
 {
-    /**
-     * @covers ::getPackagesHash
-     * @covers ::setTestResult
-     */
     public function testSetTestResultStoresTestResultCurrentConfigAndPackagesHashIntoRegistry(): void
     {
         $packagesArray = ['foo' => ['bar' => ['baz' => 'buz']]];
@@ -170,12 +171,10 @@ class EnvironmentServiceTest extends UnitTestCase
     }
 
     /**
-     * @covers ::getTestStatus
-     * @dataProvider getResultRegistryReturnAndExpectedValueDataProvider
-     *
      * @param $expected
      * @param $registryReturn
      */
+    #[DataProvider('getResultRegistryReturnAndExpectedValueDataProvider')]
     public function testGetTestResultReturnsExpectedValue($expected, $registryReturn): void
     {
         /** @var Registry|MockObject $registry */

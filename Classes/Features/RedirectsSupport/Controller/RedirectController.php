@@ -122,10 +122,9 @@ class RedirectController extends ActionController
     }
 
     /**
-     * @param Filter|null $filter
      * @throws Throwable
      */
-    public function listAction(Filter $filter = null, int $page = 1): ResponseInterface
+    public function listAction(?Filter $filter = null, int $page = 1): ResponseInterface
     {
         $query = $this->foreignDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
@@ -208,10 +207,9 @@ class RedirectController extends ActionController
     }
 
     /**
-     * @param array|null $properties
      * @throws Throwable
      */
-    public function selectSiteAction(int $redirect, array $properties = null): ResponseInterface
+    public function selectSiteAction(int $redirect, array|null $properties = null): ResponseInterface
     {
         $redirectDto = $this->sysRedirectRepo->findLocalRawByUid($redirect);
         if (null === $redirectDto) {
@@ -256,7 +254,7 @@ class RedirectController extends ActionController
         return $this->htmlResponse();
     }
 
-    protected function getRedirectsByStateFromFilter(RecordTree $recordTree, Filter $filter = null): array
+    protected function getRedirectsByStateFromFilter(RecordTree $recordTree, ?Filter $filter = null): array
     {
         $redirects = $recordTree->getChildren()['sys_redirect'] ?? [];
 
