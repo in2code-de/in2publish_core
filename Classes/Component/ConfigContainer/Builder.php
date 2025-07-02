@@ -75,7 +75,7 @@ class Builder
     public function addOptionalArray(
         string $name,
         Builder $nodes,
-        array $default = null,
+        ?array $default = null,
         array $validators = []
     ): Builder {
         $this->addNode(Node::T_OPTIONAL_ARRAY, $name, $default, $validators, $nodes);
