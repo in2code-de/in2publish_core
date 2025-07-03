@@ -3,13 +3,15 @@
 	<f:variable name="easy-modal-content" value="{f:translate(key: 'tx_in2publishcore.modal.publish.page_with_dependencies.text')}" />
 	<f:variable name="easy-modal-severity" value="1" />
 	<f:link.action
-		action="publishRecord"
-		class="btn btn-default btn-sm js-in2publish-confirmation-modal"
-		arguments="{recordId: record.id}"
-		title="{f:translate(key:'publish_pages', default:'Publish this page')}"
-		data="{easy-modal-title: easy-modal-title, easy-modal-content: easy-modal-content, easy-modal-severity: easy-modal-severity}"
-	>
-		{f:translate(key:'tx_in2publishcore.actions.publish', default:'Publish')}
-		<core:icon identifier="actions-arrow-right"></core:icon>
+			action="publishRecord"
+			class="btn btn-default btn-sm js-in2publish-confirmation-modal"
+			arguments="{recordId: record.id}"
+			title="{f:translate(key:'publish_pages', default:'Publish this page')}"
+			data-easy-modal-title="{easy-modal-title}"
+			data-easy-modal-content="{easy-modal-content}"
+			data-easy-modal-severity="{easy-modal-severity}"
+			href="javascript:void(0);">
+		<core:icon identifier="actions-move-right" overlay="overlay-warning"></core:icon>
 	</f:link.action>
 </html>
+
