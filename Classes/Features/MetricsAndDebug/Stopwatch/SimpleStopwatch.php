@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch;
 
-use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\StopwatchAlreadyStartedException;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\StopwatchWasNotStartedException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -24,9 +23,8 @@ class SimpleStopwatch implements SingletonInterface, LoggerAwareInterface
     public function start(): void
     {
         if (null !== $this->startTime) {
-            throw new StopwatchAlreadyStartedException($this->startTime);
+            $this->startTime = microtime(true);
         }
-        $this->startTime = microtime(true);
     }
 
     public function getTime(): string
