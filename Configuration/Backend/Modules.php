@@ -42,6 +42,7 @@ $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
 if ($configContainer->get('module.m1')) {
     $backendModulesToRegister['in2publish_core_m1'] = [
         'parent' => 'web',
+        'aliases' => ['web_In2publishCoreM1'],
         'position' => [],
         'access' => 'user',
         'workspaces' => 'live',
@@ -58,6 +59,7 @@ if ($configContainer->get('module.m1')) {
 if ($configContainer->get('module.m3')) {
     $backendModulesToRegister['in2publish_core_m3'] = [
         'parent' => 'file',
+        'aliases' => ['file_In2publishCoreM3'],
         'position' => [],
         'access' => 'user',
         'workspaces' => 'live',
@@ -77,6 +79,7 @@ if ($configContainer->get('module.m4')) {
     if (!empty($controllerActions)) {
         $backendModulesToRegister['in2publish_core_m4'] = [
             'parent' => 'tools',
+            'aliases' => ['tools_In2publishCoreM4'],
             'position' => [],
             'access' => 'admin',
             'workspaces' => 'live',
@@ -92,6 +95,7 @@ if ($configContainer->get('module.m4')) {
 if ($configContainer->get('features.redirectsSupport.enable')) {
     $backendModulesToRegister['in2publish_core_m5'] = [
         'parent' => 'site',
+        'aliases' => ['site_In2publishCoreM5'],
         'position' => ['after' => 'site_redirects'],
         'access' => 'user',
         'workspaces' => 'live',
