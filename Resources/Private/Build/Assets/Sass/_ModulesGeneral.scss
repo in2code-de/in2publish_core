@@ -698,6 +698,11 @@ div#typo3-docbody.stopScrolling {
     color: white;
   }
 
+  &--soft_deleted {
+    background-color: $appleblossom;
+    color: white;
+  }
+
   &--moved {
     background-color: $pictonblue;
   }

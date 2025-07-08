@@ -14,7 +14,7 @@
 			<f:comment>Left</f:comment>
 
 			<div class="in2publish-page__col in2publish-page__col--stage-page">
-				<f:if condition="{record.state} != 'deleted' && {record.id} > 0">
+				<f:if condition="{record.state} != 'deleted' && {record.state} != 'soft_deleted' && {record.id} > 0">
 					<f:then>
 						<f:if condition="{record.localProps.doktype} < 199">
 							<f:then>
@@ -51,7 +51,7 @@
 					<button class="btn btn-default btn-sm" data-action="opendirtypropertieslistcontainer">
 						<core:icon identifier="actions-info"></core:icon>
 					</button>
-					<f:if condition="{record.state} != 'deleted' && {record.id} > 0">
+					<f:if condition="{record.state} != 'deleted' && {record.state} != 'soft_deleted' %% {record.id} > 0">
 						<f:then>
 							<be:link.editRecord class="btn btn-default btn-sm" uid="{record.id}" table="{record.classification}">
 								<core:icon identifier="actions-open"></core:icon>
@@ -70,7 +70,7 @@
 					<f:then>
 						<f:if condition="{record.foreignProps.doktype} < 199">
 							<f:then>
-								<f:if condition="{record.state} != 'deleted' && {record.localProps.doktype} < 199">
+								<f:if condition="{record.state} != 'deleted' && {record.state} != 'soft_deleted' && {record.localProps.doktype} < 199">
 									<f:then>
 										<publish:uri.compareUri identifier="{record.id}" class="btn btn-default btn-sm">
 											<f:translate key="dirty_properties_preview_compare">Compare</f:translate>
@@ -105,7 +105,7 @@
 					<f:then>
 						<f:if condition="{record.foreignProps.doktype} < 199">
 							<f:then>
-								<f:if condition="{record.state} != 'deleted' && {record.localProps.doktype} < 199">
+								<f:if condition="{record.state} != 'deleted' && {record.state} != 'soft_deleted' && {record.localProps.doktype} < 199">
 									<f:then>
 										<publish:Link.PreviewRecord class="btn btn-default btn-sm" identifier="{record.id}" table="{record.classification}" stagingLevel="foreign" target="_blank">
 											<core:icon identifier="actions-eye"></core:icon>

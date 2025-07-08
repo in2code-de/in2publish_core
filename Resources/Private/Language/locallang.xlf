@@ -159,6 +159,9 @@
 			<trans-unit id="record.state.deleted.short" resname="record.state.deleted.short">
 				<source>Deleted</source>
 			</trans-unit>
+			<trans-unit id="record.state.soft_deleted.short" resname="record.state.soft_deleted.short">
+				<source>Deleted</source>
+			</trans-unit>
 			<trans-unit id="record.state.moved.short" resname="record.state.moved.short">
 				<source>Moved</source>
 			</trans-unit>
