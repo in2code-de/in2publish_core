@@ -51,7 +51,7 @@
 					<button class="btn btn-default btn-sm" data-action="opendirtypropertieslistcontainer">
 						<core:icon identifier="actions-info"></core:icon>
 					</button>
-					<f:if condition="{record.state} != 'deleted' && {record.state} != 'soft_deleted' %% {record.id} > 0">
+					<f:if condition="{record.state} != 'deleted' && {record.state} != 'soft_deleted' && {record.id} > 0">
 						<f:then>
 							<be:link.editRecord class="btn btn-default btn-sm" uid="{record.id}" table="{record.classification}">
 								<core:icon identifier="actions-open"></core:icon>
