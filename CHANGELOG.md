@@ -1,5 +1,52 @@
 # In2publish Core Change Log
 
+12.6.0:
+- [DOCS] Update Changelog.md
+- [META] Set the EM conf version number to 12.6.0
+- [DOC] Add upgrade documentation
+- [BUGFIX] Fix wrong characters in PageRow.html condition
+- [BUGFIX] Remove usage of ConditionViewHelper from EXT:in2publish
+- [BUGFIX] Show status for deleted pages in OverviewModule
+- [BUGFIX] Fix PublishButtonWithWarning displayed when record is publishable ignoring dependencies
+- [BUGFIX] Eliminate not publishable warning for unchanged elements
+- [BUGFIX] Show publishing action only if user is allowed to publish
+- [DOC] Adjust documentation and change screenshots
+- [BUGFIX] Show language flag also for default language
+- [BUGFIX] Fix layout of topmost "table" page header
+- [TASK] Add header to OverviewModule
+- [TEST] Fix PublishChangedNewsTest
+- [TEST] Fix UidClashTest
+- [TEST] Fix RecordTreeDisplayTest
+- [TEST] Fix PublishTranslationTest
+- [TEST] Fix PublishChangedPagePropertiesTest
+- [TEST] Fix PublishChangedContentTest
+- [TEST] Fix PublishingRecordWithDependencyTest
+- [TEST] Add make task for execution of single tests
+- [BUGFIX] Fix getChildPagesWithoutTranslations in AbstractRecord
+- [TASK] Improve layout for translated page records in Publish Overview
+- [TASK] Provide method getChildPagesWithoutTranslations in RecordTree, Node and AbstractRecord in order to fix display of records in OverviewModule
+- [GIT] update github workflow testsuite image
+- [BUGFIX] fix request access check
+- [TASK] Fix spacing of elements in publish overview page rows
+- [TASK] Add language filtering to publish overview
+- [COMMENT] Add comment to LanguageAugmentation
+- [TASK] Display reasons why record is not publishable in OverviewModule using a new InformationModal without publish buttons
+- [BUGFIX] Display ReasonsWhyRecordIsNotPublishable in WorkflowModule
+- [BUGFIX] Replace in2publish ContentLanguage with SiteLanguage in SiteLanguageService
+- [WIP] Add language filter to OverviewModule
+- [TASK] Assign available languages to PublishOverviewModule
+- [REFACTOR] Move SiteLanguageServie from EXT:in2publish to EXT:in2publish_core
+- [TASK] Provide event to decide if translations should be included in publishing
+- [FEATURE] Add event listener language augmentation limiting the publishing to the selected languages
+- [BUGFIX] Make searches case-insensitive
+- [BUGFIX] Fix spacing of in2publish-page entries to prevent whitespace in searches
+- [TASK] Don't render function bar in publish overview
+- [TASK] Rebuild frontend assets
+- [TASK] Move SCSS files into new build location
+- [TASK] Add updated tooling to build SCSS
+- [FEATURE] Implement new publish overview
+- [DEV] Add some make tasks for local development
+
 12.5.9:
 - [META] Set the EM conf version number to 12.5.9
 - [BUGFIX] Avoid trailing AND when additionalWhere is empty
@@ -929,7 +976,7 @@
 - [GIT] Ignore build and qa files when creating a production dist
 - [GIT] Ignore the .github folder when creating a production dist
 
-1.0.9:
+11.0.9:
 - [META] Set the EM conf version number to 11.0.9
 - [BUGFIX] Search for file links only in href attributes
 - [BUGFIX] Do not enhance records with sys_redirects if they are excluded from publishing
