@@ -13,7 +13,7 @@ class PublishingContext
 
     public function __construct(
         RecordTree $recordTree,
-        bool $publishChildPages = null
+        ?bool $publishChildPages = null
     ) {
         $this->recordTree = $recordTree;
         if (null !== $publishChildPages) {

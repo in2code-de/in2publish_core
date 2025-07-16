@@ -62,7 +62,7 @@ class TestResult
         string $label,
         string $severity = self::OK,
         array $messages = [],
-        array $labelArguments = null
+        ?array $labelArguments = null
     ) {
         $this->severity = $severity;
         $this->label = $label;
