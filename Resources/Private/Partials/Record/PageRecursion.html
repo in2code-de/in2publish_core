@@ -2,14 +2,26 @@
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<f:if condition="{record.children.pages}">
-		<publish:record.pageChildrenRecursion each="{record.children.pages}" as="page">
+	<f:if condition="{record.translations}">
+		<div class="in2publish-page-group__children--translations">
+			<f:for each="{record.translations}" as="translationsByLanguage">
+				<f:for each="{translationsByLanguage}" as="translation">
+					<f:variable name="depth" value="{publish:math.add(value: depth, increment: 1)}" />
+					<f:render partial="Record/PageRow" arguments="{config: config, record: translation, depth: depth}" />
+					<f:variable name="depth" value="{publish:math.subtract(value: depth, increment: 1)}" />
+				</f:for>
+			</f:for>
+		</div>
+	</f:if>
+
+	<publish:record.pageChildrenRecursion each="{record.childPagesWithoutTranslations}" as="page">
+		<div class="in2publish-page-group">
 			<f:render partial="Record/PageRow" arguments="{config: config, record: page, depth: depth}" />
 			<f:variable name="depth" value="{publish:math.add(value: depth, increment: 1)}" />
-			<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{depth}">
+			<div class="in2publish-page-group__children">
 				<f:render partial="Record/PageRecursion" arguments="{config:config, record: page, depth:depth}" />
-			</ul>
+			</div>
 			<f:variable name="depth" value="{publish:math.subtract(value: depth, increment: 1)}" />
-		</publish:record.pageChildrenRecursion>
-	</f:if>
+		</div>
+	</publish:record.pageChildrenRecursion>
 </html>

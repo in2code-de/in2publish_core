@@ -47,7 +47,7 @@ abstract class AbstractRecord implements Record
      */
     protected array $parents = [];
     /**
-     * @var array<Record>
+     * @var array<int, array<int, Record>>
      */
     protected array $translations = [];
     protected ?Record $translationParent = null;
@@ -119,6 +119,17 @@ abstract class AbstractRecord implements Record
     public function getChildren(): array
     {
         return $this->children;
+    }
+
+    public function getChildPagesWithoutTranslations(): array
+    {
+        $childPages = $this->children['pages'] ?? [];
+        foreach ($childPages as $id => $record) {
+            if ($record->getTranslationParent() !== null) {
+                unset($childPages[$id]);
+            }
+        }
+        return $childPages;
     }
 
     public function addParent(Record $parentRecord): void

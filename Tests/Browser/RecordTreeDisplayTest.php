@@ -20,8 +20,8 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
 
         TYPO3Helper::selectInPageTree($localDriver, []);
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $select = new Select($driver->findElement(WebDriverBy::name('depth')));
-            $select->setValueByText('0 level');
+            $select = new Select($driver->findElement(WebDriverBy::id('in2publish__publishfilter_level')));
+            $select->setValueByText('0 levels');
 
             self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
             self::assertPageNotContains($driver, 'Home');
@@ -34,7 +34,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $select = new Select($driver->findElement(WebDriverBy::name('depth')));
+            $select = new Select($driver->findElement(WebDriverBy::id('in2publish__publishfilter_level')));
             $select->setValueByText('1 level');
 
             self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
@@ -48,7 +48,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $select = new Select($driver->findElement(WebDriverBy::name('depth')));
+            $select = new Select($driver->findElement(WebDriverBy::id('in2publish__publishfilter_level')));
             $select->setValueByText('2 levels');
 
             self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
@@ -62,7 +62,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $select = new Select($driver->findElement(WebDriverBy::name('depth')));
+            $select = new Select($driver->findElement(WebDriverBy::id('in2publish__publishfilter_level')));
             $select->setValueByText('3 levels');
 
             self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
@@ -76,7 +76,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $select = new Select($driver->findElement(WebDriverBy::name('depth')));
+            $select = new Select($driver->findElement(WebDriverBy::id('in2publish__publishfilter_level')));
             $select->setValueByText('4 levels');
 
             self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
@@ -90,7 +90,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $select = new Select($driver->findElement(WebDriverBy::name('depth')));
+            $select = new Select($driver->findElement(WebDriverBy::id('in2publish__publishfilter_level')));
             $select->setValueByText('5 levels');
 
             self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
@@ -104,7 +104,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $select = new Select($driver->findElement(WebDriverBy::name('depth')));
+            $select = new Select($driver->findElement(WebDriverBy::id('in2publish__publishfilter_level')));
             $select->setValueByText('6 levels');
 
             self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
@@ -118,7 +118,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $select = new Select($driver->findElement(WebDriverBy::name('depth')));
+            $select = new Select($driver->findElement(WebDriverBy::id('in2publish__publishfilter_level')));
             $select->setValueByText('7 levels');
 
             self::assertPageContains($driver, '[LOCAL] CP TYPO3 v12');
@@ -142,7 +142,7 @@ class RecordTreeDisplayTest extends AbstractBrowserTestCase
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $select = new Select($driver->findElement(WebDriverBy::name('depth')));
+            $select = new Select($driver->findElement(WebDriverBy::id('in2publish__publishfilter_level')));
             $select->setValueByText('1 level');
         });
 

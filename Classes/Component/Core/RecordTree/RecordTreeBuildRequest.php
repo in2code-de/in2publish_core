@@ -11,19 +11,23 @@ class RecordTreeBuildRequest
     private int $pageRecursionLimit;
     private int $dependencyRecursionLimit;
     private int $contentRecursionLimit;
+    /** @var null|array<int> */
+    private ?array $languages;
 
     public function __construct(
         string $table,
         int $id,
         int $pageRecursionLimit,
         int $dependencyRecursionLimit = 3,
-        int $contentRecursionLimit = 8
+        int $contentRecursionLimit = 8,
+        ?array $languages = null
     ) {
         $this->table = $table;
         $this->id = $id;
         $this->pageRecursionLimit = $pageRecursionLimit;
         $this->dependencyRecursionLimit = $dependencyRecursionLimit;
         $this->contentRecursionLimit = $contentRecursionLimit;
+        $this->languages = $languages;
     }
 
     public function getTable(): string
@@ -49,6 +53,11 @@ class RecordTreeBuildRequest
     public function getContentRecursionLimit(): int
     {
         return $this->contentRecursionLimit;
+    }
+
+    public function getLanguages(): ?array
+    {
+        return $this->languages;
     }
 
     public function withId(int $id): RecordTreeBuildRequest

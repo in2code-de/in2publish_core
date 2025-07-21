@@ -75,6 +75,11 @@ class PublishPageAjaxController
         } else {
             try {
                 // TODO: reimplement isPublishable method in Record
+                $rawRecordService = GeneralUtility::makeInstance(
+                    RawRecordService::class,
+                );
+                $record = $rawRecordService->getRawRecord('pages', (int)$page, 'local');
+                $languageUid = (int)($record['sys_language_uid'] ?? null);
                 $recordTreeBuildRequest = new RecordTreeBuildRequest('pages', (int)$page, 0);
                 $recordTree = $this->recordTreeBuilder->buildRecordTree($recordTreeBuildRequest);
                 $record = $recordTree->getChild('pages', (int)$page, 0);

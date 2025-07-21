@@ -182,6 +182,37 @@ composer-install:
 	docker compose exec -u app local-php composer install
 	docker compose exec -u app foreign-php composer install
 
+## Run single acceptance test
+acceptance-test:
+	@if [ -z "$(name)" ]; then \
+		echo "Usage: make acceptance-test name=TestClassName [method=testMethodName]"; \
+		echo "Example: make acceptance-test name=PublishFilesModuleTest"; \
+		echo "Example: make acceptance-test name=PublishFilesModuleTest method=testNewlyUploadedFileCanBePublished"; \
+		exit 1; \
+	fi
+	@if [ -n "$(method)" ]; then \
+		echo "Running test method $(method) in $(name)"; \
+		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)::$(method)"; \
+	else \
+		echo "Running all test methods in $(name)"; \
+		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)"; \
+	fi
+
+urls:
+	echo "$(EMOJI_telescope) Project URLs:"; \
+	echo ''; \
+	printf "  %-17s %s\n" "Local Frontend:" "https://$(HOST_LOCAL)/"; \
+	printf "  %-17s %s\n" "Local Backend:" "https://$(HOST_LOCAL)/typo3/"; \
+	printf "  %-17s %s\n" "Foreign Frontend:" "https://$(HOST_FOREIGN)/"; \
+	printf "  %-17s %s\n" "Foreign Backend:" "https://$(HOST_FOREIGN)/typo3/"; \
+
+
+login-local-php:
+	docker compose exec local-php bash
+
+login-foreign-php:
+	docker compose exec foreign-php bash
+
 ## Install all phars required with phive
 .phive-install:
 	mkdir -p ~/.phive/

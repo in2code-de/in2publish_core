@@ -211,6 +211,10 @@
 				<source>Deleted</source>
 				<target>Gelöscht</target>
 			</trans-unit>
+			<trans-unit id="record.state.soft_deleted.short" resname="record.state.soft_deleted.short">
+				<source>Deleted</source>
+				<target>Gelöscht</target>
+			</trans-unit>
 			<trans-unit id="record.state.moved.short" resname="record.state.moved.short">
 				<source>Moved</source>
 				<target>Verschoben</target>
@@ -440,15 +444,15 @@
 				<source>Association missing</source>
 				<target>Verknüpfung fehlend</target>
 			</trans-unit>
-			<trans-unit id="filter.field.is_publishable">
+			<trans-unit id="filter.field.is_publishable" resname="filter.field.is_publishable">
 				<source>Publishing State</source>
 				<target>Veröffentlichungsstatus</target>
 			</trans-unit>
-			<trans-unit id="filter.field.is_publishable.true">
+			<trans-unit id="filter.field.is_publishable.true" resname="filter.field.is_publishable.true">
 				<source>is publishable</source>
 				<target>ist veröffentlichbar</target>
 			</trans-unit>
-			<trans-unit id="filter.field.is_publishable.false">
+			<trans-unit id="filter.field.is_publishable.false" resname="filter.field.is_publishable.false">
 				<source>is not publishable</source>
 				<target>ist nicht veröffentlichbar</target>
 			</trans-unit>
@@ -502,6 +506,10 @@
 				<source>Confirm publish</source>
 				<target state="translated">Veröffentlichung bestätigen</target>
 			</trans-unit>
+			<trans-unit id="tx_in2publishcore.modal.publish_disabled.title">
+				<source>Record can not be published</source>
+				<target state="translated">Der Datensatz kann nicht veröffentlicht werden</target>
+			</trans-unit>
 			<trans-unit id="tx_in2publishcore.modal.publish.file.text">
 				<source>Are you sure you want to publish the file %s? This cannot be reversed.</source>
 				<target state="translated">Möchten Sie die Datei %s wirklich veröffentlichen? Dies kann nicht rückgängig gemacht werden.</target>
@@ -509,6 +517,46 @@
 			<trans-unit id="tx_in2publishcore.modal.publish.folder.text">
 				<source>Are you sure you want to publish the folder %s? This cannot be reversed.</source>
 				<target state="translated">Möchten Sie den Ordner %s wirklich veröffentlichen? Dies kann nicht rückgängig gemacht werden.</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_state">
+				<source>Filter by change state</source>
+				<target>Filterung nach Änderungsstatus</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_language">
+				<source>Filter by change language</source>
+				<target>Filterung nach Sprache</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_language.all">
+				<source>All</source>
+				<target>Alle</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_state.all">
+				<source>All</source>
+				<target>Alle</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_field_level">
+				<source>Filter records by their level</source>
+				<target>Filterung nach Verschachtelungstiefe</target>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_field_title">
+				<source>Filter by title</source>
+				<target>Filterung nach Name</target>
+			</trans-unit>
+			<trans-unit id="module_m1_page_stage" resname="page_stage">
+				<source>Page Stage</source>
+				<target>Seite Stage</target>
+			</trans-unit>
+			<trans-unit id="module_m1_page_live" resname="page_live">
+				<source>Page Live</source>
+				<target>Seite Live</target>
+			</trans-unit>
+			<trans-unit id="module_m1_workflow" resname="workflow">
+				<source>Workflow</source>
+				<target>Workflow</target>
+			</trans-unit>
+			<trans-unit id="module_m1_action" resname="workflow">
+				<source>Action</source>
+				<target>Aktion</target>
 			</trans-unit>
 		</body>
 	</file>

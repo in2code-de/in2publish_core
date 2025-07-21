@@ -4,7 +4,6 @@
 [![Build Status](https://travis-ci.org/in2code-de/in2publish_core.svg?branch=master)](https://travis-ci.org/in2code-de/in2publish_core)
 [![Latest Unstable Version](https://poser.pugx.org/in2code/in2publish_core/v/unstable)](https://packagist.org/packages/in2code/in2publish_core)
 [![License](https://poser.pugx.org/in2code/in2publish_core/license)](https://packagist.org/packages/in2code/in2publish_core)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/606af76505674f4bb38f4a26d56b13d6)](https://www.codacy.com/gh/in2code-de/in2publish_core/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=in2code-de/in2publish_core&amp;utm_campaign=Badge_Grade)
 
 ## Introduction
 
@@ -12,10 +11,8 @@ Content Publishing in TYPO3 - the easy way:
 
 * Intuitive Use
 * High Security
-* Future proof
+* Future-proof
 * Supports all extensions (with correct TCA)
-
-![index_publisher_screen.png](Documentation/_img/index_publisher_screen.png)
 
 ## Support
 
@@ -24,7 +21,8 @@ improve our extensions. To do so, in2code provides two extra days per month for 
 Freaky Friday). During these days our more than 20 developers spend their time with improvements and updates for this
 and other extensions.
 
-You can support our work [here](https://www.in2code.de/extensionsupport).
+You can support our work by joining the Early Access Program [EAP](https://www.in2code.de/agentur/typo3-extensions/early-access-programm/).
+As an EAP member you will receive access to the latest versions many of our extensions before they are publicly released.
 
 Thank you very much in advance.
 
@@ -45,7 +43,7 @@ TCA.
 The Enterprise Edition extends the Content Publisher with a large number of features, such as workflows to organize
 pages and individual content types in the editing process, workflow assignment, workflow email notification, workflow
 colors in the page tree, publishing permissions, limiting publishing to languages, support for Solr, EXT:
-fal_securedownload, EXT:rte_ckeditor_image, Remote Cache Control, Fire and Forget and more.
+fal_securedownload, Remote Cache Control, Multi-Select for publishing and many more.
 
 ### Questions
 
@@ -72,27 +70,46 @@ See for more details:
 
 ### Screenshots
 
-<img src="https://www.in2code.de/fileadmin/content/images/produkte/contentpublisher/content_publisher_screenshot04_prev.png" width="600" />
+_Publish Overview Module_
+![Publisher Overview Module](Documentation/_img/module_publish_overview.png)
 
-Example overview module with details
+_Publish Redirects Module_
+![Publisher Redirects Module](Documentation/_img/module_publish_redirects.png)
 
-<img src="https://www.in2code.de/fileadmin/content/images/produkte/contentpublisher/content_publisher_screenshot03_prev.png" width="600" />
+_Publish Files Module_
+![Publisher Files Module](Documentation/_img/module_publish_files.png)
 
-Example workflow feature (part of the enterprise version)
+_Publisher Tools Module_
+![Publisher Tools Module](Documentation/_img/module_publisher_tools.png)
 
-<img src="https://box.everhelper.me/attachment/915970/84725fb7-0b3e-4c40-b52e-29d7620777bb/262407-93UtQ9cPeb0NCY1e/screen.png" width="600" />
 
-Browser notifications after asynchronous publishing (part of the enterprise version)
+**Enterprise Edition only:**
+
+_Publish Workflow Module_
+![Publish Workflow Module](Documentation/_img/module_publish_workflow.png)
+
+_Publisher Integration into List Module_
+![Publisher List Module](Documentation/_img/module_list_workflow.png)
+
+_Publisher Integration into Page Module_
+![Publisher List Module](Documentation/_img/module_page_workflow.png)
+
+_Compare Pages Module_
+![Publisher Compare_Pages Module](Documentation/_img/module_compare_pages.png)
+
+
 
 ## Installation
 
 `composer require in2code/in2publish_core`
 
 Easy installation via composer. See documentation for a step by step manual
+* [Installation](Documentation/Admins/Installation/README.md)
+* [Requirements And Limitations](Documentation/RequirementsAndLimitations.md)
 
 ## Documentation
 
-* [Requirements And Limitations](Documentation/RequirementsAndLimitations.md)
+* [Introduction](Documentation/Introduction.md)
 * Extension documentation: [Documentation](Documentation/README.md)
 * Community help: https://typo3.slack.com/messages/ext-in2publish/
 
@@ -102,4 +119,6 @@ See: [Changelog](CHANGELOG.md)
 
 ## Testing
 
-Hint: https://youtrack.jetbrains.com/issue/WI-74556/PHPUnit-settings-are-not-configured#focus=Comments-27-8185787.0-0
+There are many unit, functional and acceptance tests which are executed as GitHub Action on every commit.
+
+https://github.com/in2code-de/in2publish_core/actions

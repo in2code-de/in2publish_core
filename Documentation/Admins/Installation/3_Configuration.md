@@ -3,9 +3,9 @@
 The configuration is split into three parts:
 
 * **Extension Configuration**: Configuration values that are so fundamental that they cannot be set later on.
-* **[LocalConfiguration.yaml](../../Configuration/Yaml/LocalConfiguration.yaml.example)**: configuration on Local to
+* **[LocalConfiguration.yaml](../../../Configuration/Yaml/LocalConfiguration.yaml.example)**: configuration on Local to
   connect to the production server and configure the modules and behaviour.
-* **[ForeignConfiguration.yaml](../../Configuration/Yaml/ForeignConfiguration.yaml.example)**: for the configuration on
+* **[ForeignConfiguration.yaml](../../../Configuration/Yaml/ForeignConfiguration.yaml.example)**: for the configuration on
   Foreign (production).
 
 As of in2publish_core 7.0 you don't need to copy the whole file anymore.
@@ -23,7 +23,7 @@ location defined in the extension configuration of in2publish_core).
 > via https://www.yourdomain.tld/typo3conf/LocalConfiguration.yaml
 
 Note:
-> If you want to separate your configuration depending on the in2publish version, you could also use **
+> If you want to separate your configuration depending on the in2publish_core version, you could also use **
 > LocalConfiguration_[version].yaml** and **ForeignConfiguration_[version].yaml** for a version specific configuration.
 > That could help you for your future deployments. E.g. LocalConfiguration_1.2.3.yaml
 > Since 7.0 you don't have to provide the full version number. You can omit the patch version (last number:
@@ -98,7 +98,7 @@ foreign:
 You can see which dynamic configuration provider are available in the Publish Tools Module -> "Show Configuration".
 The system info export contains this information, too.
 Read more about dynamic configuration provider in
-the [Dynamic Configuration Guide](../Developers/Guides/DynamicConfiguration.md)
+the [Dynamic Configuration Guide](../../Developers/Guides/DynamicConfiguration.md)
 
 ## Configuration post processing (since 9.2.0)
 
@@ -106,7 +106,7 @@ Configuration post processing can be required when even custom dynamic configura
 A config post processor has the power to alter the complete configuration before it is casted and returned.
 You should use this feature with care.
 Read more about custom configuration post processors in
-the [Configuration Post Processing Guide](../Developers/Guides/ConfigurationPostProcessing.md)
+the [Configuration Post Processing Guide](../../Developers/Guides/ConfigurationPostProcessing.md)
 
 ## <a name="unset"></a>Removing default values
 
@@ -129,9 +129,9 @@ Now the values do not appear anymore in the configuration
 
 ![Tools Module with expanded excludeRelatedTables without be_users and be_groups](_img/95_tools_config_unset_cropped.png)
 
-You can unset any value by it's index.
+You can unset any value by its index.
 This feature is also available in PageTS und UserTs as well as any other
-configuration provider (Like the configuration wizard in in2publish).
+configuration provider (Like the configuration wizard in EXT:in2publish_core).
 
 Configuration provider configs are merged following the order of priority.
 This means you can not unset a value in your LocalConfiguration.yaml that
@@ -147,7 +147,7 @@ UserTS config can be disabled in the extension configuration.
 When the UserTS config is enabled, it will overwrite the configuration after PageTS config was merged, so it always has
 priority.
 
-PageTS and UserTs for in2publish starts with **tx_in2publish** followed by the configuration directive to overwrite.
+PageTS and UserTs for the Content Publisher starts with **tx_in2publish** followed by the configuration directive to overwrite.
 
 Here is an example to disable the filter buttons for the publish overview module:
 
