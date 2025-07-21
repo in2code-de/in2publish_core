@@ -10,6 +10,11 @@ Version 12.6.0 introduces a completely redesigned Publish Overview module with s
 
 - **Enhanced Layout**: Improved visual hierarchy and cleaner design close to TYPO3's core style
 - **Language Handling**: Languages/translations can now be published separately and filtered in the overview module
+- **Filter Functionality**: Comprehensive filtering options for records:
+  - Filter by title
+  - Filter by change state (Unchanged, Changed, New, Deleted, etc.)
+  - Filter records by their level
+  - Filter by language
 
 When using the Enterprise Edition, the Publish Overview module also includes:
 
