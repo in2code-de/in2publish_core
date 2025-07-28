@@ -167,13 +167,7 @@ class PublisherService
         $shouldPublish = $this->shouldRecordBePublished($record, $isTopLevelCall);
 
         if ($shouldPublish) {
-            // deprecated, remove in v13
-            $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
-
             $this->publisherCollection->publish($record);
-
-            // deprecated, remove in v13
-            $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));
             $this->eventDispatcher->dispatch(new RecordWasPublished($record));
 
             return true;
