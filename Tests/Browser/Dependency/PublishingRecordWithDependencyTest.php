@@ -25,10 +25,7 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
             'publisher-page-tree-publish',
         );
         TYPO3Helper::selectModuleByText($localDriver, 'Page');
-        TYPO3Helper::selectInPageTree(
-            $localDriver,
-            ['EXT:in2publish', '5c Workflows - Unfulfilled Dependencies', '5c.1 Parent not published'],
-        );
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($localDriver, '5c.1 Parent not published');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
@@ -38,7 +35,7 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
             self::assertElementIsVisible(
                 $driver,
                 WebDriverBy::xpath(
-                    '//*[@data-record-identifier="pages-35"]//*[contains(@class, "in2publish-link-publish")]/*[contains(@class, "in2publish-icon-publish")]',
+                    '//*[@data-record-identifier="pages-35"]//*[contains(@class, "icon-actions-arrow-right")]',
                 ),
             );
 
@@ -46,7 +43,7 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
             self::assertElementIsVisible(
                 $driver,
                 WebDriverBy::xpath(
-                    '//*[@data-record-identifier="pages-36"]//*[contains(@class, "in2publish-link-publish")]/*[contains(@class, "icon-actions-exclamation-triangle-alt")]',
+                    '//*[@data-record-identifier="pages-36"]//*[contains(@class, "icon-actions-exclamation-triangle-alt")]',
                 ),
             );
 
@@ -76,10 +73,12 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
                 WebDriverBy::xpath('//*[@data-record-identifier="pages-36"]'),
             );
         });
+
+        // Publish the parent page
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $driver->click(
                 WebDriverBy::xpath(
-                    '//*[@data-record-identifier="pages-35"]//*[contains(@class, "in2publish-link-publish")]/*[contains(@class, "in2publish-icon-publish")]',
+                    '//*[@data-record-identifier="pages-35"]//*[contains(@class, "icon-actions-arrow-right")]',
                 ),
             );
         });
@@ -89,19 +88,17 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
             self::assertPageContains($driver, '5c.1 Parent not published');
             self::assertPageContains($driver, '5c.1.1 Child Ready to Publish');
 
-            // Not publishable exclamation triangle
+            // Not publishable exclamation triangle is gone and child is publishable
             self::assertElementIsNotVisible(
                 $driver,
                 WebDriverBy::xpath(
-                    '//*[@data-record-identifier="pages-35"]//*[contains(@class, "in2publish-link-publish")]/*[contains(@class, "in2publish-icon-publish")]',
+                    '//*[@data-record-identifier="pages-36"]//*[contains(@class, "icon-actions-exclamation-triangle-alt")]',
                 ),
             );
-
-            // Not publishable exclamation triangle
             self::assertElementIsVisible(
                 $driver,
                 WebDriverBy::xpath(
-                    '//*[@data-record-identifier="pages-36"]//*[contains(@class, "in2publish-link-publish")]/*[contains(@class, "in2publish-icon-publish")]',
+                    '//*[@data-record-identifier="pages-36"]//*[contains(@class, "icon-actions-arrow-right")]',
                 ),
             );
         });
