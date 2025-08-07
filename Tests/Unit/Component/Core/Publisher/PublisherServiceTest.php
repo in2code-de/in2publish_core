@@ -30,7 +30,7 @@ use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 #[CoversMethod(PublisherService::class, 'addPublisher')]
 class PublisherServiceTest extends UnitTestCase
 {
-    public function testPublishRecordTreePublishesAllUnchangedRecordsInTree(): void
+    public function testPublishRecordTreePublishesAllButUnchangedRecordsInTree(): void
     {
         $publisherService = new PublisherService();
         $publisherService->injectEventDispatcher($this->createMock(EventDispatcher::class));
@@ -38,7 +38,7 @@ class PublisherServiceTest extends UnitTestCase
         $databaseRecordPublisher = $this->createMock(DatabaseRecordPublisher::class);
         $databaseRecordPublisher->method('canPublish')->willReturn(true);
 
-        // assertion: publish all unchanged db records in tree
+        // assertion: publish all but unchanged db records in tree (2 'added' records)
         $databaseRecordPublisher->expects($this->exactly(2))->method('publish');
         $publisherService->addPublisher($databaseRecordPublisher);
 
@@ -56,8 +56,8 @@ class PublisherServiceTest extends UnitTestCase
         $databaseRecordPublisher = $this->createMock(DatabaseRecordPublisher::class);
         $databaseRecordPublisher->method('canPublish')->willReturn(true);
 
-        // assertion: publish all unchanged db records in tree
-        $databaseRecordPublisher->expects($this->exactly(2))->method('publish');
+        // assertion: publish parent record and non-page children (not page children when includeChildPages=false)
+        $databaseRecordPublisher->expects($this->exactly(1))->method('publish');
         $publisherService->addPublisher($databaseRecordPublisher);
 
         $recordTree = $this->getRecordTree2();
@@ -129,6 +129,10 @@ class PublisherServiceTest extends UnitTestCase
         $record->method('getId')->willReturn($uid);
         $record->method('getClassification')->willReturn($table);
         $record->method('getState')->willReturn($state);
+        $record->method('getStateRecursive')->willReturn($state);
+        $record->method('hasReasonsWhyTheRecordIsNotPublishable')->willReturn(false);
+        $record->method('getChildren')->willReturn([]);
+        $record->method('getTranslations')->willReturn([]);
         return $record;
     }
 
