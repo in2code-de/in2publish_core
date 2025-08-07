@@ -20,10 +20,7 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
         TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
 
         TYPO3Helper::selectModuleByText($localDriver, 'Page');
-        TYPO3Helper::selectInPageTree(
-            $localDriver,
-            ['Home', 'EXT:in2publish_core', '1b Page content', '1b.1 Page content - changed'],
-        );
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($localDriver, '1b.1 Page content - changed');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
@@ -36,12 +33,11 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
             $info->click();
         });
 
-        // Workaround
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, '1b.1 Header - changed');
-            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            $driver->click(WebDriverBy::cssSelector('.icon-actions-arrow-right'));
         });
 
         // Workaround
@@ -57,12 +53,8 @@ class PublishChangedContentTest extends AbstractBrowserTestCase
         $foreignDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Page');
-        TYPO3Helper::selectInPageTree(
-            $foreignDriver,
-            ['Home', 'EXT:in2publish_core', '1b Page content', '1b.1 Page content - changed'],
-        );
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($foreignDriver, '1b.1 Page content - changed');
 
-        // Workaround
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
