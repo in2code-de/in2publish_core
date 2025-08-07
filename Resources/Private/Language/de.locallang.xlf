@@ -211,6 +211,10 @@
 				<source>Deleted</source>
 				<target>Gelöscht</target>
 			</trans-unit>
+			<trans-unit id="record.state.soft_deleted.short" resname="record.state.soft_deleted.short">
+				<source>Deleted</source>
+				<target>Gelöscht</target>
+			</trans-unit>
 			<trans-unit id="record.state.moved.short" resname="record.state.moved.short">
 				<source>Moved</source>
 				<target>Verschoben</target>
