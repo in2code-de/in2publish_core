@@ -120,7 +120,7 @@ class PublishTranslationTest extends AbstractBrowserTestCase
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $driver->findElement(
                 WebDriverBy::xpath(
-                    '//*[@data-record-identifier="pages-75"]//*[@class="icon-actions-arrow-right"]',
+                    '//*[@data-record-identifier="pages-75"]//*[contains(@class, "icon-actions-arrow-right")]',
                 ),
             )->click();
         });
