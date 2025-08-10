@@ -6,11 +6,11 @@
 	<f:render partial="Record/ShowReasonsWhyNotPublishable" arguments="{record: record}" />
 	<f:render partial="Record/Breadcrumbs" arguments="{config: config, breadcrumbs: record.breadcrumbs}" />
 	<div class="row gx-0">
-		<div class="col-6">
+		<div class="col-6 in2publish-dirty-properties-local">
 			<f:render partial="Record/DirtyProperties/ParentRecords" arguments="{record: record, stagingLevel: 'local'}" />
 			<f:render partial="Record/DirtyProperties/ChildRecords" arguments="{record: record, stagingLevel: 'local'}" />
 		</div>
-		<div class="col-6">
+		<div class="col-6 in2publish-dirty-properties-foreign">
 			<f:render partial="Record/DirtyProperties/ParentRecords" arguments="{record: record, stagingLevel: 'foreign'}" />
 			<f:render partial="Record/DirtyProperties/ChildRecords" arguments="{record: record, stagingLevel: 'foreign'}" />
 		</div>
