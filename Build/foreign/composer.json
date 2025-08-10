@@ -30,7 +30,7 @@
 		"ext-zip": "*",
 		"georgringer/news": "^12.2",
 		"helhum/typo3-console": "^8.2",
-		"in2code/in2publish_core": "@dev",
+		"in2code/in2publish_core": "dev-feature/71444-port-ui-v13",
 		"typo3/cms-about": "^13.4",
 		"typo3/cms-adminpanel": "^13.4",
 		"typo3/cms-backend": "^13.4",
