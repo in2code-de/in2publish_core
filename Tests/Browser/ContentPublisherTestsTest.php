@@ -17,11 +17,12 @@ class ContentPublisherTestsTest extends AbstractBrowserTestCase
         TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($localDriver, 'Publisher Tools');
 
+        sleep($this->sleepTime);
+
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             $driver->click(WebDriverBy::linkText('Tests'));
         });
 
-        // Workaround
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
