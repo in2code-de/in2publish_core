@@ -39,7 +39,7 @@ class PublishChangedPagePropertiesTest extends AbstractBrowserTestCase
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            $driver->click(WebDriverBy::cssSelector('.icon-actions-arrow-right'));
             self::assertPageContains($driver, 'The selected record has been published successfully');
         });
 
