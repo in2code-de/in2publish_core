@@ -181,6 +181,7 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
             );
             $filePublishButton->click();
         });
+        TYPO3Helper::clickModalButton($localDriver, 'Publish');
 
         ContentPublisherHelper::waitUntilPublishingFinished($localDriver);
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
