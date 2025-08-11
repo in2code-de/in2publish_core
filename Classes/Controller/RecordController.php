@@ -122,24 +122,6 @@ class RecordController extends ActionController
         }
 
         $this->moduleTemplate->setModuleClass('in2publish_core_m1');
-
-        $menuRegistry = $this->moduleTemplate->getDocHeaderComponent()->getMenuRegistry();
-        $menu = $menuRegistry->makeMenu();
-        $menu->setIdentifier('depth');
-        $menu->setLabel(LocalizationUtility::translate('m1.page_recursion', 'In2publishCore'));
-        for ($i = 0; $i <= 10; $i++) {
-            $menuItem = $menu->makeMenuItem();
-            $menuItem->setActive($i === $data['pageRecursionLimit']);
-            if ($i > 1) {
-                $title = LocalizationUtility::translate('m1.page_recursion.depths', 'In2publishCore', [$i]);
-            } else {
-                $title = LocalizationUtility::translate('m1.page_recursion.depth', 'In2publishCore', [$i]);
-            }
-            $menuItem->setTitle($title);
-            $menuItem->setHref($this->uriBuilder->uriFor('index', ['pageRecursionLimit' => $i]));
-            $menu->addMenuItem($menuItem);
-        }
-        $menuRegistry->addMenu($menu);
     }
 
     /**
