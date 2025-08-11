@@ -2,6 +2,6 @@
 
 * [Requirements And Limitations](RequirementsAndLimitations.md)
 * [Introduction](Introduction.md)
-* [Installation](Installation/README.md)
+* [Installation](Admins/Installation/README.md)
 * [FAQ](FAQ.md)
 * [Known Issues](KnownIssues.md)
