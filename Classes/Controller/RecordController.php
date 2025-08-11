@@ -169,6 +169,7 @@ class RecordController extends ActionController
             'localDatabaseConnectionAvailable' => $localDbAvailable,
             'foreignDatabaseConnectionAvailable' => $foreignDbAvailable,
             'publishingAvailable' => $localDbAvailable && $foreignDbAvailable,
+            'pageRecursionLimit' => $pageRecursionLimit,
             'languages' => $languages,
         ]);
         return $this->htmlResponse();
