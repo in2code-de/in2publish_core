@@ -62,7 +62,8 @@
 			"extension-key": "in2publish_core"
 		},
 		"branch-alias": {
-			"dev-develop": "13.0.x-dev"
+			"dev-develop": "13.1.x-dev",
+			"dev-master": "13.1.x-dev"
 		}
 	}
 }

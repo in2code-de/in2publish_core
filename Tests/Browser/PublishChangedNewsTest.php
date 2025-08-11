@@ -20,7 +20,7 @@ class PublishChangedNewsTest extends AbstractBrowserTestCase
         TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
 
         TYPO3Helper::selectModuleByText($localDriver, 'Page');
-        TYPO3Helper::selectInPageTree($localDriver, ['Home', 'News Folder']);
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($localDriver, 'News Folder');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
@@ -34,23 +34,19 @@ class PublishChangedNewsTest extends AbstractBrowserTestCase
             self::assertElementContains(
                 $driver,
                 'Content element with image - edited',
-                WebDriverBy::cssSelector('.in2publish-stagelisting__dropdown__item--left'),
+                WebDriverBy::cssSelector('.in2publish-page__content'),
             );
-            self::assertElementContains(
-                $driver,
-                'Content element with image',
-                WebDriverBy::cssSelector('.in2publish-stagelisting__dropdown__item--right'),
-            );
-            $relatedRecordsList = WebDriverBy::cssSelector('.in2publish-related__list');
+
+
             self::assertElementContains(
                 $driver,
                 '1:/user_upload/roman-wimmers-STrq0wSBGIs-unsplash.jpg',
-                $relatedRecordsList
+                WebDriverBy::cssSelector('.in2publish-page__content')
             );
         });
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            $driver->click(WebDriverBy::cssSelector('.icon-actions-arrow-right'));
             self::assertPageContains($driver, 'The selected record has been published successfully');
         });
 
@@ -60,9 +56,8 @@ class PublishChangedNewsTest extends AbstractBrowserTestCase
         $foreignDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
-        TYPO3Helper::selectInPageTree($foreignDriver, ['Home', 'News Folder']);
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($foreignDriver, 'News Folder');
 
-        // Workaround
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {

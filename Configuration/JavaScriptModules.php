@@ -13,6 +13,7 @@ return [
         '@in2code/in2publish_core/backend-module.js' => 'EXT:in2publish_core/Resources/Public/JavaScript/BackendModule.js',
         '@in2code/in2publish_core/backend-enhancements.js' => 'EXT:in2publish_core/Resources/Public/JavaScript/BackendEnhancements.js',
         '@in2code/in2publish_core/confirmation-modal.js' => 'EXT:in2publish_core/Resources/Public/JavaScript/ConfirmationModal.js',
+        '@in2code/in2publish_core/information-modal.js' => 'EXT:in2publish_core/Resources/Public/JavaScript/InformationModal.js',
         '@in2code/in2publish_core/context-menu-actions.js' => 'EXT:in2publish_core/Resources/Public/JavaScript/context-menu-actions.js',
         '@in2code/in2publish_core/context-menu-publish-entry.js' => 'EXT:in2publish_core/Resources/Public/JavaScript/ContextMenuPublishEntry.js',
         '@in2code/in2publish_core/loading-overlay.js' => 'EXT:in2publish_core/Resources/Public/JavaScript/LoadingOverlay.js',

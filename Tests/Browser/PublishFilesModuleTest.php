@@ -176,9 +176,13 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
                 '[data-id="1:/Testcases/2b_published_file/renamed-1523151-unsplash.jpg"]',
             );
             $fileRow = $driver->findElement($fileSelector);
-            $fileRow->findElement(WebDriverBy::linkText('Publish'))->click();
+            $filePublishButton = $fileRow->findElement(
+                WebDriverBy::cssSelector('[data-easy-modal-title="Confirm publish"]'),
+            );
+            $filePublishButton->click();
         });
         TYPO3Helper::clickModalButton($localDriver, 'Publish');
+
         ContentPublisherHelper::waitUntilPublishingFinished($localDriver);
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
             self::assertPageContains(
@@ -195,6 +199,8 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
         $foreignDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Filelist');
+        TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases', '2b_published_file']);
+        // Workaround: when selecting file for the first time, there is an error "File has been deleted"
         TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases', '2b_published_file']);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertElementIsVisible(

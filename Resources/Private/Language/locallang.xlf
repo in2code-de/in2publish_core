@@ -159,6 +159,9 @@
 			<trans-unit id="record.state.deleted.short" resname="record.state.deleted.short">
 				<source>Deleted</source>
 			</trans-unit>
+			<trans-unit id="record.state.soft_deleted.short" resname="record.state.soft_deleted.short">
+				<source>Deleted</source>
+			</trans-unit>
 			<trans-unit id="record.state.moved.short" resname="record.state.moved.short">
 				<source>Moved</source>
 			</trans-unit>
@@ -331,13 +334,13 @@
 			<trans-unit id="filter.field.has_association.missing" resname="filter.field.has_association.missing">
 				<source>Association missing</source>
 			</trans-unit>
-			<trans-unit id="filter.field.is_publishable">
+			<trans-unit id="filter.field.is_publishable" resname="filter.field.is_publishable">
 				<source>Publishing State</source>
 			</trans-unit>
-			<trans-unit id="filter.field.is_publishable.true">
+			<trans-unit id="filter.field.is_publishable.true" resname="filter.field.is_publishable.true">
 				<source>is publishable</source>
 			</trans-unit>
-			<trans-unit id="filter.field.is_publishable.false">
+			<trans-unit id="filter.field.is_publishable.false" resname="filter.field.is_publishable.false">
 				<source>is not publishable</source>
 			</trans-unit>
 			<trans-unit id="refresh_page" resname="refresh_page">
@@ -377,11 +380,32 @@
 			<trans-unit id="tx_in2publishcore.modal.publish.title">
 				<source>Confirm publish</source>
 			</trans-unit>
+			<trans-unit id="tx_in2publishcore.modal.publish_disabled.title">
+				<source>Record can not be published</source>
+			</trans-unit>
 			<trans-unit id="tx_in2publishcore.modal.publish.file.text">
 				<source>Are you sure you want to publish the file %s? This cannot be reversed.</source>
 			</trans-unit>
 			<trans-unit id="tx_in2publishcore.modal.publish.folder.text">
 				<source>Are you sure you want to publish the folder %s? This cannot be reversed.</source>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_state">
+				<source>Filter by change state</source>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_language">
+				<source>Filter by language</source>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_language.all">
+				<source>All</source>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_state.all">
+				<source>All</source>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_field_level">
+				<source>Filter records by their level</source>
+			</trans-unit>
+			<trans-unit id="module_m1_filter_field_title">
+				<source>Filter by title</source>
 			</trans-unit>
 		</body>
 	</file>

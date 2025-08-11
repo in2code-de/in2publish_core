@@ -43,6 +43,7 @@ use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Localization\Locale;
+use TYPO3\CMS\Core\Settings\Settings;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Site\Entity\SiteSettings;
@@ -64,6 +65,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
         SiteLanguage::class,
         Locale::class,
         SiteSettings::class,
+        Settings::class,
     ];
 
     public function getSiteByPageId(int $pageId): Site

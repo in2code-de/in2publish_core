@@ -46,6 +46,7 @@ use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatchInj
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
+use In2code\In2publishCore\Service\Language\SiteLanguageServiceInjection;
 use In2code\In2publishCore\Service\Permission\PermissionServiceInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -86,6 +87,7 @@ class RecordController extends ActionController
     use PublisherServiceInjection;
     use PermissionServiceInjection;
     use SimpleStopwatchInjection;
+    use SiteLanguageServiceInjection;
 
     /**
      * @codeCoverageIgnore
@@ -120,24 +122,6 @@ class RecordController extends ActionController
         }
 
         $this->moduleTemplate->setModuleClass('in2publish_core_m1');
-
-        $menuRegistry = $this->moduleTemplate->getDocHeaderComponent()->getMenuRegistry();
-        $menu = $menuRegistry->makeMenu();
-        $menu->setIdentifier('depth');
-        $menu->setLabel(LocalizationUtility::translate('m1.page_recursion', 'In2publishCore'));
-        for ($i = 0; $i <= 10; $i++) {
-            $menuItem = $menu->makeMenuItem();
-            $menuItem->setActive($i === $data['pageRecursionLimit']);
-            if ($i > 1) {
-                $title = LocalizationUtility::translate('m1.page_recursion.depths', 'In2publishCore', [$i]);
-            } else {
-                $title = LocalizationUtility::translate('m1.page_recursion.depth', 'In2publishCore', [$i]);
-            }
-            $menuItem->setTitle($title);
-            $menuItem->setHref($this->uriBuilder->uriFor('index', ['pageRecursionLimit' => $i]));
-            $menu->addMenuItem($menuItem);
-        }
-        $menuRegistry->addMenu($menu);
     }
 
     /**
@@ -160,12 +144,15 @@ class RecordController extends ActionController
         } catch (Throwable $exception) {
             $foreignDbAvailable = false;
         }
+        $languages = $this->siteLanguageService->getAllowedLanguages($pid);
 
         $this->moduleTemplate->assignMultiple([
             'recordTree' => $recordTree,
             'localDatabaseConnectionAvailable' => $localDbAvailable,
             'foreignDatabaseConnectionAvailable' => $foreignDbAvailable,
             'publishingAvailable' => $localDbAvailable && $foreignDbAvailable,
+            'pageRecursionLimit' => $pageRecursionLimit,
+            'languages' => $languages,
         ]);
         return $this->htmlResponse();
     }

@@ -17,7 +17,7 @@ class RecordTreeBuildRequest
     public function __construct(
         string $table,
         int $id,
-        int $pageRecursionLimit,
+        int $pageRecursionLimit = 0,
         int $dependencyRecursionLimit = 3,
         int $contentRecursionLimit = 8,
         ?array $languages = null

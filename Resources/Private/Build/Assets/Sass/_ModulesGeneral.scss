@@ -78,8 +78,7 @@ div.typo3-fullDoc {
 .in2publish-backend *,
 .in2publish-backend *:before,
 .in2publish-backend *:after {
-  @include box-sizing(border-box);
-
+  box-sizing: border-box;
 }
 
 .in2publish-backend ul {
@@ -750,4 +749,109 @@ div#typo3-docbody.stopScrolling {
       }
     }
   }
+}
+
+.in2publish-page-group {
+  margin-block-end: .5rem;
+
+  &:has(.in2publish-page-group__children),
+  &:last-of-type {
+    margin-block-end: 0;
+  }
+}
+
+.in2publish-page-group__children {
+  padding-inline-start: 0.5rem;
+  padding-inline-end: 0;
+  padding-block-end: 0;
+
+  .in2publish-page__col--stage-page {
+    width: calc(200px - .5rem);
+    max-width: calc(200px - .5rem);
+  }
+
+  @for $i from 1 through 10 {
+    .in2publish-page--level-#{$i} .in2publish-page__col--stage-page {
+      width: calc(200px - (.5rem * $i));
+      max-width: calc(200px - (.5rem * $i));
+    }
+  }
+}
+
+.in2publish-page {
+  background: var(--typo3-surface-container-low);
+  border: 1px solid color-mix(in srgb,var(--typo3-surface-container-low),var(--typo3-text-color-base) var(--typo3-border-mix));
+  margin-block-end: 0.5rem;
+
+  + .in2publish-page {
+    margin-block-start: -1px;
+  }
+}
+
+.in2publish-page--translation {
+  margin-inline-start: .5rem;
+
+  .in2publish-page__col--stage-page {
+    width: calc(200px - .5rem);
+    max-width: calc(200px - .5rem);
+  }
+}
+
+.in2publish-page__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: .75rem 1rem;
+  border-block-end: 1px solid color-mix(in srgb,var(--typo3-surface-container-low),var(--typo3-text-color-base) var(--typo3-border-mix));
+  margin-bottom: -1px;
+}
+
+.in2publish-page__content {
+  display: none;
+  margin-block-start: 1px;
+
+  .in2publish-page--open & {
+    display: block;
+  }
+
+  .table {
+    border: 0;
+    margin-block-end: 0;
+  }
+}
+
+.in2publish-page__col--stage-page,
+.in2publish-page__col--live-page {
+  width: 200px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.in2publish-page__col--status,
+.in2publish-page__col--compare {
+  text-align: center;
+}
+
+.in2publish-page__col--publish {
+  text-align: right;
+}
+
+.in2publish-page__col--workflow {
+  width: 150px;
+  max-width: 150px;
+
+  .in2publish__workflowrowbuttongroup {
+    width: 100%;
+    margin: 0 !important;
+  }
+}
+
+.in2publish-page__col--publish,
+.in2publish-page__col--status,
+.in2publish-page__col--compare {
+  max-width: 75px;
+  width: 75px;
 }

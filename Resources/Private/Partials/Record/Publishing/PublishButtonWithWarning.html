@@ -1,14 +1,16 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-	<f:variable name="easy-modal-title" value="{f:translate(key: 'tx_in2publishcore.modal.publish.title')}" />
-	<f:variable name="easy-modal-content" value="{f:translate(key: 'tx_in2publishcore.modal.publish.page_with_dependencies.text')}" />
-	<f:variable name="easy-modal-severity" value="1" />
-	<f:link.action
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:variable name="easy-modal-title" value="{f:translate(key: 'tx_in2publishcore.modal.publish.title')}" />
+<f:variable name="easy-modal-content" value="{f:translate(key: 'tx_in2publishcore.modal.publish.page_with_dependencies.text')}" />
+<f:variable name="easy-modal-severity" value="1" />
+<f:link.action
 		action="publishRecord"
-		class="in2publish-link-publish js-in2publish-confirmation-modal"
+		class="btn btn-default btn-sm js-in2publish-confirmation-modal"
 		arguments="{recordId: record.id}"
 		title="{f:translate(key:'publish_pages', default:'Publish this page')}"
-		data="{easy-modal-title: easy-modal-title, easy-modal-content: easy-modal-content, easy-modal-severity: easy-modal-severity}"
-	>
-		<i class="in2publish-icon-publish"></i>
-	</f:link.action>
+		data-easy-modal-title="{easy-modal-title}"
+		data-easy-modal-content="{easy-modal-content}"
+		data-easy-modal-severity="{easy-modal-severity}"
+		href="javascript:void(0);">
+	<core:icon identifier="actions-move-right" overlay="overlay-warning"></core:icon>
+</f:link.action>
 </html>

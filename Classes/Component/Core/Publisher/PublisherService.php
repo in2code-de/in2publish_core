@@ -33,6 +33,7 @@ class PublisherService
     protected PublisherCollection $publisherCollection;
     /** @var array<string, array<int, true>> */
     protected array $visitedRecords = [];
+    protected bool $isPublishAllMode = false;
 
     public function __construct()
     {
@@ -57,6 +58,20 @@ class PublisherService
     }
 
     /**
+     * Publishes all PUBLISHABLE records (dependencies must NOT be ignored during publishAll)
+     * @throws Throwable
+     */
+    public function publishAllPublishable(PublishingContext $publishingContext): void
+    {
+        $this->isPublishAllMode = true;
+        try {
+            $this->publish($publishingContext);
+        } finally {
+            $this->isPublishAllMode = false;
+        }
+    }
+
+    /**
      * @throws Throwable
      * @internal This method will be made non-public in in2publish_core v13. Use publish() with PublishingContext
      *     instead.
@@ -76,10 +91,13 @@ class PublisherService
 
         $this->publisherCollection->start();
 
+        // this is set for the first call to publishRecord, because
+        $isTopLevelCall = true;
+
         try {
             foreach ($recordTree->getChildren() as $records) {
                 foreach ($records as $record) {
-                    $this->publishRecord($record, $includeChildPages);
+                    $this->publishRecord($record, $includeChildPages, $isTopLevelCall);
                 }
             }
         } catch (Throwable $exception) {
@@ -103,8 +121,11 @@ class PublisherService
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function publishRecord(Record $record, bool $includeChildPages = false): void
-    {
+    protected function publishRecord(
+        Record $record,
+        bool $includeChildPages = false,
+        bool $isTopLevelCall = false
+    ): void {
         $classification = $record->getClassification();
         $id = $record->getId();
 
@@ -115,36 +136,123 @@ class PublisherService
 
         $this->eventDispatcher->dispatch(new RecordWasSelectedForPublishing($record));
 
-        // Do not use Record::isPublishable(). Check only the record's reasons but not dependencies.
-        // Dependencies might have been fulfilled during publishing or ignored by the user by choice.
-        if (!$record->hasReasonsWhyTheRecordIsNotPublishable()) {
-            // deprecated, remove in v13
-            $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
-            if ($record->getState() !== Record::S_UNCHANGED) {
-                $this->publisherCollection->publish($record);
-            }
-            // deprecated, remove in v13
-            $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));
-            $this->eventDispatcher->dispatch(new RecordWasPublished($record));
+        $wasPublished = $this->publishRecordIfPublishable($record, $isTopLevelCall);
+
+        // Always process children if record was published
+        // Also process children if we're not in publishAll mode (individual publishing)
+        // In publishAll mode: only process child pages if includeChildPages is true AND parent was published
+        // Always process non-page children if parent was published
+        $shouldProcessChildren = $wasPublished || !$this->isPublishAllMode;
+
+        if ($shouldProcessChildren) {
+            $this->processTranslations($record, $includeChildPages, $wasPublished);
+            $this->processChildRecords($record, $includeChildPages, $wasPublished);
+        } elseif ($this->isPublishAllMode && $includeChildPages) {
+            // in publishAll mode child pages need to be evaluated independently even if parent wasn't published
+            $this->processChildPagesIndependently($record, $includeChildPages);
+        }
+    }
+
+    private function publishRecordIfPublishable(Record $record, bool $isTopLevelCall): bool
+    {
+        if ($record->hasReasonsWhyTheRecordIsNotPublishable()) {
+            return false;
         }
 
+        if ($record->getStateRecursive() === Record::S_UNCHANGED) {
+            return false;
+        }
+
+        // Determine if record is publishable based on context
+        $shouldPublish = $this->shouldRecordBePublished($record, $isTopLevelCall);
+
+        if ($shouldPublish) {
+            $this->publisherCollection->publish($record);
+            $this->eventDispatcher->dispatch(new RecordWasPublished($record));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private function shouldRecordBePublished(Record $record, bool $isTopLevelCall): bool
+    {
+        // If not in publishAll mode, use the less strict check
+        if (!$this->isPublishAllMode) {
+            return true;
+        }
+
+        if ($isTopLevelCall && $record->getClassification() === 'pages') {
+            // Top-level pages and independent child pages must pass strict dependency check
+            return $record->isPublishable();
+        }
+
+        // For all other cases in publishAll mode use the less strict check since parent context provides validity
+        // - Child pages whose parent was published in current run
+        // - Non-page records (content elements, etc.)
+        // - Translations
+        return true;
+    }
+
+    private function processTranslations(Record $record, bool $includeChildPages, bool $parentWasPublished = false): void
+    {
         $translationEvent = new BeforePublishingTranslationsEvent($record, $includeChildPages);
         $this->eventDispatcher->dispatch($translationEvent);
 
-        if ($translationEvent->shouldProcessTranslations()) {
-            foreach ($record->getTranslations() as $translatedRecords) {
-                foreach ($translatedRecords as $translatedRecord) {
-                    $this->publishRecord($translatedRecord, $includeChildPages);
-                }
-            }
+        if (!$translationEvent->shouldProcessTranslations()) {
+            return;
         }
 
-        foreach ($record->getChildren() as $table => $children) {
-            if ('pages' === $table && !$includeChildPages) {
-                continue;
+        foreach ($record->getTranslations() as $translatedRecords) {
+            foreach ($translatedRecords as $translatedRecord) {
+                // Translations are never top-level calls
+                $this->publishRecord($translatedRecord, $includeChildPages, false);
             }
+        }
+    }
+
+    private function processChildPagesIndependently(Record $record, bool $includeChildPages): void
+    {
+        foreach ($record->getChildren() as $table => $children) {
+            if ($table !== 'pages') {
+                continue; // Only process child pages independently
+            }
+
             foreach ($children as $child) {
-                $this->publishRecord($child, $includeChildPages);
+                // Child pages evaluated independently with strict checking
+                $this->publishRecord($child, $includeChildPages, true);
+            }
+        }
+    }
+
+    private function processChildRecords(Record $record, bool $includeChildPages, bool $parentWasPublished = false): void
+    {
+        foreach ($record->getChildren() as $table => $children) {
+            // Handle child pages based on mode and settings
+            if ($table === 'pages') {
+                if (!$includeChildPages && !$this->isPublishAllMode) {
+                    // Skip child pages only if not including them AND not in publishAll mode
+                    continue;
+                }
+            }
+
+            foreach ($children as $child) {
+                // Determine if child should be treated as top-level for dependency checking
+                $isChildTopLevelCall = false;
+
+                if ($table === 'pages') {
+                    if ($this->isPublishAllMode) {
+                        // In publishAll mode: child pages get strict checking ONLY if their parent
+                        // was not published in the current run (independent evaluation)
+                        $isChildTopLevelCall = !$parentWasPublished;
+                    } elseif ($includeChildPages && !$this->isPublishAllMode) {
+                        // Child pages in regular mode with includeChildPages always get strict checking
+                        $isChildTopLevelCall = true;
+                    }
+                }
+
+                $this->publishRecord($child, $includeChildPages, $isChildTopLevelCall);
             }
         }
     }

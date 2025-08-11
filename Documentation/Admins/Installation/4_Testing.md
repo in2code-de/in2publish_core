@@ -2,14 +2,17 @@
 
 ## Testing the installation inside TYPO3
 
-After your preparation, installation and configuration of in2publish, you should log in to the backend of your Local
+After your preparation, installation and configuration of the Content Publisher, you should log in to the backend of your Local
 TYPO3.
-Open the backend module **Publish Tools** and select Tests from the drop down.
+Open the backend module **Publisher Tools** and select Tests from the drop down.
 
-You should see a couple of test result containers for the configuration tests of in2publish. Please follow the
-instructions.
+You should see a couple of test result containers for the configuration and setup tests of the Content Publisher.
+Please follow the instructions in order to fix any problems that are detected.
 
-![Backend module tests](_img/module_tools_test.png)
+![Backend module tests](_img/module_publisher_tools_test_results.png)
+
+E.g. if you have not created the required [Garbage Collector Scheduler Task](2_Installation.md#garbage-collector-task), you will see a red notice
+
 
 Hint:
 
@@ -23,7 +26,5 @@ Hint:
 
 > Some tests will be executed in the background from time to time.
 > If a problem is detected, a notice will be shown in the other modules, indicating that the test have to be run.
-
-![Problem detected](_img/module_problem_detected.png)
 
 **You have finished. Enjoy the content publisher!**

@@ -1,5 +1,17 @@
-<html xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers" data-namespace-typo3-fluid="true">
-	<div class="in2publish-link-publish">
-		<core:icon identifier="actions-exclamation-triangle-alt"/>
-	</div>
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:variable name="easy-modal-title" value="{f:translate(key: 'tx_in2publishcore.modal.publish_disabled.title')}" />
+<f:variable name="easy-modal-content">
+	<f:for each="{record.unfulfilledDependenciesHumanReadableRecursively}" as="unfulfilledDependency"> • {unfulfilledDependency}
+	</f:for><f:for each="{record.reasonsWhyTheRecordIsNotPublishableHumanReadable}" as="reasonWhyTheRecordIsNotPublishable"> • {reasonWhyTheRecordIsNotPublishable}
+</f:for>
+</f:variable>
+<f:variable name="easy-modal-severity" value="1" />
+<a class="btn btn-default btn-sm js-in2publish-information-modal"
+   title="{f:translate(key:'publish_disabled', default:'Publishing is disabled')}"
+   data-easy-modal-title="{easy-modal-title}"
+   data-easy-modal-content="{easy-modal-content}"
+   data-easy-modal-severity="{easy-modal-severity}"
+   href="javascript:void(0);">
+	<core:icon identifier="actions-exclamation-triangle-alt"></core:icon>
+</a>
 </html>

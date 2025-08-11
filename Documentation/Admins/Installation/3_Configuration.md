@@ -3,9 +3,9 @@
 The configuration is split into three parts:
 
 * **Extension Configuration**: Configuration values that are so fundamental that they cannot be set later on.
-* **[LocalConfiguration.yaml](../../Configuration/Yaml/LocalConfiguration.yaml.example)**: configuration on Local to
+* **[LocalConfiguration.yaml](../../../Configuration/Yaml/LocalConfiguration.yaml.example)**: configuration on Local to
   connect to the production server and configure the modules and behaviour.
-* **[ForeignConfiguration.yaml](../../Configuration/Yaml/ForeignConfiguration.yaml.example)**: for the configuration on
+* **[ForeignConfiguration.yaml](../../../Configuration/Yaml/ForeignConfiguration.yaml.example)**: for the configuration on
   Foreign (production).
 
 As of in2publish_core 7.0 you don't need to copy the whole file anymore.

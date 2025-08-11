@@ -103,7 +103,7 @@ class UidClashTest  extends AbstractBrowserTestCase
             self::assertPageContains($driver, 'TYPO3 Content Publisher - publish pages and records overview');
             self::assertElementIsVisible($driver, WebDriverBy::cssSelector('[data-record-identifier="pages-76"]'));
 
-            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            $driver->click(WebDriverBy::cssSelector('.icon-actions-arrow-right'));
         });
 
         // Workaround
@@ -119,14 +119,14 @@ class UidClashTest  extends AbstractBrowserTestCase
     {
         TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($localDriver, 'List');
-        TYPO3Helper::selectInPageTree($localDriver, ['Home', 'News Folder']);
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($localDriver, 'News Folder');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
 
         // Workaround
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $driver->click(WebDriverBy::cssSelector('.in2publish-icon-publish'));
+            $driver->click(WebDriverBy::cssSelector('.icon-actions-arrow-right'));
         });
 
         // Workaround
@@ -151,7 +151,7 @@ class UidClashTest  extends AbstractBrowserTestCase
     {
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
-        TYPO3Helper::selectInPageTree($foreignDriver, ['Home', 'News Folder']);
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($foreignDriver, 'News Folder');
 
         // Workaround
         sleep($this->sleepTime);
@@ -165,7 +165,7 @@ class UidClashTest  extends AbstractBrowserTestCase
     {
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
-        TYPO3Helper::selectInPageTree($foreignDriver, ['Home']);
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($foreignDriver, 'Home');
 
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertPageContains($driver, 'Category 1');
@@ -179,7 +179,7 @@ class UidClashTest  extends AbstractBrowserTestCase
     {
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
-        TYPO3Helper::selectInPageTree($foreignDriver, ['Home']);
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($foreignDriver, 'Home');
 
         // Workaround
         sleep($this->sleepTime);

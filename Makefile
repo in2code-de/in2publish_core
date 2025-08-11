@@ -133,6 +133,23 @@ functional:
 acceptance: typo3-clearcache typo3-rebuild-caches
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml
 
+## Run single acceptance test
+acceptance-test:
+	@if [ -z "$(name)" ]; then \
+		echo "Usage: make acceptance-test name=TestClassName [method=testMethodName]"; \
+		echo "Example: make acceptance-test name=PublishFilesModuleTest"; \
+		echo "Example: make acceptance-test name=PublishFilesModuleTest method=testNewlyUploadedFileCanBePublished"; \
+		exit 1; \
+	fi
+	@if [ -n "$(method)" ]; then \
+		echo "Running test method $(method) in $(name)"; \
+		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)::$(method)"; \
+	else \
+		echo "Running all test methods in $(name)"; \
+		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)"; \
+	fi
+
+
 setup-qa:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm phive install
 
