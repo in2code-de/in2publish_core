@@ -1,5 +1,47 @@
 # In2publish Core Change Log
 
+13.1.0
+
+- [META] Set the EM conf version number to 13.1.0
+- [DOCS] Update Changelog.md
+- [META] Update branch-alias in composer.json
+- [DOCS] Update documentation and add upgrade documentation
+- [BUGFIX] Remove additional level filter in doc header
+- [BUGFIX] Fix filtering for level in overview module
+- [TEST] Fix PublishTranslationTest
+- [TEST] Fix acceptance tests
+- [TASK] Provide css class in dirty property list to be used in acceptance tests
+- [TEST] Fix PublishTranslationTest
+- [TEST] Fix PublishFilesModuleTest
+- [TEST] Fix UidClashTest
+- [TEST] Fix PublishChangedPagePropertiesTest
+- [TEST] Fix RecordTreeDisplayTest
+- [TEST] Fix PublishChangedContentTest
+- [DEV] Add make task for running single acceptance tests
+- [BUGFIX] Display state of soft deleted records in overview module
+- [TEST] Fix PublishingRecordWithDependencyTest
+- [TEST] Fix PublishFilesModuleTest
+- [TEST] Fix unit tests
+- [CLEANUP] Remove deprecated events
+- [BUGFIX] Fix problems with publication of unpublishable records in publishAll
+- [BUGFIX] Restore PublishButtonWithWarning
+- [BUGFIX] Avoid sql error when updating with empty values
+- [TASK] Show filter button in Redirects Module
+- [BUGFIX] Restore display of previews for comparison in overview module
+- [TASK] final implementation of language filter in the overview module
+- [WIP] Add language filter to OverviewModule
+- [TASK] migrate InformationModal from requireJs to ES6
+- [TASK] Add language filtering to publish overview
+- [TASK] Display reasons why record is not publishable in OverviewModule using a new InformationModal without publish buttons
+- [WIP][FEATURE] Forward-port new publish overview UI from v12
+- [BUGFIX] Restore start of SimpleStopwatch
+- [BUGFIX] Fix implicit nullable in PublishingContext and TestResult
+- [BUGFIX] Allow deserialization of site settings
+- [TASK] add support for pre TYPO3 V12 backend module names
+- [BUGFIX] remove StopwatchAlreadyStartedException keep the startTime if already set
+- [BUGFIX] Fix implicit nullable in Builder
+- [BUGFIX] Prevent exception if request is not set in LanguageAugmentations
+- 
 13.0.1
 
 - [META] Set the EM conf version number to 13.0.1
