@@ -38,7 +38,7 @@ class PublisherServiceTest extends UnitTestCase
         $databaseRecordPublisher = $this->createMock(DatabaseRecordPublisher::class);
         $databaseRecordPublisher->method('canPublish')->willReturn(true);
 
-        // assertion: publish all unchanged db records in tree
+        // assertion: publish all changed db records in tree
         $databaseRecordPublisher->expects($this->exactly(2))->method('publish');
         $publisherService->addPublisher($databaseRecordPublisher);
 
@@ -142,7 +142,7 @@ class PublisherServiceTest extends UnitTestCase
         $record->method('getLocalProps')->willReturn(['foo' => 'bar']);
         $record->method('getId')->willReturn($uid);
         $record->method('getClassification')->willReturn($table);
-        $record->method('getState')->willReturn($state);
+        $record->method('getStateRecursive')->willReturn($state);
         return $record;
     }
 
