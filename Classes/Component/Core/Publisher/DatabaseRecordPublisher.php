@@ -38,7 +38,9 @@ class DatabaseRecordPublisher implements Publisher, TransactionalPublisher
 
         $foreignProps = $record->getForeignProps();
         $newValues = array_diff_assoc($localProps, $foreignProps);
-        $this->foreignDatabase->update($table, $newValues, $foreignIdentificationProps);
+        if (!empty($newValues)) {
+            $this->foreignDatabase->update($table, $newValues, $foreignIdentificationProps);
+        }
     }
 
     public function start(): void
