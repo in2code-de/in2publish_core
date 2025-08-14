@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+12.6.1:
+- [META] Set the EM conf version number to 12.6.1
+- [DOCS] Update Changelog.md
+- [TEST] Fix PublisherServiceTest
+- [BUGFIX] Avoid sql error when updating with empty values
+- [TASK] Add method publishAllPublishable for usage in publishAll mode
+
 12.6.0:
 - [DOCS] Update Changelog.md
 - [META] Set the EM conf version number to 12.6.0
