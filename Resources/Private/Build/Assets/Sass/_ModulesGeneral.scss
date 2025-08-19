@@ -761,7 +761,6 @@ div#typo3-docbody.stopScrolling {
 }
 
 .in2publish-page-group__children {
-  padding-inline-start: 0.5rem;
   padding-inline-end: 0;
   padding-block-end: 0;
 
@@ -852,6 +851,6 @@ div#typo3-docbody.stopScrolling {
 .in2publish-page__col--publish,
 .in2publish-page__col--status,
 .in2publish-page__col--compare {
-  max-width: 75px;
-  width: 75px;
+  max-width: 150px;
+  width: 150px;
 }
