@@ -1,5 +1,10 @@
 # In2publish Core Change Log
 
+12.6.2:
+- [META] Set the EM conf version number to 12.6.2
+- [DOCS] Update Changelog.md
+- [BUGFIX] Fix type errors in StopwatchAlreadyStartedException
+
 12.6.1:
 - [META] Set the EM conf version number to 12.6.1
 - [DOCS] Update Changelog.md
