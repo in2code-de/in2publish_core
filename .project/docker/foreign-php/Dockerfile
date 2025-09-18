@@ -15,7 +15,7 @@ RUN chmod 600 /home/app/.ssh/authorized_keys \
     && apt-get update \
 	&& apt-get install -y --no-install-recommends openssh-server \
 	&& docker-php-ext-install exif \
-	&& mkdir /run/sshd/ \
+	&& mkdir -p /run/sshd/ \
 	&& ssh-keygen -A \
 	&& for key in $(ls /etc/ssh/ssh_host_* | grep -v pub); do echo "HostKey $key" >> /etc/ssh/sshd_config; done \
 	&& apt-get autoremove -y \
