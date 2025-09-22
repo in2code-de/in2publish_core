@@ -197,11 +197,19 @@ class PublisherService
 
     private function processTranslations(Record $record, bool $includeChildPages, bool $parentWasPublished = false): void
     {
-        $translationEvent = new BeforePublishingTranslationsEvent($record, $includeChildPages);
-        $this->eventDispatcher->dispatch($translationEvent);
+        $state = $record->getState();
+        if (
+            !($state === Record::S_SOFT_DELETED)
+            && !($state === Record::S_DELETED)
+        ) {
+            $translationEvent = new BeforePublishingTranslationsEvent($record, $includeChildPages);
+            $this->eventDispatcher->dispatch($translationEvent);
 
-        if (!$translationEvent->shouldProcessTranslations()) {
-            return;
+            if (
+                !$translationEvent->shouldProcessTranslations()
+            ) {
+                return;
+            }
         }
 
         foreach ($record->getTranslations() as $translatedRecords) {
