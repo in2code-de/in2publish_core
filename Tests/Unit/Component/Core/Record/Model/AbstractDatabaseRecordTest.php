@@ -45,7 +45,7 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         $dependency = $dependencies[0];
         self::assertSame('foo', $dependency->getClassification());
         self::assertSame(['uid' => 15], $dependency->getProperties());
-        self::assertSame(Dependency::REQ_EXISTING, $dependency->getRequirement());
+        self::assertSame(Dependency::REQ_CONSISTENT_EXISTENCE, $dependency->getRequirement());
         $dependency = $dependencies[1];
         self::assertSame('foo', $dependency->getClassification());
         self::assertSame(['uid' => 15], $dependency->getProperties());
