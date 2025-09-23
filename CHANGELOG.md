@@ -1,5 +1,13 @@
 # In2publish Core Change Log
 
+12.6.3:
+- [META] Set the EM conf version number to 12.6.3
+- [DOCS] Update Changelog.md
+- [TASK] Replace requirement REQ_EXISTENCE with new requirement REQ_CONSISTENT_EXISTENCE for translated records
+- [TASK] Always publish translations if language parent is deleted
+- [DEV] create /run/sshd/ only if not already exist
+- [BUGFIX] remove StopwatchAlreadyStartedException keep the startTime if already set
+
 12.6.2:
 - [META] Set the EM conf version number to 12.6.2
 - [DOCS] Update Changelog.md
