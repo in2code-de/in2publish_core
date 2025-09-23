@@ -1,5 +1,16 @@
 # In2publish Core Change Log
 
+13.1.1
+
+- [META] Set the EM conf version number to 13.1.1
+- [DOCS] Update Changelog.md
+- [TASK] Replace requirement REQ_EXISTENCE with new requirement REQ_CONSISTENT_EXISTENCE for translated records
+- [TASK] Always publish translations if language parent is deleted
+- [BUGFIX] Show line breaks in information modal
+- [DEV] create /run/sshd/ only if not already exist
+- [BUGFIX] Fix spacing/sizing of publish overview page rows
+- [BUGFIX] Fix select input styling in filters
+
 13.1.0
 
 - [META] Set the EM conf version number to 13.1.0
