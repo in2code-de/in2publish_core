@@ -25,7 +25,7 @@
 			<div class="col-sm-4">
 				<div class="form-group">
 					<label for="in2publish__publishfilter_state"><f:translate key="module_m1_filter_state">Filter by change state</f:translate></label>
-					<select id="in2publish__publishfilter_state" class="form-control js-in2publish-statefilter" data-workflow-filter-field="true">
+					<select id="in2publish__publishfilter_state" class="form-select js-in2publish-statefilter" data-workflow-filter-field="true">
 						<option value=""><f:translate key="module_m1_filter_state.all">All</f:translate></option>
 						<option value="changed"><f:translate key="record.state.changed.short">changed</f:translate></option>
 						<option value="added"><f:translate key="record.state.added.short">added</f:translate></option>
@@ -42,7 +42,7 @@
 			<div class="col-sm-4">
 				<div class="form-group">
 					<label for="in2publish__publishfilter_level"><f:translate key="module_m1_filter_field_level">level</f:translate></label>
-					<select id="in2publish__publishfilter_level" class="form-control js-in2publish-levelfilter" data-workflow-filter-field="true" name="relative-level">
+					<select id="in2publish__publishfilter_level" class="form-select js-in2publish-levelfilter" data-workflow-filter-field="true" name="relative-level">
 						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 0  })}" {f:if(condition: '{pageRecursionLimit} == 0', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 0 }">0 levels</f:translate></option>
 						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 1  })}" {f:if(condition: '{pageRecursionLimit} == 1', then: 'selected')}><f:translate key="m1.page_recursion.depth" arguments="{0:  1 }">1 level</f:translate></option>
 						<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 2  })}" {f:if(condition: '{pageRecursionLimit} == 2', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 2 }">2 levels</f:translate></option>
@@ -65,7 +65,7 @@
 			<div class="col-sm-4">
 				<div class="form-group">
 					<label for="in2publish__publishfilter_language"><f:translate key="module_m1_filter_language">Filter by language</f:translate></label>
-					<select id="in2publish__publishfilter_language" class="form-control js-in2publish-languagefilter" data-workflow-filter-field="true">
+					<select id="in2publish__publishfilter_language" class="form-select js-in2publish-languagefilter" data-workflow-filter-field="true">
 						<option value="">
 							<f:translate key="module_m1_filter_language.all">Filter by language</f:translate>
 						</option>

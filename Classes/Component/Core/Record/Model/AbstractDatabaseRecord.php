@@ -80,12 +80,12 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
         $language = $this->getCtrlProp(self::CTRL_PROP_LANGUAGE_FIELD);
         $transOrigPointer = $this->getCtrlProp(self::CTRL_PROP_TRANS_ORIG_POINTER_FIELD);
         if ($language > 0 && $transOrigPointer > 0) {
-            $dependencies[] = $transOrigExisting = new Dependency(
+            $dependencies[] = $transOrigConsistentExistence = new Dependency(
                 $this,
                 $this->getClassification(),
                 ['uid' => $transOrigPointer],
-                Dependency::REQ_EXISTING,
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.existing',
+                Dependency::REQ_CONSISTENT_EXISTENCE,
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.consistent_existence',
                 fn (Record $record): array => [
                     $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
@@ -106,7 +106,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                         $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
                     ],
                 );
-                $transOrigEnableColumns->addSupersedingDependency($transOrigExisting);
+                $transOrigEnableColumns->addSupersedingDependency($transOrigConsistentExistence);
             }
         }
     }
@@ -220,5 +220,28 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
     {
         $deleteField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['delete'] ?? null;
         return (null !== $deleteField && array_key_exists($deleteField, $this->getLocalProps()) && (bool)$this->getLocalProps()[$deleteField]) && empty($this->getForeignProps());
+    }
+
+    public function isDeletedInLocalDatabase(): bool
+    {
+        return $this->hasDeleteFlag($this->getLocalProps()) || empty($this->getLocalProps());
+    }
+
+    public function isDeletedInForeignDatabase(): bool
+    {
+        return $this->hasDeleteFlag($this->getForeignProps()) || empty($this->getForeignProps());
+    }
+
+    private function hasDeleteFlag(array $props): bool
+    {
+        $deleteField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['delete'] ?? null;
+        return $deleteField !== null
+            && array_key_exists($deleteField, $props)
+            && (bool)$props[$deleteField];
+    }
+
+    public function hasConsistentExistence(): bool
+    {
+        return $this->isDeletedInLocalDatabase() === $this->isDeletedInForeignDatabase();
     }
 }

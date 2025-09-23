@@ -352,6 +352,9 @@
 			<trans-unit id="record.reason.requires_translation_parent.existing" resname="record.reason.requires_translation_parent.existing">
 				<source>&quot;%s&quot; requires that the record &quot;%s&quot; (which is the default language version) is published first.</source>
 			</trans-unit>
+			<trans-unit id="record.reason.requires_translation_parent.consistent_existence" resname="record.reason.requires_translation_parent.consistent_existencerequires_translation_parent.consistent_existence">
+				<source>"%s" requires that the default language record "%s" has consistent existence status across local and foreign databases (present OR absent).</source>
+			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.enablecolumns" resname="record.reason.requires_translation_parent.enablecolumns">
 				<source>The record &quot;%s&quot; cannot be published until all visibility settings (%s) of the default language &quot;%s&quot; have been published.</source>
 			</trans-unit>
