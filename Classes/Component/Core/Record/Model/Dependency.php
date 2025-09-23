@@ -21,6 +21,7 @@ use const PHP_EOL;
  */
 class Dependency
 {
+    public const REQ_CONSISTENT_EXISTENCE = 'consistent_existence';
     public const REQ_EXISTING = 'existing';
     public const REQ_ENABLECOLUMNS = 'enablecolumns';
     public const REQ_FULL_PUBLISHED = 'fully_published';
@@ -127,6 +128,9 @@ class Dependency
         }
         if (self::REQ_EXISTING === $this->requirement) {
             return $record->getState() !== Record::S_ADDED;
+        }
+        if (($record instanceof AbstractDatabaseRecord) && (self::REQ_CONSISTENT_EXISTENCE === $this->requirement)) {
+            return $record->hasConsistentExistence();
         }
         if (self::REQ_ENABLECOLUMNS === $this->requirement) {
             $state = $record->getState();
