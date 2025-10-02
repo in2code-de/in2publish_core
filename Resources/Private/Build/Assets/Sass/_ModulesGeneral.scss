@@ -878,3 +878,29 @@ div#typo3-docbody.stopScrolling {
   width: 45px;
   min-width: 45px;
 }
+
+.hidden-checkbox {
+  $this: &;
+
+  display: none;
+
+  ~ #{$this}-sibling {
+    display: none;
+
+    &__off {
+      display: block;
+    }
+  }
+
+  &:checked {
+    ~ #{$this}-sibling {
+      &__on {
+        display: block;
+      }
+
+      &__off {
+        display: none;
+      }
+    }
+  }
+}
