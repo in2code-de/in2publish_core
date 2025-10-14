@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Listener;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use In2code\In2publishCore\Component\Core\Reason\Reason;
 use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DeletedUnpublishedTranslationsExistForThisPage
 {
@@ -47,19 +47,19 @@ class DeletedUnpublishedTranslationsExistForThisPage
         $deletedTranslationsLocal = $localQuery->select('uid')
                                                ->from($recordTable)
                                                ->where(
-                                                   $localQuery->expr()->eq('pid', $localQuery->createNamedParameter($recordPid, \PDO::PARAM_INT)),
+                                                   $localQuery->expr()->eq('pid', $localQuery->createNamedParameter($recordPid, ParameterType::INTEGER)),
                                                    $localQuery->expr()->eq($deleteField, 1),
                                                    $localQuery->expr()->eq(
                                                        'l10n_parent',
-                                                       $localQuery->createNamedParameter($recordLanguageParent->getId(), \PDO::PARAM_INT)
+                                                       $localQuery->createNamedParameter($recordLanguageParent->getId(), ParameterType::INTEGER)
                                                    ),
                                                    $localQuery->expr()->eq(
                                                        'sys_language_uid',
-                                                       $localQuery->createNamedParameter($recordLanguage, \PDO::PARAM_INT)
+                                                       $localQuery->createNamedParameter($recordLanguage, ParameterType::INTEGER)
                                                    )
                                                )
                                                ->andWhere(
-                                                   $localQuery->expr()->neq('uid', $localQuery->createNamedParameter($currentRecord, \PDO::PARAM_INT)),
+                                                   $localQuery->expr()->neq('uid', $localQuery->createNamedParameter($currentRecord, ParameterType::INTEGER)),
                                                )
                                                ->executeQuery()
                                                ->fetchAllAssociative();
