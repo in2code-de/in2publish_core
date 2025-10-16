@@ -62,8 +62,8 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-develop": "12.6.x-dev",
-			"dev-master": "12.6.x-dev"
+			"dev-develop": "12.7.x-dev",
+			"dev-master": "12.7.x-dev"
 		},
 		"typo3/cms": {
 			"extension-key": "in2publish_core"
