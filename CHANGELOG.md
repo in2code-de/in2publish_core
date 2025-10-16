@@ -1,5 +1,16 @@
 # In2publish Core Change Log
 
+12.7.0:
+- [META] Set the EM conf version number to 12.7.0
+- [DOCS] Update Changelog.md
+- [TASK] Adjust labels for reason
+- [TASK] Fix DeletedUnpublishedTranslationsExistForThisPage listener
+- [TASK] Restrict RecordFactory:isRemovedAndDeletedRecord to records with deleted flag on foreign
+- [WIP] Add reason if DeletedUnpublishedTranslationsExistForThisPage
+- [BUGFIX] Only add dependency REQ_CONSISTENT_EXISTENCE for local records
+- [BUGFIX] move hidden_checkbox styling from in2publish to in2publish_core
+- [DEV] add missing frontend build tasks
+
 12.6.3:
 - [META] Set the EM conf version number to 12.6.3
 - [DOCS] Update Changelog.md
