@@ -39,9 +39,9 @@ class DatabaseSchemaService implements SingletonInterface
     public function getColumnNames(string $table): array
     {
         if (!isset($this->columns[$table])) {
-            $columns = $this->localDatabase->getSchemaInformation()->introspectTable($table)->getColumns();
-            foreach ($columns as $column) {
-                $this->columns[$table][] = $column->getName();
+            $columns = $this->localDatabase->getSchemaInformation()->listTableColumnNames($table);
+            foreach ($columns as $columnName) {
+                $this->columns[$table][] = $columnName;
             }
             $this->infoChanged = true;
         }
