@@ -1,5 +1,19 @@
 # In2publish Core Change Log
 
+13.2.0
+
+- [META] Set the EM conf version number to 13.2.0
+- [DOCS] Update Changelog.md
+- [BUGFIX] adapt to API changes in SchemaInformation
+- [DEV] Fix php configuration in docker setup
+- [BUGFIX] extends the URL for the “Publish Files” module.
+- [BUGFIX] Use correct ParameterType in queries
+- [TASK] Adjust labels for reason
+- [TASK] Fix DeletedUnpublishedTranslationsExistForThisPage listener
+- [TASK] Restrict RecordFactory:isRemovedAndDeletedRecord to records with deleted flag on foreign
+- [WIP] Add reason if DeletedUnpublishedTranslationsExistForThisPage
+- [BUGFIX] Only add dependency REQ_CONSISTENT_EXISTENCE for local records
+
 13.1.1
 
 - [META] Set the EM conf version number to 13.1.1

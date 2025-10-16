@@ -370,6 +370,9 @@
 			<trans-unit id="record.reason.shortcut_record" resname="record.reason.shortcut_record">
 				<source>The record &quot;%s&quot; is a target of the shortcut record &quot;%s&quot;. The target must be published before the shortcut record can be published.</source>
 			</trans-unit>
+			<trans-unit id="record.reason.unpublished_deleted_translations_for_this_page" resname="record.reason.unpublished_deleted_translations_for_this_page">
+				<source>There is at least one unpublished deletion of this translation. Please publish all deleted translations first.</source>
+			</trans-unit>
 			<trans-unit id="tx_in2publishcore.modal.publish.page_with_dependencies.text">
 				<source>This page has unmet dependencies. Since you cannot access the dependencies, it is possible to publish this page anyway. However, there is no guarantee that the page will look exactly the same as on Local.
 					You can see the dependencies in the details of the page.</source>

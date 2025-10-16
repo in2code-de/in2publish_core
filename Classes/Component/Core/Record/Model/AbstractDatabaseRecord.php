@@ -64,6 +64,19 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
         return $value;
     }
 
+    protected function getLocalCtrlProp(string $ctrlName)
+    {
+        $value = self::CTRL_DEFAULT[$ctrlName] ?? null;
+
+        $valueField = $GLOBALS['TCA'][$this->table]['ctrl'][$ctrlName] ?? null;
+
+        if (null !== $valueField) {
+            $value = $this->localProps[$valueField] ?? $value;
+        }
+
+        return $value;
+    }
+
     /**
      * @return array<Dependency>
      */
@@ -78,7 +91,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
     protected function calculateLanguageDependencies(array &$dependencies): void
     {
         $language = $this->getCtrlProp(self::CTRL_PROP_LANGUAGE_FIELD);
-        $transOrigPointer = $this->getCtrlProp(self::CTRL_PROP_TRANS_ORIG_POINTER_FIELD);
+        $transOrigPointer = $this->getLocalCtrlProp(self::CTRL_PROP_TRANS_ORIG_POINTER_FIELD);
         if ($language > 0 && $transOrigPointer > 0) {
             $dependencies[] = $transOrigConsistentExistence = new Dependency(
                 $this,

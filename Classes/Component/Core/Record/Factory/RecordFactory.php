@@ -164,7 +164,10 @@ class RecordFactory
         if (!$configContainer->get('features.hideRecordsDeletedDifferently.enable')) {
             return false;
         }
-        return (empty($record->getLocalProps()) && isset($record->getForeignProps()['deleted']) && 1 === (int)$record->getForeignProps()['deleted'])
-            || (empty($record->getForeignProps()) && isset($record->getLocalProps()['deleted']) && 1 === (int)$record->getLocalProps()['deleted']);
+        $deleteField = $GLOBALS['TCA'][$record->getClassification()]['ctrl']['delete'] ?? null;
+        if (null === $deleteField) {
+            return false;
+        }
+        return (empty($record->getLocalProps() && 1 === (int)$record->getForeignProps()[$deleteField]));
     }
 }
