@@ -1,5 +1,10 @@
 # In2publish Core Change Log
 
+13.0.2
+- [META] Set the EM conf version number to 13.0.2
+- [DOCS] Update Changelog.md
+- [BUGFIX] adapt to API changes in SchemaInformation
+
 13.0.1
 
 - [META] Set the EM conf version number to 13.0.1
