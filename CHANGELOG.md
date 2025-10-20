@@ -1,5 +1,10 @@
 # In2publish Core Change Log
 
+13.2.1
+- [META] Set the EM conf version number to 13.2.1
+- [DOCS] Update Changelog.md
+- [BUGFIX] Eliminate undefined array key warning with active feature hideRecordsDeletedDifferently
+
 13.2.0
 
 - [META] Set the EM conf version number to 13.2.0
