@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.1",
     "gulp-plumber": "^1.2.1",
     "gulp-sass": "^5.1.0",
     "kss-scheibo": "^1.8.6"
