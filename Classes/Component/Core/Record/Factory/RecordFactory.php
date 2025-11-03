@@ -168,6 +168,7 @@ class RecordFactory
         if (null === $deleteField) {
             return false;
         }
-        return (empty($record->getLocalProps() && 1 === (int)$record->getForeignProps()[$deleteField]));
+        return empty($record->getLocalProps())
+            && 1 === (int)($record->getForeignProps()[$deleteField] ?? 0);
     }
 }
