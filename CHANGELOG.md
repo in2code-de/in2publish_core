@@ -1,5 +1,10 @@
 # In2publish Core Change Log
 
+12.7.1:
+- [META] Set the EM conf version number to 12.7.1
+- [DOCS] Update Changelog.md
+- [BUGFIX] Cast foreign UIDs to int in AutoState comparison
+
 12.7.0:
 - [META] Set the EM conf version number to 12.7.0
 - [DOCS] Update Changelog.md
