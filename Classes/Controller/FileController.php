@@ -44,7 +44,9 @@ use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
@@ -95,6 +97,32 @@ class FileController extends ActionController
         );
     }
 
+    /**
+     * WORKAROUND:
+     *
+     * override the "misuse" of the "id" argument (see: typo3/cms-backend/Classes/View/BackendViewFactory.php:70).
+     * Otherwise, a template override is not possible because the PageTs is not loaded.
+     *
+     * The "filelist" and therefore the "publish files" modules use the "id" parameter to specify the currently selected
+     *  folder instead of the selected page.
+     *
+     * @see: https://projekte.in2code.de/issues/76154
+     *
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function processRequest(RequestInterface $request): ResponseInterface
+    {
+        if ($request instanceof ServerRequestInterface) {
+            $queryParams = $request->getQueryParams();
+            $queryParams['id'] = 0;
+            $request = $request->withQueryParams($queryParams);
+            $this->moduleTemplate = $this->moduleTemplateFactory->create($request);
+            $this->moduleTemplate->setModuleId(strtolower(str_replace('\\', '_', static::class)));
+        }
+        return parent::processRequest($request);
+    }
+
     public function indexAction(): ResponseInterface
     {
         $pid = BackendUtility::getPageIdentifier();
@@ -118,8 +146,6 @@ class FileController extends ActionController
         $this->pageRenderer->addInlineLanguageLabelFile(
             'EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf',
         );
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
 
         /** @see packages/in2publish_core/Resources/Private/Templates/File/Index.html */
         return $this->htmlResponse();
