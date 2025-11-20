@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\CommonInjection\ModuleTemplateFactoryInjection;
 use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinderInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
@@ -39,14 +38,12 @@ use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
-use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
+use In2code\In2publishCore\Controller\Traits\FileControllerModuleTemplate;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
@@ -70,11 +67,10 @@ class FileController extends ActionController
 {
     use CommonViewVariables;
     use ControllerFilterStatus;
-    use ControllerModuleTemplate;
+    use FileControllerModuleTemplate;
     use DeactivateErrorFlashMessage;
     use DefaultFalFinderInjection;
     use FailureCollectorInjection;
-    use ModuleTemplateFactoryInjection;
     use PageRendererInjection {
         injectPageRenderer as actualInjectPageRenderer;
     }
@@ -95,32 +91,6 @@ class FileController extends ActionController
             '',
             false,
         );
-    }
-
-    /**
-     * WORKAROUND:
-     *
-     * override the "misuse" of the "id" argument (see: typo3/cms-backend/Classes/View/BackendViewFactory.php:70).
-     * Otherwise, a template override is not possible because the PageTs is not loaded.
-     *
-     * The "filelist" and therefore the "publish files" modules use the "id" parameter to specify the currently selected
-     *  folder instead of the selected page.
-     *
-     * @see: https://projekte.in2code.de/issues/76154
-     *
-     * @param RequestInterface $request
-     * @return ResponseInterface
-     */
-    public function processRequest(RequestInterface $request): ResponseInterface
-    {
-        if ($request instanceof ServerRequestInterface) {
-            $queryParams = $request->getQueryParams();
-            $queryParams['id'] = 0;
-            $request = $request->withQueryParams($queryParams);
-            $this->moduleTemplate = $this->moduleTemplateFactory->create($request);
-            $this->moduleTemplate->setModuleId(strtolower(str_replace('\\', '_', static::class)));
-        }
-        return parent::processRequest($request);
     }
 
     public function indexAction(): ResponseInterface
