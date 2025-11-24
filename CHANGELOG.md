@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+13.2.2
+- [META] Set the EM conf version number to 13.2.2
+- [DOCS] Update Changelog.md
+- [BUGFIX][WORKAROUND] allow template override of backend module "publish files"
+- [TASK] set minimal TYPO3 core version to 13.4.19 due to API adjustments to the schema information
+
 13.2.1
 - [META] Set the EM conf version number to 13.2.1
 - [DOCS] Update Changelog.md
