@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\CommonInjection\ModuleTemplateFactoryInjection;
 use In2code\In2publishCore\CommonInjection\PageRendererInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinderInjection;
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
@@ -39,8 +38,8 @@ use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
-use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
+use In2code\In2publishCore\Controller\Traits\FileControllerModuleTemplate;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
@@ -68,11 +67,10 @@ class FileController extends ActionController
 {
     use CommonViewVariables;
     use ControllerFilterStatus;
-    use ControllerModuleTemplate;
+    use FileControllerModuleTemplate;
     use DeactivateErrorFlashMessage;
     use DefaultFalFinderInjection;
     use FailureCollectorInjection;
-    use ModuleTemplateFactoryInjection;
     use PageRendererInjection {
         injectPageRenderer as actualInjectPageRenderer;
     }
@@ -118,8 +116,6 @@ class FileController extends ActionController
         $this->pageRenderer->addInlineLanguageLabelFile(
             'EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf',
         );
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
 
         /** @see packages/in2publish_core/Resources/Private/Templates/File/Index.html */
         return $this->htmlResponse();
