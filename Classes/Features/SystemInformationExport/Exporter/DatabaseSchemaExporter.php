@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Schema\Index\IndexType;
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use TYPO3\CMS\Core\Database\Schema\SchemaInformation;
 
 class DatabaseSchemaExporter implements SystemInformationExporter
 {
@@ -43,13 +43,16 @@ class DatabaseSchemaExporter implements SystemInformationExporter
         return 'schema';
     }
 
+    /**
+     * @todo replace deprecations
+     */
     public function getInformation(): array
     {
         $schema = [];
         foreach (['local' => $this->localDatabase, 'foreign' => $this->foreignDatabase] as $side => $database) {
-            /* @var SchemaInformation */
-            $schemaInformation = $database->getSchemaInformation();
-            foreach ($schemaInformation->listTables() as $table) {
+            $schemaManager = $database->createSchemaManager();
+
+            foreach ($schemaManager->listTables() as $table) {
                 $schema[$side][$table->getName()]['options'] = $table->getOptions();
                 foreach ($table->getColumns() as $column) {
                     $schema[$side][$table->getName()]['columns'][$column->getName()] = $column->toArray();
@@ -58,8 +61,8 @@ class DatabaseSchemaExporter implements SystemInformationExporter
                     $schema[$side][$table->getName()]['indexes'][$index->getName()] = [
                         'columns' => $index->getColumns(),
                         'isPrimary' => $index->isPrimary(),
-                        'isSimple' => $index->isSimpleIndex(),
-                        'isUnique' => $index->isUnique(),
+                        'isSimple' => $index->getType() === IndexType::REGULAR,
+                        'isUnique' => $index->getType() === IndexType::UNIQUE,
                         'isQuoted' => $index->isQuoted(),
                         'options' => $index->getOptions(),
                         'flags' => $index->getFlags(),

@@ -73,7 +73,7 @@ class SitesConfigurationExporter implements SystemInformationExporter
                         'actualURI' => $uri,
                         'langId' => $languageId,
                         'typo3Lang' => $language->getTypo3Language(),
-                        'isocode' => $language->getTwoLetterIsoCode(),
+                        'isocode' => $language->getLocale()->getLanguageCode(),
                     ];
                 }
                 try {
