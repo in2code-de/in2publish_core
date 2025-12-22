@@ -14,9 +14,10 @@ export class BackendPage {
 
   /**
    * Login to TYPO3 backend if not already logged in
+   * @param baseUrl Optional base URL to use for login (defaults to config.local.baseUrl)
    */
-  async login(): Promise<void> {
-    await this.page.goto(config.local.baseUrl);
+  async login(baseUrl: string = config.local.baseUrl): Promise<void> {
+    await this.page.goto(baseUrl);
 
     // Verify if we're logged in
     const isLoggedIn = await this.page.locator('.scaffold-header')

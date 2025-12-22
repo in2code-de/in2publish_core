@@ -6,7 +6,6 @@ test.describe('Content Publisher Tests', () => {
         // Handle login
         await backend.login();
 
-        // Navigate to Publisher Tools module
         await backend.gotoModule('Publisher Tools');
     });
 
