@@ -3,26 +3,21 @@ import config from './config';
 
 test.describe('Publish Overview Module', () => {
   test('Publish Overview module can be opened', async ({ page, backend }) => {
-    await test.step('Navigate to backend', async () => {
-      await page.goto(config.local.baseUrl);
-
-      // Verify we're logged in
-      await expect(page.locator('.scaffold-header')).toBeVisible({ timeout: 5000 });
+    await test.step('Given I am logged in and on the backend home page', async () => {
+      await backend.login();
     });
 
-    await test.step('Navigate to Page module and select Home', async () => {
-      await backend.gotoModule('Page');
 
-      // Select Home in the page tree
+    await test.step('And I select "Home" in the Page module', async () => {
+      await backend.gotoModule('Page');
       await backend.searchInPageTreeAndSelectFirstOccurrence('Home');
     });
 
-    await test.step('Navigate to Publish Overview module', async () => {
+    await test.step('When I navigate to the "Publish Overview" module', async () => {
       await backend.gotoModule('Publish Overview');
     });
 
-    await test.step('Verify module is loaded', async () => {
-      // Verify we're in the Publish Overview module
+    await test.step('Then I should see the module content loaded', async () => {
       await expect(
         backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
       ).toBeVisible({ timeout: 10000 });

@@ -1,4 +1,5 @@
 import { Page, FrameLocator, expect, Locator } from '@playwright/test';
+import config from '../config';
 
 export class BackendPage {
   readonly page: Page;
@@ -9,6 +10,27 @@ export class BackendPage {
     this.page = page;
     this.moduleNavigation = this.page.locator('#modulemenu');
     this.contentFrame = this.page.frameLocator('#typo3-contentIframe');
+  }
+
+  /**
+   * Login to TYPO3 backend if not already logged in
+   */
+  async login(): Promise<void> {
+    await this.page.goto(config.local.baseUrl);
+
+    // Verify if we're logged in
+    const isLoggedIn = await this.page.locator('.scaffold-header')
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+
+    if (!isLoggedIn) {
+      // If not logged in, login manually
+      await this.page.getByLabel('Username').fill(config.login.admin.username);
+      await this.page.getByLabel('Password').fill(config.login.admin.password);
+      await this.page.getByRole('button', { name: 'Login' }).click();
+      await this.page.waitForLoadState('networkidle');
+      await expect(this.page.locator('.scaffold-header')).toBeVisible();
+    }
   }
 
   /**
@@ -29,7 +51,7 @@ export class BackendPage {
     await expect(moduleLink).toHaveClass(/modulemenu-action-active/, { timeout: 10000 });
 
     // Wait for network idle, e.g. there are no more requests for at least 500 ms
-    await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+    await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => { });
   }
 
   /**
@@ -47,7 +69,7 @@ export class BackendPage {
     await searchInput.fill(searchText);
 
     // Wait for search to process and results to appear
-    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
 
     // Find the page tree node containing the search text
     // Click on the node container (not the text) to avoid interception issues
@@ -57,6 +79,6 @@ export class BackendPage {
     await firstResult.click();
 
     // Wait for the page to be selected and content to load
-    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
   }
 }
