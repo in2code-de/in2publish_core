@@ -8,7 +8,7 @@ setup('reset environment and authenticate', async ({ page }) => {
 
   console.log('Authenticating as admin...');
 
-  await page.goto(config.baseUrl);
+  await page.goto(config.local.baseUrl);
 
   // Wait for login page to load
   await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});

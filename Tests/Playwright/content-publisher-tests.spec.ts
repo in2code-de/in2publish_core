@@ -4,7 +4,7 @@ import config from './config';
 test.describe('Content Publisher Tests', () => {
   test.beforeEach(async ({ page, backend }) => {
     // For now, navigate directly to avoid storage state issues
-    await page.goto(config.baseUrl);
+    await page.goto(config.local.baseUrl);
 
     // Storage state should handle auth, but verify we're logged in
     const isLoggedIn = await page.locator('.scaffold-header')
