@@ -1,0 +1,26 @@
+{
+  "name": "in2publish_core",
+  "version": "1.0.0",
+  "description": "[![Latest Stable Version](https://poser.pugx.org/in2code/in2publish_core/v/stable)](https://packagist.org/packages/in2code/in2publish_core) [![Build Status](https://travis-ci.org/in2code-de/in2publish_core.svg?branch=master)](https://travis-ci.org/in2code-de/in2publish_core) [![Latest Unstable Version](https://poser.pugx.org/in2code/in2publish_core/v/unstable)](https://packagist.org/packages/in2code/in2publish_core) [![License](https://poser.pugx.org/in2code/in2publish_core/license)](https://packagist.org/packages/in2code/in2publish_core) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/606af76505674f4bb38f4a26d56b13d6)](https://www.codacy.com/gh/in2code-de/in2publish_core/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=in2code-de/in2publish_core&amp;utm_campaign=Badge_Grade)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/in2code-de/in2publish_core.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/in2code-de/in2publish_core/issues"
+  },
+  "homepage": "https://github.com/in2code-de/in2publish_core#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.3",
+    "typescript": "^5.9.3"
+  }
+}
