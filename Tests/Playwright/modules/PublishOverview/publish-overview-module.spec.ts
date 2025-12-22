@@ -1,5 +1,5 @@
-import { test, expect } from './fixtures/setup-fixtures';
-import config from './config';
+import { test, expect } from '../../fixtures/setup-fixtures';
+import config from '../../config';
 
 test.describe('Publish Overview Module', () => {
   test('Publish Overview module can be opened', async ({ page, backend }) => {
