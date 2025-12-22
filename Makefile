@@ -69,6 +69,8 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	git checkout Build/local/config/sites/main/config.yaml
 	git checkout Build/foreign/config/sites/main/config.yaml
 	make restore
+	npm install
+	npx playwright install
 
 ## Wait for the mysql container to be fully provisioned
 .mysql-wait:
@@ -149,6 +151,25 @@ acceptance-test:
 		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)"; \
 	fi
 
+## Run all Playwright tests (headless)
+playwright:
+	npx playwright test $(FILE)
+
+## Open Playwright UI mode
+playwright-ui:
+	npx playwright test --ui $(FILE)
+
+## Open the last Playwright HTML report
+playwright-report:
+	npx playwright show-report
+
+## Run all Playwright tests in headed mode (watch)
+playwright-watch:
+	npx playwright test --headed $(FILE)
+
+## Run Playwright tests in debug mode
+playwright-debug:
+	npx playwright test --debug $(FILE)
 
 setup-qa:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm phive install
