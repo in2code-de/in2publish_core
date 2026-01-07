@@ -62,30 +62,26 @@ class DeletedUnpublishedTranslationsExistForThisPage
                                                    $localQuery->expr()->neq('uid', $localQuery->createNamedParameter($currentRecord, \PDO::PARAM_INT)),
                                                )
                                                ->executeQuery()
-                                               ->fetchAllAssociative();
+                                               ->fetchFirstColumn();
 
         if (empty($deletedTranslationsLocal)) {
             return;
         }
 
-        $deletedUids = array_column($deletedTranslationsLocal, 'uid');
-
         // Check which of these deleted translations still exist on foreign
         $foreignQuery = $this->foreignDatabase->createQueryBuilder();
         $foreignQuery->getRestrictions()->removeAll();
-        $deletedTranslationsForeign = $foreignQuery->select('uid', $deleteField)
+        $unpublishedDeletedTranslations = $foreignQuery->select('uid', $deleteField)
                                                    ->from($recordTable)
                                                    ->where(
                                                        $foreignQuery->expr()->in(
                                                            'uid',
-                                                           $foreignQuery->createNamedParameter($deletedUids, ArrayParameterType::INTEGER)
+                                                           $foreignQuery->createNamedParameter($deletedTranslationsLocal, ArrayParameterType::INTEGER)
                                                        ),
                                                        $foreignQuery->expr()->eq($deleteField, 0)
                                                    )
                                                    ->executeQuery()
-                                                   ->fetchAllAssociative();
-
-        $unpublishedDeletedTranslations = array_column($deletedTranslationsForeign, 'uid');
+                                                   ->fetchFirstColumn();
 
         if (!empty($unpublishedDeletedTranslations)) {
             $event->addReason(
