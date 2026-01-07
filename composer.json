@@ -42,6 +42,9 @@
 		"ext-pdo": "*",
 		"ext-zip": "*",
 		"typo3/cms-core": "^13.4.19",
+		"typo3/cms-backend": "^13.4.19",
+		"typo3/cms-extbase": "^13.4.19",
+		"typo3/cms-fluid": "^13.4.19",
 		"symfony/yaml": "^7.1"
 	},
 	"autoload": {
