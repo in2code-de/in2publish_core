@@ -70,7 +70,7 @@ class DeletedUnpublishedTranslationsExistForThisPage
 
         $deletedUids = array_column($deletedTranslationsLocal, 'uid');
 
-        // Check which of these deleted translations exist on foreign
+        // Check which of these deleted translations still exist on foreign
         $foreignQuery = $this->foreignDatabase->createQueryBuilder();
         $foreignQuery->getRestrictions()->removeAll();
         $deletedTranslationsForeign = $foreignQuery->select('uid', $deleteField)
@@ -79,17 +79,13 @@ class DeletedUnpublishedTranslationsExistForThisPage
                                                        $foreignQuery->expr()->in(
                                                            'uid',
                                                            $foreignQuery->createNamedParameter($deletedUids, ArrayParameterType::INTEGER)
-                                                       )
+                                                       ),
+                                                       $foreignQuery->expr()->eq($deleteField, 0)
                                                    )
                                                    ->executeQuery()
                                                    ->fetchAllAssociative();
 
-        $foreignUids = array_column($deletedTranslationsForeign, 'uid');
-
-        // Find deleted translations that exist locally but not on foreign
-        // These unpublished deletions should be published first
-        // https://projekte.in2code.de/issues/72213
-        $unpublishedDeletedTranslations = array_diff($deletedUids, $foreignUids);
+        $unpublishedDeletedTranslations = array_column($deletedTranslationsForeign, 'uid');
 
         if (!empty($unpublishedDeletedTranslations)) {
             $event->addReason(
