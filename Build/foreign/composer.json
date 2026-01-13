@@ -73,8 +73,7 @@
 		"allow-plugins": {
 			"typo3/cms-composer-installers": true,
 			"typo3/class-alias-loader": true,
-			"helhum/dotenv-connector": true,
-			"co-stack/build-essentials": true
+			"helhum/dotenv-connector": true
 		}
 	},
 	"minimum-stability": "dev",
@@ -91,8 +90,6 @@
 	},
 	"require-dev": {
 		"typo3/testing-framework": "^9.1",
-		"co-stack/mysql-loader": "dev-develop-v13",
-		"co-stack/process-manager": "dev-master",
 		"co-stack/stack-test": "dev-develop-v13"
 	}
 }

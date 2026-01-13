@@ -102,12 +102,13 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 
 restore: mysql-restore fileadmin-restore
 
-## Restores the database from the backup files in SQLDUMPSDIR
+## Restores the database from the dump files in SQLDUMPSDIR
 mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
-	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
+	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_local.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) local'
 	echo "$(EMOJI_robot) Restoring the foreign database"
-	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
+	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_foreign.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) foreign'
+
 
 ## Restores the fileadmin from .project/data/fileadmin
 fileadmin-restore:
