@@ -100,18 +100,41 @@ export class BackendPage {
 
     console.log(`Found ${count} matching tree items for "${searchText}"`);
 
-    // Wait for the first result to be visible
-    await expect(matchingTreeItems.first()).toBeVisible({ timeout: 10000 });
+    // Get the first matching tree item and ensure it's stable
+    const firstTreeItem = matchingTreeItems.first();
 
-    // Click on the first matching tree item to select it
-    // TYPO3 tree items should be clickable and will select the page
-    await matchingTreeItems.first().click({ force: true });
+    // Wait for the first result to be visible and stable
+    await expect(firstTreeItem).toBeVisible({ timeout: 10000 });
+    await firstTreeItem.waitFor({ state: 'visible', timeout: 5000 });
+
+    // Ensure the element is in a stable state before clicking
+    await this.page.waitForTimeout(500);
+
+    // Click on the tree item's clickable area (the content label)
+    // We target the .node-contentlabel div which is the actual clickable element
+    const clickableElement = firstTreeItem.locator('.node-contentlabel').first();
+    await expect(clickableElement).toBeVisible({ timeout: 5000 });
+
+    // Scroll into view to ensure it's clickable
+    await clickableElement.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
+
+    // Click on the element (use force: true since element may overlap with others in tree)
+    await clickableElement.click({ force: true });
 
     // Wait for the page to be selected and content to load
     await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
 
     // Additional wait to ensure the selection is registered
     await this.page.waitForTimeout(1500);
+
+    // Verify that a tree item is now selected (has active/selected state)
+    const selectedItem = this.page.locator('[role="treeitem"][aria-selected="true"]');
+    const isSelected = await selectedItem.isVisible({ timeout: 2000 }).catch(() => false);
+
+    if (!isSelected) {
+      console.warn(`Warning: No tree item appears to be selected after clicking "${searchText}"`);
+    }
 
     console.log(`Selected first tree item matching "${searchText}"`);
   }
