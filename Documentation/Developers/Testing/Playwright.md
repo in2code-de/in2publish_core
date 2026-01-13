@@ -4,6 +4,11 @@ We are migrating our browser tests from Codeception to Playwright to improve sta
 
 ## Prerequisites
 
+- Node.js 18+ (required for Playwright)
+- npm 9+
+
+Check with: `node -v && npm -v`
+
 Playwright is installed automatically when running the project setup:
 
 ```bash
