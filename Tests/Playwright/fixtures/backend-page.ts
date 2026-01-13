@@ -53,6 +53,13 @@ export class BackendPage {
 
     // Wait for network idle, e.g. there are no more requests for at least 500 ms
     await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => { });
+
+    // Additional wait to ensure iframe content has fully loaded and updated
+    // Module switches can take time to refresh the iframe content
+    await this.page.waitForTimeout(1000);
+
+    // Wait for another network idle to catch any secondary requests
+    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
   }
 
   /**
@@ -66,20 +73,46 @@ export class BackendPage {
 
     // Find and fill the search input in the page tree (by placeholder text)
     const searchInput = this.page.locator('input[placeholder="Enter search term"]');
-    await expect(searchInput).toBeVisible({ timeout: 5000 });
+    await expect(searchInput).toBeVisible({ timeout: 10000 });
+
+    // Clear any existing search text first
+    await searchInput.clear();
     await searchInput.fill(searchText);
 
+    // Press Enter to trigger search if needed
+    await searchInput.press('Enter');
+
+    // Wait a bit for the search to filter results
+    await this.page.waitForTimeout(800);
+
     // Wait for search to process and results to appear
-    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
+    await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => { });
 
-    // Find the page tree node containing the search text
-    // Click on the node container (not the text) to avoid interception issues
-    const firstResult = this.page.locator('.node-contentlabel').filter({ hasText: searchText }).first();
+    // Find tree items that match the search text
+    // Use the ARIA role to find actual tree items, then filter by the text content
+    const treeItems = this.page.locator('[role="treeitem"]');
+    const matchingTreeItems = treeItems.filter({ hasText: searchText });
 
-    await expect(firstResult).toBeVisible({ timeout: 10000 });
-    await firstResult.click();
+    const count = await matchingTreeItems.count();
+    if (count === 0) {
+      throw new Error(`No page tree nodes found matching "${searchText}"`);
+    }
+
+    console.log(`Found ${count} matching tree items for "${searchText}"`);
+
+    // Wait for the first result to be visible
+    await expect(matchingTreeItems.first()).toBeVisible({ timeout: 10000 });
+
+    // Click on the first matching tree item to select it
+    // TYPO3 tree items should be clickable and will select the page
+    await matchingTreeItems.first().click({ force: true });
 
     // Wait for the page to be selected and content to load
     await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
+
+    // Additional wait to ensure the selection is registered
+    await this.page.waitForTimeout(1500);
+
+    console.log(`Selected first tree item matching "${searchText}"`);
   }
 }
