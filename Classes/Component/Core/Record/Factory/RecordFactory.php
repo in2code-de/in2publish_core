@@ -42,6 +42,7 @@ use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\RecordWasCreated;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RecordFactory
@@ -154,7 +155,7 @@ class RecordFactory
         return null !== $deleteField
             && array_key_exists($deleteField, $record->getLocalProps())
             && $record->getLocalProps()[$deleteField]
-            && !count(array_diff_assoc($record->getLocalProps(), $record->getForeignProps()));
+            && !count(ArrayUtility::arrayDiffAssocRecursive($record->getLocalProps(), $record->getForeignProps()));
     }
 
     protected function isRemovedAndDeletedRecord(Record $record): bool
