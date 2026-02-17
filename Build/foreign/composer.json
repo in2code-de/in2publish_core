@@ -92,8 +92,14 @@
 			"web-dir": "public"
 		}
 	},
+	"autoload-dev": {
+		"psr-4": {
+			"In2code\\In2publishCore\\Tests\\": "/app/Tests/"
+		}
+	},
 	"require-dev": {
 		"typo3/testing-framework": "^8.0",
+		"co-stack/build-essentials": "@dev",
 		"co-stack/mysql-loader": "@dev",
 		"co-stack/process-manager": "@dev",
 		"co-stack/stack-test": "@dev"
