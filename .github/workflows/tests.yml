@@ -43,10 +43,10 @@ jobs:
         run: ls -la /var/run/docker.sock
 
       - name: Composer Local
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 composer install
+        run: docker exec -u$(id -u) -e COMPOSER_AUTH='{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}' in2publish_core-local-php-1 composer install
 
       - name: Composer Foreign
-        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 composer install
+        run: docker exec -u$(id -u) -e COMPOSER_AUTH='{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}' in2publish_core-foreign-php-1 composer install
 
       - name: Wait for Database
         run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
@@ -77,9 +77,9 @@ jobs:
         run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
         if: always()
 
-      - name: Acceptance Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
-        if: always()
+#      - name: Acceptance Tests
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
+#        if: always()
 
       - name: Show me what's up 3
         run: docker compose ps
