@@ -102,6 +102,6 @@
 		"co-stack/build-essentials": "@dev",
 		"co-stack/mysql-loader": "@dev",
 		"co-stack/process-manager": "@dev",
-		"co-stack/stack-test": "@dev"
+		"co-stack/stack-test": "dev-master"
 	}
 }
