@@ -61,9 +61,11 @@ start: .link-compose-file
 	docker compose build --pull
 	docker compose up -d
 
+COMPOSER_AUTH_JSON := $(shell gh auth token 2>/dev/null | sed 's/.*/{"github-oauth":{"github.com":"&"}}/' || echo '{}')
+
 setup: stop destroy .install-packages .create-certificate start .mysql-wait
-	docker compose exec local-php composer i
-	docker exec -u1000 in2publish_core-foreign-php-1 composer i
+	docker compose exec -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' local-php composer i
+	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 composer i
 	docker compose exec local-php vendor/bin/typo3 install:setup --force
 	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
 	git checkout Build/local/config/sites/main/config.yaml
