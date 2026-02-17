@@ -1,5 +1,19 @@
 # In2publish Core Change Log
 
+13.3.0
+- [META] Set the EM conf version number to 13.3.0
+- [DOCS] Update Changelog.md
+- [TASK] Add composer authentication to composer steps
+- [TASK] Prevent publishing of a translation with an existing hard deleted translation on local
+- [TASK] Adjust url for forked co-stack packages
+- [BUGFIX] set infoJson only if a json string is provided
+- [BUGFIX] Merge pull request #127 from zecm-via/bugfix/unpublished-translations
+- [TASK] Use own forks of co-stack packages in order to fix tests
+- [BUGFIX] make "in2publish_core" requirement of extension "extensionmanager" optional
+- [TASK] add missing composer requirements cms-backend, cms-extbase, cms-fluid
+- [BUGFIX] fix undefined method exception, replace replaced function getTwoLetterIsoCode()
+- [BUGFIX] prevent array key undefined exceptions for redirect module
+
 13.2.2
 - [META] Set the EM conf version number to 13.2.2
 - [DOCS] Update Changelog.md
