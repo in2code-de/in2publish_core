@@ -29,20 +29,12 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
 
 class InstalledExtensionsExporter implements SystemInformationExporter
 {
-    protected ListUtility $listUtility;
-
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
-    public function __construct(ListUtility $listUtility)
-    {
-        $this->listUtility = $listUtility;
-    }
 
     public function getUniqueKey(): string
     {
@@ -51,8 +43,14 @@ class InstalledExtensionsExporter implements SystemInformationExporter
 
     public function getInformation(): array
     {
-        $packages = $this->listUtility->getAvailableAndInstalledExtensionsWithAdditionalInformation();
+        if(!ExtensionManagementUtility::isLoaded('extensionmanager')) {
+            return ['[NOTE] EXT:extensionmanager is not installed.'];
+        }
+
         $extensions = [];
+        $listUtility = GeneralUtility::makeInstance(ListUtility::class);
+        $packages = $listUtility->getAvailableAndInstalledExtensionsWithAdditionalInformation();
+
         foreach ($packages as $package) {
             $extensions[$package['key']] = [
                 'title' => $package['title'],
@@ -61,6 +59,7 @@ class InstalledExtensionsExporter implements SystemInformationExporter
                 'installed' => $package['installed'],
             ];
         }
+
         return $extensions;
     }
 }

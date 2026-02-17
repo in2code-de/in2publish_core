@@ -78,9 +78,11 @@ class SysRedirectDatabaseRecord extends DatabaseRecord
         if (empty($props)) {
             // (Sanity) check the published domain. If the redirect is associated
             // with a site or page, the local and foreign source_host must differ
+            $localSourceHost = $this->localProps['source_host'] ?? null;
+            $foreignSourceHost = $this->foreignProps['source_host'] ?? null;
             if (
-                $this->localProps['source_host'] === $this->foreignProps['source_host']
-                && '*' !== ($this->localProps['source_host'] ?? null)
+                $localSourceHost === $foreignSourceHost
+                && '*' !== $localSourceHost
                 && (
                     null !== ($this->localProps['tx_in2publishcore_foreign_site_id'] ?? null)
                     || null !== ($this->localProps['tx_in2publishcore_page_uid'] ?? null)

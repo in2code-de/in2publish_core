@@ -105,10 +105,10 @@ class SystemInformationExportController extends AbstractAdminToolsController
                     ContextualFeedbackSeverity::ERROR,
                 );
             }
+            $this->moduleTemplate->assignMultiple([
+                'infoJson' => json_encode($info, JSON_THROW_ON_ERROR),
+            ]);
         }
-        $this->moduleTemplate->assignMultiple([
-            'infoJson' => json_encode($info, JSON_THROW_ON_ERROR),
-        ]);
         return $this->htmlResponse();
     }
 
