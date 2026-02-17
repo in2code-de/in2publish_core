@@ -1,5 +1,20 @@
 # In2publish Core Change Log
 
+12.8.0
+- [META] Set the EM conf version number to 12.8.0
+- [DOCS] Update Changelog.md
+- [DEV] use v12 compatible version of co-stack/stack-test for test setup
+- [DEV] adjust composer.json for local development
+- [DEV] Prevent GitHub API rate limit exhaustion when running make setup locally
+- [TASK] Add composer authentication to composer steps
+- [TASK] Adjust url for forked co-stack packages
+- [TASK] Prevent publishing of a translation with an existing hard deleted translation on local
+- [WIP] Disable acceptance tests failing only in pipeline
+- [TASK] Use own forks of co-stack packages in order to fix tests
+- [BUGFIX] Merge pull request #127 from zecm-via/bugfix/unpublished-translations
+- [CLEANUP] Use fetchFirstColumn instead of fetchAllAssociative
+- [BUGFIX] Exclude already deleted translations from foreign select
+
 12.7.1:
 - [META] Set the EM conf version number to 12.7.1
 - [DOCS] Update Changelog.md
