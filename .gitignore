@@ -27,7 +27,7 @@ docker-compose.yaml
 node_modules/
 
 # AI
-.claude/
+.claude/settings.local.json
 
 # Playwright
 test-results/
