@@ -16,19 +16,19 @@
 		},
 		"1": {
 			"type": "vcs",
-			"url": "https://gitlab.com/tinzog/stack-test"
+			"url": "https://github.com/in2code-de/stack-test"
 		},
 		"2": {
 			"type": "vcs",
-			"url": "https://gitlab.com/tinzog/mysql-loader"
+			"url": "https://github.com/in2code-de/mysql-loader"
 		},
 		"3": {
 			"type": "vcs",
-			"url": "https://gitlab.com/tinzog/build-essentials"
+			"url": "https://github.com/in2code-de/build-essentials"
 		},
 		"4": {
 			"type": "vcs",
-			"url": "https://gitlab.com/tinzog/process-manager"
+			"url": "https://github.com/in2code-de/process-manager"
 		}
 	},
 	"require": {
@@ -102,7 +102,7 @@
 		"typo3/testing-framework": "^9.1",
 		"co-stack/stack-test": "dev-develop-v13",
 		"co-stack/build-essentials": "@dev",
-		"co-stack/mysql-loader": "@dev",
+		"co-stack/mysql-loader": "dev-develop-v13",
 		"co-stack/process-manager": "@dev"
 	}
 }
