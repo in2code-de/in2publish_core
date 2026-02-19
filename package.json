@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/in2code-de/in2publish_core#readme",
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
+    "@in2code/typo3-playwright": "file:./in2code-typo3-playwright-0.1.0.tgz",
+    "@playwright/test": "^1.58.2",
     "@types/node": "^25.0.3",
     "typescript": "^5.9.3"
   }
