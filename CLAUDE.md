@@ -160,6 +160,20 @@ Key targets:
 
 #### 8. Configuration Files
 - Use `defined('TYPO3') || die();` in config files
+# Development Guidelines
+
+## Working Mode
+* **File Management:** You may read, create, and modify files without prior consultation.
+* **Destructive Actions:** Always ask for confirmation before performing destructive actions (e.g., deletions or database migrations without a rollback path).
+* **Testing:** Writing and executing tests is always permitted and encouraged.
+* **Handling Ambiguity:** If a requirement is unclear, make a reasonable assumption, document it, and proceed.
+* **Refactoring:** No prior approval is needed for refactoring within a specific module.
+
+
+## Restrictions (Require Explicit Approval)
+* **Dependencies:** Modifying `composer.json` or adding/removing dependencies.
+* **Database Schema:** Deploying any changes to the database schema.
+* **External APIs:** Calling live external APIs (permitted only within tests using mocks/stubs).
 
 ### Git Information
 
