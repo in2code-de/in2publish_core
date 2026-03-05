@@ -23,6 +23,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function iterator_to_array;
 
 #[CoversMethod(AbstractDatabaseRecord::class, 'calculateDependencies')]
+#[CoversMethod(AbstractDatabaseRecord::class, 'isBeingDeleted')]
+#[CoversMethod(AbstractDatabaseRecord::class, 'calculateLanguageDependencies')]
+#[CoversMethod(AbstractDatabaseRecord::class, 'calculateParentRecordDependencies')]
 #[CoversMethod(AbstractDatabaseRecord::class, 'getStateRecursive')]
 #[CoversMethod(AbstractDatabaseRecord::class, 'getAllDependencies')]
 class AbstractDatabaseRecordTest extends UnitTestCase
@@ -326,6 +329,130 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         self::assertTrue($testRecord->hasUnfulfilledDependenciesRecursively());
         self::assertFalse($testRecord->isPublishable());
         self::assertTrue($testRecord->isPublishableIgnoringUnreachableDependencies());
+    }
+
+    public function testSoftDeletedTranslationWithNonExistentLanguageParentHasFulfilledDependencies(): void
+    {
+        // Scenario: a translated record was soft-deleted locally (deleted=1),
+        // but its language parent was hard-deleted on foreign.
+        // The CP must not block publishing the deletion.
+        $GLOBALS['TCA']['foo']['ctrl']['delete'] = 'deleted';
+
+        $localProps = [
+            'uid' => 123,
+            'sys_lang' => 1,
+            'sys_lang_parent' => 99, // parent no longer exists in the DB
+            'deleted' => 1,
+        ];
+        $foreignProps = [
+            'uid' => 123,
+            'sys_lang' => 1,
+            'sys_lang_parent' => 99,
+            'deleted' => 0,
+        ];
+        $testRecord = $this->createRecord('foo', 123, $localProps, $foreignProps, []);
+
+        self::assertSame(Record::S_SOFT_DELETED, $testRecord->getState());
+
+        // Fulfill with an empty collection — the language parent (uid=99) does not exist
+        $emptyCollection = new RecordCollection();
+        foreach ($testRecord->getDependencies() as $dependency) {
+            $dependency->fulfill($emptyCollection);
+        }
+
+        self::assertFalse(
+            $testRecord->hasUnfulfilledDependenciesRecursively(),
+            'A soft-deleted translation must not be blocked by a non-existent language parent',
+        );
+    }
+
+    public function testSoftDeletedRecordWithNonExistentPageHasFulfilledDependencies(): void
+    {
+        // Scenario: a content element was soft-deleted, its parent page was also deleted
+        // and not yet published. The deletion of the content must still be publishable.
+        $GLOBALS['TCA']['foo']['ctrl']['delete'] = 'deleted';
+
+        $localProps = [
+            'uid' => 123,
+            'pid' => 99, // page no longer exists in the DB
+            'deleted' => 1,
+        ];
+        $foreignProps = [
+            'uid' => 123,
+            'pid' => 99,
+            'deleted' => 0,
+        ];
+        $testRecord = $this->createRecord('foo', 123, $localProps, $foreignProps, []);
+
+        self::assertSame(Record::S_SOFT_DELETED, $testRecord->getState());
+
+        $emptyCollection = new RecordCollection();
+        foreach ($testRecord->getDependencies() as $dependency) {
+            $dependency->fulfill($emptyCollection);
+        }
+
+        self::assertFalse(
+            $testRecord->hasUnfulfilledDependenciesRecursively(),
+            'A soft-deleted record must not be blocked by a non-existent parent page',
+        );
+    }
+
+    public function testAddedAndLocallyDeletedTranslationHasFulfilledDependencies(): void
+    {
+        // Scenario: a translation was created locally (S_ADDED) and then soft-deleted before
+        // its first publish. The CP must not block publishing
+        $GLOBALS['TCA']['foo']['ctrl']['delete'] = 'deleted';
+
+        $localProps = [
+            'uid' => 9016,
+            'sys_lang' => 1,
+            'sys_lang_parent' => 9015, // parent no longer exists in DB
+            'deleted' => 1,
+        ];
+        // Foreign does not have this record at all (never published)
+        $foreignProps = [];
+        $testRecord = $this->createRecord('foo', 9016, $localProps, $foreignProps, []);
+
+        self::assertSame(Record::S_ADDED, $testRecord->getState());
+
+        $emptyCollection = new RecordCollection();
+        foreach ($testRecord->getDependencies() as $dependency) {
+            $dependency->fulfill($emptyCollection);
+        }
+
+        self::assertFalse(
+            $testRecord->hasUnfulfilledDependenciesRecursively(),
+            'A locally-deleted (S_ADDED+deleted=1) translation must not be blocked by a non-existent language parent',
+        );
+    }
+
+    public function testActiveTranslationWithNonExistentLanguageParentIsStillBlocked(): void
+    {
+        // Scenario: an active (non-deleted) translation with a non-existent language parent.
+        // Publishing must be blocked because of the missing language parent.
+        $localProps = [
+            'uid' => 123,
+            'sys_lang' => 1,
+            'sys_lang_parent' => 99, // parent does not exist
+            'deleted' => 0,
+        ];
+        $foreignProps = [
+            'uid' => 123,
+            'sys_lang' => 1,
+            'sys_lang_parent' => 99,
+            'deleted' => 0,
+        ];
+        $testRecord = $this->createRecord('foo', 123, $localProps, $foreignProps, []);
+
+        $emptyCollection = new RecordCollection();
+        foreach ($testRecord->getDependencies() as $dependency) {
+            $dependency->fulfill($emptyCollection);
+        }
+
+        self::assertTrue(
+            $testRecord->hasUnfulfilledDependenciesRecursively(),
+            'An active translation with a missing language parent must still be blocked',
+        );
     }
 
     protected function createRecord(
