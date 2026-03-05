@@ -69,6 +69,8 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	git checkout Build/local/config/sites/main/config.yaml
 	git checkout Build/foreign/config/sites/main/config.yaml
 	make restore
+	npm install
+	npx playwright install
 
 ## Wait for the mysql container to be fully provisioned
 .mysql-wait:
@@ -100,12 +102,13 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 
 restore: mysql-restore fileadmin-restore
 
-## Restores the database from the backup files in SQLDUMPSDIR
+## Restores the database from the dump files in SQLDUMPSDIR
 mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
-	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
+	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_local.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) local'
 	echo "$(EMOJI_robot) Restoring the foreign database"
-	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
+	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_foreign.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) foreign'
+
 
 ## Restores the fileadmin from .project/data/fileadmin
 fileadmin-restore:
@@ -149,6 +152,43 @@ acceptance-test:
 		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)"; \
 	fi
 
+## Run all Playwright tests (headless) - LOCAL
+playwright:
+	npx playwright test $(FILE)
+
+## Open Playwright UI mode - LOCAL
+playwright-ui:
+	npx playwright test --ui $(FILE)
+
+## Open the last Playwright HTML report
+playwright-report:
+	npx playwright show-report
+
+## Run all Playwright tests in headed mode (watch) - LOCAL
+playwright-watch:
+	npx playwright test --headed $(FILE)
+
+## Run Playwright tests in debug mode - LOCAL
+playwright-debug:
+	npx playwright test --debug $(FILE)
+
+## Run Playwright tests in Docker (headless) - PLATFORM INDEPENDENT
+playwright-docker:
+	docker compose exec -e CI=1 playwright npx playwright test
+
+
+## Run Playwright tests in Docker with specific file - PLATFORM INDEPENDENT
+playwright-docker-file:
+	@if [ -z "$(FILE)" ]; then \
+		echo "Usage: make playwright-docker-file FILE=<test-file>"; \
+		echo "Example: make playwright-docker-file FILE=Tests/Playwright/modules/PublishOverview/publish-changed-content.spec.ts"; \
+		exit 1; \
+	fi
+	docker compose exec -e CI=1 playwright npx playwright test $(FILE)
+
+## Show Playwright report from Docker tests
+playwright-docker-report:
+	docker compose exec playwright npx playwright show-report
 
 setup-qa:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm phive install
