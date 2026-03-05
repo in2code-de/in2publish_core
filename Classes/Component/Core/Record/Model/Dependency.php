@@ -38,6 +38,13 @@ class Dependency
      * @var array<Dependency>
      */
     private array $supersededBy = [];
+    /**
+     * When the owning record is being deleted (S_SOFT_DELETED / S_DELETED), its dependency
+     * requirements can be skipped: publishing the deletion makes the record invisible on foreign
+     * regardless of the state of related records. Dependencies are still fulfilled so that
+     * reasons remain available for informational display, but they never block publishing.
+     */
+    private bool $ownerIsBeingDeleted;
 
     public function __construct(
         Record $record,
@@ -45,7 +52,8 @@ class Dependency
         array $properties,
         string $requirement,
         string $label,
-        Closure $labelArgumentsFactory
+        Closure $labelArgumentsFactory,
+        bool $ownerIsBeingDeleted = false
     ) {
         $this->record = $record;
         $this->classification = $classification;
@@ -55,6 +63,7 @@ class Dependency
         $this->requirement = $requirement;
         $this->reasons = new Reasons();
         $this->selectedRecords = new RecordCollection();
+        $this->ownerIsBeingDeleted = $ownerIsBeingDeleted;
     }
 
     public function addSupersedingDependency(Dependency $dependency): void
@@ -158,6 +167,11 @@ class Dependency
 
     public function isFulfilled(): bool
     {
+        // dependencies for a record, which is being deleted, do not need to be fulfilled: publishing the deletion
+        // makes it invisible on foreign regardless of the state of related records.
+        if ($this->ownerIsBeingDeleted) {
+            return true;
+        }
         if ($this->isSupersededByUnfulfilledDependency()) {
             return false;
         }

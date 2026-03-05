@@ -21,6 +21,8 @@ class TtContentDatabaseRecord extends DatabaseRecord
 
     protected function calculateShortcutDependencies(array &$dependencies): void
     {
+        $ownerIsBeingDeleted = $this->isBeingDeleted();
+
         $referencedRecords = '';
         if (($this->localProps['CType'] ?? null) === 'shortcut') {
             $referencedRecords .= $this->localProps['records'];
@@ -47,6 +49,7 @@ class TtContentDatabaseRecord extends DatabaseRecord
                     $record->__toString() ?: "{$record->getClassification()} [{$record->getId()}]",
                     $this->__toString() ?: "{$this->getClassification()} [{$this->getId()}]",
                 ],
+                $ownerIsBeingDeleted,
             );
         }
     }
