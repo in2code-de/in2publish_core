@@ -376,6 +376,30 @@
 			<trans-unit id="record.reason.hard_deleted_unpublished_translations_for_this_page" resname="record.reason.hard_deleted_unpublished_translations_for_this_page">
 				<source>There is at least one removed translation (UIDs: %3$s) that still exists on the production system. Please publish the removal first before publishing this new translation.</source>
 			</trans-unit>
+			<trans-unit id="record.reason.grouped.requires_published_page.existing" resname="record.reason.grouped.requires_published_page.existing">
+				<source>The page &quot;%1$s&quot; must be published first.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.grouped.requires_published_page.enablecolumns" resname="record.reason.grouped.requires_published_page.enablecolumns">
+				<source>The page &quot;%1$s&quot; must have all visibility settings published first.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.grouped.requires_translation_parent.existing" resname="record.reason.grouped.requires_translation_parent.existing">
+				<source>The record &quot;%1$s&quot; (default language version) must be published first.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.grouped.requires_translation_parent.consistent_existence" resname="record.reason.grouped.requires_translation_parent.consistent_existence">
+				<source>The default language record &quot;%1$s&quot; must have consistent existence status across local and foreign databases.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.grouped.requires_translation_parent.enablecolumns" resname="record.reason.grouped.requires_translation_parent.enablecolumns">
+				<source>The default language record &quot;%1$s&quot; must have all visibility settings published first.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.grouped.shortcut_record" resname="record.reason.grouped.shortcut_record">
+				<source>The record &quot;%1$s&quot; must be published first because it is referenced by shortcut records.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.grouped.affected_records" resname="record.reason.grouped.affected_records">
+				<source>Affected records: %s</source>
+			</trans-unit>
+			<trans-unit id="record.reason.grouped.and_more" resname="record.reason.grouped.and_more">
+				<source>%1$s and %2$d more</source>
+			</trans-unit>
 			<trans-unit id="tx_in2publishcore.modal.publish.page_with_dependencies.text">
 				<source>This page has unmet dependencies. Since you cannot access the dependencies, it is possible to publish this page anyway. However, there is no guarantee that the page will look exactly the same as on Local.
 					You can see the dependencies in the details of the page.</source>

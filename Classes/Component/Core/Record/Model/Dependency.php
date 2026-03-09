@@ -82,6 +82,26 @@ class Dependency
         return $this->requirement;
     }
 
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function getSourceRecordName(): string
+    {
+        $name = $this->record->__toString();
+        return $name !== '' ? $name : $this->record->getClassification() . ' [' . $this->record->getId() . ']';
+    }
+
+    public function getTargetRecordName(): string
+    {
+        foreach ($this->selectedRecords as $record) {
+            $name = $record->__toString();
+            return $name !== '' ? $name : $record->getClassification() . ' [' . $record->getId() . ']';
+        }
+        return $this->classification . ' [' . $this->getPropertiesAsUidOrString() . ']';
+    }
+
     public function getPropertiesAsUidOrString(): string
     {
         if (count($this->properties) === 1 && isset($this->properties['uid'])) {
