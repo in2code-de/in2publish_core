@@ -17,13 +17,18 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
 use function array_diff_assoc;
 use function array_diff_key;
 use function array_flip;
 use function array_keys;
 use function array_pop;
+use function array_slice;
 use function count;
 use function implode;
+
+use const PHP_EOL;
 
 abstract class AbstractRecord implements Record
 {
@@ -326,6 +331,23 @@ abstract class AbstractRecord implements Record
         return $dependencyTree;
     }
 
+    private const LLL_PREFIX = 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.';
+
+    private const GROUPED_LABEL_MAP = [
+        self::LLL_PREFIX . 'requires_published_page.existing'
+            => self::LLL_PREFIX . 'grouped.requires_published_page.existing',
+        self::LLL_PREFIX . 'requires_published_page.enablecolumns'
+            => self::LLL_PREFIX . 'grouped.requires_published_page.enablecolumns',
+        self::LLL_PREFIX . 'requires_translation_parent.existing'
+            => self::LLL_PREFIX . 'grouped.requires_translation_parent.existing',
+        self::LLL_PREFIX . 'requires_translation_parent.consistent_existence'
+            => self::LLL_PREFIX . 'grouped.requires_translation_parent.consistent_existence',
+        self::LLL_PREFIX . 'requires_translation_parent.enablecolumns'
+            => self::LLL_PREFIX . 'grouped.requires_translation_parent.enablecolumns',
+        self::LLL_PREFIX . 'shortcut_record'
+            => self::LLL_PREFIX . 'grouped.shortcut_record',
+    ];
+
     /**
      * @noinspection PhpUnused (Used in View)
      */
@@ -335,19 +357,82 @@ abstract class AbstractRecord implements Record
         /** @var array<array<Dependency>> $flattened */
         $flattened = [];
         $this->flattenDependencyTree($dependencyTree, $flattened);
-        $string = [];
-        foreach ($flattened as $key => $dependencies) {
+
+        $grouped = [];
+        foreach ($flattened as $dependencies) {
             foreach ($dependencies as $dependency) {
                 if (!$dependency->isSupersededByUnfulfilledDependency() && !$dependency->isFulfilled()) {
-                    $propertiesString = $dependency->getPropertiesAsUidOrString();
-                    $targetString = $dependency->getClassification() . ' [' . $propertiesString . ']';
-                    $reasonsString = $dependency->getReasonsHumanReadable();
-
-                    $string[] = "$key -> $targetString: $reasonsString";
+                    $groupKey = $dependency->getClassification()
+                        . '|' . $dependency->getPropertiesAsUidOrString()
+                        . '|' . $dependency->getLabel();
+                    $grouped[$groupKey][] = $dependency;
                 }
             }
         }
-        return $string;
+
+        $result = [];
+        foreach ($grouped as $dependencies) {
+            $first = $dependencies[0];
+
+            if (count($dependencies) <= 1) {
+                $result[] = $first->getReasonsHumanReadable();
+                continue;
+            }
+
+            // Collect all unique source record names
+            $sourceNames = [];
+            foreach ($dependencies as $dep) {
+                $name = $dep->getSourceRecordName();
+                if (!isset($sourceNames[$name])) {
+                    $sourceNames[$name] = true;
+                }
+            }
+            $sourceNames = array_keys($sourceNames);
+            $affectedString = $this->formatAffectedRecordsList($sourceNames);
+
+            $groupedMessage = null;
+            $groupedLabel = self::GROUPED_LABEL_MAP[$first->getLabel()] ?? null;
+            if ($groupedLabel !== null) {
+                $targetName = $first->getTargetRecordName();
+                $groupedMessage = LocalizationUtility::translate($groupedLabel, null, [$targetName]);
+            }
+
+            if (!empty($groupedMessage)) {
+                $affectedLabel = LocalizationUtility::translate(
+                    self::LLL_PREFIX . 'grouped.affected_records',
+                    null,
+                    [$affectedString],
+                ) ?? 'Affected records: ' . $affectedString;
+                $result[] = $groupedMessage . PHP_EOL . $affectedLabel;
+            } else {
+                $result[] = $first->getReasonsHumanReadable() . PHP_EOL
+                    . (LocalizationUtility::translate(
+                        self::LLL_PREFIX . 'grouped.affected_records',
+                        null,
+                        [$affectedString],
+                    ) ?? 'Affected records: ' . $affectedString);
+            }
+        }
+
+        return $result;
+    }
+
+    private function formatAffectedRecordsList(array $names): string
+    {
+        $maxDisplay = 3;
+        $total = count($names);
+        // Only truncate when hiding 3+ names; for 1-2 remaining just show them all
+        if ($total > $maxDisplay + 2) {
+            $displayed = array_slice($names, 0, $maxDisplay);
+            $remaining = $total - $maxDisplay;
+            $list = '"' . implode('", "', $displayed) . '"';
+            return LocalizationUtility::translate(
+                self::LLL_PREFIX . 'grouped.and_more',
+                null,
+                [$list, $remaining],
+            ) ?? $list . ' and ' . $remaining . ' more';
+        }
+        return '"' . implode('", "', $names) . '"';
     }
 
     /**
