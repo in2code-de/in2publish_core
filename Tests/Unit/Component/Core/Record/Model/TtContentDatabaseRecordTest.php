@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Model;
 
 use In2code\In2publishCore\Component\Core\Record\Model\Dependency;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\Record\Model\TtContentDatabaseRecord;
+use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use ReflectionProperty;
@@ -18,6 +20,7 @@ use ReflectionProperty;
 #[CoversMethod(TtContentDatabaseRecord::class, 'getDependencies')]
 #[CoversMethod(TtContentDatabaseRecord::class, 'calculateDependencies')]
 #[CoversMethod(TtContentDatabaseRecord::class, 'calculateShortcutDependencies')]
+#[CoversMethod(TtContentDatabaseRecord::class, 'isBeingDeleted')]
 class TtContentDatabaseRecordTest extends UnitTestCase
 {
     public function testConstructor(): void
@@ -115,6 +118,61 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         $this->assertSame(1, count($ttContentDatabaseRecord1->calculateDependencies()));
         $this->assertSame(3, count($ttContentDatabaseRecord3->calculateDependencies()));
         $this->assertSame(6, count($ttContentDatabaseRecord6->calculateDependencies()));
+    }
+
+    public function testSoftDeletedShortcutHasFulfilledDependenciesEvenWhenTargetDoesNotExist(): void
+    {
+        // Scenario: a shortcut content element is soft-deleted (deleted=1 local, deleted=0 foreign).
+        // Its referenced target no longer exists in the DB.
+        // Publishing the deletion must not be blocked by the missing shortcut target.
+        $GLOBALS['TCA']['table_foo']['ctrl']['delete'] = 'deleted';
+
+        $localProps = ['CType' => 'shortcut', 'records' => 'table_bar_1', 'deleted' => 1];
+        $foreignProps = ['CType' => 'shortcut', 'records' => 'table_bar_1', 'deleted' => 0];
+
+        $record = new TtContentDatabaseRecord('table_foo', 42, $localProps, $foreignProps, []);
+
+        self::assertSame(Record::S_SOFT_DELETED, $record->getState());
+
+        $emptyCollection = new RecordCollection();
+        foreach ($record->getDependencies() as $dependency) {
+            $dependency->fulfill($emptyCollection);
+        }
+
+        foreach ($record->getDependencies() as $dependency) {
+            self::assertTrue(
+                $dependency->isFulfilled(),
+                'Shortcut dependency of a soft-deleted record must always be fulfilled',
+            );
+        }
+    }
+
+    public function testActiveShortcutWithMissingTargetIsStillBlocked(): void
+    {
+        // Scenario: an active shortcut pointing to a non-existent target must remain blocked.
+        $localProps = ['CType' => 'shortcut', 'records' => 'table_bar_1'];
+        $foreignProps = ['CType' => 'shortcut', 'records' => 'table_bar_1'];
+
+        $record = new TtContentDatabaseRecord('table_foo', 42, $localProps, $foreignProps, []);
+
+        self::assertSame(Record::S_UNCHANGED, $record->getState());
+
+        $emptyCollection = new RecordCollection();
+        foreach ($record->getDependencies() as $dependency) {
+            $dependency->fulfill($emptyCollection);
+        }
+
+        $hasUnfulfilled = false;
+        foreach ($record->getDependencies() as $dependency) {
+            if (!$dependency->isFulfilled()) {
+                $hasUnfulfilled = true;
+                break;
+            }
+        }
+        self::assertTrue(
+            $hasUnfulfilled,
+            'An active shortcut with a missing target must still have unfulfilled dependencies',
+        );
     }
 
     public function testNoDependencyIsFoundIfNoValidShortcutIsFound(): void

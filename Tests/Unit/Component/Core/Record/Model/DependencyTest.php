@@ -19,6 +19,7 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 #[CoversMethod(Dependency::class, 'addSupersedingDependency')]
 #[CoversMethod(Dependency::class, 'getPropertiesAsUidOrString')]
 #[CoversMethod(Dependency::class, 'fulfill')]
+#[CoversMethod(Dependency::class, 'isFulfilled')]
 #[CoversMethod(Dependency::class, 'recordMatchesRequirements')]
 #[CoversMethod(Dependency::class, 'areSupersededDependenciesFulfilled')]
 #[CoversMethod(Dependency::class, 'isSupersededByUnfulfilledDependency')]
@@ -171,6 +172,61 @@ class DependencyTest extends UnitTestCase
         $reasons = $reflectionProperty->getValue($dependency);
 
         self::assertTrue($reasons->isEmpty());
+    }
+
+    public function testIsFulfilledReturnsTrueWhenOwnerIsBeingDeletedEvenIfTargetIsMissing(): void
+    {
+        // arrange
+        $dependency = new Dependency(
+            $this->createMock(Record::class),
+            'classification',
+            ['uid' => 99],
+            Dependency::REQ_CONSISTENT_EXISTENCE,
+            'label',
+            function () {
+                return ['arguments'];
+            },
+            true, // ownerIsBeingDeleted
+        );
+        $recordCollection = $this->createMock(RecordCollection::class);
+        // Target does not exist in the collection
+        $recordCollection->expects($this->once())->method('getRecordsByProperties')->willReturn([]);
+
+        // act
+        $dependency->fulfill($recordCollection);
+
+        // assert: reasons were collected (informational), but isFulfilled() still returns true
+        $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
+        $reflectionProperty->setAccessible(true);
+        $reasons = $reflectionProperty->getValue($dependency);
+        self::assertFalse($reasons->isEmpty(), 'Reasons should still be collected for informational display');
+        self::assertTrue($dependency->isFulfilled(), 'A dependency owned by a deleted record must always be considered fulfilled');
+    }
+
+    public function testIsFulfilledReturnsTrueWhenOwnerIsBeingDeletedEvenIfRequirementIsUnmet(): void
+    {
+        // arrange — target exists but violates REQ_FULL_PUBLISHED (state is S_CHANGED, not S_UNCHANGED)
+        $dependency = new Dependency(
+            $this->createMock(Record::class),
+            'classification',
+            ['uid' => 99],
+            Dependency::REQ_FULL_PUBLISHED,
+            'label',
+            function () {
+                return ['arguments'];
+            },
+            true, // ownerIsBeingDeleted
+        );
+        $targetRecord = $this->createMock(DatabaseRecord::class);
+        $targetRecord->method('getState')->willReturn(Record::S_CHANGED);
+        $recordCollection = $this->createMock(RecordCollection::class);
+        $recordCollection->expects($this->once())->method('getRecordsByProperties')->willReturn([$targetRecord]);
+
+        // act
+        $dependency->fulfill($recordCollection);
+
+        // assert
+        self::assertTrue($dependency->isFulfilled());
     }
 
     public function testFulfillReturnsFalse(): void
