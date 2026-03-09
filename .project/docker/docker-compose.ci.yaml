@@ -143,7 +143,7 @@ services:
       - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-13331}:7900
 
   playwright:
-    image: mcr.microsoft.com/playwright:v1.57.0-noble
+    image: mcr.microsoft.com/playwright:v1.58.2-noble
     command: sleep infinity
     user: ${USER_ID:-1000}
     volumes:

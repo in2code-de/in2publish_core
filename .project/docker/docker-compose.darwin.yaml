@@ -150,7 +150,7 @@ services:
       - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-13331}:7900
 
   playwright:
-    image: mcr.microsoft.com/playwright:v1.57.0-noble
+    image: mcr.microsoft.com/playwright:v1.58.2-noble
     command: sleep infinity
     user: ${USER_ID:-1000}
     volumes:
@@ -166,7 +166,7 @@ services:
       HOME: /work
       NODE_EXTRA_CA_CERTS: /certs/${HOST_LOCAL}.crt
     ports:
-      - "9323:9323"
+      - "${PLAYWRIGHT_UI_PORT:-9323}:9323"
     networks:
       default:
     depends_on:
