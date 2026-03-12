@@ -29,6 +29,9 @@ node_modules/
 # AI
 .claude/settings.local.json
 
+# Local configuration
+.env.local
+
 # Playwright
 test-results/
 playwright-report/
