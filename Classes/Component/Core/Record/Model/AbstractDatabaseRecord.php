@@ -88,11 +88,34 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
         return $dependencies;
     }
 
+    /**
+     * Returns true when this record is being published as a deletion.
+     *
+     * S_SOFT_DELETED: deleted=1 locally, deleted=0 on foreign
+     * S_DELETED: record is missing on local and still exists on foreign
+     * S_ADDED: deleted=1 locally, missing on foreign, i.e. the record was soft-deleted before publishing
+     *
+     * In all three cases, dependency requirements on related records (language parent, parent page
+     * visibility, shortcut targets) are skipped
+     */
+    protected function isBeingDeleted(): bool
+    {
+        if ($this->state === Record::S_SOFT_DELETED || $this->state === Record::S_DELETED) {
+            return true;
+        }
+        if ($this->state === Record::S_ADDED && $this->getLocalCtrlProp(self::CTRL_PROP_DELETE)) {
+            return true;
+        }
+        return false;
+    }
+
     protected function calculateLanguageDependencies(array &$dependencies): void
     {
         $language = $this->getCtrlProp(self::CTRL_PROP_LANGUAGE_FIELD);
         $transOrigPointer = $this->getLocalCtrlProp(self::CTRL_PROP_TRANS_ORIG_POINTER_FIELD);
         if ($language > 0 && $transOrigPointer > 0) {
+            $ownerIsBeingDeleted = $this->isBeingDeleted();
+
             $dependencies[] = $transOrigConsistentExistence = new Dependency(
                 $this,
                 $this->getClassification(),
@@ -103,6 +126,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                     $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
                 ],
+                $ownerIsBeingDeleted,
             );
 
             $enableFieldLabels = $this->getInheritedEnableColumnsWithLabels();
@@ -118,6 +142,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                         implode(', ', $enableFieldLabels),
                         $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
                     ],
+                    $ownerIsBeingDeleted,
                 );
                 $transOrigEnableColumns->addSupersedingDependency($transOrigConsistentExistence);
             }
@@ -128,6 +153,8 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
     {
         $pid = $this->getProp('pid');
         if ($pid > 0) {
+            $ownerIsBeingDeleted = $this->isBeingDeleted();
+
             $dependencies[] = $pageExisting = new Dependency(
                 $this,
                 'pages',
@@ -138,6 +165,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                     $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
                 ],
+                $ownerIsBeingDeleted,
             );
 
             $enableFieldLabels = [];
@@ -156,6 +184,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
                     implode(', ', $enableFieldLabels),
                 ],
+                $ownerIsBeingDeleted,
             );
             $pageEnableColumns->addSupersedingDependency($pageExisting);
         }

@@ -25,3 +25,23 @@ Build/.phpunit.result.cache
 composer.lock
 docker-compose.yaml
 node_modules/
+
+# AI
+.claude/settings.local.json
+
+# Local configuration
+.env.local
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+publisher-tools-frame.html
+*.spec.ts-snapshots/
+Tests/Playwright/.auth/
+
+# Debug artifacts
+debug-*.png
+debug-*.html
+Tests/Playwright/debug/

@@ -103,3 +103,7 @@ See: [Changelog](CHANGELOG.md)
 ## Testing
 
 Hint: https://youtrack.jetbrains.com/issue/WI-74556/PHPUnit-settings-are-not-configured#focus=Comments-27-8185787.0-0
+
+## Playwright Tests
+
+See: [Playwright Tests Documentation](Documentation/Developers/Testing/PlaywrightTests.md)

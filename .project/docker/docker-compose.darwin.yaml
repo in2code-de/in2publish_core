@@ -149,5 +149,29 @@ services:
       - ${SELENIUM_NODE_FIREFOX_VNC_PORT:-13321}:5900
       - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-13331}:7900
 
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.58.2-noble
+    command: sleep infinity
+    user: ${USER_ID:-1000}
+    volumes:
+      - ./:/work:cached
+      - ${HOME}/.dinghy/certs/:/certs/:ro
+    working_dir: /work
+    env_file:
+      - .env
+    environment:
+      CI: ${CI:-0}
+      PLAYWRIGHT_BASE_URL: https://${HOST_LOCAL}/typo3/
+      PLAYWRIGHT_FOREIGN_BASE_URL: https://${HOST_FOREIGN}/typo3/
+      HOME: /work
+      NODE_EXTRA_CA_CERTS: /certs/${HOST_LOCAL}.crt
+    ports:
+      - "${PLAYWRIGHT_UI_PORT:-9323}:9323"
+    networks:
+      default:
+    depends_on:
+      - local
+      - foreign
+
 volumes:
   mysql-data:
