@@ -1,5 +1,22 @@
 # In2publish Core Change Log
 
+13.4.0
+- [META] Set the EM conf version number to 13.4.0
+- [DOCS] Update Changelog.md
+- [TEST] Fx PublishingRecordWithDependencyTest
+- [TASK] Group redundant unfulfilled dependency messages
+- [DEV] make playwright ports configurable
+- [TASK] add unit tests for scenarios where publishing should not be blocked by unfulfilled dependencies because the record is being deleted
+- [DEV] Prevent GitHub API rate limit exhaustion when running make setup locally
+- [TASK] skip fulfillment of dependencies for records which are being deleted
+- [TASK][SECURITY] remove kss-scheibo and update gulp package
+- [DEV] Add .claude settings.local.json
+- [META] Update npm dependencies (immutable 5.0.3 → 5.1.5).
+- [WIP] Add playwright tests and helpers
+- [DEV][AI] Add development guidelines to CLAUDE.md
+- [DEV] git ingore claude settings.local.json
+- [DEV][AI] Add claude.md project information
+
 13.3.0
 - [META] Set the EM conf version number to 13.3.0
 - [DOCS] Update Changelog.md
