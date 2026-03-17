@@ -64,6 +64,8 @@ tx_solr_indexqueue_indexing_property
 tx_solr_indexqueue_item
 tx_solr_last_searches
 tx_solr_statistics
+tx_in2publish_wfpn_demand
+tx_in2accordion_item
 )
 
 IGNORED_TABLES_STRING=''
@@ -73,9 +75,7 @@ do :
 done
 
 echo "Dump db structure"
-docker compose exec mysql /usr/bin/mysqldump  -u root --password=root --single-transaction --no-data ${DATABASE} > ${MYSQL_DUMP_DIR}/${DB_FILE}
-# does not work unfortunately
-#docker compose exec mysql /usr/bin/mysqldump  -u root --password=${MYSQL_ROOT_PASSWORD} --single-transaction --no-data local > ${MYSQL_DUMP_DIR}/${DB_FILE}
+docker compose exec mysql /usr/bin/mysqldump -u root --password=root --single-transaction --no-data ${IGNORED_TABLES_STRING} ${DATABASE} > ${MYSQL_DUMP_DIR}/${DB_FILE}
 
 echo "Dump db content"
 docker compose exec mysql /usr/bin/mysqldump -u root --password=root ${DATABASE} --no-create-info ${IGNORED_TABLES_STRING} >> ${MYSQL_DUMP_DIR}/${DB_FILE}
