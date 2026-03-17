@@ -40,8 +40,13 @@ playwright/.cache/
 publisher-tools-frame.html
 *.spec.ts-snapshots/
 Tests/Playwright/.auth/
+*.tgz
+package-lock.json
 
 # Debug artifacts
 debug-*.png
 debug-*.html
 Tests/Playwright/debug/
+.cache
+.npm/_logs
+.pki
