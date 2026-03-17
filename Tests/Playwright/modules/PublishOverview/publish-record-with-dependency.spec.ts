@@ -1,11 +1,13 @@
-import { test, expect } from '../../fixtures/setup-fixtures';
-import { BackendPage } from '../../fixtures/backend-page';
+import { test, expect } from '@fixtures/setup-fixtures';
+import { BackendPage } from '@fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { Environment } from '@helpers/Environment';
+import { restoreDatabases } from '@helpers/DbRestore';
 
 test.describe('Publish Record With Dependency', () => {
 
     test.beforeAll(async () => {
+        await restoreDatabases();
         await Environment.reset();
     });
 
@@ -16,7 +18,8 @@ test.describe('Publish Record With Dependency', () => {
      * Uses 'publisher-page-tree-publish' user (not admin) to test permission-based publishing.
      */
     test('Record with unfulfilled dependency is publishable after dependencies are fulfilled', async ({ browser }) => {
-        const context = await browser.newContext();
+        // Use explicit empty storageState to ensure a clean unauthenticated context
+        const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
         const page = await context.newPage();
         const backend = new BackendPage(page);
 

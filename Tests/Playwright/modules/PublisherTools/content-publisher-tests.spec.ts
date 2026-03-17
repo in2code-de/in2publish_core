@@ -1,8 +1,7 @@
-import { test, expect } from '../../fixtures/setup-fixtures';
-import config from '../../config';
+import { test, expect } from '@fixtures/setup-fixtures';
 
 test.describe('Content Publisher Tests', () => {
-    test.beforeEach(async ({ page, backend }) => {
+    test.beforeEach(async ({ backend }) => {
         // Handle login
         await backend.login();
 

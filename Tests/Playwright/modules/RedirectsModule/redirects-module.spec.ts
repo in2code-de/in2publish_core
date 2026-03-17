@@ -1,6 +1,6 @@
-import { test, expect } from '../../fixtures/setup-fixtures';
+import { test, expect } from '@fixtures/setup-fixtures';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { Environment } from '@helpers/Environment';
 
 test.describe('Redirects Module', () => {
 

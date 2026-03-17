@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { Browser, Page, expect } from '@playwright/test';
 import { BackendPage as BaseBackendPage } from '@in2code/typo3-playwright/fixtures';
 import config from '../config';
 
@@ -64,6 +64,25 @@ export class BackendPage extends BaseBackendPage {
     await expect(
       this.contentFrame.locator('.in2publish-loading-overlay')
     ).not.toBeVisible({ timeout: 30000 });
+  }
+
+  /**
+   * Create a Foreign backend context, log in, run a callback, then close the context.
+   * Handles context cleanup even if the callback throws.
+   *
+   * @param browser The Playwright Browser fixture
+   * @param callback Function receiving the logged-in foreign BackendPage
+   */
+  async withForeignContext<T>(browser: Browser, callback: (foreignBackend: BackendPage) => Promise<T>): Promise<T> {
+    const foreignContext = await browser.newContext();
+    try {
+      const foreignPage = await foreignContext.newPage();
+      const foreignBackend = new BackendPage(foreignPage);
+      await foreignBackend.login(config.foreign.baseUrl);
+      return await callback(foreignBackend);
+    } finally {
+      await foreignContext.close();
+    }
   }
 
   /**

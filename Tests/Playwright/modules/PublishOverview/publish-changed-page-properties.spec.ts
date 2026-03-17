@@ -1,7 +1,6 @@
-import { test, expect } from '../../fixtures/setup-fixtures';
-import { BackendPage } from '../../fixtures/backend-page';
+import { test, expect } from '@fixtures/setup-fixtures';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { Environment } from '@helpers/Environment';
 
 test.describe('Publish Changed Page Properties', () => {
 
@@ -13,7 +12,7 @@ test.describe('Publish Changed Page Properties', () => {
      * Test Case 1a: Changed page properties can be published.
      * Mirrors Tests/Browser/PublishChangedPagePropertiesTest.php
      */
-    test('Changed page properties can be published', async ({ page, backend, browser }) => {
+    test('Changed page properties can be published', async ({ backend, browser }) => {
 
         await test.step('Given I am logged in to the Local Backend', async () => {
             await backend.login(config.local.baseUrl);
@@ -54,29 +53,22 @@ test.describe('Publish Changed Page Properties', () => {
         });
 
         await test.step('Then the changed title should be visible in the Foreign Backend', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Page');
+                await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1a Page properties - changed');
 
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Page');
-            await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1a Page properties - changed');
+                // Click the Edit button for the page
+                const editButton = foreignBackend.contentFrame.locator('a[title="Edit"]').first();
+                await expect(editButton).toBeVisible({ timeout: 10000 });
+                await editButton.click();
 
-            await foreignPage.waitForTimeout(2000);
-
-            // Click the Edit button for the page
-            const editButton = foreignBackend.contentFrame.locator('a[title="Edit"]').first();
-            await expect(editButton).toBeVisible();
-            await editButton.click();
-
-            // Verify the page title input contains the changed value
-            const titleInput = foreignBackend.contentFrame.locator(
-                '[data-formengine-input-name="data[pages][5][title]"]'
-            );
-            await expect(titleInput).toBeVisible({ timeout: 10000 });
-            await expect(titleInput).toHaveValue(/1a Page properties - changed/);
-
-            await foreignContext.close();
+                // Verify the page title input contains the changed value
+                const titleInput = foreignBackend.contentFrame.locator(
+                    '[data-formengine-input-name="data[pages][5][title]"]'
+                );
+                await expect(titleInput).toBeVisible({ timeout: 10000 });
+                await expect(titleInput).toHaveValue(/1a Page properties - changed/);
+            });
         });
     });
 });

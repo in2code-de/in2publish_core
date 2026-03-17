@@ -1,11 +1,13 @@
-import { test, expect } from '../../fixtures/setup-fixtures';
-import { BackendPage } from '../../fixtures/backend-page';
+import * as path from 'path';
+import { test, expect } from '@fixtures/setup-fixtures';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { Environment } from '@helpers/Environment';
+import { restoreDatabases } from '@helpers/DbRestore';
 
 test.describe('Publish Files Module', () => {
 
     test.beforeAll(async () => {
+        await restoreDatabases();
         await Environment.reset();
     });
 
@@ -38,8 +40,8 @@ test.describe('Publish Files Module', () => {
 
             // Upload the file via the form
             const fileInput = backend.contentFrame.locator('input[name="upload_1[]"]');
-            await fileInput.setInputFiles('/work/packages/in2publish_core/Tests/Browser/files/carson-masterson-1540698-unsplash.jpg');
-            await backend.contentFrame.locator('#FileUploadController').locator('button[type="submit"]').click();
+            await fileInput.setInputFiles(path.resolve(__dirname, '../../Browser/files/carson-masterson-1540698-unsplash.jpg'));
+            await backend.contentFrame.locator('#FileUploadController').locator('[type="submit"]').click();
 
             await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
         });
@@ -76,19 +78,14 @@ test.describe('Publish Files Module', () => {
         });
 
         await test.step('Then the file should be visible in the Foreign Filelist', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2e_missing_folder']);
 
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2e_missing_folder']);
-
-            await expect(
-                foreignBackend.contentFrame.locator('[data-filelist-name="carson-masterson-1540698-unsplash.jpg"]')
-            ).toBeVisible({ timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-filelist-name="carson-masterson-1540698-unsplash.jpg"]')
+                ).toBeVisible({ timeout: 10000 });
+            });
         });
     });
 
@@ -99,18 +96,14 @@ test.describe('Publish Files Module', () => {
     test('Renamed file can be published', async ({ page, backend, browser }) => {
 
         await test.step('Verify the file exists on Foreign first', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
 
-            await expect(
-                foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2b_published_file/bds-photo-1523151-unsplash.jpg"]')
-            ).toBeVisible({ timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2b_published_file/bds-photo-1523151-unsplash.jpg"]')
+                ).toBeVisible({ timeout: 10000 });
+            });
         });
 
         await test.step('Given I am logged in', async () => {
@@ -191,18 +184,14 @@ test.describe('Publish Files Module', () => {
         });
 
         await test.step('Then the renamed file should be visible on Foreign', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
 
-            await expect(
-                foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2b_published_file/renamed-1523151-unsplash.jpg"]')
-            ).toBeVisible({ timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2b_published_file/renamed-1523151-unsplash.jpg"]')
+                ).toBeVisible({ timeout: 10000 });
+            });
         });
     });
 
@@ -210,21 +199,17 @@ test.describe('Publish Files Module', () => {
      * Test Case 2c: A moved file can be published.
      * Mirrors Tests/Browser/PublishFilesModuleTest.php::testMovedFileCanBePublished
      */
-    test('Moved file can be published', async ({ page, backend, browser }) => {
+    test('Moved file can be published', async ({ backend, browser }) => {
 
         await test.step('Verify the file exists in source folder on Foreign', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2c_source_folder']);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2c_source_folder']);
 
-            await expect(
-                foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2c_source_folder/MovedFile_2c.txt"]')
-            ).toBeVisible({ timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2c_source_folder/MovedFile_2c.txt"]')
+                ).toBeVisible({ timeout: 10000 });
+            });
         });
 
         await test.step('Given I am logged in', async () => {
@@ -262,18 +247,14 @@ test.describe('Publish Files Module', () => {
         });
 
         await test.step('Then the file should be in the target folder on Foreign', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2c_target_folder']);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2c_target_folder']);
 
-            await expect(
-                foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2c_target_folder/MovedFile_2c.txt"]')
-            ).toBeVisible({ timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2c_target_folder/MovedFile_2c.txt"]')
+                ).toBeVisible({ timeout: 10000 });
+            });
         });
     });
 
@@ -281,21 +262,17 @@ test.describe('Publish Files Module', () => {
      * Test Case 2d: A deleted file can be published.
      * Mirrors Tests/Browser/PublishFilesModuleTest.php::testDeletedFileCanBePublished
      */
-    test('Deleted file can be published', async ({ page, backend, browser }) => {
+    test('Deleted file can be published', async ({ backend, browser }) => {
 
         await test.step('Verify the file exists on Foreign first', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2d_deleted_file']);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2d_deleted_file']);
 
-            await expect(
-                foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2d_deleted_file/2d_deleted_file.txt"]')
-            ).toBeVisible({ timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2d_deleted_file/2d_deleted_file.txt"]')
+                ).toBeVisible({ timeout: 10000 });
+            });
         });
 
         await test.step('Given I am logged in', async () => {
@@ -332,18 +309,14 @@ test.describe('Publish Files Module', () => {
         });
 
         await test.step('Then the file should be gone from Foreign', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2d_deleted_file']);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2d_deleted_file']);
 
-            await expect(
-                foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2d_deleted_file/2d_deleted_file.txt"]')
-            ).not.toBeVisible();
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2d_deleted_file/2d_deleted_file.txt"]')
+                ).not.toBeVisible();
+            });
         });
     });
 
@@ -351,21 +324,17 @@ test.describe('Publish Files Module', () => {
      * Test Case 2f: A deleted folder can be published.
      * Mirrors Tests/Browser/PublishFilesModuleTest.php::testDeletedFolderCanBePublished
      */
-    test('Deleted folder can be published', async ({ page, backend, browser }) => {
+    test('Deleted folder can be published', async ({ backend, browser }) => {
 
         await test.step('Verify the folder exists on Foreign first', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2f_delete_folder']);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2f_delete_folder']);
 
-            await expect(
-                foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2f_delete_folder/DeletedFile_2f.txt"]')
-            ).toBeVisible({ timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2f_delete_folder/DeletedFile_2f.txt"]')
+                ).toBeVisible({ timeout: 10000 });
+            });
         });
 
         await test.step('Given I am logged in', async () => {
@@ -404,18 +373,14 @@ test.describe('Publish Files Module', () => {
         });
 
         await test.step('Then the folder should be gone from Foreign', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases']);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases']);
 
-            await expect(
-                foreignBackend.contentFrame.locator('[data-id="1:/Testcases/2f_delete_folder/"]')
-            ).not.toBeVisible();
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-id="1:/Testcases/2f_delete_folder/"]')
+                ).not.toBeVisible();
+            });
         });
     });
 
@@ -423,21 +388,17 @@ test.describe('Publish Files Module', () => {
      * Test Case 2g: A moved/renamed folder with file can be published.
      * Mirrors Tests/Browser/PublishFilesModuleTest.php::testRenamedFolderCanBePublished
      */
-    test('Moved folder with file can be published', async ({ page, backend, browser }) => {
+    test('Moved folder with file can be published', async ({ backend, browser }) => {
 
         await test.step('Verify the folder exists on Foreign in original location', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2g_moved_folder_with_file']);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2g_moved_folder_with_file']);
 
-            await expect(
-                foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2g_moved_folder_with_file/MovedFileInFolder_2g.txt"]')
-            ).toBeVisible({ timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2g_moved_folder_with_file/MovedFileInFolder_2g.txt"]')
+                ).toBeVisible({ timeout: 10000 });
+            });
         });
 
         await test.step('Given I am logged in', async () => {
@@ -485,18 +446,14 @@ test.describe('Publish Files Module', () => {
         });
 
         await test.step('Then the file should be in the new location on Foreign', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Filelist');
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2g_target_folder', '2g_moved_folder_with_file']);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2g_target_folder', '2g_moved_folder_with_file']);
 
-            await expect(
-                foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2g_target_folder/2g_moved_folder_with_file/MovedFileInFolder_2g.txt"]')
-            ).toBeVisible({ timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2g_target_folder/2g_moved_folder_with_file/MovedFileInFolder_2g.txt"]')
+                ).toBeVisible({ timeout: 10000 });
+            });
         });
     });
 });

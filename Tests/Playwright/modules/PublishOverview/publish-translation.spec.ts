@@ -1,11 +1,12 @@
-import { test, expect } from '../../fixtures/setup-fixtures';
-import { BackendPage } from '../../fixtures/backend-page';
+import { test, expect } from '@fixtures/setup-fixtures';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { Environment } from '@helpers/Environment';
+import { restoreDatabases } from '@helpers/DbRestore';
 
 test.describe('Publish Translation', () => {
 
     test.beforeAll(async () => {
+        await restoreDatabases();
         await Environment.reset();
     });
 
@@ -13,7 +14,7 @@ test.describe('Publish Translation', () => {
      * Test Case 1d.1: Translated content in free mode can be published.
      * Mirrors Tests/Browser/PublishTranslationTest.php::testTranslatedContentInFreeModeCanBePublished
      */
-    test('Translated content in free mode can be published', async ({ page, backend, browser }) => {
+    test('Translated content in free mode can be published', async ({ backend, browser }) => {
 
         await test.step('Given I am logged in to the Local Backend', async () => {
             await backend.login(config.local.baseUrl);
@@ -71,19 +72,14 @@ test.describe('Publish Translation', () => {
         });
 
         await test.step('And the translated content should be visible in the Foreign Backend', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('List');
+                await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1d.1 Free Mode');
 
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('List');
-            await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1d.1 Free Mode');
-
-            await expect(
-                foreignBackend.contentFrame.locator('body')
-            ).toContainText('Header in German - Version 3', { timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('body')
+                ).toContainText('Header in German - Version 3', { timeout: 10000 });
+            });
         });
     });
 
@@ -91,7 +87,7 @@ test.describe('Publish Translation', () => {
      * Test Case 1d.2: Translated content in connected mode can be published.
      * Mirrors Tests/Browser/PublishTranslationTest.php::testTranslatedContentInConnectedModeCanBePublished
      */
-    test('Translated content in connected mode can be published', async ({ page, backend, browser }) => {
+    test('Translated content in connected mode can be published', async ({ backend, browser }) => {
 
         await test.step('Given I am logged in to the Local Backend', async () => {
             await backend.login(config.local.baseUrl);
@@ -148,19 +144,14 @@ test.describe('Publish Translation', () => {
         });
 
         await test.step('And the translated content should be visible in the Foreign Backend', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('List');
+                await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1d.2 Connected Mode');
 
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('List');
-            await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1d.2 Connected Mode');
-
-            await expect(
-                foreignBackend.contentFrame.locator('body')
-            ).toContainText('Header in German - Version 3', { timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('body')
+                ).toContainText('Header in German - Version 3', { timeout: 10000 });
+            });
         });
     });
 });

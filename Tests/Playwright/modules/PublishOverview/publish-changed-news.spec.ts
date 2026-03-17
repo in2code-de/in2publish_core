@@ -1,11 +1,12 @@
-import { test, expect } from '../../fixtures/setup-fixtures';
-import { BackendPage } from '../../fixtures/backend-page';
+import { test, expect } from '@fixtures/setup-fixtures';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { Environment } from '@helpers/Environment';
+import { restoreDatabases } from '@helpers/DbRestore';
 
 test.describe('Publish Changed News', () => {
 
     test.beforeAll(async () => {
+        await restoreDatabases();
         await Environment.reset();
     });
 
@@ -13,7 +14,7 @@ test.describe('Publish Changed News', () => {
      * Test Case 1c: Changed news record with image can be published.
      * Mirrors Tests/Browser/PublishChangedNewsTest.php
      */
-    test('Changed news record can be published', async ({ page, backend, browser }) => {
+    test('Changed news record can be published', async ({ backend, browser }) => {
 
         await test.step('Given I am logged in to the Local Backend', async () => {
             await backend.login(config.local.baseUrl);
@@ -55,19 +56,14 @@ test.describe('Publish Changed News', () => {
         });
 
         await test.step('Then the changes should be visible in the Foreign Backend', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('List');
+                await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('News Folder');
 
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('List');
-            await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('News Folder');
-
-            await expect(
-                foreignBackend.contentFrame.locator('body')
-            ).toContainText('Content element with image - edited', { timeout: 10000 });
-
-            await foreignContext.close();
+                await expect(
+                    foreignBackend.contentFrame.locator('body')
+                ).toContainText('Content element with image - edited', { timeout: 10000 });
+            });
         });
     });
 });

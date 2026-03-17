@@ -1,7 +1,6 @@
-import { test, expect } from '../../fixtures/setup-fixtures';
-import { BackendPage } from '../../fixtures/backend-page';
+import { test, expect } from '@fixtures/setup-fixtures';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { Environment } from '@helpers/Environment';
 
 test.describe('Publish Changed Content', () => {
 
@@ -9,7 +8,7 @@ test.describe('Publish Changed Content', () => {
         await Environment.reset();
     });
 
-    test('Changed page content can be published', async ({ page, backend, browser }) => {
+    test('Changed page content can be published', async ({ backend, browser }) => {
 
         await test.step('Given I am logged in to the Local Backend', async () => {
             await backend.login(config.local.baseUrl);
@@ -44,26 +43,18 @@ test.describe('Publish Changed Content', () => {
         });
 
         await test.step('Then the changes should be visible in the Foreign Backend', async () => {
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await foreignBackend.gotoModule('Page');
+                await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1b.1 Page content - changed');
 
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
+                // Edit the content element (uid 49 from PHP test)
+                const editButton = foreignBackend.contentFrame.locator('div[data-table="tt_content"][data-uid="49"] a[title="Edit"]').first();
+                await expect(editButton).toBeVisible({ timeout: 10000 });
+                await editButton.click();
 
-            await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Page');
-            await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1b.1 Page content - changed');
-
-            await foreignPage.waitForTimeout(2000);
-
-            // Edit the content element (uid 49 from PHP test)
-            const editButton = foreignBackend.contentFrame.locator('div[data-table="tt_content"][data-uid="49"] a[title="Edit"]').first();
-            await expect(editButton).toBeVisible();
-            await editButton.click();
-
-            const headerInput = foreignBackend.contentFrame.locator('[data-formengine-input-name="data[tt_content][49][header]"]');
-            await expect(headerInput).toHaveValue(/1b.1 Header - changed/);
-
-            await foreignContext.close();
+                const headerInput = foreignBackend.contentFrame.locator('[data-formengine-input-name="data[tt_content][49][header]"]');
+                await expect(headerInput).toHaveValue(/1b.1 Header - changed/);
+            });
         });
     });
 });

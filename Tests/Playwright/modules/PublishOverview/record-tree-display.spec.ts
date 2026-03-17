@@ -1,6 +1,6 @@
-import { test, expect } from '../../fixtures/setup-fixtures';
+import { test, expect } from '@fixtures/setup-fixtures';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { Environment } from '@helpers/Environment';
 
 test.describe('Record Tree Display', () => {
 
@@ -20,7 +20,7 @@ test.describe('Record Tree Display', () => {
      *         - "4.1.1.1.1 Subpage - Level 5" (pid=30) ← named Level 5 in DB
      *           - "Subpage - Level 5" (pid=31) ← 5th level, ambiguous name
      */
-    test('The level of records to show can be selected', async ({ page, backend }) => {
+    test('The level of records to show can be selected', async ({ backend }) => {
 
         await test.step('Given I am logged in and navigate to the depth test page', async () => {
             await backend.login(config.local.baseUrl);

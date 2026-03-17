@@ -1,7 +1,7 @@
-import { test, expect } from '../../fixtures/setup-fixtures';
-import { BackendPage } from '../../fixtures/backend-page';
+import { test, expect } from '@fixtures/setup-fixtures';
+import { BackendPage } from '@fixtures/backend-page';
 import config from '../../config';
-import { restoreDatabases } from '../../helpers/DbRestore';
+import { restoreDatabases } from '@helpers/DbRestore';
 
 test.describe('UID Clash', () => {
 
@@ -100,7 +100,7 @@ test.describe('UID Clash', () => {
      * Use Case 1: Page 24 is published in Overview Module.
      * Result: Page is published, both categories are published.
      */
-    test('Use Case 1: Publishing page publishes both categories', async ({ page, backend, browser }) => {
+    test('Use Case 1: Publishing page publishes both categories', async ({ backend, browser }) => {
 
         await test.step('Given I am logged in', async () => {
             await backend.login(config.local.baseUrl);
@@ -111,15 +111,10 @@ test.describe('UID Clash', () => {
         });
 
         await test.step('Then page and both categories are visible on Foreign', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-
-            await assertPage76Published(foreignBackend);
-            await assertBothCategoriesPublished(foreignBackend);
-
-            await foreignContext.close();
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await assertPage76Published(foreignBackend);
+                await assertBothCategoriesPublished(foreignBackend);
+            });
         });
     });
 
@@ -127,7 +122,7 @@ test.describe('UID Clash', () => {
      * Use Case 2: News folder with News 24 is published in Overview Module.
      * Result: News 24 is published, Page 24 is not published, only Category 1 is published.
      */
-    test('Use Case 2: Publishing news publishes only Category 1', async ({ page, backend, browser }) => {
+    test('Use Case 2: Publishing news publishes only Category 1', async ({ backend, browser }) => {
 
         await test.step('Given I am logged in', async () => {
             await backend.login(config.local.baseUrl);
@@ -138,15 +133,10 @@ test.describe('UID Clash', () => {
         });
 
         await test.step('Then news and only Category 1 are visible on Foreign', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-
-            await assertNews76Published(foreignBackend);
-            await assertOnlyCategory1Published(foreignBackend);
-
-            await foreignContext.close();
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await assertNews76Published(foreignBackend);
+                await assertOnlyCategory1Published(foreignBackend);
+            });
         });
     });
 
@@ -154,7 +144,7 @@ test.describe('UID Clash', () => {
      * Use Case 3: Page 24 is published first, then News 24.
      * Result: First only page, categories and page mm-records, then news and news mm-record.
      */
-    test('Use Case 3: Publishing page then news publishes both categories', async ({ page, backend, browser }) => {
+    test('Use Case 3: Publishing page then news publishes both categories', async ({ backend, browser }) => {
 
         await test.step('Given I am logged in', async () => {
             await backend.login(config.local.baseUrl);
@@ -166,16 +156,11 @@ test.describe('UID Clash', () => {
         });
 
         await test.step('Then page, news and both categories are visible on Foreign', async () => {
-            const foreignContext = await browser.newContext();
-            const foreignPage = await foreignContext.newPage();
-            const foreignBackend = new BackendPage(foreignPage);
-            await foreignBackend.login(config.foreign.baseUrl);
-
-            await assertPage76Published(foreignBackend);
-            await assertNews76Published(foreignBackend);
-            await assertBothCategoriesPublished(foreignBackend);
-
-            await foreignContext.close();
+            await backend.withForeignContext(browser, async (foreignBackend) => {
+                await assertPage76Published(foreignBackend);
+                await assertNews76Published(foreignBackend);
+                await assertBothCategoriesPublished(foreignBackend);
+            });
         });
     });
 });
