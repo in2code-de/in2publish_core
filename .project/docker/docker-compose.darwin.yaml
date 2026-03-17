@@ -82,7 +82,6 @@ services:
 
   mysql:
     image: in2code/mysql:8.0
-    command: --secure-file-priv=${SQLDUMPSDIR}
     user: '1000'
     env_file:
       - .env
@@ -165,6 +164,8 @@ services:
       PLAYWRIGHT_FOREIGN_BASE_URL: https://${HOST_FOREIGN}/typo3/
       HOME: /work
       NODE_EXTRA_CA_CERTS: /certs/${HOST_LOCAL}.crt
+      PLAYWRIGHT_DB_HOST: mysql
+      PLAYWRIGHT_DB_PORT: 3306
     ports:
       - "${PLAYWRIGHT_UI_PORT:-9323}:9323"
     networks:

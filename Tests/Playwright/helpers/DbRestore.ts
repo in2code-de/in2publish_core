@@ -13,14 +13,16 @@ import * as path from 'path';
  * the root Makefile which calls `make restore` on the host.
  */
 
-const DUMPS_DIR = path.resolve(__dirname, '../../../../../.project/data/dumps');
-const DB_HOST = 'mysql';
+const DUMPS_DIR = path.resolve(__dirname, '../../../.project/data/dumps');
+const DB_HOST = process.env.PLAYWRIGHT_DB_HOST || 'mysql';
+const DB_PORT = parseInt(process.env.PLAYWRIGHT_DB_PORT || '3306', 10);
 const DB_USER = 'app';
 const DB_PASS = 'app';
 
 async function restoreDb(database: 'local' | 'foreign', sqlFile: string): Promise<void> {
     const conn = await mysql2.createConnection({
         host: DB_HOST,
+        port: DB_PORT,
         user: DB_USER,
         password: DB_PASS,
         database,

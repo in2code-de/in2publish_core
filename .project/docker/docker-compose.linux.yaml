@@ -85,7 +85,6 @@ services:
 
   mysql:
     image: in2code/mysql:8.0
-    command: --secure-file-priv=${SQLDUMPSDIR}
     user: '1000'
     env_file:
       - .env

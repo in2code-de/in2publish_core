@@ -102,7 +102,7 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	if [[ ! -f $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.crt -key-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ${HOST_FOREIGN}; fi;
 	if [[ ! -f $(HOME)/.dinghy/certs/${MAIL_HOST}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${MAIL_HOST}.crt -key-file $(HOME)/.dinghy/certs/${MAIL_HOST}.key ${MAIL_HOST}; fi;
 
-restore: mysql-restore fileadmin-restore
+restore: mysql-restore fileadmin-restore typo3-clearcache
 
 ## Restores the database from the dump files in SQLDUMPSDIR
 mysql-restore: .mysql-wait
@@ -118,16 +118,23 @@ fileadmin-restore:
 	rsync -a --delete .project/data/fileadmin/local/ Build/local/public/fileadmin/
 	rsync -a --delete .project/data/fileadmin/foreign/ Build/foreign/public/fileadmin/
 
+## Run TYPO3 database schema compare and apply missing/extra changes on both instances
+.typo3-db-compare:
+	echo "$(EMOJI_robot) Updating database schema on local"
+	docker compose exec -u app local-php vendor/bin/typo3 database:updateschema
+	echo "$(EMOJI_robot) Updating database schema on foreign"
+	docker compose exec -u app foreign-php vendor/bin/typo3 database:updateschema
+
 ## Create dumps of local and foreign database in dir .project/data/dumps
 dump-dbs: dump-local-database dump-foreign-database
 
 dump-local-database: .mysql-wait
 	echo "$(EMOJI_robot) Dumping the local database"
-	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+	bash .project/scripts/dump-database.sh local project
 
 dump-foreign-database: .mysql-wait
 	echo "$(EMOJI_robot) Dumping the foreign database"
-	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+	bash .project/scripts/dump-database.sh foreign project
 
 unit:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml
@@ -156,11 +163,11 @@ acceptance-test:
 
 ## Run all Playwright tests (headless) - LOCAL
 playwright:
-	npx playwright test $(FILE)
+	PLAYWRIGHT_DB_HOST=127.0.0.1 PLAYWRIGHT_DB_PORT=$(SQLPORT) npx playwright test $(FILE)
 
 ## Open Playwright UI mode - LOCAL
 playwright-ui:
-	npx playwright test --ui $(FILE)
+	PLAYWRIGHT_DB_HOST=127.0.0.1 PLAYWRIGHT_DB_PORT=$(SQLPORT) npx playwright test --ui $(FILE)
 
 ## Open the last Playwright HTML report
 playwright-report:
@@ -168,11 +175,11 @@ playwright-report:
 
 ## Run all Playwright tests in headed mode (watch) - LOCAL
 playwright-watch:
-	npx playwright test --headed $(FILE)
+	PLAYWRIGHT_DB_HOST=127.0.0.1 PLAYWRIGHT_DB_PORT=$(SQLPORT) npx playwright test --headed $(FILE)
 
 ## Run Playwright tests in debug mode - LOCAL
 playwright-debug:
-	npx playwright test --debug $(FILE)
+	PLAYWRIGHT_DB_HOST=127.0.0.1 PLAYWRIGHT_DB_PORT=$(SQLPORT) npx playwright test --debug $(FILE)
 
 ## Run Playwright tests in Docker (headless) - PLATFORM INDEPENDENT
 playwright-docker:
