@@ -41,7 +41,7 @@ test.describe('Publish Changed News', () => {
 
             // Verify the changed news content and file reference
             const pageContent = backend.contentFrame.locator('.in2publish-page__content');
-            await expect(pageContent).toContainText('Content element with image - edited');
+            await expect(pageContent).toContainText('24 news with Category 1');
             await expect(pageContent).toContainText('1:/user_upload/roman-wimmers-STrq0wSBGIs-unsplash.jpg');
         });
 
@@ -62,7 +62,7 @@ test.describe('Publish Changed News', () => {
 
                 await expect(
                     foreignBackend.contentFrame.locator('body')
-                ).toContainText('Content element with image - edited', { timeout: 10000 });
+                ).toContainText('24 news with Category 1', { timeout: 10000 });
             });
         });
     });

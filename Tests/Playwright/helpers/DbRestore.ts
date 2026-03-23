@@ -1,46 +1,25 @@
-import * as mysql2 from 'mysql2/promise';
-import * as fs from 'fs';
-import * as path from 'path';
+import { execSync } from 'child_process';
 
 /**
- * Restores local and foreign databases directly from SQL dump files via mysql2.
+ * Restores local and foreign databases using the layered restore script.
  *
- * This helper connects to the mysql Docker container via network (hostname 'mysql'),
- * which works from within the Playwright Docker container without needing docker CLI.
+ * Calls restore-db.sh which uses mysql-loader to import CSV dumps layer by layer.
+ * The base layer contains all shared TYPO3 + in2publish_core tables.
+ * The in2publish layer adds workflow/notification tables (optional).
  *
  * Used for mid-run DB resets (e.g. uid-clash tests that need a clean DB per test).
  * For the initial clean state before the entire test run, see `make playwright` in
  * the root Makefile which calls `make restore` on the host.
  */
 
-const DUMPS_DIR = path.resolve(__dirname, '../../../.project/data/dumps');
-const DB_HOST = process.env.PLAYWRIGHT_DB_HOST || 'mysql';
-const DB_PORT = parseInt(process.env.PLAYWRIGHT_DB_PORT || '3306', 10);
-const DB_USER = 'app';
-const DB_PASS = 'app';
-
-async function restoreDb(database: 'local' | 'foreign', sqlFile: string): Promise<void> {
-    const conn = await mysql2.createConnection({
-        host: DB_HOST,
-        port: DB_PORT,
-        user: DB_USER,
-        password: DB_PASS,
-        database,
-        multipleStatements: true,
-    });
-    try {
-        const sql = fs.readFileSync(sqlFile, 'utf8');
-        await conn.query(sql);
-    } finally {
-        await conn.end();
-    }
-}
+const RESTORE_SCRIPT = '/.project/scripts/restore-db.sh';
 
 /**
- * Restore both local and foreign databases from their SQL dump files.
- * Works from inside the Playwright Docker container.
+ * Restore both local and foreign databases.
+ * @param layers - Layers to apply (default: ['base'] for in2publish_core tests)
  */
-export async function restoreDatabases(): Promise<void> {
-    await restoreDb('local', path.join(DUMPS_DIR, 'db_local.sql'));
-    await restoreDb('foreign', path.join(DUMPS_DIR, 'db_foreign.sql'));
+export async function restoreDatabases(layers: string[] = ['base']): Promise<void> {
+    const layerArgs = layers.join(' ');
+    execSync(`${RESTORE_SCRIPT} local ${layerArgs}`, { stdio: 'pipe' });
+    execSync(`${RESTORE_SCRIPT} foreign ${layerArgs}`, { stdio: 'pipe' });
 }

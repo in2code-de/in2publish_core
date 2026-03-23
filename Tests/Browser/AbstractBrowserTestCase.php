@@ -49,27 +49,11 @@ abstract class AbstractBrowserTestCase extends TestCase
             env: $env,
         );
         $processes[] = new Process(
-            [
-                '/app/Build/local/vendor/bin/mysql-loader',
-                'import',
-                '-Hmysql',
-                '-uroot',
-                '-proot',
-                '-Dlocal',
-                '-f/.project/data/dumps/local/',
-            ],
+            ['/.project/scripts/restore-db.sh', 'local', 'base'],
             env: $env,
         );
         $processes[] = new Process(
-            [
-                '/app/Build/local/vendor/bin/mysql-loader',
-                'import',
-                '-Hmysql',
-                '-uroot',
-                '-proot',
-                '-Dforeign',
-                '-f/.project/data/dumps/foreign/',
-            ],
+            ['/.project/scripts/restore-db.sh', 'foreign', 'base'],
             env: $env,
         );
         register_shutdown_function(static function () use ($processes) {
