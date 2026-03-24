@@ -41,11 +41,11 @@
 		"ext-json": "*",
 		"ext-pdo": "*",
 		"ext-zip": "*",
-		"typo3/cms-core": "^13.4.19",
-		"typo3/cms-backend": "^13.4.19",
-		"typo3/cms-extbase": "^13.4.19",
-		"typo3/cms-fluid": "^13.4.19",
-		"symfony/yaml": "^7.1"
+		"typo3/cms-core": "^14.2",
+		"typo3/cms-backend": "^14.2",
+		"typo3/cms-extbase": "^14.2",
+		"typo3/cms-fluid": "^14.2",
+		"symfony/yaml": "^7.4"
 	},
 	"autoload": {
 		"psr-4": {
@@ -65,8 +65,8 @@
 			"extension-key": "in2publish_core"
 		},
 		"branch-alias": {
-			"dev-develop": "13.2.x-dev",
-			"dev-master": "13.2.x-dev"
+			"dev-develop": "14.0-dev",
+			"dev-master": "14.0-dev"
 		}
 	}
 }
