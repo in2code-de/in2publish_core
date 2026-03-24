@@ -52,7 +52,7 @@ class FlexResolverTest extends UnitTestCase
         $this->assertSame(['tca_key1' => 'tca_value1'], $processedTca->getValue($flexResolver));
     }
 
-    public function testResolveDoesNotResolveFileRecords()
+    public function testResolveDoesNotResolveFileRecords(): void
     {
         $flexResolver = new FlexResolver();
         $demands = new DemandsCollection();

@@ -24,7 +24,7 @@ class SelectMmResolverTest extends UnitTestCase
         $this->assertEquals(['foreignTable'], $selectMmResolver->getTargetTables());
     }
 
-    public function testConfigure()
+    public function testConfigure(): void
     {
         $selectMmResolver = new SelectMmResolver();
         $foreignTableWhere = new ReflectionProperty(SelectMmResolver::class, 'foreignTableWhere');
@@ -53,7 +53,7 @@ class SelectMmResolverTest extends UnitTestCase
         $this->assertEquals('selectField', $selectField->getValue($selectMmResolver));
     }
 
-    public function testResolve()
+    public function testResolve(): void
     {
         $selectMmResolver = $this->getConfiguredMmSelectResolver();
 
@@ -71,7 +71,7 @@ class SelectMmResolverTest extends UnitTestCase
         $this->assertEquals($resolvedRecord, $record);
     }
 
-    public function testResolveWithAdditionalWhere()
+    public function testResolveWithAdditionalWhere(): void
     {
         $selectMmResolver = new SelectMmResolver();
         $selectMmResolver->configure(

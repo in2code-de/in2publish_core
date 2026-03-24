@@ -35,7 +35,10 @@ use function trim;
 #[CoversMethod(FileRecordPublisher::class, 'publish')]
 class FileRecordPublisherTest extends UnitTestCase
 {
-    public function testCanPublishReturnsTrueForFileRecordsOnly()
+    public function __construct(private readonly \TYPO3\CMS\Core\Context\Context $context)
+    {
+    }
+    public function testCanPublishReturnsTrueForFileRecordsOnly(): void
     {
         $fileRecordPublisher = new FileRecordPublisher();
 
@@ -49,7 +52,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $this->assertFalse($fileRecordPublisher->canPublish($databaseRecord));
     }
 
-    public function testPublishDeletesRemovedFile()
+    public function testPublishDeletesRemovedFile(): void
     {
         $fileRecordPublisher = $this->createFileRecordPublisher();
 
@@ -58,8 +61,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
-                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'crdate' => $this->context->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => $this->context->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => DeleteFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -78,7 +81,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->finish();
     }
 
-    public function testPublishTransmitsAddedRecord()
+    public function testPublishTransmitsAddedRecord(): void
     {
         $fileRecordPublisher = $this->createFileRecordPublisher('/var/tmp/asdfasdf.tmp');
 
@@ -87,8 +90,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
-                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'crdate' => $this->context->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => $this->context->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => AddFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -108,7 +111,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->finish();
     }
 
-    public function testPublishTransmitsRenamedRecord()
+    public function testPublishTransmitsRenamedRecord(): void
     {
         $fileRecordPublisher = $this->createFileRecordPublisher();
 
@@ -125,8 +128,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
-                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'crdate' => $this->context->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => $this->context->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => MoveFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -141,7 +144,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->finish();
     }
 
-    public function testPublishTransmitsMovedRecord()
+    public function testPublishTransmitsMovedRecord(): void
     {
         $fileRecordPublisher = $this->createFileRecordPublisher();
 
@@ -155,8 +158,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
-                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'crdate' => $this->context->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => $this->context->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => MoveFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -171,7 +174,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->finish();
     }
 
-    public function testPublishTransmitsReplacedFileWithNewNameRecord()
+    public function testPublishTransmitsReplacedFileWithNewNameRecord(): void
     {
         $fileRecordPublisher = $this->createFileRecordPublisher('/var/tmp/transient/sadsdas.tmp');
 
@@ -185,8 +188,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
-                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'crdate' => $this->context->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => $this->context->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => ReplaceAndRenameFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -202,7 +205,7 @@ class FileRecordPublisherTest extends UnitTestCase
         $fileRecordPublisher->finish();
     }
 
-    public function testPublishTransmitsReplacedFileWithSameNameRecord()
+    public function testPublishTransmitsReplacedFileWithSameNameRecord(): void
     {
         $fileRecordPublisher = $this->createFileRecordPublisher('/var/tmp/transient/sadsdas.tmp');
 
@@ -216,8 +219,8 @@ class FileRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
-                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'crdate' => $this->context->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => $this->context->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => ReplaceFileInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,

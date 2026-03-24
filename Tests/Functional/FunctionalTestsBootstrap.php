@@ -27,5 +27,5 @@ call_user_func(function () {
 
     $context = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class);
     $context->setAspect('date', new DateTimeAspect(new \DateTimeImmutable('@' . time())));
-    $GLOBALS['EXEC_TIME'] = time();
+    \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp') = time();
 });

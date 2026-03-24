@@ -15,7 +15,7 @@ class UnitTestCase extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
     protected bool $resetSingletonInstances = true;
 
-    public function initializeIn2publishConfig(array $config = [])
+    public function initializeIn2publishConfig(array $config = []): void
     {
         $testConfigProvider = new class implements ProviderInterface {
             public array $config = [];

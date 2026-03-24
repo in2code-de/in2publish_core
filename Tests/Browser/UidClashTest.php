@@ -161,7 +161,7 @@ class UidClashTest  extends AbstractBrowserTestCase
         });
     }
 
-    private function assertOnlyCategory1HasBeenPublished(WebDriver $foreignDriver)
+    private function assertOnlyCategory1HasBeenPublished(WebDriver $foreignDriver): void
     {
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');
@@ -175,7 +175,7 @@ class UidClashTest  extends AbstractBrowserTestCase
 
     }
 
-    private function assertBothCategoriesHaveBeenPublished(WebDriver $foreignDriver)
+    private function assertBothCategoriesHaveBeenPublished(WebDriver $foreignDriver): void
     {
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'List');

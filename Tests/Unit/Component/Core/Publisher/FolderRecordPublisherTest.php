@@ -26,7 +26,10 @@ use function json_encode;
 #[CoversMethod(FolderRecordPublisher::class, 'publish')]
 class FolderRecordPublisherTest extends UnitTestCase
 {
-    public function testCanPublishReturnsTrueForFileRecordsOnly()
+    public function __construct(private readonly \TYPO3\CMS\Core\Context\Context $context)
+    {
+    }
+    public function testCanPublishReturnsTrueForFileRecordsOnly(): void
     {
         $folderRecordPublisher = new FolderRecordPublisher();
 
@@ -40,7 +43,7 @@ class FolderRecordPublisherTest extends UnitTestCase
         $this->assertFalse($folderRecordPublisher->canPublish($databaseRecord));
     }
 
-    public function testPublishRemovesDeletedFolder()
+    public function testPublishRemovesDeletedFolder(): void
     {
         $folderRecordPublisher = $this->createFolderRecordPublisher();
 
@@ -54,8 +57,8 @@ class FolderRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
-                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'crdate' => $this->context->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => $this->context->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => DeleteFolderInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,
@@ -69,7 +72,7 @@ class FolderRecordPublisherTest extends UnitTestCase
         $folderRecordPublisher->finish();
     }
 
-    public function testPublishAddsAddedFolder()
+    public function testPublishAddsAddedFolder(): void
     {
         $folderRecordPublisher = $this->createFolderRecordPublisher();
 
@@ -83,8 +86,8 @@ class FolderRecordPublisherTest extends UnitTestCase
             'tx_in2publishcore_filepublisher_instruction',
             new IsEqualIgnoringRequestToken([
                 [
-                    'crdate' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
-                    'tstamp' => \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getPropertyFromAspect('date', 'timestamp'),
+                    'crdate' => $this->context->getPropertyFromAspect('date', 'timestamp'),
+                    'tstamp' => $this->context->getPropertyFromAspect('date', 'timestamp'),
                     'instruction' => AddFolderInstruction::class,
                     'configuration' => json_encode([
                         'storage' => 1,

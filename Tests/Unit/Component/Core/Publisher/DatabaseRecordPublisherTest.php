@@ -20,7 +20,7 @@ use TYPO3\CMS\Core\Database\Connection;
 #[CoversMethod(DatabaseRecordPublisher::class, 'cancel')]
 class DatabaseRecordPublisherTest extends UnitTestCase
 {
-    public function testCanPublishReturnsTrueForDatabaseRecordsOnly()
+    public function testCanPublishReturnsTrueForDatabaseRecordsOnly(): void
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
 
@@ -34,7 +34,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $this->assertFalse($databaseRecordPublisher->canPublish($fileRecord));
     }
 
-    public function testPublishInsertsAddedRecords()
+    public function testPublishInsertsAddedRecords(): void
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
         $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);
@@ -51,7 +51,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $databaseRecordPublisher->publish($addedRecord);
     }
 
-    public function testPublishDeletesRemovedRecords()
+    public function testPublishDeletesRemovedRecords(): void
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
         $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);
@@ -68,7 +68,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $databaseRecordPublisher->publish($addedRecord);
     }
 
-    public function testPublishUpdatesChangedRecords()
+    public function testPublishUpdatesChangedRecords(): void
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
         $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);
@@ -86,7 +86,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $databaseRecordPublisher->publish($addedRecord);
     }
 
-    public function testFinishCommitsDatabaseChanges()
+    public function testFinishCommitsDatabaseChanges(): void
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
         $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);;
@@ -97,7 +97,7 @@ class DatabaseRecordPublisherTest extends UnitTestCase
         $databaseRecordPublisher->finish();
     }
 
-    public function testCancelRollsBackDatabaseChanges()
+    public function testCancelRollsBackDatabaseChanges(): void
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
         $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);

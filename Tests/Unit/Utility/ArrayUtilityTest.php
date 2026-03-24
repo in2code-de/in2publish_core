@@ -35,7 +35,7 @@ class ArrayUtilityTest extends UnitTestCase
         array $array,
         array $keysToRemove,
         int $countArray
-    ) {
+    ): void {
         $array = ArrayUtility::removeFromArrayByKey($array, $keysToRemove);
         foreach ($keysToRemove as $key) {
             $this->assertFalse(isset($array[$key]));
@@ -43,7 +43,7 @@ class ArrayUtilityTest extends UnitTestCase
         $this->assertSame(count($array), $countArray);
     }
 
-    public function testNormalizeArrayConvertsBoolAndIntAndRemovesEmptyValues()
+    public function testNormalizeArrayConvertsBoolAndIntAndRemovesEmptyValues(): void
     {
         $arrayToNormalize = [
             '12',

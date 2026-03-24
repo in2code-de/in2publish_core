@@ -69,7 +69,7 @@ class ContextServiceTest extends UnitTestCase
         }
     }
 
-    private function setApplicationContext($value)
+    private function setApplicationContext($value): void
     {
         if (null === $value) {
             putenv('TYPO3_CONTEXT');
@@ -92,7 +92,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertSame(ContextService::FOREIGN, $contextService->getContext());
     }
 
-    public function testContextIsDeterminedByEnvironmentVariable()
+    public function testContextIsDeterminedByEnvironmentVariable(): void
     {
         $this->setIn2publishContext(ContextService::LOCAL);
 
@@ -100,7 +100,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertSame(ContextService::LOCAL, $contextService->getContext());
     }
 
-    public function testUnsupportedContextWillThrowAnExceptionIfApplicationContextIsNotProduction()
+    public function testUnsupportedContextWillThrowAnExceptionIfApplicationContextIsNotProduction(): void
     {
         $this->setIn2publishContext('Wrong');
         $this->setApplicationContext('Development');
@@ -112,7 +112,7 @@ class ContextServiceTest extends UnitTestCase
         new ContextService();
     }
 
-    public function testUnsupportedContextResultsInDefaultContextIfApplicationContextIsProduction()
+    public function testUnsupportedContextResultsInDefaultContextIfApplicationContextIsProduction(): void
     {
         $this->setIn2publishContext('Wrong');
         $this->setApplicationContext('Production');
@@ -121,7 +121,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertSame(ContextService::FOREIGN, $contextService->getContext());
     }
 
-    public function testIsLocalReturnsTrueIfIn2publishContextIsLocal()
+    public function testIsLocalReturnsTrueIfIn2publishContextIsLocal(): void
     {
         $this->setIn2publishContext(ContextService::LOCAL);
 
@@ -129,7 +129,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isLocal());
     }
 
-    public function testIsLocalReturnsFalseIfIn2publishContextIsNotLocal()
+    public function testIsLocalReturnsFalseIfIn2publishContextIsNotLocal(): void
     {
         $this->setIn2publishContext(ContextService::FOREIGN);
 
@@ -137,7 +137,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertFalse($contextService->isLocal());
     }
 
-    public function testIsForeignReturnsTrueIfIn2publishContextIsForeign()
+    public function testIsForeignReturnsTrueIfIn2publishContextIsForeign(): void
     {
         $this->setIn2publishContext(ContextService::FOREIGN);
 
@@ -145,7 +145,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isForeign());
     }
 
-    public function testIsForeignReturnsFalseIfIn2publishContextIsLocal()
+    public function testIsForeignReturnsFalseIfIn2publishContextIsLocal(): void
     {
         $this->setIn2publishContext(ContextService::LOCAL);
 
@@ -153,7 +153,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertFalse($contextService->isForeign());
     }
 
-    public function testIsContextDefinedReturnsFalseIfContextIsNotDefined()
+    public function testIsContextDefinedReturnsFalseIfContextIsNotDefined(): void
     {
         $this->setIn2publishContext(null);
 
@@ -161,7 +161,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertFalse($contextService->isContextDefined());
     }
 
-    public function testIsContextDefinedReturnsTrueIfContextIsDefined()
+    public function testIsContextDefinedReturnsTrueIfContextIsDefined(): void
     {
         $this->setIn2publishContext(ContextService::LOCAL);
 
@@ -169,7 +169,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isContextDefined());
     }
 
-    public function testRedirectContextAlsoDefinesContext()
+    public function testRedirectContextAlsoDefinesContext(): void
     {
         $this->setRedirectedIn2publishContext(ContextService::LOCAL);
 
@@ -177,7 +177,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isContextDefined());
     }
 
-    public function testIsLocalReturnsTrueIfRedirectIn2publishContextIsLocal()
+    public function testIsLocalReturnsTrueIfRedirectIn2publishContextIsLocal(): void
     {
         $this->setRedirectedIn2publishContext(ContextService::LOCAL);
 
@@ -185,7 +185,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isLocal());
     }
 
-    public function testIsForeignReturnsTrueIfRedirectIn2publishContextIsForeign()
+    public function testIsForeignReturnsTrueIfRedirectIn2publishContextIsForeign(): void
     {
         $this->setRedirectedIn2publishContext(ContextService::FOREIGN);
 
@@ -193,7 +193,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertTrue($contextService->isForeign());
     }
 
-    public function testIsLocalReturnsFalseIfRedirectIn2publishContextIsForeign()
+    public function testIsLocalReturnsFalseIfRedirectIn2publishContextIsForeign(): void
     {
         $this->setRedirectedIn2publishContext(ContextService::FOREIGN);
 
@@ -201,7 +201,7 @@ class ContextServiceTest extends UnitTestCase
         $this->assertFalse($contextService->isLocal());
     }
 
-    public function testIsForeignReturnsFalseIfRedirectIn2publishContextIsLocal()
+    public function testIsForeignReturnsFalseIfRedirectIn2publishContextIsLocal(): void
     {
         $this->setRedirectedIn2publishContext(ContextService::LOCAL);
 

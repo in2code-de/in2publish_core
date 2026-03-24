@@ -58,7 +58,7 @@ class BackendUserProcessorTest extends UnitTestCase
         parent::tearDown();
     }
 
-    public function testBackendUserProcessorAddsBackendUserUidToLogEntryData()
+    public function testBackendUserProcessorAddsBackendUserUidToLogEntryData(): void
     {
         $expectedBeUserUid = 31;
 
@@ -74,7 +74,7 @@ class BackendUserProcessorTest extends UnitTestCase
         $this->assertSame(['be_user' => $expectedBeUserUid], $log->getData());
     }
 
-    public function testBackendUserProcessorAddsUnknownValueStringToLogEntryIfBackendUserIsKnownButHasNoId()
+    public function testBackendUserProcessorAddsUnknownValueStringToLogEntryIfBackendUserIsKnownButHasNoId(): void
     {
         // preparation
         $GLOBALS['BE_USER'] = new BackendUserAuthentication();

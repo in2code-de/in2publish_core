@@ -38,7 +38,7 @@ use PHPUnit\Framework\Attributes\Test;
 class ConfigurationUtilityTest extends UnitTestCase
 {
     #[Test]
-    public function addsNewKeyValues()
+    public function addsNewKeyValues(): void
     {
         $value1 = 'lorem';
         $value2 = 'ipsum';
@@ -69,7 +69,7 @@ class ConfigurationUtilityTest extends UnitTestCase
     }
 
     #[Test]
-    public function overwritesValuesOfAlphanumericKeys()
+    public function overwritesValuesOfAlphanumericKeys(): void
     {
         $value1 = 'lorem';
         $value2 = 'ipsum';
@@ -99,7 +99,7 @@ class ConfigurationUtilityTest extends UnitTestCase
     }
 
     #[Test]
-    public function doesNotOverwriteButAddsValuesOfNumericKeys()
+    public function doesNotOverwriteButAddsValuesOfNumericKeys(): void
     {
         $value1 = 'lorem';
         $value2 = 'ipsum';
@@ -133,7 +133,7 @@ class ConfigurationUtilityTest extends UnitTestCase
     }
 
     #[Test]
-    public function doesOverwriteNumericKeysOfDefinitionArrays()
+    public function doesOverwriteNumericKeysOfDefinitionArrays(): void
     {
         $original = [
             'definition' => [
@@ -172,7 +172,7 @@ class ConfigurationUtilityTest extends UnitTestCase
     }
 
     #[Test]
-    public function canMergeNestedArraysRecursively()
+    public function canMergeNestedArraysRecursively(): void
     {
         $value1 = 'lorem';
         $value2original = [
@@ -228,7 +228,7 @@ class ConfigurationUtilityTest extends UnitTestCase
     }
 
     #[Test]
-    public function sortsValuesByDefinedOrder()
+    public function sortsValuesByDefinedOrder(): void
     {
         $original = [
             'foo' => 'bar',
@@ -255,7 +255,7 @@ class ConfigurationUtilityTest extends UnitTestCase
     }
 
     #[Test]
-    public function valuesAreRemovedIfTheValueIsUnset()
+    public function valuesAreRemovedIfTheValueIsUnset(): void
     {
         $original = [
             'foo' => 'bar',

@@ -25,7 +25,7 @@ use ReflectionProperty;
 #[CoversMethod(PublisherCollection::class, 'finish')]
 class PublisherCollectionTest extends UnitTestCase
 {
-    public function testAddPublisherAddsPublisher()
+    public function testAddPublisherAddsPublisher(): void
     {
         $publisherCollection = new PublisherCollection();
         $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
@@ -75,7 +75,7 @@ class PublisherCollectionTest extends UnitTestCase
         $this->assertGreaterThan($arrayKeyFinishablePublisher, $arrayKeyTransactionalPublisher);
     }
 
-    public function testPublishIsCalledByTheFirstPublisherThatCanPublishARecord()
+    public function testPublishIsCalledByTheFirstPublisherThatCanPublishARecord(): void
     {
         $publisherCollection = new PublisherCollection();
         $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
@@ -104,7 +104,7 @@ class PublisherCollectionTest extends UnitTestCase
         $publisherCollection->publish($dbRecord);
     }
 
-    public function testCancelIsCalledByTransactionalPublishers()
+    public function testCancelIsCalledByTransactionalPublishers(): void
     {
         $publisherCollection = new PublisherCollection();
         $transactionalPublisher = $this->getTransactionalPublisher();
@@ -128,7 +128,7 @@ class PublisherCollectionTest extends UnitTestCase
         }
     }
 
-    public function testReverseIsCalledByReversiblePublishers()
+    public function testReverseIsCalledByReversiblePublishers(): void
     {
         $publisherCollection = new PublisherCollection();
         $reversiblePublisher = $this->getReversiblePublisher();
@@ -152,7 +152,7 @@ class PublisherCollectionTest extends UnitTestCase
         }
     }
 
-    public function testFinishIsCalledByFinishablePublishers()
+    public function testFinishIsCalledByFinishablePublishers(): void
     {
         $publisherCollection = new PublisherCollection();
         $finishablePublisher = $this->getFinishablePublisher();
@@ -202,7 +202,7 @@ class PublisherCollectionTest extends UnitTestCase
                 return true;
             }
 
-            public function publish(Record $record)
+            public function publish(Record $record): void
             {
             }
         };
@@ -237,7 +237,7 @@ class PublisherCollectionTest extends UnitTestCase
                 return true;
             }
 
-            public function publish(Record $record)
+            public function publish(Record $record): void
             {
             }
         };
@@ -272,7 +272,7 @@ class PublisherCollectionTest extends UnitTestCase
                 return true;
             }
 
-            public function publish(Record $record)
+            public function publish(Record $record): void
             {
             }
         };

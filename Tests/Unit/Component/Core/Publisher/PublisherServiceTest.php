@@ -214,7 +214,7 @@ class PublisherServiceTest extends UnitTestCase
                 return true;
             }
 
-            public function publish(Record $record)
+            public function publish(Record $record): void
             {
             }
         };

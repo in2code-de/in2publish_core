@@ -19,10 +19,13 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
 {
     // Read-only tests do not require database reset
     protected bool $initializeDatabase = false;
+    public function __construct(private readonly \TYPO3\CMS\Core\Database\ConnectionPool $connectionPool)
+    {
+    }
 
     public function testFindByPropertyReturnsRowsSortedByTcaCtrl(): void
     {
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $connectionPool = $this->connectionPool;
         $connection = $connectionPool->getConnectionByName('Default');
         $singleDataRepository = new SingleDatabaseRepository($connection);
 
@@ -33,7 +36,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
 
     public function testFindByPropertyWithJoinReturnsJoinedRows(): void
     {
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $connectionPool = $this->connectionPool;
         $connection = $connectionPool->getConnectionByName('Default');
         $singleDataRepository = new SingleDatabaseRepository($connection);
         $databaseSchemaService = GeneralUtility::makeInstance(DatabaseSchemaService::class);
@@ -137,7 +140,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
 
     public function testFindByWhere(): void
     {
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $connectionPool = $this->connectionPool;
         $connection = $connectionPool->getConnectionByName('Default');
         $singleDataRepository = new SingleDatabaseRepository($connection);
 
