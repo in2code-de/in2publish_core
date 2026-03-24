@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\ViewHelpers\Record;
 
-use Closure;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use RuntimeException;
 use Traversable;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
-use TYPO3Fluid\Fluid\ViewHelpers\ForViewHelper;
 
 use function array_pop;
 use function array_reverse;
@@ -20,28 +18,33 @@ use function in_array;
 use function is_object;
 use function iterator_to_array;
 
-class PageChildrenRecursionViewHelper extends ForViewHelper
+class PageChildrenRecursionViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var array<string, true>
-     */
     protected static array $recordStack = [];
 
+    protected $escapeOutput = false;
+
+    public function initializeArguments(): void
+    {
+        parent::initializeArguments();
+        $this->registerArgument('each', 'array', 'The array or \SplObjectStorage to iterated over', true);
+        $this->registerArgument('as', 'string', 'The name of the iteration variable', true);
+        $this->registerArgument('key', 'string', 'Variable to assign array key to', false);
+        $this->registerArgument('reverse', 'boolean', 'If enabled, the iterator will start with the last element', false, false);
+        $this->registerArgument('iteration', 'string', 'The name of the variable to store iteration information (index, cycle, isFirst, isLast, isEven, isOdd)');
+    }
+
     /**
-     * @param array $arguments
-     * @param Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     * @return string
      * @throws Exception
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public static function renderStatic(
-        array $arguments,
-        Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
+    public function render(): string
+    {
+        $arguments = $this->arguments;
+        $renderingContext = $this->renderingContext;
         $templateVariableContainer = $renderingContext->getVariableProvider();
+
         if (!isset($arguments['each'])) {
             return '';
         }
@@ -52,23 +55,21 @@ class PageChildrenRecursionViewHelper extends ForViewHelper
             );
         }
 
+        $each = $arguments['each'];
         if ($arguments['reverse'] === true) {
-            // array_reverse only supports arrays
-            if (is_object($arguments['each'])) {
-                /** @var $each Traversable */
-                $each = $arguments['each'];
-                $arguments['each'] = iterator_to_array($each);
+            if (is_object($each)) {
+                $each = iterator_to_array($each);
             }
-            $arguments['each'] = array_reverse($arguments['each'], true);
+            $each = array_reverse($each, true);
         }
         $iterationData = [
             'index' => 0,
             'cycle' => 1,
-            'total' => count($arguments['each']),
+            'total' => count($each),
         ];
 
         $output = '';
-        foreach ($arguments['each'] as $keyValue => $singleElement) {
+        foreach ($each as $keyValue => $singleElement) {
             if (!$singleElement instanceof Record) {
                 throw new RuntimeException('Can not iterate over other elements than record', 1660921900);
             }
@@ -93,7 +94,7 @@ class PageChildrenRecursionViewHelper extends ForViewHelper
                 $iterationData['index']++;
                 $iterationData['cycle']++;
             }
-            $output .= $renderChildrenClosure();
+            $output .= $this->renderChildren();
             $templateVariableContainer->remove($arguments['as']);
             if (isset($arguments['key'])) {
                 $templateVariableContainer->remove($arguments['key']);

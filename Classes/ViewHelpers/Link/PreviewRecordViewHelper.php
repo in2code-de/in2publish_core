@@ -42,19 +42,18 @@ class PreviewRecordViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerTagAttribute('name', 'string', 'Specifies the name of an anchor');
-        $this->registerTagAttribute(
+        $this->registerArgument('name', 'string', 'Specifies the name of an anchor');
+        $this->registerArgument(
             'rel',
             'string',
             'Specifies the relationship between the current document and the linked document',
         );
-        $this->registerTagAttribute(
+        $this->registerArgument(
             'rev',
             'string',
             'Specifies the relationship between the linked document and the current document',
         );
-        $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
-        $this->registerUniversalTagAttributes();
+        $this->registerArgument('target', 'string', 'Specifies where to open the linked document');
         $this->registerArgument(self::ARG_IDENTIFIER, 'integer', 'UID the the page to preview');
         $this->registerArgument(self::ARG_STAGING_LEVEL, 'string', '"local" or "foreign"');
         $this->registerArgument(self::ARG_TABLE, 'string', 'the records\' table name');

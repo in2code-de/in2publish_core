@@ -53,12 +53,12 @@ class IsPropertyDirtyViewHelper extends AbstractViewHelper
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function compile(
-        $argumentsName,
-        $closureName,
-        &$initializationPhpCode,
-        ViewHelperNode $node,
-        TemplateCompiler $compiler
-    ) {
+        string $argumentsName,
+        string $closureName,
+        string &$initializationPhpCode,
+        \TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode $node,
+        \TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler $compiler
+    ): string {
         /** @noinspection PhpUnnecessaryCurlyVarSyntaxInspection */
         return "in_array({$argumentsName}['property'], {$argumentsName}['record']->getChangedProps(), true)";
     }

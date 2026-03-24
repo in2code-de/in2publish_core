@@ -40,7 +40,6 @@ class ShowReasonsButtonViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerUniversalTagAttributes();
         $this->registerArgument('redirectRecord', SysRedirectDatabaseRecord::class, '', true);
     }
 

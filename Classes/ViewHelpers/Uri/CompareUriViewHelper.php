@@ -53,7 +53,6 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerUniversalTagAttributes();
         $this->registerArgument(self::ARG_IDENTIFIER, 'int', 'The uid of the page to compare', true);
     }
 
