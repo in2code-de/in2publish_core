@@ -48,14 +48,9 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
     protected string $foreignVarPath;
     protected int $fileTransmissionTimeout = 0;
 
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
-    public function injectConfigContainer(ConfigContainer $configContainer): void
+    public function __construct(ConfigContainer $configContainer)
     {
         $this->foreignVarPath = rtrim($configContainer->get('foreign.varPath'), '/');
-        $this->fileTransmissionTimeout = (int)$configContainer->get('adapter.local.fileTransmissionTimeout');
     }
 
     /**
@@ -72,7 +67,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
 
         if (!file_exists($source)) {
             $this->logger->error('File does not exist', ['source' => $source]);
-            throw new FileMissingException($source);
+            throw new FileMissingException($source, 2488666634);
         }
 
         $identifierHash = hash('sha1', $source);

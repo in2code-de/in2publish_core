@@ -51,6 +51,9 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
         Record::S_ADDED,
         Record::S_MOVED,
     ];
+    public function __construct(private readonly \TYPO3\CMS\Core\LinkHandling\LinkService $linkService)
+    {
+    }
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -110,7 +113,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
         // 4. Check Target
         $target = $properties['target'];
         if (null !== $target && str_contains($target, 't3://')) {
-            $coreLinkService = GeneralUtility::makeInstance(LinkService::class);
+            $coreLinkService = $this->linkService;
             $linkAttributes = $coreLinkService->resolveByStringRepresentation($target);
             if (!empty($linkAttributes['pageuid'])) {
                 $url = BackendUtility::buildPreviewUri('pages', (int)$linkAttributes['pageuid'], 'foreign');

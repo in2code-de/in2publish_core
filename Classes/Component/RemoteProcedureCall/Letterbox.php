@@ -49,13 +49,8 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
     protected const CHUNK_SIZE = 65000;
     protected bool $keepEnvelopes;
 
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
-    public function injectConfigContainer(ConfigContainer $configContainer): void
+    public function __construct(ConfigContainer $configContainer)
     {
-        // Type cast this value because this class is also used on foreign and there's no such setting.
         $this->keepEnvelopes = (bool)$configContainer->get('debug.keepEnvelopes');
     }
 

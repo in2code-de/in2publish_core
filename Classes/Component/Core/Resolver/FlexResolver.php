@@ -163,7 +163,7 @@ class FlexResolver extends AbstractResolver
         );
         $this->injectResolverService(GeneralUtility::makeInstance(ResolverService::class));
         $this->injectFlexFormFlatteningService(GeneralUtility::makeInstance(FlexFormFlatteningService::class));
-        $this->injectFlexFormService(GeneralUtility::makeInstance(FlexFormService::class));
+        $this->injectFlexFormService($this->flexFormService);
         $this->injectFlexFormTools(GeneralUtility::makeInstance(FlexFormTools::class));
     }
 }

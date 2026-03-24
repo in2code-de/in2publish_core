@@ -71,27 +71,8 @@ class FileController extends ActionController
     use DeactivateErrorFlashMessage;
     use DefaultFalFinderInjection;
     use FailureCollectorInjection;
-    use PageRendererInjection {
-        injectPageRenderer as actualInjectPageRenderer;
-    }
+    use PageRendererInjection;
     use PublisherServiceInjection;
-
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
-    public function injectPageRenderer(PageRenderer $pageRenderer): void
-    {
-        $this->actualInjectPageRenderer($pageRenderer);
-        $this->pageRenderer->loadJavaScriptModule('@in2code/in2publish_core/backend-module.js');
-        $this->pageRenderer->addCssFile(
-            'EXT:in2publish_core/Resources/Public/Css/Modules.css',
-            'stylesheet',
-            'all',
-            '',
-            false,
-        );
-    }
 
     public function indexAction(): ResponseInterface
     {

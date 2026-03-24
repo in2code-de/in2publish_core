@@ -39,6 +39,9 @@ HTML;
         '/typo3/module/in2publish',
         '/module/web/In2publishM2',
     ];
+    public function __construct(private readonly \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer)
+    {
+    }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -47,7 +50,7 @@ HTML;
         }
 
         /** @var PageRenderer $pageRenderer */
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $pageRenderer = $this->pageRenderer;
         $pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/LoadingOverlay.css',
             'stylesheet',

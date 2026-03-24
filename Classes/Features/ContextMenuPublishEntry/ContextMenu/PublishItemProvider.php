@@ -51,7 +51,7 @@ class PublishItemProvider extends AbstractProvider
     ];
     protected PermissionService $permissionService;
 
-    public function __construct()
+    public function __construct(private readonly \TYPO3\CMS\Core\EventDispatcher\EventDispatcher $eventDispatcher, private readonly \TYPO3\CMS\Backend\Routing\UriBuilder $uriBuilder)
     {
         parent::__construct(...func_get_args());
 
@@ -79,7 +79,7 @@ class PublishItemProvider extends AbstractProvider
             return $items;
         }
 
-        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $eventDispatcher = $this->eventDispatcher;
         $event = new VoteIfRecordIsPublishable($this->table, (int)$this->identifier);
         $eventDispatcher->dispatch($event);
         if ($event->getVotingResult()) {
@@ -93,7 +93,7 @@ class PublishItemProvider extends AbstractProvider
     {
         $attributes = [];
         if ($itemName === 'publish') {
-            $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+            $uriBuilder = $this->uriBuilder;
             $publishUrl = (string)$uriBuilder->buildUriFromRoute(
                 'ajax_in2publishcore_contextmenupublishentry_publish',
                 ['id' => $this->identifier],

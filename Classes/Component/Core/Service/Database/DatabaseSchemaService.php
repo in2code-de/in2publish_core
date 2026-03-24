@@ -12,29 +12,12 @@ use TYPO3\CMS\Core\SingletonInterface;
 class DatabaseSchemaService implements SingletonInterface
 {
     use LocalDatabaseInjection;
-    use CacheInjection {
-        injectCache as actualInjectCache;
-    }
+    use CacheInjection;
 
     protected const CACHE_ID = 'component_database_info';
     protected array $columns = [];
     protected ?array $tables = null;
     protected bool $infoChanged = false;
-
-    /**
-     * @noinspection PhpUnused
-     */
-    public function injectCache(FrontendInterface $cache): void
-    {
-        $this->actualInjectCache($cache);
-        $cacheData = $cache->get(self::CACHE_ID);
-        if (isset($cacheData['columns'])) {
-            $this->columns = $cacheData['columns'];
-        }
-        if (isset($cacheData['tables'])) {
-            $this->tables = $cacheData['tables'];
-        }
-    }
 
     public function getColumnNames(string $table): array
     {

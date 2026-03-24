@@ -80,34 +80,12 @@ class RecordController extends ActionController
     use CommonViewVariables;
     use RecordIndexInjection;
     use RecordTreeBuilderInjection;
-    use PageRendererInjection {
-        injectPageRenderer as actualInjectPageRenderer;
-    }
+    use PageRendererInjection;
     use FailureCollectorInjection;
     use PublisherServiceInjection;
     use PermissionServiceInjection;
     use SimpleStopwatchInjection;
     use SiteLanguageServiceInjection;
-
-    /**
-     * @codeCoverageIgnore
-     * @noinspection PhpUnused
-     */
-    public function injectPageRenderer(PageRenderer $pageRenderer): void
-    {
-        $this->actualInjectPageRenderer($pageRenderer);
-
-        $this->pageRenderer->loadJavaScriptModule('@in2code/in2publish_core/backend-module.js');
-        $this->pageRenderer->loadJavaScriptModule('@in2code/in2publish_core/backend-enhancements.js');
-
-        $this->pageRenderer->addCssFile(
-            'EXT:in2publish_core/Resources/Public/Css/Modules.css',
-            'stylesheet',
-            'all',
-            '',
-            false,
-        );
-    }
 
     public function initializeIndexAction(): void
     {
