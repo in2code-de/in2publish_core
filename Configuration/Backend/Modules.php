@@ -27,20 +27,24 @@ declare(strict_types=1);
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Controller\FileController;
 use In2code\In2publishCore\Controller\RecordController;
-use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
+use In2code\In2publishCore\Features\AdminTools\Controller\LetterboxController;
+use In2code\In2publishCore\Features\AdminTools\Controller\RegistryController;
+use In2code\In2publishCore\Features\AdminTools\Controller\ShowConfigurationController;
+use In2code\In2publishCore\Features\AdminTools\Controller\TcaController;
+use In2code\In2publishCore\Features\AdminTools\Controller\TestController;
+use In2code\In2publishCore\Features\AdminTools\Controller\ToolsController;
+use In2code\In2publishCore\Features\CompareDatabaseTool\Controller\CompareDatabaseToolController;
+use In2code\In2publishCore\Features\RecordInspector\Controller\RecordInspectorController;
 use In2code\In2publishCore\Features\RedirectsSupport\Controller\RedirectController;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use In2code\In2publishCore\Features\SystemInformationExport\Controller\SystemInformationExportController;
 
-$backendModulesToRegister = [];
+// Note: ConfigContainer is not available during DI container compilation (TYPO3 v14).
+// All modules are always registered. Config-based disabling can be done via BeforeModuleCreationEvent.
 
-/** @var ConfigContainer $configContainer */
-$configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-
-if ($configContainer->get('module.m1')) {
-    $backendModulesToRegister['in2publish_core_m1'] = [
+return [
+    'in2publish_core_m1' => [
         'parent' => 'web',
         'aliases' => ['web_In2publishCoreM1'],
         'position' => [],
@@ -53,11 +57,8 @@ if ($configContainer->get('module.m1')) {
         'controllerActions' => [
             RecordController::class => ['index', 'detail', 'publishRecord', 'toggleFilterStatus'],
         ],
-    ];
-}
-
-if ($configContainer->get('module.m3')) {
-    $backendModulesToRegister['in2publish_core_m3'] = [
+    ],
+    'in2publish_core_m3' => [
         'parent' => 'file',
         'aliases' => ['file_In2publishCoreM3'],
         'position' => [],
@@ -70,30 +71,30 @@ if ($configContainer->get('module.m3')) {
         'controllerActions' => [
             FileController::class => ['index', 'publishFolder', 'publishFile', 'toggleFilterStatus'],
         ],
-    ];
-}
-
-if ($configContainer->get('module.m4')) {
-    $toolsRegistry = GeneralUtility::makeInstance(ToolsRegistry::class);
-    $controllerActions = $toolsRegistry->processData();
-    if (!empty($controllerActions)) {
-        $backendModulesToRegister['in2publish_core_m4'] = [
-            'parent' => 'tools',
-            'aliases' => ['tools_In2publishCoreM4'],
-            'position' => [],
-            'access' => 'admin',
-            'workspaces' => 'live',
-            'path' => '/module/in2publish_core/m4',
-            'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
-            'extensionName' => 'in2publish_core',
-            'iconIdentifier' => 'in2publish-core-tools-module',
-            'controllerActions' => $controllerActions,
-        ];
-    }
-}
-
-if ($configContainer->get('features.redirectsSupport.enable')) {
-    $backendModulesToRegister['in2publish_core_m5'] = [
+    ],
+    'in2publish_core_m4' => [
+        'parent' => 'tools',
+        'aliases' => ['tools_In2publishCoreM4'],
+        'position' => [],
+        'access' => 'admin',
+        'workspaces' => 'live',
+        'path' => '/module/in2publish_core/m4',
+        'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
+        'extensionName' => 'in2publish_core',
+        'iconIdentifier' => 'in2publish-core-tools-module',
+        'controllerActions' => [
+            ToolsController::class => ['index'],
+            LetterboxController::class => ['index', 'flushEnvelopes'],
+            RegistryController::class => ['index', 'flushRegistry'],
+            TcaController::class => ['index'],
+            ShowConfigurationController::class => ['index'],
+            TestController::class => ['index'],
+            RecordInspectorController::class => ['index', 'inspect'],
+            CompareDatabaseToolController::class => ['index', 'compare', 'transfer'],
+            SystemInformationExportController::class => ['sysInfoIndex', 'sysInfoShow', 'sysInfoDecode', 'sysInfoDownload', 'sysInfoUpload'],
+        ],
+    ],
+    'in2publish_core_m5' => [
         'parent' => 'site',
         'aliases' => ['site_In2publishCoreM5'],
         'position' => ['after' => 'site_redirects'],
@@ -104,9 +105,7 @@ if ($configContainer->get('features.redirectsSupport.enable')) {
         'extensionName' => 'in2publish_core',
         'iconIdentifier' => 'in2publish-core-redirect-module',
         'controllerActions' => [
-            RedirectController::class => ['list','publish','selectSite'],
+            RedirectController::class => ['list', 'publish', 'selectSite'],
         ],
-    ];
-}
-
-return $backendModulesToRegister;
+    ],
+];

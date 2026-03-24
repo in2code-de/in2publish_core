@@ -29,18 +29,20 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use TYPO3\CMS\Core\Resource\StorageRepository;
 
 class DefaultStorageIsConfiguredTest implements TestCaseInterface
 {
-    use ResourceFactoryInjection;
+    public function __construct(private readonly StorageRepository $storageRepository)
+    {
+    }
 
     public function run(): TestResult
     {
-        if (null === $this->resourceFactory->getDefaultStorage()) {
+        if (null === $this->storageRepository->getDefaultStorage()) {
             return new TestResult('fal.default_storage.missing', TestResult::ERROR);
         }
         return new TestResult('fal.default_storage.configured');
