@@ -1,0 +1,2 @@
+14	installUpdateRows	rowUpdatersDone	a:1:{i:0;s:69:"TYPO3\\CMS\\Install\\Updates\\RowUpdater\\SysRedirectRootPageMoveMigration";}
+12	tx_scheduler	lastRun	a:3:{s:5:"start";i:1719995529;s:3:"end";i:1719995529;s:4:"type";s:6:"manual";}
