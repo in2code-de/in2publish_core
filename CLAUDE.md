@@ -4,9 +4,9 @@ Content publishing extension to connect stage (Local) and production (Foreign) T
 
 ## TYPO3 Configuration
 
-**TYPO3 Version**: 13.4.x (LTS)
-**PHP Version**: 8.2 - 8.4 (running: 8.4.8)
-**Extension Version**: 13.2.2 (ext_emconf) / 13.3.0 (latest release)
+**TYPO3 Version**: 14.2.0-dev
+**PHP Version**: 8.2 - 8.5 (running: 8.4.8)
+**Extension Version**: 14.0.0 (ext_emconf) / develop-v14 (current branch)
 **Extension Key**: in2publish_core
 **Vendor Namespace**: In2code\In2publishCore
 **Project Type**: Docker Compose + Composer Mode (monorepo)
