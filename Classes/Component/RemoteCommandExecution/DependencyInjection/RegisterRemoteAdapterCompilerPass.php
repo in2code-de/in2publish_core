@@ -44,7 +44,7 @@ class RegisterRemoteAdapterCompilerPass implements CompilerPassInterface
         $this->tagName = $tagName;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $adapters = [];
         $taggedAdapters = $container->findTaggedServiceIds($this->tagName);

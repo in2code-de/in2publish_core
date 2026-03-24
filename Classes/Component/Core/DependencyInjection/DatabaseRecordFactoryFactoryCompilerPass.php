@@ -24,7 +24,7 @@ class DatabaseRecordFactoryFactoryCompilerPass implements CompilerPassInterface
         $this->tagName = $tagName;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $recordDatabaseFactoryFactory = $container->getDefinition(DatabaseRecordFactoryFactory::class);
         if (!$recordDatabaseFactoryFactory) {

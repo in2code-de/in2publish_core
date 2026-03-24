@@ -19,7 +19,7 @@ class DatabaseRecordPublisher implements Publisher, TransactionalPublisher
         return $record instanceof AbstractDatabaseRecord;
     }
 
-    public function publish(Record $record)
+    public function publish(Record $record): void
     {
         $table = $record->getClassification();
         $localProps = $record->getLocalProps();

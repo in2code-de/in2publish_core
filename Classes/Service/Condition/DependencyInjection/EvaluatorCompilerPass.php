@@ -20,7 +20,7 @@ class EvaluatorCompilerPass implements CompilerPassInterface
         $this->tagName = $tagName;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $service = $container->findDefinition(ConditionEvaluationService::class);
         $evaluators = $container->findTaggedServiceIds($this->tagName);

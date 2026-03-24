@@ -43,7 +43,7 @@ class RecordCollection implements IteratorAggregate
         $this->records[$record->getClassification()][$record->getId()] = $record;
     }
 
-    public function removeRecordByTableAndIdentifier(string $table, int $identifier)
+    public function removeRecordByTableAndIdentifier(string $table, int $identifier): void
     {
         if (!empty($this->records[$table][$identifier])) {
             unset($this->records[$table][$identifier]);

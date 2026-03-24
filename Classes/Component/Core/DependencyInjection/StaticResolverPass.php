@@ -20,7 +20,7 @@ class StaticResolverPass implements CompilerPassInterface
         $this->tagName = $tagName;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $resolverServiceDefinition = $container->findDefinition(ResolverService::class);
         $staticResolvers = $container->findTaggedServiceIds($this->tagName);

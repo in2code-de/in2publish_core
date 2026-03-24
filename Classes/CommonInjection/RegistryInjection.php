@@ -16,7 +16,7 @@ trait RegistryInjection
     /**
      * @noinspection PhpUnused
      */
-    public function injectRegistry(Registry $registry)
+    public function injectRegistry(Registry $registry): void
     {
         $this->registry = $registry;
     }

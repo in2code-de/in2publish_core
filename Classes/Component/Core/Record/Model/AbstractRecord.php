@@ -438,7 +438,7 @@ abstract class AbstractRecord implements Record
     /**
      * @param array<Dependency> $dependencyTree
      */
-    public function flattenDependencyTree(array $dependencyTree, array &$flattened, array &$parents = [])
+    public function flattenDependencyTree(array $dependencyTree, array &$flattened, array &$parents = []): void
     {
         foreach ($dependencyTree as $classification => $identifiers) {
             foreach ($identifiers as $identifier => $structure) {

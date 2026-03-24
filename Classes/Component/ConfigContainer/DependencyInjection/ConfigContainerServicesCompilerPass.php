@@ -55,7 +55,7 @@ class ConfigContainerServicesCompilerPass implements CompilerPassInterface
         $this->providerServiceTag = $providerServiceTag;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $configContainerFactory = $container->getDefinition(ConfigContainerFactory::class);
 

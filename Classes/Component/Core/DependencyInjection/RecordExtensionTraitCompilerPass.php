@@ -23,7 +23,7 @@ class RecordExtensionTraitCompilerPass implements CompilerPassInterface
         $this->tagName = $tagName;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $recordExtensions = [];
 
