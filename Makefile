@@ -64,13 +64,15 @@ start: .link-compose-file
 COMPOSER_AUTH_JSON := $(shell gh auth token 2>/dev/null | sed 's/.*/{"github-oauth":{"github.com":"&"}}/' || echo '{}')
 
 setup: stop destroy .install-packages .create-certificate start .mysql-wait
-	docker compose exec -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' local-php composer i
-	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 composer i
+	docker compose exec local-php composer i
+	docker compose exec foreign-php composer i
 	docker compose exec local-php vendor/bin/typo3 install:setup --force
-	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+	docker compose exec foreign-php vendor/bin/typo3 install:setup --force
 	git checkout Build/local/config/sites/main/config.yaml
 	git checkout Build/foreign/config/sites/main/config.yaml
-	make restore
+	docker compose exec local-php vendor/bin/typo3 cache:flush
+	docker compose exec foreign-php vendor/bin/typo3 cache:flush
+	make setup-qa restore
 	npm install
 	npx playwright install
 
@@ -102,14 +104,14 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	if [[ ! -f $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.crt -key-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ${HOST_FOREIGN}; fi;
 	if [[ ! -f $(HOME)/.dinghy/certs/${MAIL_HOST}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${MAIL_HOST}.crt -key-file $(HOME)/.dinghy/certs/${MAIL_HOST}.key ${MAIL_HOST}; fi;
 
-restore: mysql-restore fileadmin-restore typo3-clearcache
+restore: mysql-restore fileadmin-restore .typo3-db-compare
 
-## Restores the database from the dump files in SQLDUMPSDIR
+## Restores the database using mysql-loader CSV dumps
 mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
-	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_local.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) local'
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/${SQLDUMPSDIR}/local/
 	echo "$(EMOJI_robot) Restoring the foreign database"
-	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_foreign.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) foreign'
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/${SQLDUMPSDIR}/foreign/
 
 
 ## Restores the fileadmin from .project/data/fileadmin
@@ -125,16 +127,18 @@ fileadmin-restore:
 	echo "$(EMOJI_robot) Updating database schema on foreign"
 	docker compose exec -u app foreign-php vendor/bin/typo3 database:updateschema
 
-## Create dumps of local and foreign database in dir .project/data/dumps
+MYSQL_LOADER_EXCLUDE := -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -xtx_in2publish_workflow
+
+## Create dumps of local and foreign database using mysql-loader
 dump-dbs: dump-local-database dump-foreign-database
 
 dump-local-database: .mysql-wait
 	echo "$(EMOJI_robot) Dumping the local database"
-	bash .project/scripts/dump-database.sh local project
+	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/${SQLDUMPSDIR}/local/ $(MYSQL_LOADER_EXCLUDE) -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
 
 dump-foreign-database: .mysql-wait
 	echo "$(EMOJI_robot) Dumping the foreign database"
-	bash .project/scripts/dump-database.sh foreign project
+	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/${SQLDUMPSDIR}/foreign/ $(MYSQL_LOADER_EXCLUDE) -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
 
 unit:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml

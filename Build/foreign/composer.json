@@ -20,6 +20,10 @@
 		},
 		"2": {
 			"type": "vcs",
+			"url": "https://github.com/in2code-de/mysql-loader.git"
+		},
+		"3": {
+			"type": "vcs",
 			"url": "https://github.com/in2code-de/process-manager"
 		}
 	},
@@ -92,6 +96,7 @@
 	"require-dev": {
 		"typo3/testing-framework": "^9.1",
 		"co-stack/build-essentials": "@dev",
+		"co-stack/mysql-loader": "@dev",
 		"co-stack/process-manager": "@dev"
 	}
 }
