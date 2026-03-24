@@ -36,7 +36,12 @@ use function trim;
 
 class AdminToolButton extends LinkButton
 {
-    protected $showLabelText = true;
+    /**
+     * Defines whether to show the title as a label within the button
+     *
+     * @var bool
+     */
+    protected bool $showLabelText = true;
 
     protected $defaultClasses = [
         'btn', 'btn-default',

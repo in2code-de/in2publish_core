@@ -38,7 +38,7 @@ class EarlyCacheManager
 {
     public function create(string $identifier): FrontendInterface
     {
-        $backend = new FileBackend(Environment::getContext()->__toString());
+        $backend = new FileBackend([]);
         return new PhpFrontend($identifier, $backend);
     }
 }

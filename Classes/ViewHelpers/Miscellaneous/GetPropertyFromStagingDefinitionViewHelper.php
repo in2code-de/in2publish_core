@@ -96,7 +96,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
                 return $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
             }
 
-            return LocalizationUtility::translate('label_production', 'in2publish_core') ?? 'label_production';
+            return LocalizationUtility::translate('label_production', 'In2publishCore') ?? 'label_production';
         }
         return static::EMPTY_FIELD_VALUE;
     }

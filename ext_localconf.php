@@ -77,7 +77,6 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
         'Pi1',
         [FrontendController::class => 'preview'],
         [FrontendController::class => 'preview'],
-        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT,
     );
 
     /******************************************** Configure Garbage Collector  ****************************************/

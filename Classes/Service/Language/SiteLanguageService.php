@@ -74,7 +74,7 @@ class SiteLanguageService
             $languages[-1] = [
                 'uid' => -1,
                 'title' => $this->languageService->sL(
-                    'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:multipleLanguages',
+                    'core.mod_web_list:multipleLanguages',
                 ),
                 'ISOcode' => '',
                 'flagIcon' => 'flags-multiple',
