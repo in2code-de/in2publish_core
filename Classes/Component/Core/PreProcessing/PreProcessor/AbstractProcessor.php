@@ -63,7 +63,7 @@ abstract class AbstractProcessor implements TcaPreProcessor
     public function getType(): string
     {
         if (!isset($this->type)) {
-            throw new MissingPreProcessorTypeException($this);
+            throw new MissingPreProcessorTypeException($this, 7056407549);
         }
         return $this->type;
     }

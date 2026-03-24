@@ -82,7 +82,7 @@ class DynamicValueProviderRegistry implements SingletonInterface
     public function getDynamicValueProviderByKey(string $key): DynamicValueProviderInterface
     {
         if (!$this->hasDynamicValueProviderForKey($key)) {
-            throw new InvalidDynamicValueProviderKeyException($key);
+            throw new InvalidDynamicValueProviderKeyException($key, 5726792933);
         }
         return $this->providers[$key];
     }

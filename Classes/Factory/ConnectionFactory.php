@@ -45,7 +45,7 @@ class ConnectionFactory
     {
         $connection = DatabaseUtility::buildLocalDatabaseConnection();
         if (null === $connection) {
-            throw new ConnectionUnavailableException('local');
+            throw new ConnectionUnavailableException('local', 5817084068);
         }
         return $connection;
     }
@@ -57,7 +57,7 @@ class ConnectionFactory
     {
         $connection = DatabaseUtility::buildForeignDatabaseConnection();
         if (null === $connection) {
-            throw new ConnectionUnavailableException('foreign');
+            throw new ConnectionUnavailableException('foreign', 9042135002);
         }
         return $connection;
     }
