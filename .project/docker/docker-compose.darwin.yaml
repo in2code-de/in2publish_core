@@ -82,6 +82,7 @@ services:
 
   mysql:
     image: in2code/mysql:8.0
+    command: --secure-file-priv=${SQLDUMPSDIR} --local-infile=1
     user: '1000'
     env_file:
       - .env
@@ -145,8 +146,8 @@ services:
       - ./:/app/
       - /dev/shm:/dev/shm
     ports:
-      - ${SELENIUM_NODE_FIREFOX_VNC_PORT:-13321}:5900
-      - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-13331}:7900
+      - ${SELENIUM_NODE_FIREFOX_VNC_PORT:-13421}:5900
+      - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-13431}:7900
 
   playwright:
     image: mcr.microsoft.com/playwright:v1.58.2-noble
