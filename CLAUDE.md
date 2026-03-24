@@ -14,11 +14,12 @@ Content publishing extension to connect stage (Local) and production (Foreign) T
 
 ### Project Architecture
 
-This is a **monorepo** for the in2publish Content Publisher suite. The extension connects a **Local** (staging) TYPO3 instance with a **Foreign** (production) instance for content publishing.
+This is a **monorepo** for the in2publish Content Publisher suite. The extension connects a **Local** (staging) TYPO3
+instance with a **Foreign** (production) instance for content publishing.
 
 Key concepts:
-- **Local**: The local/staging TYPO3 instance where editors work
-- **Foreign**: The foreign/live TYPO3 instance that receives published content
+- **Local**: The Build/local TYPO3 instance where editors work
+- **Foreign**: The Build/foreign TYPO3 instance that receives published content
 - Two separate database connections (`$localDatabase`, `$foreignDatabase`) injected via DI
 - Adapter pattern for SSH/HTTP/Native communication between instances
 
@@ -71,21 +72,6 @@ Configuration/
 - Cache: `cache.in2publish_core`
 - Modular Services.yaml imports from `Component/*/Services.yaml` and `Features/*/Services.yaml`
 
-### Local Extensions (Monorepo packages/)
-
-| Package | Description |
-|---------|-------------|
-| **in2publish_core** | Core publishing extension (this package) |
-| **in2publish** | Meta package / distribution |
-| **in2publish_http** | HTTP-based adapter for communication |
-| **in2publish_local** | Native file publishing adapter (no SSH) |
-| **in2publish_native** | SSH adapter using OS SSH/SCP binary |
-| **in2publish_seclib** | SSH adapter using phpseclib |
-| **in2publish_testing** | Scripts and helpers for testing |
-| **build-essentials** | Build tools |
-| **mysql-loader** | MySQL LOAD DATA / SELECT INTO OUTFILE via DBAL |
-| **process-manager** | Parallel processing via Symfony Process |
-| **stack-test** | Testing framework (PHPUnit ^9.6/^10.4/^11.5) |
 
 ### Docker Environment
 
@@ -105,7 +91,7 @@ Configuration/
 
 ```
 Tests/
-├── Browser/       # Browser-based tests
+├── Browser/       # Browser-based Codeception tests - legacy, to be replaced by Playwright
 ├── Functional/    # Functional tests
 ├── Helper/        # Test helpers
 ├── Manual/        # Manual test procedures
@@ -121,7 +107,7 @@ Key targets:
 - `make install-project` - Full project setup (Docker, DB, composer)
 - `make start` / `make stop` / `make destroy` - Docker lifecycle
 - `make composer-install` / `make composer-update` - Composer operations
-- `make dump-dbs` / `make restore` - Database backup/restore
+- `make restore` - Restore database and fileadmin from csv files
 - `make typo3-clearcache` / `make typo3-rebuild-caches` - Cache management
 - `make login-local-php` / `make login-foreign-php` - Shell access
 - `make setup-qa` - QA tools setup
@@ -160,6 +146,7 @@ Key targets:
 
 #### 8. Configuration Files
 - Use `defined('TYPO3') || die();` in config files
+
 # Development Guidelines
 
 ## Working Mode
@@ -168,22 +155,29 @@ Key targets:
 * **Testing:** Writing and executing tests is always permitted and encouraged.
 * **Handling Ambiguity:** If a requirement is unclear, make a reasonable assumption, document it, and proceed.
 * **Refactoring:** No prior approval is needed for refactoring within a specific module.
-
+* **Code Style:** Follow existing code style and conventions. No prior approval needed for code style fixes.
+* **Documentation:** You may update or add documentation (e.g., README, inline comments) without prior approval.
+* **Git Commits:** You may commit changes with clear messages following guidelines above, but you are never allowed to push changes.
 
 ## Restrictions (Require Explicit Approval)
 * **Dependencies:** Modifying `composer.json` or adding/removing dependencies.
 * **Database Schema:** Deploying any changes to the database schema.
 * **External APIs:** Calling live external APIs (permitted only within tests using mocks/stubs).
+* **Git Pushes:** You are not allowed to push changes to the repository.
 
 ### Git Information
 
-**Current Branch**: master (main branch: develop)
+**Commit Message Convention:**
+- `[BUGFIX]` - Bug fixes
+- `[TASK]` - General tasks
+- `[FEATURE]` - New features
+- `[DOCS]` - Documentation changes
+- `[CODESTYLE]` - Code style fixes
+- `[TEST]` - Test additions/changes
+- `[SECURITY]` - Security updates
+- `[DEV]` - Changes related to development environment or tools
+- `[AI]` - Instructions / plans for AI tools
 
-**Recent Commits:**
-- 92856f62: [RELEASE] Version 13.3.0
-- 301b3299: [META] Set the EM conf version number to 13.3.0
-- 1acb0fd0: [DOCS] Update Changelog.md
-- 86c966b6: [TASK] Merge dependabot pull-request for locutus
-- ba1f9acb: Bump locutus from 2.0.32 to 2.0.39
-
-**Commit Message Convention**: `[TYPE] Description` where TYPE is RELEASE, META, DOCS, TASK, BUGFIX, FEATURE, TEST
+* Keep messages concise, focussed on the change, and avoid unnecessary details/explanations.
+* Use the present tense ("Fix bug" not "Fixed bug").
+* Do not add statements like authored by Claude-Code or AI assisted in commit message.
