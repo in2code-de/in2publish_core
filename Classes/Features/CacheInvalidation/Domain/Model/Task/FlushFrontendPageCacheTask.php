@@ -77,8 +77,7 @@ class FlushFrontendPageCacheTask extends AbstractTask
 
         $dataHandler->BE_USER = $user;
 
-        /** @psalm-suppress InternalProperty */
-        $dataHandler->admin = true;
+        $dataHandler->BE_USER->user['admin'] = 1;
         return $dataHandler;
     }
 }
