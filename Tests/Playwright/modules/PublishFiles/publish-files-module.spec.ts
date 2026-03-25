@@ -40,7 +40,7 @@ test.describe('Publish Files Module', () => {
 
             // Upload the file via the form
             const fileInput = backend.contentFrame.locator('input[name="upload_1[]"]');
-            await fileInput.setInputFiles(path.resolve(__dirname, '../../Browser/files/carson-masterson-1540698-unsplash.jpg'));
+            await fileInput.setInputFiles(path.resolve(__dirname, '../../../Browser/files/carson-masterson-1540698-unsplash.jpg'));
             await backend.contentFrame.locator('#FileUploadController').locator('[type="submit"]').click();
 
             await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
@@ -94,10 +94,15 @@ test.describe('Publish Files Module', () => {
      * Mirrors Tests/Browser/PublishFilesModuleTest.php::testRenamedFileCanBePublished
      */
     test('Renamed file can be published', async ({ page, backend, browser }) => {
+        test.setTimeout(120_000);
 
         await test.step('Verify the file exists on Foreign first', async () => {
             await backend.withForeignContext(browser, async (foreignBackend) => {
                 await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
+
+                // Workaround: first visit may trigger "File has been deleted" due to stale FAL index.
+                // Re-select to force FAL re-indexing from disk.
                 await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
 
                 await expect(
@@ -112,6 +117,10 @@ test.describe('Publish Files Module', () => {
 
         await test.step('When I rename the file via context menu', async () => {
             await backend.gotoModule('Filelist');
+            await backend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
+
+            // Workaround: first visit may show "File has been deleted" due to stale FAL index.
+            // Re-select to force FAL re-indexing from disk.
             await backend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
 
             // Right-click the file row in the content frame
@@ -186,6 +195,10 @@ test.describe('Publish Files Module', () => {
         await test.step('Then the renamed file should be visible on Foreign', async () => {
             await backend.withForeignContext(browser, async (foreignBackend) => {
                 await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
+
+                // Workaround: first visit triggers FAL re-indexing which causes "File has been deleted" error.
+                // Selecting the folder again after re-indexing resolves the stale reference.
                 await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
 
                 await expect(
@@ -389,6 +402,7 @@ test.describe('Publish Files Module', () => {
      * Mirrors Tests/Browser/PublishFilesModuleTest.php::testRenamedFolderCanBePublished
      */
     test('Moved folder with file can be published', async ({ backend, browser }) => {
+        test.setTimeout(120_000);
 
         await test.step('Verify the folder exists on Foreign in original location', async () => {
             await backend.withForeignContext(browser, async (foreignBackend) => {
@@ -448,6 +462,9 @@ test.describe('Publish Files Module', () => {
         await test.step('Then the file should be in the new location on Foreign', async () => {
             await backend.withForeignContext(browser, async (foreignBackend) => {
                 await foreignBackend.gotoModule('Filelist');
+                await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2g_target_folder', '2g_moved_folder_with_file']);
+
+                // Workaround: first visit may show empty due to FAL indexing; re-select to refresh
                 await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2g_target_folder', '2g_moved_folder_with_file']);
 
                 await expect(

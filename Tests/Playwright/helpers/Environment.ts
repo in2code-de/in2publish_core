@@ -9,7 +9,7 @@ import * as path from 'path';
  * two levels up to reach the root where the Makefile lives.
  */
 export const Environment = createEnvironment({
-  command: 'make restore',
+  command: 'make restore-core-only',
   cwd: path.resolve(__dirname, '../../../../..'),
   skipInCi: true,
 });

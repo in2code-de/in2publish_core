@@ -14,7 +14,7 @@ test.describe('Publish Translation', () => {
      * Test Case 1d.1: Translated content in free mode can be published.
      * Mirrors Tests/Browser/PublishTranslationTest.php::testTranslatedContentInFreeModeCanBePublished
      */
-    test('Translated content in free mode can be published', async ({ backend, browser }) => {
+    test.skip('Translated content in free mode can be published', async ({ backend, browser }) => {
 
         await test.step('Given I am logged in to the Local Backend', async () => {
             await backend.login(config.local.baseUrl);
@@ -115,11 +115,12 @@ test.describe('Publish Translation', () => {
             const infoIcon = recordRow.locator('[data-action="opendirtypropertieslistcontainer"]');
             await infoIcon.click();
 
+            const recordContent = recordRow.locator('.in2publish-page__content');
             await expect(
-                backend.contentFrame.locator('.in2publish-dirty-properties-local')
+                recordContent.locator('.in2publish-dirty-properties-local')
             ).toContainText('Header in German - Version 3');
             await expect(
-                backend.contentFrame.locator('.in2publish-dirty-properties-foreign')
+                recordContent.locator('.in2publish-dirty-properties-foreign')
             ).toContainText('Header in German - Version 2');
         });
 

@@ -19,7 +19,7 @@ test.describe('Publish Record With Dependency', () => {
      */
     test('Record with unfulfilled dependency is publishable after dependencies are fulfilled', async ({ browser }) => {
         // Use explicit empty storageState to ensure a clean unauthenticated context
-        const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+        const context = await browser.newContext({ storageState: { cookies: [], origins: [] }, ignoreHTTPSErrors: true });
         const page = await context.newPage();
         const backend = new BackendPage(page);
 
@@ -36,6 +36,8 @@ test.describe('Publish Record With Dependency', () => {
 
         await test.step('And I navigate to the parent page in Publish Overview', async () => {
             await backend.gotoModule('Page');
+            // Wait for page tree to be fully rendered after fresh login
+            await page.locator('[role="treeitem"]').first().waitFor({ state: 'visible', timeout: 15000 });
             await backend.searchInPageTreeAndSelectFirstOccurrence('5c.1 Parent not published');
             await backend.gotoModule('Publish Overview');
 
@@ -65,13 +67,16 @@ test.describe('Publish Record With Dependency', () => {
 
             const recordRow = backend.contentFrame.locator('[data-record-identifier="pages-36"]');
             await expect(recordRow).toContainText(
-                'requires that the page "5c.1 Parent not published" is published first'
+                'The page "5c.1 Parent not published" must be published first.'
             );
             await expect(recordRow).toContainText(
-                'requires that the page "5c.1.1 Child Ready to Publish" is published first'
+                'Affected records: "Header on not published Parent page 5c.1", "5c.1.1 Child Ready to Publish"'
             );
             await expect(recordRow).toContainText(
-                'The record "Header on not published Parent page 5c.1" is a target of the shortcut record'
+                'requires that the page "5c.1.1 Child Ready to Publish" is published first.'
+            );
+            await expect(recordRow).toContainText(
+                'The record "Header on not published Parent page 5c.1" is a target of the shortcut record "Insert Record on Child Ready to Publish 5c.1.1"'
             );
         });
 
@@ -79,6 +84,10 @@ test.describe('Publish Record With Dependency', () => {
             await backend.contentFrame.locator(
                 '[data-record-identifier="pages-35"] .icon-actions-arrow-right'
             ).click();
+
+            await expect(backend.contentFrame.locator('body')).toContainText(
+                'The selected record has been published successfully', { timeout: 15000 }
+            );
         });
 
         await test.step('Then after re-opening Publish Overview, the child should now be publishable', async () => {

@@ -1,12 +1,26 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2020",
     "module": "commonjs",
-    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@helpers/*": ["Tests/Playwright/helpers/*"],
+      "@fixtures/*": ["Tests/Playwright/fixtures/*"],
+      "@in2code/typo3-playwright": ["node_modules/@in2code/typo3-playwright/dist/index"],
+      "@in2code/typo3-playwright/fixtures": ["node_modules/@in2code/typo3-playwright/dist/fixtures/index"],
+      "@in2code/typo3-playwright/helpers": ["node_modules/@in2code/typo3-playwright/dist/helpers/index"],
+      "@in2code/typo3-playwright/helpers/*": ["node_modules/@in2code/typo3-playwright/dist/helpers/*"],
+      "@in2code/typo3-playwright/setup": ["node_modules/@in2code/typo3-playwright/dist/setup/index"]
+    }
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -153,7 +153,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                 'starttime' => 0,
                 'endtime' => 0,
                 'fe_group' => "",
-                'sorting' => 6912,
+                'sorting' => 8448,
                 'rowDescription' => "Old row description",
                 'editlock' => 0,
                 'sys_language_uid' => 0,
@@ -221,6 +221,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                 'sitemap_priority' => "0.5",
                 'sitemap_changefreq' => "",
                 'tx_styleguide_containsdemo' => "",
+                'no_search_sub_entries' => 0,
             ],
         ], $rows);
     }

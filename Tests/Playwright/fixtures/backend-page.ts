@@ -28,10 +28,27 @@ export class BackendPage extends BaseBackendPage {
     const fileTree = this.page.locator('.scaffold-content-navigation-component');
     await expect(fileTree).toBeVisible({ timeout: 10000 });
 
+    // Track the expected aria-level for disambiguation when duplicate folder names exist.
+    // TYPO3's tree renders flat DOM elements with aria-level attributes.
+    let expectedLevel: number | null = null;
+
     for (const segment of pathSegments) {
-      const treeNode = fileTree.locator(`[role="treeitem"]`).filter({ hasText: segment });
-      const firstNode = treeNode.first();
+      let candidates;
+      if (expectedLevel !== null) {
+        // Use aria-level to ensure we pick a child of the previously expanded node,
+        // not a sibling with the same name at a different tree depth.
+        candidates = fileTree.locator(`[role="treeitem"][aria-level="${expectedLevel}"]`)
+          .filter({ hasText: segment });
+      } else {
+        candidates = fileTree.locator(`[role="treeitem"]`).filter({ hasText: segment });
+      }
+
+      const firstNode = candidates.first();
       await expect(firstNode).toBeVisible({ timeout: 10000 });
+
+      // Read the actual level for determining the next expected child level
+      const levelStr = await firstNode.getAttribute('aria-level');
+      expectedLevel = levelStr ? parseInt(levelStr, 10) + 1 : null;
 
       // Expand the node if it has children and is not expanded
       const chevron = firstNode.locator('.node-toggle');
@@ -74,7 +91,7 @@ export class BackendPage extends BaseBackendPage {
    * @param callback Function receiving the logged-in foreign BackendPage
    */
   async withForeignContext<T>(browser: Browser, callback: (foreignBackend: BackendPage) => Promise<T>): Promise<T> {
-    const foreignContext = await browser.newContext();
+    const foreignContext = await browser.newContext({ ignoreHTTPSErrors: true });
     try {
       const foreignPage = await foreignContext.newPage();
       const foreignBackend = new BackendPage(foreignPage);

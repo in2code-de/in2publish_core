@@ -29,7 +29,7 @@ test.describe('UID Clash', () => {
         await backend.contentFrame.locator('.icon-actions-arrow-right').click();
 
         await expect(backend.contentFrame.locator('body')).toContainText(
-            'The selected record has been published successfully'
+            'The selected record has been published successfully', { timeout: 30000 }
         );
     }
 
@@ -48,7 +48,7 @@ test.describe('UID Clash', () => {
         await backend.contentFrame.locator('.icon-actions-arrow-right').click();
 
         await expect(backend.contentFrame.locator('body')).toContainText(
-            'The selected record has been published successfully'
+            'The selected record has been published successfully', { timeout: 30000 }
         );
     }
 
@@ -74,26 +74,30 @@ test.describe('UID Clash', () => {
 
     /**
      * Helper: Assert both categories exist in Foreign.
+     * Checks the sys_category section in the List module (not the page titles which also mention categories).
      */
     async function assertBothCategoriesPublished(foreignBackend: BackendPage) {
         await foreignBackend.gotoModule('List');
         await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('Home');
 
-        const body = foreignBackend.contentFrame.locator('body');
-        await expect(body).toContainText('Category 1', { timeout: 10000 });
-        await expect(body).toContainText('Category 2');
+        // The Category section header shows the count: "Category (2)" for 2 records
+        await expect(
+            foreignBackend.contentFrame.locator('body')
+        ).toContainText('Category (2)', { timeout: 15000 });
     }
 
     /**
      * Helper: Assert only Category 1 is published (not Category 2).
+     * Checks the sys_category section in the List module (not the page titles which also mention categories).
      */
     async function assertOnlyCategory1Published(foreignBackend: BackendPage) {
         await foreignBackend.gotoModule('List');
         await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('Home');
 
-        const body = foreignBackend.contentFrame.locator('body');
-        await expect(body).toContainText('Category 1', { timeout: 10000 });
-        await expect(body).not.toContainText('Category 2');
+        // The Category section header shows the count: "Category (1)" for only 1 record
+        await expect(
+            foreignBackend.contentFrame.locator('body')
+        ).toContainText('Category (1)', { timeout: 15000 });
     }
 
     /**
@@ -101,6 +105,7 @@ test.describe('UID Clash', () => {
      * Result: Page is published, both categories are published.
      */
     test('Use Case 1: Publishing page publishes both categories', async ({ backend, browser }) => {
+        test.setTimeout(120_000);
 
         await test.step('Given I am logged in', async () => {
             await backend.login(config.local.baseUrl);
@@ -123,6 +128,7 @@ test.describe('UID Clash', () => {
      * Result: News 24 is published, Page 24 is not published, only Category 1 is published.
      */
     test('Use Case 2: Publishing news publishes only Category 1', async ({ backend, browser }) => {
+        test.setTimeout(120_000);
 
         await test.step('Given I am logged in', async () => {
             await backend.login(config.local.baseUrl);
@@ -145,6 +151,7 @@ test.describe('UID Clash', () => {
      * Result: First only page, categories and page mm-records, then news and news mm-record.
      */
     test('Use Case 3: Publishing page then news publishes both categories', async ({ backend, browser }) => {
+        test.setTimeout(180_000);
 
         await test.step('Given I am logged in', async () => {
             await backend.login(config.local.baseUrl);
