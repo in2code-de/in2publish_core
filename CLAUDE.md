@@ -107,11 +107,70 @@ Key targets:
 - `make install-project` - Full project setup (Docker, DB, composer)
 - `make start` / `make stop` / `make destroy` - Docker lifecycle
 - `make composer-install` / `make composer-update` - Composer operations
-- `make restore` - Restore database and fileadmin from csv files
+- `make restore` - Full restore: DB (base + enterprise) + fileadmin + schema + cache clear
+- `make restore-core-only` - Restore base layer only (no enterprise workflow tables)
+- `make dump-dbs-core` - Re-dump the base layer from the running DB
 - `make typo3-clearcache` / `make typo3-rebuild-caches` - Cache management
 - `make login-local-php` / `make login-foreign-php` - Shell access
 - `make setup-qa` - QA tools setup
 - `make urls` - Show project URLs
+
+### Database & Fileadmin Restore (in2publish_core)
+
+`in2publish_core` owns the **base layer** dumps — all page content, files, users, and extension
+data except enterprise workflow tables.
+
+**Dump location:** `.project/data/dumps/{local,foreign}/`
+
+Each directory contains:
+- `_preamble.sql` — DDL and TRUNCATE statements run before the data import
+- One CSV file per included table (mysql-loader format)
+
+**Included tables (examples):** `pages`, `tt_content`, `sys_file`, `sys_file_metadata`,
+`sys_file_reference`, `sys_file_storage`, `be_users`, `be_groups`, `fe_users`, `fe_groups`,
+`sys_category`, `sys_redirect`, `sys_registry`, `sys_template`, `tx_news_domain_model_news`,
+`tx_scheduler_task`
+
+**Excluded tables:** caches (`cache_*`), full-text indexes (`index_*`), sessions (`be_sessions`,
+`fe_sessions`), processed files, history, logs, refindex, enterprise tables
+(`tx_in2publish_workflow_*`, `tx_in2publish_notification`, etc.)
+
+**Restore for core-only testing (no enterprise features):**
+
+```bash
+make restore-core-only
+```
+
+This imports only the base layer, skipping enterprise workflow tables entirely. Use this when
+working on core functionality without the `in2publish` enterprise package.
+
+**Re-dumping after DB changes:**
+
+```bash
+make dump-dbs-core
+```
+
+Dumps the current state of both `local` and `foreign` databases into
+`packages/in2publish_core/.project/data/dumps/` with all exclusions and filters applied.
+Commit the resulting CSV changes to keep the base test fixtures up to date.
+
+**Schema changes require re-dumping.** The `_preamble.sql` file contains `DROP TABLE` +
+`CREATE TABLE` DDL. If the schema diverges (new/removed/renamed columns, new tables), the CSV
+data and DDL go out of sync and `make restore` may fail or import stale definitions.
+
+Workflow after a schema change affecting base layer tables:
+
+```bash
+make typo3-comparedb   # apply the schema change to the running databases
+# verify the instances work, then:
+make dump-dbs-core     # re-dump with the updated DDL and data
+make restore           # smoke-test that the new dumps import cleanly
+git add packages/in2publish_core/.project/data/dumps/
+git commit -m "[DEV] Update base layer dumps after schema change"
+```
+
+See the main `CLAUDE.md` → "Database & Fileadmin Restore" → "Handling Schema Changes" for the
+full decision matrix (which layer to dump, when each change type requires immediate re-dumping).
 
 ### TYPO3 v13 Guidelines
 
