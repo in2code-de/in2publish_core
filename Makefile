@@ -102,15 +102,20 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	if [[ ! -f $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.crt -key-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ${HOST_FOREIGN}; fi;
 	if [[ ! -f $(HOME)/.dinghy/certs/${MAIL_HOST}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${MAIL_HOST}.crt -key-file $(HOME)/.dinghy/certs/${MAIL_HOST}.key ${MAIL_HOST}; fi;
 
-restore: mysql-restore fileadmin-restore
+restore: mysql-restore fileadmin-restore .typo3-db-compare
 
-## Restores the database from the dump files in SQLDUMPSDIR
+## Restore databases from CSV dumps + run schema compare
+restore-dbs: mysql-restore .typo3-db-compare
+
+## Restore core tables only + schema — alias for restore (no enterprise in standalone core)
+restore-core-only: restore
+
+## Restores the database using mysql-loader CSV dumps
 mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
-	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_local.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) local'
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/${SQLDUMPSDIR}/local/
 	echo "$(EMOJI_robot) Restoring the foreign database"
-	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_foreign.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) foreign'
-
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/${SQLDUMPSDIR}/foreign/
 
 ## Restores the fileadmin from .project/data/fileadmin
 fileadmin-restore:
@@ -118,16 +123,21 @@ fileadmin-restore:
 	rsync -a --delete .project/data/fileadmin/local/ Build/local/public/fileadmin/
 	rsync -a --delete .project/data/fileadmin/foreign/ Build/foreign/public/fileadmin/
 
-## Create dumps of local and foreign database in dir .project/data/dumps
+MYSQL_LOADER_EXCLUDE_CORE := -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -xtx_in2publish_workflow
+
+## Dump core tables to .project/data/dumps (excluding enterprise workflow tables)
 dump-dbs: dump-local-database dump-foreign-database
+
+## Explicit alias for dump-dbs
+dump-dbs-core: dump-dbs
 
 dump-local-database: .mysql-wait
 	echo "$(EMOJI_robot) Dumping the local database"
-	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/ $(MYSQL_LOADER_EXCLUDE_CORE) -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
 
 dump-foreign-database: .mysql-wait
 	echo "$(EMOJI_robot) Dumping the foreign database"
-	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/ $(MYSQL_LOADER_EXCLUDE_CORE) -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
 
 unit:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml

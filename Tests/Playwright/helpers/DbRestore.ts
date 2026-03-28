@@ -13,7 +13,7 @@ import * as path from 'path';
  * the root Makefile which calls `make restore` on the host.
  */
 
-const DUMPS_DIR = path.resolve(__dirname, '../../../../../.project/data/dumps');
+const DUMPS_DIR = path.resolve(__dirname, '../../../.project/data/dumps');
 const DB_HOST = 'mysql';
 const DB_USER = 'app';
 const DB_PASS = 'app';
