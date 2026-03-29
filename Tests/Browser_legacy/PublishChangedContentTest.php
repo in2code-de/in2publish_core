@@ -2,46 +2,48 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Browser;
+namespace In2code\In2publishCore\Tests\Browser_legacy;
 
-use CoStack\StackTest\Test\Constraint\Visibility\ElementIsVisible;
 use CoStack\StackTest\TYPO3\TYPO3Helper;
 use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 
-class PublishTextpicTest extends AbstractBrowserTestCase
+class PublishChangedContentTest extends AbstractBrowserTestCase
 {
     /**
-     * Test Case 1e
+     * Test Case 1b
      */
-    public function testTextPicCanBePublished(): void
+    public function testChangedPageContentCanBePublished(): void
     {
         $localDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($localDriver, 'https://local.v13.in2publish-core.de/typo3', 'admin', 'password');
 
         TYPO3Helper::selectModuleByText($localDriver, 'Page');
-        TYPO3Helper::selectInPageTree($localDriver, ['Home', 'EXT:in2publish_core', '1e Page with textpic']);
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($localDriver, '1b.1 Page content - changed');
         TYPO3Helper::selectModuleByText($localDriver, 'Publish Overview');
+
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
+            self::assertPageContains($driver, 'TYPO3 Content Publisher - publish pages and records overview');
+            self::assertElementIsVisible($driver, WebDriverBy::cssSelector('[data-record-identifier="pages-65"]'));
+            $recordRow = $driver->findElement(WebDriverBy::cssSelector('[data-record-identifier="pages-65"]'));
+            $info = $recordRow->findElement(
+                WebDriverBy::cssSelector('[data-action="opendirtypropertieslistcontainer"]'),
+            );
+            $info->click();
+        });
+
+        sleep($this->sleepTime);
+
+        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
+            self::assertPageContains($driver, '1b.1 Header - changed');
+            $driver->click(WebDriverBy::cssSelector('.icon-actions-arrow-right'));
+        });
 
         // Workaround
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            self::assertPageContains($driver, 'TYPO3 Content Publisher - publish pages and records overview');
-            self::assertElementIsVisible($driver, WebDriverBy::cssSelector('[data-record-identifier="pages-79"]'));
-            $recordRow = $driver->findElement(WebDriverBy::cssSelector('[data-record-identifier="pages-79"]'));
-            $info = $recordRow->findElement(
-                WebDriverBy::cssSelector('[data-action="opendirtypropertieslistcontainer"]'),
-            );
-            $info->click();
-            self::assertPageContains($driver, '1e Page with textpic');
-            // Relation to sys_file is resolved
-            self::assertPageContains($driver, 'pages [79] / sys_file_reference [11] / sys_file [5] / _file [1:/user_upload/maxim-berg-9XunOfueKKI-unsplash.jpg]');
-        });
-
-        TYPO3Helper::inContentIFrameContext($localDriver, static function (WebDriver $driver): void {
-            $driver->click(WebDriverBy::cssSelector('.icon-actions-arrow-right'));
             self::assertPageContains($driver, 'The selected record has been published successfully');
         });
 
@@ -51,19 +53,23 @@ class PublishTextpicTest extends AbstractBrowserTestCase
         $foreignDriver = WebDriverFactory::createChromeDriver();
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Page');
-        TYPO3Helper::selectInPageTree($foreignDriver, ['Home', 'EXT:in2publish_core', '1e Page with textpic']);
+        TYPO3Helper::searchInPageTreeAndSelectFirstOccurrence($foreignDriver, '1b.1 Page content - changed');
 
-        // Workaround
         sleep($this->sleepTime);
 
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
-            // Assert the textpic content element exists and contains the image
-            $previewElement = $driver->findElement(WebDriverBy::cssSelector('.preview-thumbnails-element'));
-            self::assertNotNull($previewElement, 'Preview element should exist');
+            $driver->findElement(
+                WebDriverBy::xpath(
+                    '//div[contains(@class, "t3-page-ce") and @data-table="tt_content" and @data-uid="49"]' .
+                    '//div[contains(@class, "btn-group")]//a[@title="Edit"]'
+                )
+            )->click();
 
-            // Find and verify the image
-            $image = $previewElement->findElement(WebDriverBy::cssSelector('img[alt="maxim-berg-9XunOfueKKI-unsplash.jpg"]'));
-            self::assertNotNull($image, 'Image should be present');
+            self::assertElementContains(
+                $driver,
+                '1b.1 Header - changed',
+                WebDriverBy::cssSelector('[data-formengine-input-name="data[tt_content][49][header]"]'),
+            );
         });
 
         $foreignDriver->close();

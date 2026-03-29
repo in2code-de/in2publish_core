@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Browser\RedirectsModule;
+namespace In2code\In2publishCore\Tests\Browser_legacy\RedirectsModule;
 
 use CoStack\StackTest\Elements\FormElementFactory;
 use CoStack\StackTest\Elements\Select;
@@ -10,7 +10,7 @@ use CoStack\StackTest\TYPO3\TYPO3Helper;
 use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
-use In2code\In2publishCore\Tests\Browser\AbstractBrowserTestCase;
+use In2code\In2publishCore\Tests\Browser_legacy\AbstractBrowserTestCase;
 
 /**
  * @ticket https://projekte.in2code.de/issues/52878

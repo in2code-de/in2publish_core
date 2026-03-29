@@ -64,10 +64,10 @@ start: .link-compose-file
 COMPOSER_AUTH_JSON := $(shell gh auth token 2>/dev/null | sed 's/.*/{"github-oauth":{"github.com":"&"}}/' || echo '{}')
 
 setup: stop destroy .install-packages .create-certificate start .mysql-wait
-	docker compose exec -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' local-php composer i
-	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 composer i
+	docker compose exec -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' local-php composer u -W
+	docker compose exec -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' foreign-php composer u -W
 	docker compose exec local-php vendor/bin/typo3 install:setup --force
-	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+	docker compose exec foreign-php vendor/bin/typo3 install:setup --force
 	git checkout Build/local/config/sites/main/config.yaml
 	git checkout Build/foreign/config/sites/main/config.yaml
 	make restore
@@ -102,7 +102,14 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	if [[ ! -f $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.crt -key-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ${HOST_FOREIGN}; fi;
 	if [[ ! -f $(HOME)/.dinghy/certs/${MAIL_HOST}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${MAIL_HOST}.crt -key-file $(HOME)/.dinghy/certs/${MAIL_HOST}.key ${MAIL_HOST}; fi;
 
-restore: mysql-restore fileadmin-restore .typo3-db-compare
+## Starts the TYPO3 Databasecompare
+typo3-comparedb:
+	echo "$(EMOJI_leftright) Running database:updateschema on local"
+	docker compose exec local-php ./vendor/bin/typo3 database:updateschema
+	echo "$(EMOJI_leftright) Running database:updateschema on foreign"
+	docker compose exec foreign-php ./vendor/bin/typo3 database:updateschema
+
+restore: mysql-restore fileadmin-restore typo3-comparedb
 
 ## Restore databases from CSV dumps + run schema compare
 restore-dbs: mysql-restore .typo3-db-compare
@@ -144,25 +151,6 @@ unit:
 
 functional:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.functional.xml
-
-acceptance: typo3-clearcache typo3-rebuild-caches
-	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml
-
-## Run single acceptance test
-acceptance-test:
-	@if [ -z "$(name)" ]; then \
-		echo "Usage: make acceptance-test name=TestClassName [method=testMethodName]"; \
-		echo "Example: make acceptance-test name=PublishFilesModuleTest"; \
-		echo "Example: make acceptance-test name=PublishFilesModuleTest method=testNewlyUploadedFileCanBePublished"; \
-		exit 1; \
-	fi
-	@if [ -n "$(method)" ]; then \
-		echo "Running test method $(method) in $(name)"; \
-		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)::$(method)"; \
-	else \
-		echo "Running all test methods in $(name)"; \
-		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)"; \
-	fi
 
 ## Run all Playwright tests (headless) - LOCAL
 playwright:

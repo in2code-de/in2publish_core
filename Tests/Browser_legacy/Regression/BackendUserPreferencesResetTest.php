@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Browser\Regression;
+namespace In2code\In2publishCore\Tests\Browser_legacy\Regression;
 
 use CoStack\StackTest\TYPO3\TYPO3Helper;
 use CoStack\StackTest\WebDriver\WebDriverFactory;
 use CoStack\StackTest\WebDriver\Remote\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
-use In2code\In2publishCore\Tests\Browser\AbstractBrowserTestCase;
+use In2code\In2publishCore\Tests\Browser_legacy\AbstractBrowserTestCase;
 
 class BackendUserPreferencesResetTest extends AbstractBrowserTestCase
 {
