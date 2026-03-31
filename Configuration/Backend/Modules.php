@@ -41,7 +41,11 @@ use In2code\In2publishCore\Features\RedirectsSupport\Controller\RedirectControll
 use In2code\In2publishCore\Features\SystemInformationExport\Controller\SystemInformationExportController;
 
 // Note: ConfigContainer is not available during DI container compilation (TYPO3 v14).
-// All modules are always registered. Config-based disabling can be done via BeforeModuleCreationEvent.
+// Config-based disabling can be done via BeforeModuleCreationEvent.
+// Modules must not be registered on Foreign at all.
+if ('Foreign' === (getenv('IN2PUBLISH_CONTEXT') ?: getenv('REDIRECT_IN2PUBLISH_CONTEXT') ?: '')) {
+    return [];
+}
 
 return [
     'in2publish_core_m1' => [
