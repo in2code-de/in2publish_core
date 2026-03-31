@@ -44,7 +44,7 @@ class RemoteAdapterRegistry
 {
     protected const DEPRECATION_MANUAL_REGISTRATION = 'The manual registration of remote adapter is deprecated and will be removed in in2publish_core. Tag your adapter with in2publish_core.adapter.remote_adapter and the key %s instead.';
     private array $adapters;
-    private array $legacyAdapters;
+    private array $legacyAdapters = [];
     private string $selectedAdapter;
 
     /**
