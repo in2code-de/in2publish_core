@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  */
 
 use Doctrine\DBAL\Driver\Exception as DriverException;
-use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
+use TYPO3\CMS\Core\Resource\StorageRepository;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FileInfo;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\ForeignFileInfoServiceInjection;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProviderInjection;
@@ -57,9 +57,18 @@ use function uniqid;
  */
 class UniqueStorageTargetTest implements TestCaseInterface
 {
-    use ResourceFactoryInjection;
     use ForeignFileInfoServiceInjection;
     use FalStorageTestSubjectsProviderInjection;
+
+    protected StorageRepository $storageRepository;
+
+    /**
+     * @noinspection PhpUnused
+     */
+    public function injectStorageRepository(StorageRepository $storageRepository): void
+    {
+        $this->storageRepository = $storageRepository;
+    }
 
     /**
      * @return TestResult
@@ -82,7 +91,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
         $foreignOffline = [];
 
         foreach ($keys as $key) {
-            $storageObject = $this->resourceFactory->getStorageObject($key, $storages['local'][$key]);
+            $storageObject = $this->storageRepository->getStorageObject($key, $storages['local'][$key]);
             if (!$storageObject->isOnline()) {
                 $skippedStorages[] = $storageObject->getName();
                 continue;
