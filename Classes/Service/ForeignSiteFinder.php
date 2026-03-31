@@ -47,6 +47,7 @@ use TYPO3\CMS\Core\Settings\Settings;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Site\Entity\SiteSettings;
+use TYPO3\CMS\Core\Site\Entity\SiteTypoScript;
 
 use function array_key_exists;
 use function base64_decode;
@@ -65,6 +66,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
         SiteLanguage::class,
         Locale::class,
         SiteSettings::class,
+        SiteTypoScript::class,
         Settings::class,
     ];
 
