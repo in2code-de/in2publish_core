@@ -17,7 +17,10 @@
       "Bash(echo:*)",
       "Bash(ls:*)",
       "Bash(grep:*)",
-      "Bash(zcat:*)"
+      "Bash(zcat:*)",
+      "Bash(git:*)",
+      "Bash(head -5 grep -n \"Environment\\\\|restoreDatabases\" /Volumes/Projekte/Repositories/in2publish-dev-t3v13-cpv13/packages/in2publish_core/Tests/Playwright/modules/PublisherTools/content-publisher-tests.spec.ts)",
+      "Bash(find /Volumes/Projekte/Repositories/in2publish-dev-t3v13-cpv13/packages/in2publish_core/.project/data/dumps -name *.csv -type f)"
     ]
   }
 }

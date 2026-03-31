@@ -105,9 +105,9 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 ## Starts the TYPO3 Databasecompare
 typo3-comparedb:
 	echo "$(EMOJI_leftright) Running database:updateschema on local"
-	docker compose exec local-php ./vendor/bin/typo3 database:updateschema
+	docker compose exec local-php ./vendor/bin/typo3 database:updateschema > /dev/null
 	echo "$(EMOJI_leftright) Running database:updateschema on foreign"
-	docker compose exec foreign-php ./vendor/bin/typo3 database:updateschema
+	docker compose exec foreign-php ./vendor/bin/typo3 database:updateschema > /dev/null
 
 restore: mysql-restore fileadmin-restore typo3-comparedb
 
