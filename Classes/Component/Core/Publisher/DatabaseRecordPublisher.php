@@ -7,8 +7,7 @@ namespace In2code\In2publishCore\Component\Core\Publisher;
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseReconnectedInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\AbstractDatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-
-use function array_diff_assoc;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 
 class DatabaseRecordPublisher implements Publisher, TransactionalPublisher
 {
@@ -37,7 +36,7 @@ class DatabaseRecordPublisher implements Publisher, TransactionalPublisher
         }
 
         $foreignProps = $record->getForeignProps();
-        $newValues = array_diff_assoc($localProps, $foreignProps);
+        $newValues = ArrayUtility::arrayDiffAssocRecursive($localProps, $foreignProps);
         if (!empty($newValues)) {
             $this->foreignDatabase->update($table, $newValues, $foreignIdentificationProps);
         }
