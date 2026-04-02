@@ -102,22 +102,6 @@ services:
       VIRTUAL_HOST: ${MAIL_HOST}
       VIRTUAL_PORT: 8025
 
-  selenium-hub:
-    image: ${SELENIUM_HUB_IMAGE:-selenium/hub}
-    shm_size: 2gb
-    healthcheck:
-      test: '/opt/bin/check-grid.sh --host 0.0.0.0 --port 4444'
-      interval: 15s
-      timeout: 30s
-      retries: 5
-    environment:
-      SE_EVENT_BUS_PUBLISH_PORT: 4442
-      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-      SE_NODE_OVERRIDE_MAX_SESSIONS: true
-      SE_NODE_MAX_SESSIONS: 5
-    volumes:
-      - ./:/app/
-
   playwright:
     image: mcr.microsoft.com/playwright:v1.57.0-noble
     command: sleep infinity
