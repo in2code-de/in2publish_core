@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Component\Core\FileHandling;
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
+use In2code\In2publishCore\CommonInjection\StorageRepositoryInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilderInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
 use In2code\In2publishCore\Component\Core\Demand\Type\FilesInFolderDemand;
@@ -65,6 +66,7 @@ class DefaultFalFinder
     use DemandsFactoryInjection;
     use DemandResolverInjection;
     use ResourceFactoryInjection;
+    use StorageRepositoryInjection;
     use RecordTreeBuilderInjection;
     use EventDispatcherInjection;
     use LocalFileInfoServiceInjection;
@@ -99,7 +101,7 @@ class DefaultFalFinder
             // Get the default storage and the default folder to show.
             // Notice: ->getDefaultFolder does not return the default folder to show, but to upload files to.
             // The root level folder is the "real" default and also respects mount points of the current user.
-            $folder = $this->resourceFactory->getDefaultStorage()->getRootLevelFolder();
+            $folder = $this->storageRepository->getDefaultStorage()->getRootLevelFolder();
             // Update the combinedIdentifier to the actual folder we work with.
             $combinedIdentifier = $folder->getCombinedIdentifier();
             $storage = $folder->getStorage()->getUid();
