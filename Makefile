@@ -107,9 +107,9 @@ restore: mysql-restore fileadmin-restore
 ## Restores the database from the dump files in SQLDUMPSDIR
 mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
-	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_local.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) local'
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
 	echo "$(EMOJI_robot) Restoring the foreign database"
-	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_foreign.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) foreign'
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
 
 
 ## Restores the fileadmin from .project/data/fileadmin
