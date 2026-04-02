@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service;
 
-use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FilesystemInformationCollection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FolderInfo;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\MissingFolderInfo;
+use TYPO3\CMS\Core\Resource\StorageRepository;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
 class LocalFolderInfoService
 {
     use FalDriverServiceInjection;
-    use ResourceFactoryInjection;
     use FileInfoServiceInjection;
     use SharedFilesystemInfoCacheInjection;
+
+    private StorageRepository $storageRepository;
+
+    public function injectStorageRepository(StorageRepository $storageRepository): void
+    {
+        $this->storageRepository = $storageRepository;
+    }
 
     public function getFolderInfo(array $request): FilesystemInformationCollection
     {
@@ -61,7 +67,7 @@ class LocalFolderInfoService
     {
         $name = PathUtility::basename($identifier);
         if (empty($name)) {
-            $name = $this->resourceFactory->getStorageObject($storage)->getName();
+            $name = $this->storageRepository->getStorageObject($storage)->getName();
         }
         return $name;
     }
