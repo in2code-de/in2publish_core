@@ -58,6 +58,13 @@ HTML;
             '',
             false,
         );
+        $pageRenderer->addCssFile(
+            'EXT:in2publish_core/Resources/Public/Css/Modules.css',
+            'stylesheet',
+            'all',
+            '',
+            false,
+        );
         $pageRenderer->loadJavaScriptModule('@in2code/in2publish_core/loading-overlay.js');
         $pageRenderer->loadJavaScriptModule('@in2code/in2publish_core/backend-module.js');
         $pageRenderer->addInlineLanguageLabelFile('EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf');
