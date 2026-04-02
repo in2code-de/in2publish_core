@@ -112,7 +112,7 @@ typo3-comparedb:
 restore: mysql-restore fileadmin-restore typo3-comparedb
 
 ## Restore databases from CSV dumps + run schema compare
-restore-dbs: mysql-restore .typo3-db-compare
+restore-dbs: mysql-restore typo3-comparedb
 
 ## Restore core tables only + schema — alias for restore (no enterprise in standalone core)
 restore-core-only: restore
@@ -152,42 +152,33 @@ unit:
 functional:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.functional.xml
 
-## Run all Playwright tests (headless) - LOCAL
+## Run all Playwright tests
 playwright:
-	npx playwright test $(FILE)
+	docker compose run --rm playwright npx playwright test $(FILE);
 
-## Open Playwright UI mode - LOCAL
+## Open Playwright UI mode
+## Show playwright tests in the Playwright UI (interactive test runner with test management and debugging features)
 playwright-ui:
-	npx playwright test --ui $(FILE)
+	echo "$(EMOJI_eyes) Starting Playwright UI mode"
+	@echo "$(EMOJI_point_right) Opening Playwright UI at http://localhost:$(PLAYWRIGHT_UI_PORT)"
+	@echo "$(EMOJI_warning) Press Ctrl+C to stop"
+	docker compose run --rm --service-ports playwright npx playwright test
 
 ## Open the last Playwright HTML report
 playwright-report:
-	npx playwright show-report
-
-## Run all Playwright tests in headed mode (watch) - LOCAL
-playwright-watch:
-	npx playwright test --headed $(FILE)
-
-## Run Playwright tests in debug mode - LOCAL
-playwright-debug:
-	npx playwright test --debug $(FILE)
-
-## Run Playwright tests in Docker (headless) - PLATFORM INDEPENDENT
-playwright-docker:
-	docker compose exec -e CI=1 playwright npx playwright test
-
+	docker compose exec -e CI=1 playwright npx playwright show-report
 
 ## Run Playwright tests in Docker with specific file - PLATFORM INDEPENDENT
-playwright-docker-file:
+playwright-file:
 	@if [ -z "$(FILE)" ]; then \
-		echo "Usage: make playwright-docker-file FILE=<test-file>"; \
-		echo "Example: make playwright-docker-file FILE=Tests/Playwright/modules/PublishOverview/publish-changed-content.spec.ts"; \
+		echo "Usage: make playwright-file FILE=<test-file>"; \
+		echo "Example: make playwright-file FILE=Tests/Playwright/modules/PublishOverview/publish-changed-content.spec.ts"; \
 		exit 1; \
 	fi
 	docker compose exec -e CI=1 playwright npx playwright test $(FILE)
 
 ## Show Playwright report from Docker tests
-playwright-docker-report:
+playwright-report:
 	docker compose exec playwright npx playwright show-report
 
 setup-qa:
