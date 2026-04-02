@@ -49,11 +49,12 @@ if ('Foreign' === (getenv('IN2PUBLISH_CONTEXT') ?: getenv('REDIRECT_IN2PUBLISH_C
 
 return [
     'in2publish_core_m1' => [
-        'parent' => 'web',
+        'parent' => 'content',
         'aliases' => ['web_In2publishCoreM1'],
         'position' => [],
         'access' => 'user',
         'workspaces' => 'live',
+        'navigationComponent' => '@typo3/backend/tree/page-tree-element',
         'path' => '/module/in2publish_core/m1',
         'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod1.xlf',
         'extensionName' => 'in2publish_core',
@@ -63,11 +64,12 @@ return [
         ],
     ],
     'in2publish_core_m3' => [
-        'parent' => 'file',
+        'parent' => 'media',
         'aliases' => ['file_In2publishCoreM3'],
         'position' => [],
         'access' => 'user',
         'workspaces' => 'live',
+        'navigationComponent' => '@typo3/backend/tree/file-storage-tree-container',
         'path' => '/module/in2publish_core/m3',
         'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod3.xlf',
         'extensionName' => 'in2publish_core',
@@ -77,7 +79,7 @@ return [
         ],
     ],
     'in2publish_core_m4' => [
-        'parent' => 'tools',
+        'parent' => 'admin',
         'aliases' => ['tools_In2publishCoreM4'],
         'position' => [],
         'access' => 'admin',
