@@ -20,6 +20,31 @@ export class BackendPage extends BaseBackendPage {
   }
 
   /**
+   * Search for a page in the page tree with retry logic.
+   * The TYPO3 page tree can take variable time to load, so we retry
+   * the search up to 3 times with increasing waits between attempts.
+   */
+  async searchInPageTreeAndSelectFirstOccurrence(searchText: string): Promise<void> {
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        await super.searchInPageTreeAndSelectFirstOccurrence(searchText);
+        return;
+      } catch (error) {
+        if (attempt === maxRetries) {
+          throw error;
+        }
+        // Wait longer on each retry for the page tree to fully render
+        await this.page.waitForTimeout(1000 * attempt);
+        // Reload the page to get a fresh page tree state
+        await this.page.reload();
+        await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+        await this.page.waitForTimeout(1000);
+      }
+    }
+  }
+
+  /**
    * Navigate through the file storage tree by clicking each path segment.
    * Used for Filelist and Publish Files modules.
    * @param pathSegments Array of folder names to navigate through (e.g., ['fileadmin', 'Testcases', '2b_published_file'])
@@ -64,6 +89,18 @@ export class BackendPage extends BaseBackendPage {
     await expect(
       this.contentFrame.locator('.in2publish-loading-overlay')
     ).not.toBeVisible({ timeout: 30000 });
+  }
+
+  /**
+   * Clear all TYPO3 caches via the backend toolbar button.
+   */
+  async clearCaches(): Promise<void> {
+    const clearCacheBtn = this.page.locator('button').filter({ hasText: 'Clear cache' }).first();
+    await clearCacheBtn.click();
+    const flushAll = this.page.locator('.dropdown-menu.show').getByText('Flush all caches');
+    await flushAll.click();
+    await this.page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+    await this.page.waitForTimeout(2000);
   }
 
   /**

@@ -19,13 +19,9 @@ test.describe('Publish Changed Page Properties', () => {
             await backend.login(config.local.baseUrl);
         });
 
-        await test.step('And I navigate to the changed page in the page tree', async () => {
-            await backend.gotoModule('Page');
-            await backend.searchInPageTreeAndSelectFirstOccurrence('1a Page properties - changed');
-        });
-
-        await test.step('When I open "Publish Overview" and inspect the changed record', async () => {
+        await test.step('When I open "Publish Overview" and select the changed page', async () => {
             await backend.gotoModule('Publish Overview');
+            await backend.searchInPageTreeAndSelectFirstOccurrence('1a Page properties - changed');
 
             await expect(
                 backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
@@ -48,13 +44,15 @@ test.describe('Publish Changed Page Properties', () => {
             await expect(arrowRight).toBeVisible();
             await arrowRight.click();
 
+            await backend.waitUntilPublishingFinished();
             await expect(backend.contentFrame.locator('body')).toContainText(
-                'The selected record has been published successfully'
+                'The selected record has been published successfully',
+                { timeout: 30000 }
             );
         });
 
         await test.step('Then the changed title should be visible in the Foreign Backend', async () => {
-            const foreignContext = await browser.newContext();
+            const foreignContext = await browser.newContext({ ignoreHTTPSErrors: true });
             const foreignPage = await foreignContext.newPage();
             const foreignBackend = new BackendPage(foreignPage);
 

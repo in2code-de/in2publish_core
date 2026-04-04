@@ -118,6 +118,11 @@ fileadmin-restore:
 	rsync -a --delete .project/data/fileadmin/local/ Build/local/public/fileadmin/
 	rsync -a --delete .project/data/fileadmin/foreign/ Build/foreign/public/fileadmin/
 
+## Set all workflow states to "Ready to Publish" (state=1) for test environments
+workflow-ready:
+	echo "$(EMOJI_robot) Setting workflow states to 'Ready to Publish'"
+	docker compose exec -T mysql mysql -uroot -proot local -e "UPDATE tx_in2publish_workflow_state SET state_identifier = 1"
+
 ## Create dumps of local and foreign database in dir .project/data/dumps
 dump-dbs: dump-local-database dump-foreign-database
 
@@ -175,12 +180,12 @@ playwright-debug:
 	npx playwright test --debug $(FILE)
 
 ## Run Playwright tests in Docker (headless) - PLATFORM INDEPENDENT
-playwright-docker:
+playwright-docker: restore typo3-clearcache workflow-ready
 	docker compose exec -e CI=1 playwright npx playwright test
 
 
 ## Run Playwright tests in Docker with specific file - PLATFORM INDEPENDENT
-playwright-docker-file:
+playwright-docker-file: restore typo3-clearcache workflow-ready
 	@if [ -z "$(FILE)" ]; then \
 		echo "Usage: make playwright-docker-file FILE=<test-file>"; \
 		echo "Example: make playwright-docker-file FILE=Tests/Playwright/modules/PublishOverview/publish-changed-content.spec.ts"; \

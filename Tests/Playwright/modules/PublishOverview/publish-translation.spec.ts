@@ -1,12 +1,16 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { restoreDatabases } from '../../helpers/direct-restore';
 
 test.describe('Publish Translation', () => {
 
-    test.beforeAll(async () => {
-        await Environment.reset();
+    // Use direct DB restore before each test to ensure translation test data has the correct
+    // differences between local and foreign (e.g., "Version 3" vs "Version 2").
+    // Must be beforeEach (not beforeAll) because the free mode test publishes data,
+    // which would leave connected mode with no diff if run without a fresh restore.
+    test.beforeEach(async () => {
+        await restoreDatabases();
     });
 
     /**
@@ -19,13 +23,9 @@ test.describe('Publish Translation', () => {
             await backend.login(config.local.baseUrl);
         });
 
-        await test.step('And I navigate to the free mode translation page', async () => {
-            await backend.gotoModule('Page');
-            await backend.searchInPageTreeAndSelectFirstOccurrence('1d.1 Free Mode');
-        });
-
-        await test.step('When I open "Publish Overview" and inspect the changed record', async () => {
+        await test.step('When I open "Publish Overview" and select the free mode translation page', async () => {
             await backend.gotoModule('Publish Overview');
+            await backend.searchInPageTreeAndSelectFirstOccurrence('1d.1 Free Mode');
 
             await expect(
                 backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
@@ -41,12 +41,12 @@ test.describe('Publish Translation', () => {
             const infoIcon = recordRow.locator('[data-action="opendirtypropertieslistcontainer"]');
             await infoIcon.click();
 
-            // Verify local and foreign values
+            // Verify local and foreign values (scoped to the record to avoid strict mode violation)
             await expect(
-                backend.contentFrame.locator('.in2publish-dirty-properties-local')
+                recordRow.locator('.in2publish-dirty-properties-local')
             ).toContainText('Header in German - Version 3');
             await expect(
-                backend.contentFrame.locator('.in2publish-dirty-properties-foreign')
+                recordRow.locator('.in2publish-dirty-properties-foreign')
             ).toContainText('Header in German - Version 2');
         });
 
@@ -57,8 +57,10 @@ test.describe('Publish Translation', () => {
             await expect(arrowRight).toBeVisible();
             await arrowRight.click();
 
+            await backend.waitUntilPublishingFinished();
             await expect(backend.contentFrame.locator('body')).toContainText(
-                'The selected record has been published successfully'
+                'The selected record has been published successfully',
+                { timeout: 30000 }
             );
         });
 
@@ -71,7 +73,7 @@ test.describe('Publish Translation', () => {
         });
 
         await test.step('And the translated content should be visible in the Foreign Backend', async () => {
-            const foreignContext = await browser.newContext();
+            const foreignContext = await browser.newContext({ ignoreHTTPSErrors: true });
             const foreignPage = await foreignContext.newPage();
             const foreignBackend = new BackendPage(foreignPage);
 
@@ -97,13 +99,9 @@ test.describe('Publish Translation', () => {
             await backend.login(config.local.baseUrl);
         });
 
-        await test.step('And I navigate to the connected mode translation page', async () => {
-            await backend.gotoModule('Page');
-            await backend.searchInPageTreeAndSelectFirstOccurrence('1d.2 Connected Mode');
-        });
-
-        await test.step('When I open "Publish Overview" and inspect the changed record', async () => {
+        await test.step('When I open "Publish Overview" and select the connected mode page', async () => {
             await backend.gotoModule('Publish Overview');
+            await backend.searchInPageTreeAndSelectFirstOccurrence('1d.2 Connected Mode');
 
             await expect(
                 backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
@@ -120,10 +118,10 @@ test.describe('Publish Translation', () => {
             await infoIcon.click();
 
             await expect(
-                backend.contentFrame.locator('.in2publish-dirty-properties-local')
+                recordRow.locator('.in2publish-dirty-properties-local')
             ).toContainText('Header in German - Version 3');
             await expect(
-                backend.contentFrame.locator('.in2publish-dirty-properties-foreign')
+                recordRow.locator('.in2publish-dirty-properties-foreign')
             ).toContainText('Header in German - Version 2');
         });
 
@@ -134,8 +132,10 @@ test.describe('Publish Translation', () => {
             await expect(arrowRight).toBeVisible();
             await arrowRight.click();
 
+            await backend.waitUntilPublishingFinished();
             await expect(backend.contentFrame.locator('body')).toContainText(
-                'The selected record has been published successfully'
+                'The selected record has been published successfully',
+                { timeout: 30000 }
             );
         });
 
@@ -148,7 +148,7 @@ test.describe('Publish Translation', () => {
         });
 
         await test.step('And the translated content should be visible in the Foreign Backend', async () => {
-            const foreignContext = await browser.newContext();
+            const foreignContext = await browser.newContext({ ignoreHTTPSErrors: true });
             const foreignPage = await foreignContext.newPage();
             const foreignBackend = new BackendPage(foreignPage);
 

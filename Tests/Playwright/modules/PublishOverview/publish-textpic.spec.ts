@@ -22,13 +22,9 @@ test.describe('Publish Textpic', () => {
             await backend.login(config.local.baseUrl);
         });
 
-        await test.step('And I navigate to the textpic page', async () => {
-            await backend.gotoModule('Page');
-            await backend.searchInPageTreeAndSelectFirstOccurrence('1e Page with textpic');
-        });
-
         await test.step('When I open "Publish Overview" and inspect the record', async () => {
             await backend.gotoModule('Publish Overview');
+            await backend.searchInPageTreeAndSelectFirstOccurrence('1e Page with textpic');
 
             await expect(
                 backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
@@ -53,13 +49,15 @@ test.describe('Publish Textpic', () => {
             await expect(arrowRight).toBeVisible();
             await arrowRight.click();
 
+            await backend.waitUntilPublishingFinished();
             await expect(backend.contentFrame.locator('body')).toContainText(
-                'The selected record has been published successfully'
+                'The selected record has been published successfully',
+                { timeout: 30000 }
             );
         });
 
         await test.step('Then the textpic with image should be visible in the Foreign Backend', async () => {
-            const foreignContext = await browser.newContext();
+            const foreignContext = await browser.newContext({ ignoreHTTPSErrors: true });
             const foreignPage = await foreignContext.newPage();
             const foreignBackend = new BackendPage(foreignPage);
 

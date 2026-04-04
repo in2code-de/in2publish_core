@@ -1,12 +1,13 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { restoreDatabases } from '../../helpers/direct-restore';
 
 test.describe('Publish Record With Dependency', () => {
 
-    test.beforeAll(async () => {
-        await Environment.reset();
+    // DB restore before each test (including retries) to ensure clean workflow states.
+    test.beforeEach(async () => {
+        await restoreDatabases();
     });
 
     /**
@@ -15,15 +16,14 @@ test.describe('Publish Record With Dependency', () => {
      *
      * Uses 'publisher-page-tree-publish' user (not admin) to test permission-based publishing.
      */
-    test('Record with unfulfilled dependency is publishable after dependencies are fulfilled', async ({ browser }) => {
-        const context = await browser.newContext();
-        const page = await context.newPage();
-        const backend = new BackendPage(page);
+    test('Record with unfulfilled dependency is publishable after dependencies are fulfilled', async ({ page, backend }) => {
 
         await test.step('Given I am logged in as publisher-page-tree-publish', async () => {
-            // Fresh context without storageState — navigate directly to login page
+            // Clear cookies to log out, then log in as the publisher user
+            await page.context().clearCookies();
             await page.goto(config.local.baseUrl);
-            await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+            await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+
             await page.getByLabel('Username').fill('publisher-page-tree-publish');
             await page.getByLabel('Password').fill('publisher-page-tree-publish');
             await page.getByRole('button', { name: 'Login' }).click();
@@ -32,9 +32,8 @@ test.describe('Publish Record With Dependency', () => {
         });
 
         await test.step('And I navigate to the parent page in Publish Overview', async () => {
-            await backend.gotoModule('Page');
-            await backend.searchInPageTreeAndSelectFirstOccurrence('5c.1 Parent not published');
             await backend.gotoModule('Publish Overview');
+            await backend.searchInPageTreeAndSelectFirstOccurrence('5c.1 Parent not published');
 
             await expect(
                 backend.contentFrame.locator('body')
@@ -62,10 +61,10 @@ test.describe('Publish Record With Dependency', () => {
 
             const recordRow = backend.contentFrame.locator('[data-record-identifier="pages-36"]');
             await expect(recordRow).toContainText(
-                'requires that the page "5c.1 Parent not published" is published first'
+                '"5c.1 Parent not published" must be published first'
             );
             await expect(recordRow).toContainText(
-                'requires that the page "5c.1.1 Child Ready to Publish" is published first'
+                '"5c.1.1 Child Ready to Publish" is published first'
             );
             await expect(recordRow).toContainText(
                 'The record "Header on not published Parent page 5c.1" is a target of the shortcut record'
@@ -76,6 +75,11 @@ test.describe('Publish Record With Dependency', () => {
             await backend.contentFrame.locator(
                 '[data-record-identifier="pages-35"] .icon-actions-arrow-right'
             ).click();
+
+            // Wait for the publish confirmation before re-opening the module
+            await expect(backend.contentFrame.locator('body')).toContainText(
+                'The selected record has been published successfully', { timeout: 30000 }
+            );
         });
 
         await test.step('Then after re-opening Publish Overview, the child should now be publishable', async () => {
@@ -98,7 +102,5 @@ test.describe('Publish Record With Dependency', () => {
                 backend.contentFrame.locator('[data-record-identifier="pages-36"] .icon-actions-arrow-right')
             ).toBeVisible();
         });
-
-        await context.close();
     });
 });

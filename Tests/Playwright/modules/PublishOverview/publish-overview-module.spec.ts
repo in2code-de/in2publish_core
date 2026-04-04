@@ -8,13 +8,9 @@ test.describe('Publish Overview Module', () => {
     });
 
 
-    await test.step('And I select "Home" in the Page module', async () => {
-      await backend.gotoModule('Page');
-      await backend.searchInPageTreeAndSelectFirstOccurrence('Home');
-    });
-
-    await test.step('When I navigate to the "Publish Overview" module', async () => {
+    await test.step('When I open "Publish Overview" and select "Home"', async () => {
       await backend.gotoModule('Publish Overview');
+      await backend.searchInPageTreeAndSelectFirstOccurrence('Home');
     });
 
     await test.step('Then I should see the module content loaded', async () => {
