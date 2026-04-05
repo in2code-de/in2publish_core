@@ -38,7 +38,6 @@ const FOREIGN_VAR_CACHE = path.join(APP_ROOT, APP_PREFIX, 'foreign/var/cache');
 
 /**
  * Restore both local and foreign databases from dump files.
- * Also sets all workflow states to "Ready to publish".
  */
 export async function restoreDatabases(): Promise<void> {
     const connection = await mysql.createConnection({
@@ -75,33 +74,6 @@ export async function restoreDatabases(): Promise<void> {
                         `LOAD DATA INFILE '${csvPathMysql}' INTO TABLE \`${table}\``
                     );
                 }
-            }
-        }
-
-        // Set all workflow states to "Ready to publish" (mirrors make workflow-ready)
-        await connection.query('USE local');
-        await connection.query('UPDATE tx_in2publish_workflow_state SET state_identifier = 1');
-
-        // Insert missing workflow states for workflow-enabled tables.
-        // The enterprise extension (in2publish) requires workflow states for tables listed
-        // in workflow.tables config (tx_news_domain_model_news, sys_category, etc.).
-        // Records without a state get auto-generated with state=0 (not publishable),
-        // which blocks publishing. Insert state=1 (Ready to publish) for all missing records.
-        const workflowTables = ['tx_news_domain_model_news', 'sys_category'];
-        for (const table of workflowTables) {
-            const [tableExists] = await connection.query(
-                `SELECT COUNT(*) as cnt FROM information_schema.tables WHERE table_schema='local' AND table_name='${table}'`
-            ) as any;
-            if (tableExists[0]?.cnt > 0) {
-                await connection.query(`
-                    INSERT INTO tx_in2publish_workflow_state
-                        (record_table, record_identifier, record_pid, record_language, record_language_parent, record_page_uid, backend_user, creation_date, state_identifier, message, scheduled_publish)
-                    SELECT '${table}', t.uid, t.pid, 0, 0, t.pid, 1, UNIX_TIMESTAMP(), 1, 'Test setup', 0
-                    FROM local.\`${table}\` t
-                    LEFT JOIN local.tx_in2publish_workflow_state ws
-                        ON ws.record_table = '${table}' AND ws.record_identifier = t.uid
-                    WHERE ws.uid IS NULL AND t.deleted = 0
-                `);
             }
         }
 
@@ -157,8 +129,8 @@ export function restoreFileadmin(): void {
 }
 
 /**
- * Full restore: databases + fileadmin + workflow states.
- * Equivalent to `make restore && make workflow-ready`.
+ * Full restore: databases + fileadmin.
+ * Equivalent to `make restore`.
  */
 export async function fullRestore(): Promise<void> {
     await restoreDatabases();

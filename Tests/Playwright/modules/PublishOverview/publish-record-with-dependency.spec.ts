@@ -5,7 +5,7 @@ import { restoreDatabases } from '../../helpers/direct-restore';
 
 test.describe('Publish Record With Dependency', () => {
 
-    // DB restore before each test (including retries) to ensure clean workflow states.
+    // DB restore before each test (including retries) to ensure clean state.
     test.beforeEach(async () => {
         await restoreDatabases();
     });
