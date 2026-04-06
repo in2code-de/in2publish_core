@@ -62,10 +62,20 @@ start: .link-compose-file
 	docker compose up -d
 
 COMPOSER_AUTH_JSON := $(shell gh auth token 2>/dev/null | sed 's/.*/{"github-oauth":{"github.com":"&"}}/' || echo '{}')
+CURRENT_BRANCH := $(shell git branch --show-current 2>/dev/null || echo develop)
+IN2PUBLISH_DEV_VERSION := dev-$(CURRENT_BRANCH)
 
 setup: stop destroy .install-packages .create-certificate start .mysql-wait
-	docker compose exec -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' local-php composer i
-	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 composer i
+	@echo "Installing in2publish_core as $(IN2PUBLISH_DEV_VERSION)"
+	@for f in Build/local/composer.json Build/foreign/composer.json; do \
+		cp "$$f" "$$f.bak"; \
+		sed 's|"in2code/in2publish_core": "@dev"|"in2code/in2publish_core": "$(IN2PUBLISH_DEV_VERSION)"|' "$$f.bak" > "$$f"; \
+	done
+	docker compose exec -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' local-php composer u -W
+	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 composer u -W
+	@for f in Build/local/composer.json Build/foreign/composer.json; do \
+		mv "$$f.bak" "$$f"; \
+	done
 	docker compose exec local-php vendor/bin/typo3 install:setup --force
 	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
 	git checkout Build/local/config/sites/main/config.yaml
@@ -107,9 +117,9 @@ restore: mysql-restore fileadmin-restore
 ## Restores the database from the dump files in SQLDUMPSDIR
 mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
-	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_local.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) local'
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
 	echo "$(EMOJI_robot) Restoring the foreign database"
-	docker compose exec mysql bash -c 'cat $(SQLDUMPSDIR)/db_foreign.sql | mysql --default-character-set=utf8 -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) foreign'
+	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
 
 
 ## Restores the fileadmin from .project/data/fileadmin
@@ -117,6 +127,11 @@ fileadmin-restore:
 	echo "$(EMOJI_robot) Restoring the fileadmin"
 	rsync -a --delete .project/data/fileadmin/local/ Build/local/public/fileadmin/
 	rsync -a --delete .project/data/fileadmin/foreign/ Build/foreign/public/fileadmin/
+
+## Set all workflow states to "Ready to Publish" (state=1) for test environments
+workflow-ready:
+	echo "$(EMOJI_robot) Setting workflow states to 'Ready to Publish'"
+	docker compose exec -T mysql mysql -uroot -proot local -e "UPDATE tx_in2publish_workflow_state SET state_identifier = 1"
 
 ## Create dumps of local and foreign database in dir .project/data/dumps
 dump-dbs: dump-local-database dump-foreign-database
@@ -154,43 +169,17 @@ acceptance-test:
 		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)"; \
 	fi
 
-## Run all Playwright tests (headless) - LOCAL
-playwright:
-	npx playwright test $(FILE)
-
-## Open Playwright UI mode - LOCAL
-playwright-ui:
-	npx playwright test --ui $(FILE)
-
-## Open the last Playwright HTML report
-playwright-report:
-	npx playwright show-report
-
-## Run all Playwright tests in headed mode (watch) - LOCAL
-playwright-watch:
-	npx playwright test --headed $(FILE)
-
-## Run Playwright tests in debug mode - LOCAL
-playwright-debug:
-	npx playwright test --debug $(FILE)
-
-## Run Playwright tests in Docker (headless) - PLATFORM INDEPENDENT
-playwright-docker:
-	docker compose exec -e CI=1 playwright npx playwright test
-
-
-## Run Playwright tests in Docker with specific file - PLATFORM INDEPENDENT
-playwright-docker-file:
-	@if [ -z "$(FILE)" ]; then \
-		echo "Usage: make playwright-docker-file FILE=<test-file>"; \
-		echo "Example: make playwright-docker-file FILE=Tests/Playwright/modules/PublishOverview/publish-changed-content.spec.ts"; \
-		exit 1; \
-	fi
+## Run all Playwright tests (restores DB and clears TYPO3 caches first). Use FILE= for individual tests.
+playwright: restore typo3-clearcache
 	docker compose exec -e CI=1 playwright npx playwright test $(FILE)
 
-## Show Playwright report from Docker tests
-playwright-docker-report:
-	docker compose exec playwright npx playwright show-report
+## Open Playwright UI mode (http://localhost:9323). Use FILE= to filter tests.
+playwright-ui:
+	docker compose exec --service-ports playwright npx playwright test --ui --ui-host=0.0.0.0 --ui-port=9323 $(FILE)
+
+## Show the last Playwright HTML report (http://localhost:9323)
+playwright-report:
+	docker compose exec --service-ports playwright npx playwright show-report --host=0.0.0.0 --port=9323
 
 setup-qa:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm phive install

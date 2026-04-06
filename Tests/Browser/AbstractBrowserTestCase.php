@@ -19,8 +19,15 @@ abstract class AbstractBrowserTestCase extends TestCase
     // Sleep Time used for "Workaround Sleeps"
     protected $sleepTime = 3;
 
+    protected bool $restoreBeforeEachTest = true;
+
     protected function setUp(): void
     {
+        if (!$this->restoreBeforeEachTest) {
+            parent::setUp();
+            return;
+        }
+
         $env = [];
         $env['XDEBUG_SESSION'] = 0;
         $env['PHP_IDE_CONFIG'] = 'serverName=local.v13.in2publish-core.de';
@@ -32,7 +39,7 @@ abstract class AbstractBrowserTestCase extends TestCase
                 '-a',
                 '--delete',
                 '--verbose',
-                '/app/.project/data/fileadmin/local/',
+                '/packages/in2publish_core/.project/data/fileadmin/local/',
                 '/app/Build/local/public/fileadmin/',
             ],
             env: $env,
@@ -43,7 +50,7 @@ abstract class AbstractBrowserTestCase extends TestCase
                 '-a',
                 '--delete',
                 '--verbose',
-                '/app/.project/data/fileadmin/foreign/',
+                '/packages/in2publish_core/.project/data/fileadmin/foreign/',
                 '/app/Build/foreign/public/fileadmin/',
             ],
             env: $env,

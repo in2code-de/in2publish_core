@@ -31,13 +31,13 @@ class JoinDemandResolverTest extends FunctionalTestCase
 
         $joinDemandResolver = GeneralUtility::makeInstance(JoinDemandResolver::class);
         $joinDemandResolver->resolveDemand($demands, $recordCollection);
-        self::assertTrue($recordCollection->contains('sys_category', ['uid' => 1]));
+        self::assertTrue($recordCollection->contains('sys_category', ['uid' => 3]));
 
-        $sysCategoryRecord = $recordCollection->getRecord('sys_category', 1);
+        $sysCategoryRecord = $recordCollection->getRecord('sys_category', 3);
         $sysCategoryParents = $sysCategoryRecord->getParents();
         self::assertCount(1, $sysCategoryParents);
         $sysCategoryMmRecord = reset($sysCategoryParents);
-        self::assertSame('6ed754e2fa2e937739af04a069a6f6d9e96db685', $sysCategoryMmRecord->getId());
+        self::assertSame('e807cea110c53f369af28985e1e4df3a4e95d7b8', $sysCategoryMmRecord->getId());
         $mmParents = $sysCategoryMmRecord->getParents();
         self::assertCount(1, $mmParents);
         $mmParent = reset($mmParents);

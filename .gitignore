@@ -45,3 +45,6 @@ Tests/Playwright/.auth/
 debug-*.png
 debug-*.html
 Tests/Playwright/debug/
+.cache
+.npm
+.pki

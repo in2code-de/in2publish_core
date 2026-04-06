@@ -43,6 +43,8 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
     private static string $currentTestCaseClass = '';
     private bool $isFirstTest = true;
 
+    protected bool $restoreBeforeEachTest = true;
+
     /**
      * Set up creates a test instance and database.
      *
@@ -50,6 +52,11 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
      */
     protected function setUp(): void
     {
+        if (!$this->restoreBeforeEachTest) {
+            parent::setUp();
+            return;
+        }
+
         if (!defined('ORIGINAL_ROOT')) {
             self::markTestSkipped('Functional tests must be called through phpunit on CLI');
         }
@@ -142,7 +149,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
                 '-a',
                 '--delete',
                 '--verbose',
-                '/app/.project/data/fileadmin/local/',
+                '/packages/in2publish_core/.project/data/fileadmin/local/',
                 '/app/Build/local/public/fileadmin/',
             ],
             env: $env,
@@ -153,7 +160,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
                 '-a',
                 '--delete',
                 '--verbose',
-                '/app/.project/data/fileadmin/foreign/',
+                '/packages/in2publish_core/.project/data/fileadmin/foreign/',
                 '/app/Build/foreign/public/fileadmin/',
             ],
             env: $env,

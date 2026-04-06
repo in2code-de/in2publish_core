@@ -13,10 +13,9 @@ test.describe('Publish Overview Module', () => {
       await backend.login();
     });
 
-    await test.step('When I open "Publish Overview" for the Home page', async () => {
-      // Use direct URL navigation (page id=65) to avoid page tree race conditions.
-      // Page 65 = "1b.1 Page content - changed" (a known accessible page in test fixtures)
-      await backend.gotoModuleWithPageId('module/in2publish_core/m1', 65);
+    await test.step('When I open "Publish Overview" and select "Home"', async () => {
+      await backend.gotoModule('Publish Overview');
+      await backend.searchInPageTreeAndSelectFirstOccurrence('Home');
     });
 
     await test.step('Then I should see the module content loaded', async () => {

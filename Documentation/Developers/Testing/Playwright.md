@@ -1,113 +1,67 @@
 # Playwright Testing for in2publish_core
 
-We have started to migrate our browser tests from Codeception to Playwright to improve stability, speed, and debugging capabilities.
+We have migrated our browser tests from Codeception to Playwright to improve stability, speed, and debugging capabilities.
 This document contains the documentation for end-to-end browser tests for in2publish_core using Playwright.
 
 ## Overview
 
-The test setup supports two execution modes:
-
-1. **Local Execution** - Fast iteration for test development
-2. **Docker Execution** - Platform-independent, CI/CD ready (following TYPO3's approach)
+Tests run inside a dedicated Playwright Docker container that connects to the already-running TYPO3 instances (local + foreign) through the Docker network. No local Node.js installation is required.
 
 ## Prerequisites
 
-### For Local Execution
-- Node.js 18+ (required for Playwright)
-- npm 9+
-
-Check with: `node -v && npm -v`
-
-```bash
-# Install Node.js dependencies and Playwright browsers
-npm install
-npx playwright install
-```
-
-Playwright is also installed automatically when running the project setup:
-```bash
-make setup
-```
-
-### For Docker Execution
 - Docker must be installed and running
 - TYPO3 instances (local/foreign) must be running: `make start`
-- No local Node.js installation required
 
 ## Quick Start
 
-All Playwright commands must be run from the `packages/in2publish_core` directory.
+All Playwright commands must be run from the `packages/in2publish_core` directory (standalone) or from the monorepo root.
 
-### Local Development (Recommended for Writing Tests)
+### From the package directory (standalone)
 
 ```bash
-# Run all tests in headless mode
+# Run all tests (restores DB, clears caches)
 make playwright
 
-# Open Playwright UI for interactive test development
+# Run specific test file
+make playwright FILE="Tests/Playwright/modules/PublishOverview/publish-changed-content.spec.ts"
+
+# Open Playwright UI for interactive test development (http://localhost:9323)
 make playwright-ui
 
-# Run tests with visible browser (headed mode)
-make playwright-watch
-
-# Debug tests with Playwright Inspector
-make playwright-debug
-
-# View the last test report
+# View the last test report (http://localhost:9323)
 make playwright-report
-
-# Run specific test file
-make playwright FILE="modules/PublishOverview/publish-changed-content.spec.ts"
 ```
 
-### Docker Execution (Recommended for CI/CD)
+### From the monorepo root
 
 ```bash
-# Run all tests in Docker (headless)
-make playwright-docker
+# Run all in2publish_core tests (uninstalls enterprise extension, restores DB, clears caches)
+make playwright
 
-# Run tests with UI mode in Docker (accessible at http://localhost:9323)
-make playwright-docker-ui
-
-# Run specific test file in Docker
-make playwright-docker-file FILE="Tests/Playwright/modules/PublishOverview/publish-changed-content.spec.ts"
-
-# Show test report from Docker tests
-make playwright-docker-report
+# Run specific test file
+make playwright FILE="Tests/Playwright/modules/PublishOverview/publish-changed-content.spec.ts"
 ```
 
-## When to Use Which Mode
-
-### Use Local Execution When:
-- Writing new tests (fastest feedback loop)
-- Debugging test failures interactively
-- Generating test code with Playwright codegen
-- Developing test fixtures and helpers
-- Quick iteration during development
-
-### Use Docker Execution When:
-- Running tests in CI/CD pipelines
-- Validating tests on different platforms
-- Ensuring consistent execution environment
-- Team members without local Node.js setup
-- Final validation before committing
+**Important:** When running from the monorepo, `make playwright` automatically uninstalls the enterprise extension (`in2code/in2publish`) before running tests. This ensures that `in2publish_core` tests run in isolation without enterprise features. Use `make install-enterprise` afterwards to restore it for normal development or enterprise testing.
 
 ## Architecture
 
 ### Test Structure
 ```
 Tests/Playwright/
-├── config.ts                   # Test configuration
-├── global.setup.ts             # Global setup (authentication)
+├── config.ts                   # Test configuration (local/foreign URLs)
+├── global.setup.ts             # Global setup (DB restore + authentication)
 ├── fixtures/                   # Custom fixtures
 │   ├── backend-page.ts         # TYPO3 backend page fixture
 │   └── setup-fixtures.ts       # Setup fixtures
 ├── helpers/                    # Test helpers
-│   ├── Environment.ts          # Environment configuration
-│   └── Typo3Helper.ts          # TYPO3-specific helpers
+│   ├── direct-restore.ts       # Direct database + fileadmin restore (used in CI/Docker)
+│   └── Environment.ts          # Environment reset via `make restore` (used locally)
 └── modules/                    # Test files organized by module
     ├── PublishOverview/
-    └── PublisherTools/
+    ├── PublishFiles/
+    ├── RedirectsModule/
+    └── Regression/
 ```
 
 ### Configuration
@@ -120,13 +74,25 @@ The test configuration is in `playwright.config.ts` at the project root.
 - Retries: 2 on CI, 0 locally
 - Timeout: 60 seconds per test
 
+### Database Restore
+
+Tests rely on a clean, known database state restored from dumps in `.project/data/dumps/`.
+
+**Two restore mechanisms exist:**
+
+1. **`direct-restore.ts`** (used in Docker/CI via `global.setup.ts`): Connects directly to MySQL and re-imports dump data using `LOAD DATA INFILE`. This is the primary mechanism and runs automatically at the start of each test suite. Individual tests that modify data use `restoreDatabases()` in `test.beforeEach()` for per-test isolation.
+
+2. **`Environment.reset()`** (used locally, skipped in CI): Runs `make restore` from the monorepo root via shell. Used in `test.beforeAll()` blocks for local development.
+
+**Dump architecture:** The dumps in `in2publish_core/.project/data/dumps/` include tables from both `in2publish_core` and the enterprise extension (`in2publish`). Enterprise tables (e.g. `tx_in2publish_workflow_state`, `tx_in2publish_workflow_history`) are always present in the dumps but do not interfere with core-only tests. The enterprise package maintains its own supplementary dump files for workflow-specific test data.
+
 ### Environment Isolation
 
-The `in2publish_core` tests operate in an isolated environment (`packages/in2publish_core/.env`).
+The `in2publish_core` tests operate in an isolated environment:
 - **Local System**: `https://local.v13.in2publish-core.de`
 - **Foreign System**: `https://foreign.v13.in2publish-core.de`
 
-The test helper `Environment.ts` automatically handles database resets (`make restore`) before tests run.
+When running from the monorepo, the enterprise extension is uninstalled to ensure tests validate core functionality in isolation.
 
 ### Authentication
 
@@ -138,15 +104,11 @@ Tests use authenticated sessions stored in `Tests/Playwright/.auth/login.json`. 
 
 The Docker setup uses a dedicated Playwright service in docker-compose:
 
-1. Playwright runs in Microsoft's official Playwright Docker image (v1.57.0)
-2. The container joins your existing Docker network (`in2publish_core_default`)
+1. Playwright runs in Microsoft's official Playwright Docker image
+2. The container joins your existing Docker network
 3. Tests access your already-running TYPO3 instances (local + foreign) through the network
 4. Test files and results are mounted via volume at `/work`
 5. The service runs continuously (`sleep infinity`) for fast test execution
-
-### Docker Compose Service
-
-The Playwright service is defined in `.project/docker/docker-compose.*.yaml`:
 
 ### Environment Variables
 
@@ -155,8 +117,6 @@ The Playwright service is defined in `.project/docker/docker-compose.*.yaml`:
 | `PLAYWRIGHT_BASE_URL` | Base URL for local TYPO3 instance | `https://local.v13.in2publish-core.de/typo3/` |
 | `PLAYWRIGHT_FOREIGN_BASE_URL` | Base URL for foreign TYPO3 instance | `https://foreign.v13.in2publish-core.de/typo3/` |
 | `CI` | Enable CI mode (retries, forbidOnly) | `0` (set to `1` in CI) |
-| `HOST_LOCAL` | Hostname for local instance | From `.env` file |
-| `HOST_FOREIGN` | Hostname for foreign instance | From `.env` file |
 
 ### Accessing Both Instances in Tests
 
@@ -213,30 +173,20 @@ Click on the failed test and open the "Trace" tab to time-travel through the tes
 
 ## Troubleshooting
 
-### Local Execution Issues
-
-**Browsers not installed:**
-```bash
-npx playwright install
-```
-
 **Tests not visible in UI mode:**
 - Make sure the "chromium" project is checked in the project filter at the top of the UI
 - The UI remembers your selection in browser localStorage
 
+**Tests fail due to database state:**
+```bash
+make restore
+```
 
 ## Maintenance
 
 ### Updating Playwright
 
-**Local:**
-```bash
-npm update @playwright/test
-npx playwright install
-```
-
-**Docker:**
-Update the image version in `.project/docker/docker-compose.*.yaml` files:
+Update the image version in `.project/docker/docker-compose.*.yaml` (or `docker-compose.yml` in monorepo):
 ```yaml
 playwright:
   image: mcr.microsoft.com/playwright:v1.XX.X-noble
@@ -247,26 +197,19 @@ Then recreate the container:
 docker compose up -d playwright
 ```
 
-### Database Reset
+Also update `@playwright/test` in `package.json` to match the Docker image version.
 
-If tests fail due to database state:
+### Updating Dumps
+
+After making changes to the database that should be reflected in test data:
 ```bash
-make restore
+make dump-dbs
 ```
 
-**Note:** In Docker mode (CI=1), the environment reset is skipped since `make` is not available in the Playwright container. 
+This exports both local and foreign databases to `.project/data/dumps/`.
 
 ## Resources
 
 - [Playwright Documentation](https://playwright.dev/)
 - [TYPO3 Testing Documentation](https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/Testing/)
 - [Microsoft Playwright Docker Images](https://mcr.microsoft.com/en-us/product/playwright/about)
-
-## Support
-
-For issues or questions:
-1. Check this documentation
-2. Review the Playwright documentation
-3. Check `playwright.config.ts` for configuration
-4. Check `.project/docker/docker-compose.*.yaml` for Docker service configuration
-5. Ask the team in your communication channel

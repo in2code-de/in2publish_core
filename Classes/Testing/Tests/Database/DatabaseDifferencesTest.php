@@ -144,10 +144,12 @@ class DatabaseDifferencesTest implements TestCaseInterface
                                 $localTableInfo[$tableName]['table'][$propertyName]
                                 !== $foreignTableInfo[$tableName]['table'][$propertyName]
                             ) {
+                                $localPropValue = $localTableInfo[$tableName]['table'][$propertyName];
+                                $foreignPropValue = $foreignTableInfo[$tableName]['table'][$propertyName];
                                 $tableDifferences[] = $tableName . '.' . $propertyName . ': Local: '
-                                    . $localTableInfo[$tableName]['table'][$propertyName]
+                                    . (is_scalar($localPropValue) ? (string)$localPropValue : json_encode($localPropValue))
                                     . ' Foreign: '
-                                    . $foreignTableInfo[$tableName]['table'][$propertyName];
+                                    . (is_scalar($foreignPropValue) ? (string)$foreignPropValue : json_encode($foreignPropValue));
                             }
                         } elseif ($propExistsLocal && !$propExistsForeign) {
                             $tableDifferences[] = 'Table property ' . $tableName . '.' . $propertyName
@@ -273,13 +275,13 @@ class DatabaseDifferencesTest implements TestCaseInterface
                     'notnull' => $field->getNotnull(),
                     'fixed' => $field->getFixed(),
                     'default' => $field->getDefault(),
-                    'type' => $field->getType(),
+                    'type' => get_class($field->getType()),
                     'comment' => $field->getComment(),
                 ];
             }
 
             $tableOptions = $table->getOptions();
-            unset($tableOptions['autoincrement'], $tableOptions['comment']);
+            unset($tableOptions['autoincrement'], $tableOptions['comment'], $tableOptions['create_options']);
             $tableStructure[$tableName] = [
                 'table' => $tableOptions,
                 'fields' => $fieldStructure,

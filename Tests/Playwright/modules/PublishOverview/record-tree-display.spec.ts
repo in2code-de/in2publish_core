@@ -24,9 +24,8 @@ test.describe('Record Tree Display', () => {
 
         await test.step('Given I am logged in and navigate to the depth test page', async () => {
             await backend.login(config.local.baseUrl);
-            await backend.gotoModule('Page');
-            await backend.searchInPageTreeAndSelectFirstOccurrence('4 PageTree depth');
             await backend.gotoModule('Publish Overview');
+            await backend.searchInPageTreeAndSelectFirstOccurrence('4 PageTree depth');
 
             await expect(
                 backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')

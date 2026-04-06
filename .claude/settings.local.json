@@ -17,7 +17,8 @@
       "Bash(echo:*)",
       "Bash(ls:*)",
       "Bash(grep:*)",
-      "Bash(zcat:*)"
+      "Bash(zcat:*)",
+      "Bash(docker run:*)"
     ]
   }
 }

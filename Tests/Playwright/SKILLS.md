@@ -5,7 +5,7 @@
 - **Shared package**: `@in2code/typo3-playwright` (from tarball, see package.json)
 - **Playwright version**: 1.57+
 - **Test location**: `Tests/Playwright/modules/<Area>/<test-name>.spec.ts`
-- **Runner**: `make playwright` (Docker) or `npx playwright test` (local)
+- **Runner**: `make playwright` (Docker, restores DB + clears caches)
 
 ---
 
@@ -28,7 +28,7 @@ import { Environment } from '../../helpers/Environment';
 test.describe('Publish Changed Page Properties', () => {
 
     test.beforeAll(async () => {
-        await Environment.reset();  // Restores DB + fileadmin via 'make restore'
+        await Environment.reset();  // Restores DB + fileadmin via 'make restore' (skipped in CI)
     });
 
     test('Test case description', async ({ page, backend, browser }) => {
@@ -255,9 +255,15 @@ await backend.waitUntilPublishingFinished();
 config.local.baseUrl   // Local backend URL (e.g. https://local.v13.in2publish-core.de/typo3/)
 config.foreign.baseUrl // Foreign backend URL (e.g. https://foreign.v13.in2publish-core.de/typo3/)
 
-// Environment reset runs 'make restore' (DB + fileadmin) from monorepo root
-// Skipped automatically when CI=1 (inside Docker)
+// Environment reset runs 'make restore' (DB + fileadmin) from monorepo root.
+// Skipped when CI=1 (Docker) — global.setup.ts uses direct-restore.ts instead.
 await Environment.reset();
+
+// For per-test DB reset in CI (e.g. tests that modify data):
+import { restoreDatabases } from '../../helpers/direct-restore';
+test.beforeEach(async () => {
+    await restoreDatabases();  // Direct MySQL restore, works in Docker
+});
 ```
 
 ---
