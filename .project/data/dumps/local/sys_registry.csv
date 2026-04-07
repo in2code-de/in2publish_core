@@ -61,7 +61,6 @@
 64	tx_reports	status.highestSeverity	i:2;
 67	installUpdate	TYPO3\\CMS\\Install\\Updates\\BackendModulePermissionMigration	i:1;
 69	installUpdate	TYPO3\\CMS\\Install\\Updates\\PasswordPolicyForFrontendUsersUpdate	i:1;
-70	core	formProtectionSessionToken:1	s:64:"c97f36e27d8ce7cc0dc7d32bd34aa985040e7e3b0a04252fd528ee8f4212064f";
 74	extensionDataImport	core:ext_tables_static+adt.sql	s:0:"";
 75	extensionDataImport	extbase:ext_tables_static+adt.sql	s:0:"";
 76	extensionDataImport	fluid:ext_tables_static+adt.sql	s:0:"";

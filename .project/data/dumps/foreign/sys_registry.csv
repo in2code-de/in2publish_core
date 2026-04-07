@@ -1,6 +1,5 @@
 12	tx_scheduler	lastRun	a:3:{s:5:"start";i:1719995529;s:3:"end";i:1719995529;s:4:"type";s:6:"manual";}
 14	installUpdateRows	rowUpdatersDone	a:0:{}
-15	core	formProtectionSessionToken:1	s:64:"22c9116a6e35891304187eca878034fd751b6c4f616125c94fa389cb33b8929e";
 16	installUpdate	TYPO3\\CMS\\Core\\Upgrades\\BackendUserLanguageMigration	i:1;
 17	installUpdate	TYPO3\\CMS\\Core\\Upgrades\\MigrateExtensionDataImportRegistryKeysUpdate	i:1;
 18	installUpdate	TYPO3\\CMS\\Core\\Upgrades\\PageDoktypeLinkMigration	i:1;
