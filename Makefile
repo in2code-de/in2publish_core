@@ -67,17 +67,10 @@ IN2PUBLISH_DEV_VERSION := dev-$(CURRENT_BRANCH)
 
 setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	@echo "Installing in2publish_core as $(IN2PUBLISH_DEV_VERSION)"
-	@for f in Build/local/composer.json Build/foreign/composer.json; do \
-		cp "$$f" "$$f.bak"; \
-		sed 's|"in2code/in2publish_core": "@dev"|"in2code/in2publish_core": "$(IN2PUBLISH_DEV_VERSION)"|' "$$f.bak" > "$$f"; \
-	done
-	docker compose exec -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' local-php composer u -W
+	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-local-php-1 composer u -W
 	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 composer u -W
-	@for f in Build/local/composer.json Build/foreign/composer.json; do \
-		mv "$$f.bak" "$$f"; \
-	done
-	docker compose exec local-php vendor/bin/typo3 install:setup --force
-	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
+	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
 	git checkout Build/local/config/sites/main/config.yaml
 	git checkout Build/foreign/config/sites/main/config.yaml
 	make restore
