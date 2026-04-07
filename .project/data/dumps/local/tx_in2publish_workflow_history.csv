@@ -1,10 +1,14 @@
+22	0	pages	2	3	0	0	2	1	1695902980	2	Autostate change	0	0
+28	0	pages	7	3	0	0	7	1	1695905984	2	Autostate change	0	0
 197	0	pages	1	0	0	0	1	1	1696490340	0	Published	\N	1
 274	0	pages	26	3	0	0	26	1	1697100375	1		\N	0
 409	0	pages	55	16	1	54	54	1	1697545928	1		\N	0
 417	0	pages	54	16	0	0	54	1	1697548156	1		\N	0
 498	0	pages	5	4	0	0	5	11	1698049256	0	Initial state	0	0
+499	0	pages	27	4	0	0	27	11	1698049256	0	Initial state	0	0
 523	0	pages	44	16	0	0	44	1	1698151878	1		\N	1
 524	0	pages	48	16	1	44	44	1	1698151882	1		\N	1
+564	0	pages	28	27	0	0	28	1	1698235775	0	Initial state	0	0
 601	0	tx_news_domain_model_news	5	33	0	0	33	1	1698750669	0	Initial state	0	0
 602	0	pages	33	1	0	0	33	1	1698750669	0	Initial state	0	0
 611	0	pages	67	3	0	0	67	1	1698753437	1		\N	1
@@ -30,10 +34,13 @@
 636	0	pages	75	73	1	74	74	1	1701691194	0	Initial state	0	0
 637	0	pages	74	73	0	0	74	1	1701691194	0	Initial state	0	0
 638	0	pages	68	4	0	0	68	1	1701691194	0	Initial state	0	1
+642	0	pages	29	28	0	0	29	1	1701691194	0	Initial state	0	0
+643	0	pages	29	28	0	0	29	1	1701691194	0	Initial state	0	0
 652	0	tx_news_domain_model_news	7	26	0	0	26	1	1719843284	0	Initial state	0	0
 653	0	tx_news_domain_model_news	7	26	0	0	26	1	1719843284	2	Autostate change	0	0
 655	0	pages	1	0	0	0	1	1	1719999727	2	Autostate change	0	0
 656	0	tx_news_domain_model_news	8	26	0	0	26	1	1720008134	0	Initial state	0	0
+657	0	tx_news_domain_model_news	8	26	0	0	26	1	1720008134	2	Autostate change	0	0
 658	0	pages	76	4	0	0	76	1	1730131569	0	Initial state	0	0
 659	0	pages	76	4	0	0	76	1	1730131569	2	Autostate change	0	0
 660	0	pages	76	1	0	0	76	1	1730131579	2	Autostate change	0	0
@@ -47,6 +54,7 @@
 669	0	pages	77	16	0	0	77	1	1730279121	2	Autostate change	0	1
 670	0	pages	54	16	0	0	54	1	1730279127	2	Autostate change	0	0
 672	0	pages	54	16	0	0	54	1	1730279127	2	Autostate change	0	0
+673	0	pages	54	16	0	0	54	1	1730279144	2	Autostate change	0	0
 674	0	pages	77	3	0	0	77	1	1730279160	2	Autostate change	0	1
 675	0	pages	77	3	0	0	77	1	1730279160	2	Autostate change	0	1
 676	0	pages	77	16	0	0	77	1	1730279173	2	Autostate change	0	1
@@ -77,9 +85,11 @@
 707	0	pages	80	3	0	0	80	1	1730892771	2	Autostate change	0	0
 708	0	pages	1	0	0	0	1	1	1730892832	1		\N	0
 709	0	pages	80	3	0	0	80	1	1730892846	1		\N	0
+712	0	pages	26	3	0	0	26	1	1741939064	2	Autostate change	0	0
 713	0	pages	85	4	0	0	85	1	1741945077	0	Initial state	0	0
-715	0	pages	84	4	0	0	84	1	1741945094	0	Initial state	0	0
-716	0	pages	84	1	0	0	84	1	1741945094	2	Autostate change	0	0
+715	0	pages	84	4	0	0	84	1	1741945094	0	Initial state	0	1
+716	0	pages	84	1	0	0	84	1	1741945094	2	Autostate change	0	1
+717	0	pages	84	1	0	0	84	1	1741945094	2	Autostate change	0	1
 718	0	pages	86	0	0	0	86	1	1741945243	0	Initial state	0	1
 719	0	pages	86	0	0	0	86	1	1741945243	2	Autostate change	0	1
 720	0	pages	87	86	0	0	87	1	1741945243	0	Initial state	0	0
@@ -366,6 +376,8 @@
 1729	0	pages	1000	3	0	0	1000	1	1765877699	2	Autostate change	0	0
 1730	0	pages	1001	3	1	1000	1000	1	1765877716	0	Initial state	0	0
 1731	0	pages	1001	3	1	1000	1000	1	1765877716	2	Autostate change	0	0
+1732	0	pages	1000	3	0	0	1000	1	1765879434	1		\N	0
+1733	0	pages	1001	3	1	1000	1000	1	1765879438	1		\N	0
 1736	0	pages	501	3	1	497	497	1	1768901404	0	Published	\N	1
 1738	0	pages	501	3	1	497	497	1	1768901655	2	Autostate change	0	1
 1739	0	pages	501	3	1	497	497	1	1768901671	1		\N	1
@@ -389,5 +401,82 @@
 1761	0	pages	1005	3	1	1004	1004	1	1768911127	1		\N	1
 1762	0	pages	1005	3	1	1004	1004	1	1768911213	0	Published	\N	0
 1764	0	pages	1006	3	1	1004	1004	1	1768911354	2	Autostate change	0	0
-1766	0	pages	1007	3	1	67	67	1	1768918674	0	Initial state	0	0
-1767	0	pages	1007	3	1	67	67	1	1768918674	2	Autostate change	0	0
+1767	0	tx_news_domain_model_news	79	26	0	0	26	1	1769697785	0	Initial state	0	0
+1768	0	tx_news_domain_model_news	79	26	0	0	26	1	1769697785	2	Autostate change	0	0
+1772	0	tx_news_domain_model_news	80	26	0	0	26	1	1769697965	0	Initial state	0	1
+1773	0	tx_news_domain_model_news	80	26	0	0	26	1	1769697965	2	Autostate change	0	1
+1774	0	tx_news_domain_model_news	81	26	0	0	26	1	1769697978	0	Initial state	0	1
+1776	0	tx_news_domain_model_news	80	26	0	0	26	1	1769697988	1		\N	1
+1777	0	tx_news_domain_model_news	80	26	0	0	26	1	1769697999	1		\N	1
+1778	0	tx_news_domain_model_news	80	26	0	0	26	1	1769698009	0	Published	\N	1
+1780	0	tx_news_domain_model_news	81	26	0	0	26	1	1769698261	0	Initial state	0	0
+1781	0	tx_news_domain_model_news	80	26	0	0	26	1	1769698261	0	Initial state	0	0
+1784	0	pages	32	31	0	0	32	1	1770885766	0	Initial state	0	0
+1785	0	pages	32	31	0	0	32	1	1770885783	2	Autostate change	0	0
+1786	0	pages	32	31	0	0	32	1	1770885791	1		\N	0
+1787	0	pages	32	31	0	0	32	1	1770885817	2	Autostate change	0	0
+1788	0	pages	32	31	0	0	32	1	1770885828	1		\N	0
+1789	0	pages	1007	3	0	0	1007	1	1772720923	0	Initial state	0	1
+1790	0	pages	1007	3	0	0	1007	1	1772720923	2	Autostate change	0	1
+1791	0	pages	1007	3	0	0	1007	1	1772720934	2	Autostate change	0	1
+1792	0	pages	1008	3	0	0	1008	1	1772720990	0	Initial state	0	0
+1793	0	pages	1008	3	0	0	1008	1	1772720990	2	Autostate change	0	0
+1794	0	pages	1008	3	0	0	1008	1	1772721002	2	Autostate change	0	0
+1795	0	pages	1009	3	0	0	1009	1	1772721046	0	Initial state	0	1
+1796	0	pages	1009	3	0	0	1009	1	1772721046	2	Autostate change	0	1
+1797	0	pages	1009	3	0	0	1009	1	1772721058	2	Autostate change	0	1
+1798	0	pages	1010	3	1	1007	1007	1	1772721146	0	Initial state	0	0
+1799	0	pages	1010	3	1	1007	1007	1	1772721146	2	Autostate change	0	0
+1800	0	pages	1007	3	0	0	1007	1	1772721514	1		\N	1
+1801	0	pages	1010	3	1	1007	1007	1	1772721518	1		\N	0
+1802	0	pages	1007	3	0	0	1007	1	1772721522	0	Published	\N	1
+1803	0	pages	1007	3	0	0	1007	1	1772721561	2	Autostate change	0	1
+1804	0	pages	1010	3	1	1007	1007	1	1772721561	2	Autostate change	0	0
+1805	0	pages	1007	3	0	0	1007	1	1772721655	1		\N	1
+1806	0	pages	1010	3	1	1007	1007	1	1772721659	1		\N	0
+1809	0	pages	1000	3	0	0	1000	1	1773042674	2	Autostate change	0	0
+1810	0	pages	1001	3	1	1000	1000	1	1773042674	2	Autostate change	0	0
+1811	0	pages	1000	3	0	0	1000	1	1773042674	2	Autostate change	0	0
+1812	0	pages	1008	3	0	0	1008	1	1773043202	1		\N	0
+1813	0	pages	1008	3	0	0	1008	1	1773043317	2	Autostate change	0	0
+1815	0	pages	1009	3	0	0	1009	1	1773044580	1		\N	1
+1816	0	pages	1009	3	0	0	1009	1	1773044582	0	Published	\N	1
+1817	0	pages	1009	3	0	0	1009	1	1773044594	2	Autostate change	0	1
+1818	0	pages	1009	3	0	0	1009	1	1773044619	1		\N	1
+1819	0	pages	1009	3	0	0	1009	1	1773046566	2	Autostate change	0	1
+1820	0	pages	1011	1009	0	0	1011	1	1773046590	0	Initial state	0	1
+1821	0	pages	1011	1009	0	0	1011	1	1773046590	2	Autostate change	0	1
+1822	0	pages	1011	1009	0	0	1011	1	1773046644	1		\N	1
+1823	0	pages	1009	3	0	0	1009	1	1773046644	1		\N	1
+1824	0	pages	1011	1009	0	0	1011	1	1773046647	0	Published	\N	0
+1825	0	pages	1009	3	0	0	1009	1	1773046650	0	Published	\N	0
+1826	0	pages	1009	3	0	0	1009	1	1773046667	2	Autostate change	0	0
+1827	0	pages	1011	1009	0	0	1011	1	1773046678	2	Autostate change	0	0
+1829	0	pages	30	29	0	0	30	1	1773065127	0	Initial state	0	0
+1830	0	pages	31	30	0	0	31	1	1773065127	0	Initial state	0	0
+1832	0	pages	28	27	0	0	28	1	1773065141	1		\N	0
+1833	0	pages	29	28	0	0	29	1	1773065144	1		\N	0
+1834	0	pages	30	29	0	0	30	1	1773065148	1		\N	0
+1835	0	pages	31	30	0	0	31	1	1773065152	1		\N	0
+1836	0	pages	84	1	0	0	84	1	1773065159	1		\N	1
+1843	0	pages	31	30	0	0	31	1	1773071053	2	Autostate change	0	0
+1844	0	pages	30	29	0	0	30	1	1773071072	2	Autostate change	0	0
+1845	0	pages	29	28	0	0	29	1	1773071117	2	Autostate change	0	0
+1846	0	pages	28	27	0	0	28	1	1773071134	2	Autostate change	0	0
+1852	0	pages	84	1	0	0	84	1	1773228526	2	Autostate change	0	1
+1853	0	pages	84	1	0	0	84	1	1773228537	1		\N	1
+1855	0	pages	1012	4	0	0	1012	1	1773235077	0	Initial state	0	0
+1856	0	pages	1012	4	0	0	1012	1	1773235077	2	Autostate change	0	0
+1857	0	pages	1012	32	0	0	1012	1	1773235083	2	Autostate change	0	0
+1858	0	pages	1012	32	0	0	1012	1	1773235083	2	Autostate change	0	0
+1859	0	pages	1012	32	0	0	1012	1	1773235097	2	Autostate change	0	0
+1860	0	pages	1012	4	0	0	1012	1	1773235104	2	Autostate change	0	0
+1861	0	pages	1012	4	0	0	1012	1	1773235104	2	Autostate change	0	0
+1862	0	pages	1012	27	0	0	1012	1	1773235121	2	Autostate change	0	0
+1863	0	pages	1012	27	0	0	1012	1	1773235121	2	Autostate change	0	0
+1864	0	pages	1012	32	0	0	1012	1	1773235133	2	Autostate change	0	0
+1865	0	pages	1012	32	0	0	1012	1	1773235133	2	Autostate change	0	0
+1866	0	pages	1012	1	0	0	1012	1	1773235146	2	Autostate change	0	0
+1867	0	pages	1012	1	0	0	1012	1	1773235146	2	Autostate change	0	0
+1868	0	pages	1013	1012	0	0	1013	1	1773235207	0	Initial state	0	0
+1869	0	pages	1013	1012	0	0	1013	1	1773235207	2	Autostate change	0	0

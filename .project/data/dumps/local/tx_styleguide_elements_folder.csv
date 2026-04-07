@@ -1,0 +1,120 @@
+1	112	1741947233	1741945243	1	0	0	0	0	0	\N	{"folder_1":"","folder_2":"","folder_3":"","flex_1":"","sys_language_uid":""}	0	0	0	0	1:/styleguide/,1:/Testcases/2b_published_file/	1:/styleguide/	1:/styleguide/	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>\
+<T3FlexForms>\
+    <data>\
+        <sheet index="sDb">\
+            <language index="lDEF">\
+                <field index="folder_1">\
+                    <value index="vDEF">1:/styleguide/</value>\
+                </field>\
+            </language>\
+        </sheet>\
+    </data>\
+</T3FlexForms>
+2	112	1741947233	1741945243	1	0	256	6	0	1	\N		0	0	0	0	1:/styleguide/	1:/styleguide/	1:/styleguide/	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>\
+<T3FlexForms>\
+    <data>\
+        <sheet index="sDb">\
+            <language index="lDEF">\
+                <field index="folder_1">\
+                    <value index="vDEF">1:/styleguide/</value>\
+                </field>\
+            </language>\
+        </sheet>\
+    </data>\
+</T3FlexForms>
+3	112	1741947233	1741945243	1	0	128	7	1	1	\N	{"hidden":"0","l10n_parent":"0","l10n_diffsource":"","sys_language_uid":"0","l10n_source":"0","folder_1":"1:\\/styleguide\\/","folder_2":"1:\\/styleguide\\/","folder_3":"1:\\/styleguide\\/","flex_1":"<?xml version=\\"1.0\\" encoding=\\"utf-8\\" standalone=\\"yes\\" ?>\\n<T3FlexForms>\\n    <data>\\n        <sheet index=\\"sDb\\">\\n            <language index=\\"lDEF\\">\\n                <field index=\\"folder_1\\">\\n                    <value index=\\"vDEF\\">1:\\/styleguide\\/<\\/value>\\n                <\\/field>\\n            <\\/language>\\n        <\\/sheet>\\n    <\\/data>\\n<\\/T3FlexForms>"}	0	0	0	0	1:/styleguide/	1:/styleguide/	1:/styleguide/	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>\
+<T3FlexForms>\
+    <data>\
+        <sheet index="sDb">\
+            <language index="lDEF">\
+                <field index="folder_1">\
+                    <value index="vDEF">1:/styleguide/</value>\
+                </field>\
+            </language>\
+        </sheet>\
+    </data>\
+</T3FlexForms>
+4	112	1741947233	1741945243	1	0	192	8	1	3	\N	{"hidden":"0","l10n_parent":"0","l10n_diffsource":"","sys_language_uid":"0","l10n_source":"0","folder_1":"1:\\/styleguide\\/","folder_2":"1:\\/styleguide\\/","folder_3":"1:\\/styleguide\\/","flex_1":"<?xml version=\\"1.0\\" encoding=\\"utf-8\\" standalone=\\"yes\\" ?>\\n<T3FlexForms>\\n    <data>\\n        <sheet index=\\"sDb\\">\\n            <language index=\\"lDEF\\">\\n                <field index=\\"folder_1\\">\\n                    <value index=\\"vDEF\\">1:\\/styleguide\\/<\\/value>\\n                <\\/field>\\n            <\\/language>\\n        <\\/sheet>\\n    <\\/data>\\n<\\/T3FlexForms>"}	0	0	0	0	1:/styleguide/	1:/styleguide/	1:/styleguide/	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>\
+<T3FlexForms>\
+    <data>\
+        <sheet index="sDb">\
+            <language index="lDEF">\
+                <field index="folder_1">\
+                    <value index="vDEF">1:/styleguide/</value>\
+                </field>\
+            </language>\
+        </sheet>\
+    </data>\
+</T3FlexForms>
+5	112	1741947233	1741945243	1	0	224	9	0	4	\N	{"hidden":"0","l10n_parent":"0","l10n_diffsource":"","sys_language_uid":"0","l10n_source":"0","folder_1":"1:\\/styleguide\\/","folder_2":"1:\\/styleguide\\/","folder_3":"1:\\/styleguide\\/","flex_1":"<?xml version=\\"1.0\\" encoding=\\"utf-8\\" standalone=\\"yes\\" ?>\\n<T3FlexForms>\\n    <data>\\n        <sheet index=\\"sDb\\">\\n            <language index=\\"lDEF\\">\\n                <field index=\\"folder_1\\">\\n                    <value index=\\"vDEF\\">1:\\/styleguide\\/<\\/value>\\n                <\\/field>\\n            <\\/language>\\n        <\\/sheet>\\n    <\\/data>\\n<\\/T3FlexForms>"}	0	0	0	0	1:/styleguide/	1:/styleguide/	1:/styleguide/	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>\
+<T3FlexForms>\
+    <data>\
+        <sheet index="sDb">\
+            <language index="lDEF">\
+                <field index="folder_1">\
+                    <value index="vDEF">1:/styleguide/</value>\
+                </field>\
+            </language>\
+        </sheet>\
+    </data>\
+</T3FlexForms>
+6	303	1741951567	1741947254	0	0	0	0	0	0	\N	{"folder_1":"","folder_2":"","folder_3":"","flex_1":"","sys_language_uid":""}	0	0	0	0	1:/user_upload/New_Folder/			<?xml version="1.0" encoding="utf-8" standalone="yes" ?>\
+<T3FlexForms>\
+    <data>\
+        <sheet index="sDb">\
+            <language index="lDEF">\
+                <field index="folder_1">\
+                    <value index="vDEF"></value>\
+                </field>\
+            </language>\
+        </sheet>\
+    </data>\
+</T3FlexForms>
+7	303	1741947254	1741947254	0	0	256	6	0	6	\N		0	0	0	0	1:/styleguide/	1:/styleguide/	1:/styleguide/	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>\
+<T3FlexForms>\
+    <data>\
+        <sheet index="sDb">\
+            <language index="lDEF">\
+                <field index="folder_1">\
+                    <value index="vDEF">1:/styleguide/</value>\
+                </field>\
+            </language>\
+        </sheet>\
+    </data>\
+</T3FlexForms>
+8	303	1741947254	1741947254	0	0	128	7	6	6	\N	{"hidden":"0","l10n_parent":"0","l10n_diffsource":"","sys_language_uid":"0","l10n_source":"0","folder_1":"1:\\/styleguide\\/","folder_2":"1:\\/styleguide\\/","folder_3":"1:\\/styleguide\\/","flex_1":"<?xml version=\\"1.0\\" encoding=\\"utf-8\\" standalone=\\"yes\\" ?>\\n<T3FlexForms>\\n    <data>\\n        <sheet index=\\"sDb\\">\\n            <language index=\\"lDEF\\">\\n                <field index=\\"folder_1\\">\\n                    <value index=\\"vDEF\\">1:\\/styleguide\\/<\\/value>\\n                <\\/field>\\n            <\\/language>\\n        <\\/sheet>\\n    <\\/data>\\n<\\/T3FlexForms>"}	0	0	0	0	1:/styleguide/	1:/styleguide/	1:/styleguide/	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>\
+<T3FlexForms>\
+    <data>\
+        <sheet index="sDb">\
+            <language index="lDEF">\
+                <field index="folder_1">\
+                    <value index="vDEF">1:/styleguide/</value>\
+                </field>\
+            </language>\
+        </sheet>\
+    </data>\
+</T3FlexForms>
+9	303	1741947254	1741947254	0	0	192	8	6	8	\N	{"hidden":"0","l10n_parent":"0","l10n_diffsource":"","sys_language_uid":"0","l10n_source":"0","folder_1":"1:\\/styleguide\\/","folder_2":"1:\\/styleguide\\/","folder_3":"1:\\/styleguide\\/","flex_1":"<?xml version=\\"1.0\\" encoding=\\"utf-8\\" standalone=\\"yes\\" ?>\\n<T3FlexForms>\\n    <data>\\n        <sheet index=\\"sDb\\">\\n            <language index=\\"lDEF\\">\\n                <field index=\\"folder_1\\">\\n                    <value index=\\"vDEF\\">1:\\/styleguide\\/<\\/value>\\n                <\\/field>\\n            <\\/language>\\n        <\\/sheet>\\n    <\\/data>\\n<\\/T3FlexForms>"}	0	0	0	0	1:/styleguide/	1:/styleguide/	1:/styleguide/	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>\
+<T3FlexForms>\
+    <data>\
+        <sheet index="sDb">\
+            <language index="lDEF">\
+                <field index="folder_1">\
+                    <value index="vDEF">1:/styleguide/</value>\
+                </field>\
+            </language>\
+        </sheet>\
+    </data>\
+</T3FlexForms>
+10	303	1741947254	1741947254	0	0	224	9	0	9	\N	{"hidden":"0","l10n_parent":"0","l10n_diffsource":"","sys_language_uid":"0","l10n_source":"0","folder_1":"1:\\/styleguide\\/","folder_2":"1:\\/styleguide\\/","folder_3":"1:\\/styleguide\\/","flex_1":"<?xml version=\\"1.0\\" encoding=\\"utf-8\\" standalone=\\"yes\\" ?>\\n<T3FlexForms>\\n    <data>\\n        <sheet index=\\"sDb\\">\\n            <language index=\\"lDEF\\">\\n                <field index=\\"folder_1\\">\\n                    <value index=\\"vDEF\\">1:\\/styleguide\\/<\\/value>\\n                <\\/field>\\n            <\\/language>\\n        <\\/sheet>\\n    <\\/data>\\n<\\/T3FlexForms>"}	0	0	0	0	1:/styleguide/	1:/styleguide/	1:/styleguide/	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>\
+<T3FlexForms>\
+    <data>\
+        <sheet index="sDb">\
+            <language index="lDEF">\
+                <field index="folder_1">\
+                    <value index="vDEF">1:/styleguide/</value>\
+                </field>\
+            </language>\
+        </sheet>\
+    </data>\
+</T3FlexForms>
