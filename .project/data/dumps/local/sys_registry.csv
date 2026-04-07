@@ -70,7 +70,6 @@
 80	extensionDataImport	form:ext_tables_static+adt.sql	s:0:"";
 81	extensionDataImport	felogin:ext_tables_static+adt.sql	s:0:"";
 82	extensionDataImport	indexed_search:ext_tables_static+adt.sql	s:0:"";
-83	extensionDataImport	styleguide:ext_tables_static+adt.sql	s:0:"";
 84	extensionDataImport	backend:ext_tables_static+adt.sql	s:0:"";
 85	extensionDataImport	adminpanel:ext_tables_static+adt.sql	s:0:"";
 86	extensionDataImport	dashboard:ext_tables_static+adt.sql	s:0:"";

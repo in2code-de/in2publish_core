@@ -8,10 +8,6 @@
 8	26	1741939064	1697026206	0	0	0	0	\N	{"alternative":"","description":"","link":"","title":"","crop":"","uid_local":"","hidden":"","sys_language_uid":""}	0	0	0	0	5	16	tt_content	image	1	\N	\N	\N		{"default":{"cropArea":{"x":0,"y":0,"width":1,"height":1},"selectedRatio":"NaN","focusArea":null}}	0	0
 9	26	1697027409	1697027409	0	0	0	0	\N		0	0	0	0	4	19	tt_content	image	1	\N	\N	\N		{"default":{"cropArea":{"x":0,"y":0,"width":1,"height":1},"selectedRatio":"NaN","focusArea":null}}	0	0
 10	26	1719843334	1719843334	0	0	0	0	\N		0	0	0	0	22	7	tx_news_domain_model_news	fal_media	1	\N	\N	\N		{"default":{"cropArea":{"x":0,"y":0,"width":1,"height":1},"selectedRatio":"NaN","focusArea":null}}	0	0
-14	323	1741947254	1741947254	0	0	0	0	\N		0	0	0	0	26	3	tx_styleguide_elements_select_single_12_foreign	fal_1	0	\N	\N	\N		\N	0	0
-15	323	1741947254	1741947254	0	0	0	0	\N		0	0	0	0	27	4	tx_styleguide_elements_select_single_12_foreign	fal_1	0	\N	\N	\N		\N	0	0
-16	338	1741947254	1741947254	0	0	0	0	\N		0	0	0	0	26	2	tx_styleguide_file	file_1	0	\N	\N	\N		\N	0	0
-17	483	1741948624	1741948624	0	0	0	0	\N		0	0	0	0	29	87	tt_content	media	0	\N	\N	\N		\N	0	0
 18	44	1758555102	1758555078	0	0	0	0	\N	{"hidden":""}	0	0	0	0	2	99	tt_content	image	1	\N	\N	\N		{"default":{"cropArea":{"x":0,"y":0,"width":1,"height":1},"selectedRatio":"NaN","focusArea":null}}	0	0
 19	44	1758555095	1758555086	0	0	1	18	\N	{"alternative":"","autoplay":"0","crop":"{\\"default\\":{\\"cropArea\\":{\\"x\\":0,\\"y\\":0,\\"width\\":1,\\"height\\":1},\\"selectedRatio\\":\\"NaN\\",\\"focusArea\\":null}}","description":"","fieldname":"image","hidden":"0","link":"","showinpreview":"0","sorting_foreign":"1","tablenames":"tt_content","title":"","uid_foreign":"99","uid_local":"2"}	0	0	0	0	2	100	tt_content	image	1	\N	\N	\N		{"default":{"cropArea":{"x":0,"y":0,"width":1,"height":1},"selectedRatio":"NaN","focusArea":null}}	0	0
 9001	999	1764086663	1764086663	0	0	0	0	\N	\N	0	0	0	0	9001	9003	tt_content	image	1	\N	\N	\N		{"default":{"cropArea":{"x":0,"y":0,"width":1,"height":1},"selectedRatio":"NaN","focusArea":null}}	0	1
