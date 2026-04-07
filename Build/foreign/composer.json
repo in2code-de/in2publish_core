@@ -71,7 +71,6 @@
 		"typo3/cms-scheduler": "^14.2",
 		"typo3/cms-seo": "^14.2",
 		"typo3/cms-setup": "^14.2",
-		"typo3/cms-styleguide": "^14.2",
 		"typo3/cms-sys-note": "^14.2",
 		"typo3/cms-t3editor": "^14.2",
 		"typo3/cms-tstemplate": "^14.2",
