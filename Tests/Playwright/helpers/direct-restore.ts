@@ -4,16 +4,23 @@ import * as path from 'path';
 import { execSync } from 'child_process';
 
 /**
- * Direct database and fileadmin restore from the Playwright container.
+ * Direct database and fileadmin restore for Playwright tests.
  *
- * Database: Connects to MySQL and re-imports dump data using LOAD DATA INFILE.
+ * Database: Connects to MySQL and re-imports dump data.
  * Fileadmin: Restores fileadmin from backup to both instances.
  *
- * Supports two contexts (auto-detected):
+ * Supports two execution contexts (auto-detected):
+ * - Docker: Running inside the Playwright container (host=mysql, LOAD DATA INFILE)
+ * - Host: Running on the developer's machine (host=127.0.0.1, LOAD DATA LOCAL INFILE)
+ *
+ * And two project contexts (auto-detected):
  * - Monorepo: Playwright at /work/packages/in2publish_core, app dirs at /work/app/{local,foreign}/
  * - Standalone: Playwright at /work, app dirs at /work/Build/{local,foreign}/
  *
- * MySQL LOAD DATA path is derived from SQLDUMPSDIR env var (set in .env).
+ * Environment Variables:
+ * - DB_HOST: MySQL host (default: auto-detect 'mysql' in Docker, '127.0.0.1' on host)
+ * - DB_PORT: MySQL port (default: 3306 in Docker, 54444 on host)
+ * - SQLDUMPSDIR: MySQL LOAD DATA path prefix (Docker only)
  */
 // in2publish_core package root (3 levels up from Tests/Playwright/helpers/)
 const PACKAGE_ROOT = path.resolve(__dirname, '../../..');
@@ -24,6 +31,9 @@ const PACKAGE_ROOT = path.resolve(__dirname, '../../..');
 const isMonorepo = fs.existsSync(path.resolve(PACKAGE_ROOT, '../../app'));
 const APP_ROOT = isMonorepo ? path.resolve(PACKAGE_ROOT, '../..') : PACKAGE_ROOT;
 const APP_PREFIX = isMonorepo ? 'app' : 'Build';
+
+// Detect Docker vs host: inside Docker, /.dockerenv exists.
+const isDocker = fs.existsSync('/.dockerenv');
 
 const DUMPS_DIR_PW = path.join(PACKAGE_ROOT, '.project/data/dumps');
 // MySQL LOAD DATA INFILE path: volume mount is ${SQLDUMPSDIR}:/${SQLDUMPSDIR},
@@ -36,17 +46,24 @@ const FOREIGN_FILEADMIN = path.join(APP_ROOT, APP_PREFIX, 'foreign/public/filead
 const LOCAL_VAR_CACHE = path.join(APP_ROOT, APP_PREFIX, 'local/var/cache');
 const FOREIGN_VAR_CACHE = path.join(APP_ROOT, APP_PREFIX, 'foreign/var/cache');
 
+const DB_HOST = process.env.DB_HOST || (isDocker ? 'mysql' : '127.0.0.1');
+const DB_PORT = parseInt(process.env.DB_PORT || (isDocker ? '3306' : '54444'), 10);
+
 /**
  * Restore both local and foreign databases from dump files.
  */
 export async function restoreDatabases(): Promise<void> {
     const connection = await mysql.createConnection({
-        host: 'mysql',
-        port: 3306,
+        host: DB_HOST,
+        port: DB_PORT,
         user: 'root',
         password: 'root',
         multipleStatements: true,
+        // LOAD DATA LOCAL INFILE requires this flag on the client side
+        ...(!isDocker ? { flags: ['+LOCAL_FILES'] } : {}),
     });
+
+    console.log(`[direct-restore] Connecting to MySQL at ${DB_HOST}:${DB_PORT} (${isDocker ? 'Docker' : 'host'} mode)`);
 
     try {
         for (const db of ['local', 'foreign']) {
@@ -57,8 +74,18 @@ export async function restoreDatabases(): Promise<void> {
             const preamblePath = path.join(DUMPS_DIR_PW, db, '_preamble.sql');
             const preamble = fs.readFileSync(preamblePath, 'utf8').trim();
             if (preamble) {
+                await connection.query("SET sql_mode = ''");
                 await connection.query(preamble);
             }
+
+            // Fix columns that preamble creates as NOT NULL without DEFAULT,
+            // which causes INSERT failures when creating new pages via the wizard.
+            await connection.query(
+                "ALTER TABLE `pages` MODIFY COLUMN `link` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL"
+            ).catch(() => {});
+            await connection.query(
+                "ALTER TABLE `pages` MODIFY COLUMN `canonical_link` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL"
+            ).catch(() => {});
 
             // Get list of tables
             const [rows] = await connection.query('SHOW TABLES') as any;
@@ -68,11 +95,21 @@ export async function restoreDatabases(): Promise<void> {
             for (const table of tables) {
                 const csvPathPw = path.join(DUMPS_DIR_PW, db, `${table}.csv`);
                 if (fs.existsSync(csvPathPw)) {
-                    const csvPathMysql = `${DUMPS_DIR_MYSQL}/${db}/${table}.csv`;
                     await connection.query(`TRUNCATE TABLE \`${table}\``);
-                    await connection.query(
-                        `LOAD DATA INFILE '${csvPathMysql}' INTO TABLE \`${table}\``
-                    );
+                    if (isDocker) {
+                        // Inside Docker: MySQL server can read the file directly
+                        const csvPathMysql = `${DUMPS_DIR_MYSQL}/${db}/${table}.csv`;
+                        await connection.query(
+                            `LOAD DATA INFILE '${csvPathMysql}' INTO TABLE \`${table}\``
+                        );
+                    } else {
+                        // On host: send file from client to server
+                        await connection.query({
+                            sql: `LOAD DATA LOCAL INFILE ? INTO TABLE \`${table}\``,
+                            values: [csvPathPw],
+                            infileStreamFactory: () => fs.createReadStream(csvPathPw),
+                        } as any);
+                    }
                 }
             }
         }

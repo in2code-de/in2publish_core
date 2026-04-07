@@ -36,6 +36,9 @@
 		"ext-json": "*",
 		"ext-pdo": "*",
 		"ext-zip": "*",
+		"co-stack/build-essentials": "@dev",
+		"co-stack/mysql-loader": "@dev",
+		"co-stack/process-manager": "@dev",
 		"georgringer/news": "^14.0",
 		"helhum/typo3-console": "^8.2",
 		"in2code/in2publish_core": "dev-develop-v14",
@@ -73,7 +76,8 @@
 		"typo3/cms-t3editor": "^14.2",
 		"typo3/cms-tstemplate": "^14.2",
 		"typo3/cms-viewpage": "^14.2",
-		"typo3/cms-workspaces": "^14.2"
+		"typo3/cms-workspaces": "^14.2",
+		"typo3/testing-framework": "^9.1"
 	},
 	"config": {
 		"sort-packages": true,
@@ -95,11 +99,5 @@
 		"psr-4": {
 			"In2code\\In2publishCore\\Tests\\": "/app/Tests/"
 		}
-	},
-	"require-dev": {
-		"typo3/testing-framework": "^9.1",
-		"co-stack/build-essentials": "@dev",
-		"co-stack/mysql-loader": "@dev",
-		"co-stack/process-manager": "@dev"
 	}
 }

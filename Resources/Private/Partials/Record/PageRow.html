@@ -53,9 +53,9 @@
 				</button>
 				<f:if condition="{record.state} != 'deleted' && {record.id} > 0">
 					<f:then>
-						<be:link.editRecord class="btn btn-default btn-sm" uid="{record.id}" table="{record.classification}">
+						<publish:Link.SafeEditRecord class="btn btn-default btn-sm" uid="{record.id}" table="{record.classification}">
 							<core:icon identifier="actions-open"></core:icon>
-						</be:link.editRecord>
+						</publish:Link.SafeEditRecord>
 					</f:then>
 					<f:else>
 						<button class="btn btn-default btn-sm invisible pe-none">

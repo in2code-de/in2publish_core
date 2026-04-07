@@ -17,6 +17,10 @@ EMOJI_robot := "🤖️"
 EMOJI_ping_pong := "🏓"
 EMOJI_face_with_rolling_eyes := "🙄"
 
+COMPOSER_AUTH_JSON := $(shell gh auth token 2>/dev/null | sed 's/.*/{"github-oauth":{"github.com":"&"}}/' || echo '{}')
+CURRENT_BRANCH := $(shell git branch --show-current 2>/dev/null || echo develop)
+IN2PUBLISH_DEV_VERSION := dev-$(CURRENT_BRANCH)
+
 ## Show this help
 help:
 	echo "$(EMOJI_interrobang) Makefile help "
@@ -60,10 +64,6 @@ destroy: stop
 start: .link-compose-file
 	docker compose build --pull
 	docker compose up -d
-
-COMPOSER_AUTH_JSON := $(shell gh auth token 2>/dev/null | sed 's/.*/{"github-oauth":{"github.com":"&"}}/' || echo '{}')
-CURRENT_BRANCH := $(shell git branch --show-current 2>/dev/null || echo develop)
-IN2PUBLISH_DEV_VERSION := dev-$(CURRENT_BRANCH)
 
 setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	@echo "Installing in2publish_core as $(IN2PUBLISH_DEV_VERSION)"
@@ -214,14 +214,14 @@ typo3-rebuild-caches:
 ## Starts composer-update
 composer-update:
 	echo "$(EMOJI_package) updating composer dependencies"
-	docker compose exec -u app local-php composer update -W
-	docker compose exec -u app foreign-php composer update -W
+	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-local-php-1 composer u -W
+	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 composer u -W
 
 ## Starts composer-install
 composer-install:
 	echo "$(EMOJI_package) Installing composer dependencies"
-	docker compose exec -u app local-php composer install
-	docker compose exec -u app foreign-php composer install
+	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-local-php-1 composer install
+	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 composer install
 
 ## Install all phars required with phive
 .phive-install:

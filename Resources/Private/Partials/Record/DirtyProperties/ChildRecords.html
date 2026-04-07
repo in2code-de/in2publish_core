@@ -36,32 +36,27 @@
 									<publish:Link.RecordHistory class="btn btn-default btn-sm" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{relatedRecord.id}" table="{relatedRecord.classification}">
 										<core:icon identifier="actions-history"></core:icon>
 									</publish:Link.RecordHistory>
-									<f:if condition="{relatedRecord.id} > 1">
-										<f:then>
-											<be:link.editRecord class="btn btn-default btn-sm" uid="{relatedRecord.id}" table="{relatedRecord.classification}">
-												<core:icon identifier="actions-pencil"></core:icon>
-											</be:link.editRecord>
-										</f:then>
-										<f:else>
-											<button class="btn btn-default btn-sm pe-none invisible">
-												<core:icon identifier="actions-pencil"></core:icon>
-											</button>
-										</f:else>
-									</f:if>
+									<publish:Link.SafeEditRecord class="btn btn-default btn-sm" uid="{relatedRecord.id}" table="{relatedRecord.classification}">
+										<core:icon identifier="actions-pencil"></core:icon>
+									</publish:Link.SafeEditRecord>
 								</f:then>
 								<f:else>
 									<f:comment>Empty button for non-local stages to match row height</f:comment>
 									<button class="btn btn-sm invisible w-0"></button>
 								</f:else>
 							</f:if>
-							<f:if condition="{stagingLevel} == 'local'">
+							<publish:Tca.HasSchema table="{tableName}">
 								<f:then>
-									<core:iconForRecord row="{relatedRecord.localProps}" table="{tableName}"></core:iconForRecord>
+									<f:if condition="{stagingLevel} == 'local'">
+										<f:then>
+											<core:iconForRecord row="{relatedRecord.localProps}" table="{tableName}"></core:iconForRecord>
+										</f:then>
+										<f:else>
+											<core:iconForRecord row="{relatedRecord.foreignProps}" table="{tableName}"></core:iconForRecord>
+										</f:else>
+									</f:if>
 								</f:then>
-								<f:else>
-									<core:iconForRecord row="{relatedRecord.foreignProps}" table="{tableName}"></core:iconForRecord>
-								</f:else>
-							</f:if>
+							</publish:Tca.HasSchema>
 							<publish:Tca.GetLabelFieldFromRecord record="{relatedRecord}" stagingLevel="{stagingLevel}"/>
 						</td>
 					</tr>

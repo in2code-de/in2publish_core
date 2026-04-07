@@ -1,4 +1,4 @@
-base: 'https://local.v13.in2publish-core.de/styleguide_tca_demo'
+base: 'https://local.v14.in2publish-core.de/styleguide_tca_demo'
 languages:
   -
     title: English

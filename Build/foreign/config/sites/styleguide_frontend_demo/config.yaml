@@ -1,4 +1,4 @@
-base: 'https://foreign.v13.in2publish-core.de/styleguide_frontend_demo'
+base: 'https://local.v14.in2publish-core.de/styleguide_frontend_demo'
 languages:
   -
     title: English

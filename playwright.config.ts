@@ -8,8 +8,8 @@ import { defineConfig, devices } from '@playwright/test';
  * - Docker execution: Platform-independent CI/CD (docker-compose)
  *
  * Environment Variables:
- * - PLAYWRIGHT_BASE_URL: Override local instance URL (default: https://local.v13.in2publish-core.de/typo3/)
- * - PLAYWRIGHT_FOREIGN_BASE_URL: Override foreign instance URL (default: https://foreign.v13.in2publish-core.de/typo3/)
+ * - PLAYWRIGHT_BASE_URL: Override local instance URL (default: https://local.v14.in2publish.de/typo3/)
+ * - PLAYWRIGHT_FOREIGN_BASE_URL: Override foreign instance URL (default: https://foreign.v14.in2publish.de/typo3/)
  * - CI: Set to 1/true for CI mode (enables retries, enforces forbidOnly)
  *
  * Usage:
@@ -46,7 +46,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://local.v13.in2publish-core.de/typo3/',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://local.v14.in2publish.de/typo3/',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',

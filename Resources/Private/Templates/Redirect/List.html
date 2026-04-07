@@ -64,9 +64,9 @@
 								</td>
 								<td>
 									<f:if condition="!{redirect.deleted}">
-										<be:link.editRecord class="btn btn-default" table="sys_redirect" uid="{redirect.id}" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:edit')}">
+										<publish:Link.SafeEditRecord class="btn btn-default" table="sys_redirect" uid="{redirect.id}" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:edit')}">
 											<core:icon identifier="actions-open"/>
-										</be:link.editRecord>
+										</publish:Link.SafeEditRecord>
 									</f:if>
 									<f:if condition="{redirect.publishingState} != 'unchanged' && !{redirect.reasonsWhyTheRecordIsNotPublishable.empty}">
 										<f:then>

@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall;
  */
 
 use In2code\In2publishCore\CommonInjection\ResourceFactoryInjection;
+use In2code\In2publishCore\CommonInjection\StorageRepositoryInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FilesystemInformationCollection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\LocalFileInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\LocalFolderInfoServiceInjection;
@@ -43,6 +44,7 @@ use function method_exists;
 class EnvelopeDispatcher
 {
     use ResourceFactoryInjection;
+    use StorageRepositoryInjection;
     use LocalFolderInfoServiceInjection;
     use LocalFileInfoServiceInjection;
 
@@ -80,7 +82,7 @@ class EnvelopeDispatcher
 
     protected function getStorageDriver(array $request): DriverInterface
     {
-        $storage = $this->resourceFactory->getStorageObject($request['storage']);
+        $storage = $this->storageRepository->getStorageObject($request['storage']);
         if (!$storage->isOnline()) {
             throw new StorageIsOfflineException((int)$request['storage'], 4307401617);
         }

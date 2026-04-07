@@ -13,7 +13,8 @@ setup('reset environment and authenticate', async ({ page }) => {
   // page tree to fully load. After fullRestore() clears DB caches, the first
   // backend requests are slow due to cache rebuilding. Without this warmup,
   // subsequent tests timeout waiting for the page tree search to return results.
-  const moduleLink = page.locator('#modulemenu a.modulemenu-action[title="Page"]');
+  // TYPO3 v14: module menu uses menuitem elements; "Page" module is now "Layout"
+  const moduleLink = page.locator('nav[aria-label="Module Menu"] [role="menuitem"]:has-text("Layout")');
   await moduleLink.click();
   await expect(page.locator('iframe#typo3-contentIframe')).toBeVisible({ timeout: 15000 });
   await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});

@@ -115,7 +115,7 @@ class DefaultFalFinder
             } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
                 [$storage] = GeneralUtility::trimExplode(':', $combinedIdentifier);
                 $storage = (int)$storage;
-                $localStorage = $this->resourceFactory->getStorageObject($storage);
+                $localStorage = $this->storageRepository->getStorageObject($storage);
                 $folder = $localStorage->getRootLevelFolder();
             }
             $identifier = GeneralUtility::trimExplode(':', $combinedIdentifier)[1];

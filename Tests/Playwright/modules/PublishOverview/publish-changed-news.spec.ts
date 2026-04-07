@@ -27,7 +27,7 @@ test.describe('Publish Changed News', () => {
             const hasCorrectPage = await backend.contentFrame.locator('[data-record-identifier="pages-33"]').count();
             if (hasCorrectPage === 0) {
                 // Try selecting the second "News Folder" node in the page tree
-                const pageTree = page.locator('.scaffold-content-navigation-component');
+                const pageTree = page.locator('typo3-backend-content-navigation');
                 const treeItems = pageTree.locator('[role="treeitem"]').filter({ hasText: 'News Folder' });
                 const secondItem = treeItems.nth(1);
                 if (await secondItem.count() > 0) {
