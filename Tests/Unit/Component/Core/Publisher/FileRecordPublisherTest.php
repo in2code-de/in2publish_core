@@ -21,7 +21,9 @@ use In2code\In2publishCore\Tests\Unit\Component\Core\Publisher\Constraint\IsEqua
 use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function json_encode;
 use function sha1;
@@ -35,9 +37,14 @@ use function trim;
 #[CoversMethod(FileRecordPublisher::class, 'publish')]
 class FileRecordPublisherTest extends UnitTestCase
 {
-    public function __construct(private readonly \TYPO3\CMS\Core\Context\Context $context)
+    protected Context $context;
+
+    protected function setUp(): void
     {
+        parent::setUp();
+        $this->context = GeneralUtility::makeInstance(Context::class);
     }
+
     public function testCanPublishReturnsTrueForFileRecordsOnly(): void
     {
         $fileRecordPublisher = new FileRecordPublisher();

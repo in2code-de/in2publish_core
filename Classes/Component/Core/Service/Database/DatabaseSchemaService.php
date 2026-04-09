@@ -9,6 +9,8 @@ use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 
+use function is_array;
+
 class DatabaseSchemaService implements SingletonInterface
 {
     use LocalDatabaseInjection;
@@ -18,6 +20,16 @@ class DatabaseSchemaService implements SingletonInterface
     protected array $columns = [];
     protected ?array $tables = null;
     protected bool $infoChanged = false;
+
+    public function injectCache(FrontendInterface $cache): void
+    {
+        $this->cache = $cache;
+        $cacheData = $cache->get(self::CACHE_ID);
+        if (is_array($cacheData)) {
+            $this->columns = $cacheData['columns'] ?? [];
+            $this->tables = $cacheData['tables'] ?? null;
+        }
+    }
 
     public function getColumnNames(string $table): array
     {
