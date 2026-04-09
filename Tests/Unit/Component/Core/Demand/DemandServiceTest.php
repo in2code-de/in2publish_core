@@ -22,7 +22,7 @@ class DemandServiceTest extends UnitTestCase
 {
     public function testBuildDemandForRecordsReturnsContentOfResolverArray(): void
     {
-        $demandsFactory = $this->createMock(DemandsFactory::class);
+        $demandsFactory = $this->createStub(DemandsFactory::class);
         $demandsFactory->method('createDemand')->willReturn(new DemandsCollection());
 
         $demandBuilder = new DemandBuilder();
@@ -42,7 +42,7 @@ class DemandServiceTest extends UnitTestCase
             },
         ];
 
-        $resolverService = $this->createMock(ResolverService::class);
+        $resolverService = $this->createStub(ResolverService::class);
         $resolverService->method('getResolversForClassification')->willReturn($resolversForTable);
         $demandBuilder->injectResolverService($resolverService);
 
@@ -55,7 +55,7 @@ class DemandServiceTest extends UnitTestCase
 
     public function testBuildDemandForRecordsReturnsResolversOfAllRecords(): void
     {
-        $demandsFactory = $this->createMock(DemandsFactory::class);
+        $demandsFactory = $this->createStub(DemandsFactory::class);
         $demandsFactory->method('createDemand')->willReturn(new DemandsCollection());
 
         $demandBuilder = new DemandBuilder();
@@ -89,7 +89,7 @@ class DemandServiceTest extends UnitTestCase
             },
         ];
 
-        $resolverService = $this->createMock(ResolverService::class);
+        $resolverService = $this->createStub(ResolverService::class);
         $resolverService->method('getResolversForClassification')->willReturnOnConsecutiveCalls(
             $resolversForTableFoo,
             $resolversForTableBar,

@@ -25,7 +25,7 @@ class AllSitesCommandTest extends UnitTestCase
      */
     public function testCommandCanBeExecuted(): void
     {
-        $siteFinder = $this->createMock(SiteFinder::class);
+        $siteFinder = $this->createStub(SiteFinder::class);
         $site = new Site('foo', 3, ['bar' => 'bza']);
         $siteFinder->method('getAllSites')->willReturn([$site]);
 

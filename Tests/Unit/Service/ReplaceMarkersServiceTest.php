@@ -39,10 +39,7 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Service\ReplaceMarkersService
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
- */
+/** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
 #[CoversMethod(ReplaceMarkersService::class, 'replaceMarkers')]
 #[CoversMethod(ReplaceMarkersService::class, 'replacePageTsConfigMarkers')]
 #[CoversMethod(ReplaceMarkersService::class, 'replaceSiteMarker')]
@@ -54,9 +51,9 @@ class ReplaceMarkersServiceTest extends UnitTestCase
     {
         $record = $this->getRecordStub('tx_unit_test_table');
 
-        $flexFormTools = $this->createMock(FlexFormTools::class);
-        $siteFinder = $this->createMock(SiteFinder::class);
-        $connection = $this->createMock(Connection::class);
+        $flexFormTools = $this->createStub(FlexFormTools::class);
+        $siteFinder = $this->createStub(SiteFinder::class);
+        $connection = $this->createStub(Connection::class);
 
         $replaceMarkerService = new class extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
@@ -89,9 +86,9 @@ class ReplaceMarkersServiceTest extends UnitTestCase
     {
         $record = $this->getRecordStub('tx_unit_test_table');
 
-        $flexFormTools = $this->createMock(FlexFormTools::class);
-        $siteFinder = $this->createMock(SiteFinder::class);
-        $connection = $this->createMock(Connection::class);
+        $flexFormTools = $this->createStub(FlexFormTools::class);
+        $siteFinder = $this->createStub(SiteFinder::class);
+        $connection = $this->createStub(Connection::class);
 
         $replaceMarkerService = new class extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
@@ -124,8 +121,8 @@ class ReplaceMarkersServiceTest extends UnitTestCase
     {
         $record = $this->getRecordStub('tx_unit_test_table');
 
-        $flexFormTools = $this->createMock(FlexFormTools::class);
-        $siteFinder = $this->createMock(SiteFinder::class);
+        $flexFormTools = $this->createStub(FlexFormTools::class);
+        $siteFinder = $this->createStub(SiteFinder::class);
         $siteFinder->method('getSiteByPageId')->willReturn(
             new Site('test', 1, [
                 'rootPageId' => 1,
@@ -143,7 +140,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
                 'boolOption' => false,
             ]),
         );
-        $connection = $this->createMock(Connection::class);
+        $connection = $this->createStub(Connection::class);
         $connection->method('quote')->willReturnCallback(static fn(string $input): string => "'$input'");
 
         $replaceMarkerService = new ReplaceMarkersService();
@@ -170,7 +167,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             [],
         );
 
-        $localDatabase = $this->createMock(Connection::class);
+        $localDatabase = $this->createStub(Connection::class);
         $localDatabase->method('quote')->willReturnCallback(static fn(string $input): string => '"' . $input . '"');
 
         $replaceMarkerService = new ReplaceMarkersService();
@@ -195,7 +192,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             [],
         );
 
-        $localDatabase = $this->createMock(Connection::class);
+        $localDatabase = $this->createStub(Connection::class);
         $localDatabase->method('quote')->willReturnCallback(static fn(string $input): string => '"' . $input . '"');
 
         $replaceMarkerService = new ReplaceMarkersService();
@@ -223,7 +220,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             [],
         );
 
-        $localDatabase = $this->createMock(Connection::class);
+        $localDatabase = $this->createStub(Connection::class);
         $localDatabase->method('quote')->willReturnCallback(static fn(string $input): string => '"' . $input . '"');
 
         $replaceMarkerService = new ReplaceMarkersService();
@@ -252,7 +249,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             [],
         );
 
-        $localDatabase = $this->createMock(Connection::class);
+        $localDatabase = $this->createStub(Connection::class);
         $localDatabase->method('quote')->willReturnCallback(static fn(string $input): string => '"' . $input . '"');
 
         $replaceMarkerService = new ReplaceMarkersService();
@@ -290,7 +287,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         ];
         $this->initializeIn2publishConfig($config);
 
-        $record = $this->createMock(DatabaseRecord::class);
+        $record = $this->createStub(DatabaseRecord::class);
         $record->method('getClassification')->willReturn($table);
         return $record;
     }

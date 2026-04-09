@@ -26,11 +26,11 @@ class DemandsCollectionTest extends TestCase
 {
     public function testAddSelectAddsUniqueSelect(): void
     {
-        $record1 = $this->createMock(DatabaseRecord::class);
+        $record1 = $this->createStub(DatabaseRecord::class);
         $record1->method('getClassification')->willReturn('table_foo');
         $record1->method('getId')->willReturn(4);
 
-        $record2 = $this->createMock(DatabaseRecord::class);
+        $record2 = $this->createStub(DatabaseRecord::class);
         $record2->method('getClassification')->willReturn('table_bar');
         $record2->method('getId')->willReturn(5);
 
@@ -48,11 +48,11 @@ class DemandsCollectionTest extends TestCase
 
     public function testAddSelectAddsUniqueJoin(): void
     {
-        $record1 = $this->createMock(DatabaseRecord::class);
+        $record1 = $this->createStub(DatabaseRecord::class);
         $record1->method('getClassification')->willReturn('table_foo');
         $record1->method('getId')->willReturn(4);
 
-        $record2 = $this->createMock(DatabaseRecord::class);
+        $record2 = $this->createStub(DatabaseRecord::class);
         $record2->method('getClassification')->willReturn('table_bar');
         $record2->method('getId')->willReturn(5);
 
@@ -70,11 +70,11 @@ class DemandsCollectionTest extends TestCase
 
     public function testAddSelectAddsUniqueFiles(): void
     {
-        $record1 = $this->createMock(DatabaseRecord::class);
+        $record1 = $this->createStub(DatabaseRecord::class);
         $record1->method('getClassification')->willReturn('table_foo');
         $record1->method('getId')->willReturn(4);
 
-        $record2 = $this->createMock(DatabaseRecord::class);
+        $record2 = $this->createStub(DatabaseRecord::class);
         $record2->method('getClassification')->willReturn('table_bar');
         $record2->method('getId')->willReturn(5);
 
@@ -92,7 +92,7 @@ class DemandsCollectionTest extends TestCase
 
     public function testUnsetSelectRemovesEntryAndEmptyParents(): void
     {
-        $record1 = $this->createMock(DatabaseRecord::class);
+        $record1 = $this->createStub(DatabaseRecord::class);
         $record1->method('getClassification')->willReturn('table_foo');
         $record1->method('getId')->willReturn(4);
 
@@ -106,7 +106,7 @@ class DemandsCollectionTest extends TestCase
 
     public function testUnsetJoinRemovesEntryAndEmptyParents(): void
     {
-        $record1 = $this->createMock(DatabaseRecord::class);
+        $record1 = $this->createStub(DatabaseRecord::class);
         $record1->method('getClassification')->willReturn('table_foo');
         $record1->method('getId')->willReturn(4);
 

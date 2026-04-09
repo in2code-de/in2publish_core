@@ -58,7 +58,7 @@ class SelectResolverTest extends UnitTestCase
     {
         $selectResolver = new SelectResolver();
 
-        $replaceMarkersService = $this->createMock(ReplaceMarkersService::class);
+        $replaceMarkersService = $this->createStub(ReplaceMarkersService::class);
         $selectResolver->injectReplaceMarkersService($replaceMarkersService);
 
         $selectResolver->configure(

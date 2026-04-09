@@ -23,7 +23,7 @@ class MoveFileInstructionTest extends UnitTestCase
             'newFileName.txt',
         );
 
-        $falDriverService = $this->createMock(FalDriverService::class);
+        $falDriverService = $this->createStub(FalDriverService::class);
         $falDriverService->method('getDriver')->willReturn($driver);
         $instruction = new MoveFileInstruction(1, 'new_folder/oldFile.txt', 'someOtherFolder/newFileName.txt');
         $instruction->execute($falDriverService);

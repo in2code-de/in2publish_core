@@ -42,9 +42,6 @@ use function json_encode;
 use function serialize;
 use function sha1;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Service\Environment\EnvironmentService
- */
 #[CoversMethod(EnvironmentService::class, 'setTestResult')]
 #[CoversMethod(EnvironmentService::class, 'getPackagesHash')]
 #[CoversMethod(EnvironmentService::class, 'getTestStatus')]

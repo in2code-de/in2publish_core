@@ -14,11 +14,11 @@ class UniqueRecordKeyGeneratorTest extends UnitTestCase
 {
     public function testUniqueRecordKeyReturnsUniqueIdentifier(): void
     {
-        $record1 = $this->createMock(DatabaseRecord::class);
+        $record1 = $this->createStub(DatabaseRecord::class);
         $record1->method('getClassification')->willReturn('table_');
         $record1->method('getId')->willReturn(41);
 
-        $record2 = $this->createMock(DatabaseRecord::class);
+        $record2 = $this->createStub(DatabaseRecord::class);
         $record2->method('getClassification')->willReturn('table_4');
         $record2->method('getId')->willReturn(1);
 

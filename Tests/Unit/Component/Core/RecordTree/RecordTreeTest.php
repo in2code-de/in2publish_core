@@ -19,11 +19,11 @@ class RecordTreeTest extends UnitTestCase
 {
     public function testRecordTree(): void
     {
-        $record1 = $this->createMock(DatabaseRecord::class);
+        $record1 = $this->createStub(DatabaseRecord::class);
         $record1->method('getClassification')->willReturn('table_foo');
         $record1->method('getId')->willReturn(1);
 
-        $record2 = $this->createMock(DatabaseRecord::class);
+        $record2 = $this->createStub(DatabaseRecord::class);
         $record2->method('getClassification')->willReturn('table_bar');
         $record2->method('getId')->willReturn(2);
 

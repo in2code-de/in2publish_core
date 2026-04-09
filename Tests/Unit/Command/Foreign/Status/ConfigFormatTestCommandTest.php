@@ -23,7 +23,7 @@ class ConfigFormatTestCommandTest extends UnitTestCase
      */
     public function testCommandCanBeExecuted(): void
     {
-        $validationContainer = $this->createMock(ValidationContainer::class);
+        $validationContainer = $this->createStub(ValidationContainer::class);
         $validationContainer->method('getErrors')->willReturn([
             [
                 'configuration' => 'fii',
@@ -32,7 +32,7 @@ class ConfigFormatTestCommandTest extends UnitTestCase
                 'configuration' => 'faa',
             ],
         ]);
-        $configContainer = $this->createMock(ConfigContainer::class);
+        $configContainer = $this->createStub(ConfigContainer::class);
         $node = new NodeCollection();
         $configContainer->method('getForeignDefinition')->willReturn($node);
         $configContainer->method('get')->willReturn([]);

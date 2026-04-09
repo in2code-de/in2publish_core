@@ -60,11 +60,11 @@ class FileDemandResolverTest extends UnitTestCase
         $fileSystemInfoService = $this->createMock(LocalFileInfoService::class);
         $fileSystemInfoService->expects($this->once())->method('getFileInfo')->willReturn($fileInfoArray);
 
-        $foreignFileInfoService = $this->createMock(ForeignFileInfoService::class);
+        $foreignFileInfoService = $this->createStub(ForeignFileInfoService::class);
 
         $fileRecordChild1 = new FileRecord($childFile1Info->toArray(), []);
         $fileRecordChild2 = new FileRecord($childFile2Info->toArray(), []);
-        $recordFactory = $this->createMock(RecordFactory::class);
+        $recordFactory = $this->createStub(RecordFactory::class);
         $recordFactory->method('createFileRecord')->willReturnOnConsecutiveCalls(
             $fileRecordChild1,
             $fileRecordChild2,
@@ -74,7 +74,7 @@ class FileDemandResolverTest extends UnitTestCase
         $fileDemandResolver->injectForeignFileInfoService($foreignFileInfoService);
         $fileDemandResolver->injectRecordFactory($recordFactory);
 
-        $demands = $this->createMock(DemandsCollection::class);
+        $demands = $this->createStub(DemandsCollection::class);
 
         $parentFile1 = new FileRecord(['identifier' => 'file1', 'storage' => 42], []);
         $parentFile2 = new FileRecord(['identifier' => 'file2', 'storage' => 42], []);

@@ -26,7 +26,7 @@ class AddFileInstructionTest extends UnitTestCase
         $driver->expects($this->once())->method('addFile')->with('/tmp/foo.txt', 'new_folder/');
         $driver->expects($this->once())->method('fileExists')->with('new_folder/foo.txt')->willReturn(false);
 
-        $falDriverService = $this->createMock(FalDriverService::class);
+        $falDriverService = $this->createStub(FalDriverService::class);
         $falDriverService->method('getDriver')->willReturn($driver);
         register_shutdown_function(static fn() => file_exists('/tmp/foo.txt') && unlink('/tmp/foo.txt'));
         file_put_contents('/tmp/foo.txt', 'TestString');
@@ -42,7 +42,7 @@ class AddFileInstructionTest extends UnitTestCase
         $driver->expects($this->once())->method('addFile')->with('/tmp/foo.txt', 'new_folder/');
         $driver->expects($this->once())->method('fileExists')->with('new_folder/foo.txt')->willReturn(false);
 
-        $falDriverService = $this->createMock(FalDriverService::class);
+        $falDriverService = $this->createStub(FalDriverService::class);
         $falDriverService->method('getDriver')->willReturn($driver);
         register_shutdown_function(static fn() => file_exists('/tmp/foo.txt') && unlink('/tmp/foo.txt'));
         file_put_contents('/tmp/foo.txt', 'TestString');

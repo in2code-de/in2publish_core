@@ -21,7 +21,7 @@ class Typo3VersionCommandTest extends UnitTestCase
      */
     public function testCommandCanBeExecuted(): void
     {
-        $typo3Version = $this->createMock(Typo3Version::class);
+        $typo3Version = $this->createStub(Typo3Version::class);
         $typo3Version->method('getVersion')->willReturn('12.34.56');
 
         $input = new ArrayInput([]);

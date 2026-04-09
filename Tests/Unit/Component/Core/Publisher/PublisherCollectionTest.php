@@ -34,7 +34,7 @@ class PublisherCollectionTest extends UnitTestCase
         $maxPublisherCount = 64;
 
         for ($i = 1; $i < $maxPublisherCount + 1; $i++) {
-            $publisher = $this->createMock(Publisher::class);
+            $publisher = $this->createStub(Publisher::class);
             $publisherCollection->addPublisher($publisher);
             // only one assertion randomly chosen after adding 5 publishers
             if ($i === 5) {
@@ -51,9 +51,9 @@ class PublisherCollectionTest extends UnitTestCase
         $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
         $reflectionPropertyPublishers->setAccessible(true);
 
-        $standardPublisher = $this->createMock(Publisher::class);
-        $transactionalPublisher = $this->createMock(DatabaseRecordPublisher::class);
-        $finishablePublisher = $this->createMock(FinishablePublisher::class);
+        $standardPublisher = $this->createStub(Publisher::class);
+        $transactionalPublisher = $this->createStub(DatabaseRecordPublisher::class);
+        $finishablePublisher = $this->createStub(FinishablePublisher::class);
 
         $publisherCollection->addPublisher($standardPublisher);
         $publisherCollection->addPublisher($transactionalPublisher);
@@ -81,7 +81,7 @@ class PublisherCollectionTest extends UnitTestCase
         $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
         $reflectionPropertyPublishers->setAccessible(true);
 
-        $dbRecord = $this->createMock(DatabaseRecord::class);
+        $dbRecord = $this->createStub(DatabaseRecord::class);
 
         $transactionalPublisher = $this->createMock(DatabaseRecordPublisher::class);
         $transactionalPublisher->method('canPublish')->with($dbRecord)->willReturn(true);
@@ -99,7 +99,7 @@ class PublisherCollectionTest extends UnitTestCase
         $publisherCollection->addPublisher($standardPublisher);
         $publisherCollection->addPublisher($finishablePublisher);
 
-        $dbRecord = $this->createMock(DatabaseRecord::class);
+        $dbRecord = $this->createStub(DatabaseRecord::class);
 
         $publisherCollection->publish($dbRecord);
     }

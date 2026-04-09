@@ -22,7 +22,7 @@ class AllCommandTest extends UnitTestCase
      */
     public function testCommandCanBeExecuted(): void
     {
-        $commandRegistry = $this->createMock(CommandRegistry::class);
+        $commandRegistry = $this->createStub(CommandRegistry::class);
         $commandRegistry->method('getCommandByIdentifier')->willReturn(
             new class extends Command {
                 public function execute(InputInterface $input, OutputInterface $output): int

@@ -27,15 +27,15 @@ class SelectProcessorTest extends UnitTestCase
 {
     public function testSelectProcessorReturnsCompatibleResultForCompatibleColumn(): void
     {
-        $resolver = $this->createMock(SelectResolver::class);
-        $tcaEscapingMarkerService = $this->createMock(TcaEscapingMarkerService::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(SelectResolver::class);
+        $tcaEscapingMarkerService = $this->createStub(TcaEscapingMarkerService::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor($container);
         $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
 
-        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService = $this->createStub(ExcludedTablesService::class);
         $excludedTablesService->method('isExcludedTable')->willReturn(false);
         $selectProcessor->injectExcludedTablesService($excludedTablesService);
 
@@ -62,9 +62,9 @@ class SelectProcessorTest extends UnitTestCase
     public function testSelectProcessorFlagsColumnsWithForbiddenTcaAsIncompatible(array $tca): void
     {
         $tca = array_merge($tca, ['type' => 'select', 'foreign_table' => 'tableNameBeng']);
-        $selectProcessor = new SelectProcessor($this->createMock(Container::class));
+        $selectProcessor = new SelectProcessor($this->createStub(Container::class));
 
-        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService = $this->createStub(ExcludedTablesService::class);
         $excludedTablesService->method('isExcludedTable')->willReturn(false);
         $selectProcessor->injectExcludedTablesService($excludedTablesService);
 
@@ -96,15 +96,15 @@ class SelectProcessorTest extends UnitTestCase
             'rootLevel' => '',
         ];
 
-        $resolver = $this->createMock(SelectMmResolver::class);
-        $tcaEscapingMarkerService = $this->createMock(TcaEscapingMarkerService::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(SelectMmResolver::class);
+        $tcaEscapingMarkerService = $this->createStub(TcaEscapingMarkerService::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor($container);
         $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
 
-        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService = $this->createStub(ExcludedTablesService::class);
         $excludedTablesService->method('isExcludedTable')->willReturn(false);
         $selectProcessor->injectExcludedTablesService($excludedTablesService);
 
@@ -120,20 +120,20 @@ class SelectProcessorTest extends UnitTestCase
             'foreign_table' => 'tableNameBeng',
             'foreign_table_where' => ' AND fieldname = "fieldvalue"',
         ];
-        $replaceMarkerService = $this->createMock(ReplaceMarkersService::class);
+        $replaceMarkerService = $this->createStub(ReplaceMarkersService::class);
         $replaceMarkerService->method('replaceMarkers')->willReturnArgument(1);
 
-        $tcaEscapingMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $tcaEscapingMarkerService = $this->createStub(TcaEscapingMarkerService::class);
         $tcaEscapingMarkerService->method('escapeMarkedIdentifier')->willReturnArgument(0);
 
-        $resolver = $this->createMock(SelectResolver::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(SelectResolver::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor($container);
         $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
 
-        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService = $this->createStub(ExcludedTablesService::class);
         $excludedTablesService->method('isExcludedTable')->willReturn(false);
         $selectProcessor->injectExcludedTablesService($excludedTablesService);
 
@@ -157,20 +157,20 @@ class SelectProcessorTest extends UnitTestCase
                 'fieldName2' => 'fieldValue2',
             ],
         ];
-        $replaceMarkerService = $this->createMock(ReplaceMarkersService::class);
+        $replaceMarkerService = $this->createStub(ReplaceMarkersService::class);
         $replaceMarkerService->method('replaceMarkers')->willReturnArgument(1);
 
-        $tcaEscapingMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $tcaEscapingMarkerService = $this->createStub(TcaEscapingMarkerService::class);
         $tcaEscapingMarkerService->method('escapeMarkedIdentifier')->willReturnArgument(0);
 
-        $resolver = $this->createMock(SelectMmResolver::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(SelectMmResolver::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor($container);
         $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
 
-        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService = $this->createStub(ExcludedTablesService::class);
         $excludedTablesService->method('isExcludedTable')->willReturn(false);
         $selectProcessor->injectExcludedTablesService($excludedTablesService);
 
@@ -185,7 +185,7 @@ class SelectProcessorTest extends UnitTestCase
     #[DataProvider('isSysCategoryFieldDataProvider')]
     public function testIsSysCategoryField($config, $expectation): void
     {
-        $selectProcessor = new SelectProcessor($this->createMock(Container::class));
+        $selectProcessor = new SelectProcessor($this->createStub(Container::class));
         // access protected method isSysCategoryField()
         $reflectionMethod = new ReflectionMethod(SelectProcessor::class, 'isSysCategoryField');
         $reflectionMethod->setAccessible(true);

@@ -81,7 +81,7 @@ class ContextServiceTest extends UnitTestCase
 
         $environmentReflection = new ReflectionProperty(Environment::class, 'context');
         $environmentReflection->setAccessible(true);
-        $environmentReflection->setValue(Environment::class, $applicationContext);
+        $environmentReflection->setValue(null, $applicationContext);
     }
 
     public function testDefaultContextIsForeign(): void

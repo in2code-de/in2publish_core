@@ -8,12 +8,14 @@ use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractPro
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\Exception\MissingPreProcessorTypeException;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
 use ReflectionMethod;
 use ReflectionProperty;
 
+#[AllowMockObjectsWithoutExpectations]
 #[CoversMethod(AbstractProcessor::class, 'process')]
 #[CoversMethod(AbstractProcessor::class, 'buildResolver')]
 #[CoversMethod(AbstractProcessor::class, 'getImportantFields')]
@@ -118,7 +120,7 @@ class AbstractProcessorTest extends UnitTestCase
 
     protected function getMockAbstractProcessorWithJoinResolver(): MockObject
     {
-        $container = $this->createMock(ContainerInterface::class);
+        $container = $this->createStub(ContainerInterface::class);
 
         $abstractProcessor = $this->getMockBuilder(AbstractProcessor::class)
                                   ->onlyMethods(['buildResolver'])
@@ -126,14 +128,14 @@ class AbstractProcessorTest extends UnitTestCase
                                   ->getMock();
 
         $abstractProcessor->method('buildResolver')
-                          ->willReturn($this->createMock(StaticJoinResolver::class));
+                          ->willReturn($this->createStub(StaticJoinResolver::class));
 
         return $abstractProcessor;
     }
 
     protected function getMockAbstractProcessor(): MockObject
     {
-        $container = $this->createMock(ContainerInterface::class);
+        $container = $this->createStub(ContainerInterface::class);
 
         $abstractProcessor = $this->getMockBuilder(AbstractProcessor::class)
                                   ->onlyMethods(['buildResolver'])

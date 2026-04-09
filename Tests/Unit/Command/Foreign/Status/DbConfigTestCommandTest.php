@@ -23,7 +23,7 @@ class DbConfigTestCommandTest extends UnitTestCase
      */
     public function testCommandCanBeExecuted(): void
     {
-        $query = $this->createMock(Result::class);
+        $query = $this->createStub(Result::class);
         $query->method('fetchAllAssociative')->willReturn([
             [
                 'configuration' => 'fii',
@@ -33,10 +33,10 @@ class DbConfigTestCommandTest extends UnitTestCase
             ],
         ]);
 
-        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $queryBuilder = $this->createStub(QueryBuilder::class);
         $queryBuilder->method('executeQuery')->willReturn($query);
 
-        $connection = $this->createMock(Connection::class);
+        $connection = $this->createStub(Connection::class);
         $connection->method('createQueryBuilder')->willReturn($queryBuilder);
 
         $input = new ArrayInput([]);

@@ -11,9 +11,6 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\ExtNewsRelatedProcessor
- */
 #[CoversMethod(ExtNewsRelatedProcessor::class, 'process')]
 #[CoversMethod(ExtNewsRelatedProcessor::class, 'buildResolver')]
 #[CoversMethod(ExtNewsRelatedProcessor::class, 'getTable')]
@@ -35,7 +32,7 @@ class ExtNewsRelatedProcessorTest extends UnitTestCase
         $container->expects($this->once())->method('get')->willReturn($staticJoinResolver);
 
         $extRelatedProcessor = new ExtNewsRelatedProcessor($container);
-        $excludedTablesService = $this->createMock(ExcludedTablesService::class);
+        $excludedTablesService = $this->createStub(ExcludedTablesService::class);
         $excludedTablesService->method('isExcludedTable')->willReturn(false);
         $extRelatedProcessor->injectExcludedTablesService($excludedTablesService);
 
@@ -45,13 +42,13 @@ class ExtNewsRelatedProcessorTest extends UnitTestCase
 
     public function testGetTable(): void
     {
-        $extRelatedProcessor = new ExtNewsRelatedProcessor($this->createMock(ContainerInterface::class));
+        $extRelatedProcessor = new ExtNewsRelatedProcessor($this->createStub(ContainerInterface::class));
         $this->assertSame('tx_news_domain_model_news', $extRelatedProcessor->getTable());
     }
 
     public function testGetColumn(): void
     {
-        $extRelatedProcessor = new ExtNewsRelatedProcessor($this->createMock(ContainerInterface::class));
+        $extRelatedProcessor = new ExtNewsRelatedProcessor($this->createStub(ContainerInterface::class));
         $this->assertSame('related', $extRelatedProcessor->getColumn());
     }
 }

@@ -18,7 +18,7 @@ class DeleteFileInstructionTest extends UnitTestCase
         $driver = $this->createMock(LocalDriver::class);
         $driver->expects($this->once())->method('deleteFile')->with('new_folder/foo.txt');
 
-        $falDriverService = $this->createMock(FalDriverService::class);
+        $falDriverService = $this->createStub(FalDriverService::class);
         $falDriverService->method('getDriver')->willReturn($driver);
         $instruction = new DeleteFileInstruction(1, 'new_folder/foo.txt');
         $instruction->execute($falDriverService);

@@ -27,7 +27,7 @@ class TextResolverTest extends UnitTestCase
     public function testResolverFindsFileRelations(): void
     {
         $textResolver = new TextResolver();
-        $eventDispatcher = $this->createMock(EventDispatcher::class);
+        $eventDispatcher = $this->createStub(EventDispatcher::class);
         $textResolver->injectEventDispatcher($eventDispatcher);
         $textResolver->configure('header_link');
         $demands = new DemandsCollection();

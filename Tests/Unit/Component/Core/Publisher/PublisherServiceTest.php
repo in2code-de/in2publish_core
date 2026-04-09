@@ -21,9 +21,6 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\PublisherService
- */
 #[CoversMethod(PublisherService::class, 'publish')]
 #[CoversMethod(PublisherService::class, 'publishRecordTree')]
 #[CoversMethod(PublisherService::class, 'publishRecord')]
@@ -33,8 +30,8 @@ class PublisherServiceTest extends UnitTestCase
     public function testPublishRecordTreePublishesAllButUnchangedRecordsInTree(): void
     {
         $publisherService = new PublisherService();
-        $publisherService->injectEventDispatcher($this->createMock(EventDispatcher::class));
-        $publisherService->injectTaskExecutionService($this->createMock(TaskExecutionService::class));
+        $publisherService->injectEventDispatcher($this->createStub(EventDispatcher::class));
+        $publisherService->injectTaskExecutionService($this->createStub(TaskExecutionService::class));
         $databaseRecordPublisher = $this->createMock(DatabaseRecordPublisher::class);
         $databaseRecordPublisher->method('canPublish')->willReturn(true);
 
@@ -51,8 +48,8 @@ class PublisherServiceTest extends UnitTestCase
     public function testPublishRecordTreePublishesChildRecordsWithoutPages(): void
     {
         $publisherService = new PublisherService();
-        $publisherService->injectEventDispatcher($this->createMock(EventDispatcher::class));
-        $publisherService->injectTaskExecutionService($this->createMock(TaskExecutionService::class));
+        $publisherService->injectEventDispatcher($this->createStub(EventDispatcher::class));
+        $publisherService->injectTaskExecutionService($this->createStub(TaskExecutionService::class));
         $databaseRecordPublisher = $this->createMock(DatabaseRecordPublisher::class);
         $databaseRecordPublisher->method('canPublish')->willReturn(true);
 
@@ -69,8 +66,8 @@ class PublisherServiceTest extends UnitTestCase
     public function testCancelIsCalledWhenExceptionIsThrownDuringPublishing(): void
     {
         $publisherService = new PublisherService();
-        $publisherService->injectEventDispatcher($this->createMock(EventDispatcher::class));
-        $publisherService->injectTaskExecutionService($this->createMock(TaskExecutionService::class));
+        $publisherService->injectEventDispatcher($this->createStub(EventDispatcher::class));
+        $publisherService->injectTaskExecutionService($this->createStub(TaskExecutionService::class));
         $databaseRecordPublisher = $this->createMock(DatabaseRecordPublisher::class);
         $databaseRecordPublisher->method('canPublish')->willReturn(true);
         $databaseRecordPublisher->method('publish')->willThrowException(new Exception());
@@ -87,14 +84,14 @@ class PublisherServiceTest extends UnitTestCase
     public function testCancelAndReverseAreCalledWhenExceptionIsThrownDuringFinish(): void
     {
         $publisherService = new PublisherService();
-        $publisherService->injectEventDispatcher($this->createMock(EventDispatcher::class));
-        $publisherService->injectTaskExecutionService($this->createMock(TaskExecutionService::class));
-        $recordTree = $this->createMock(RecordTree::class);
+        $publisherService->injectEventDispatcher($this->createStub(EventDispatcher::class));
+        $publisherService->injectTaskExecutionService($this->createStub(TaskExecutionService::class));
+        $recordTree = $this->createStub(RecordTree::class);
         $file = $this->createFileRecord('file1');
         $recordTree->method('getChildren')->willReturn([$file]);
 
-        $fileRecordPublisher = $this->createMock(FileRecordPublisher::class);
-        $fileRecordPublisher->method('canPublish')->with($file)->willReturn(true);
+        $fileRecordPublisher = $this->createStub(FileRecordPublisher::class);
+        $fileRecordPublisher->method('canPublish')->willReturn(true);
         $fileRecordPublisher->method('finish')->willThrowException(new Exception('TestException'));
         $publisherService->addPublisher($fileRecordPublisher);
 
@@ -124,7 +121,7 @@ class PublisherServiceTest extends UnitTestCase
         string $table = 'tablename',
         string $state = 'added'
     ): DatabaseRecord {
-        $record = $this->createMock(DatabaseRecord::class);
+        $record = $this->createStub(DatabaseRecord::class);
         $record->method('getLocalProps')->willReturn(['foo' => 'bar']);
         $record->method('getId')->willReturn($uid);
         $record->method('getClassification')->willReturn($table);
@@ -138,7 +135,7 @@ class PublisherServiceTest extends UnitTestCase
 
     protected function createFileRecord(string $identifier, int $storage = 1): FileRecord
     {
-        $record = $this->createMock(FileRecord::class);
+        $record = $this->createStub(FileRecord::class);
         $record->method('getProp')->with('storage')->willReturn($storage);
         $record->method('getProp')->with('identifier')->willReturn($identifier);
         return $record;
@@ -147,7 +144,7 @@ class PublisherServiceTest extends UnitTestCase
     // RT with 3 DatabaseRecords, one of them unchanged
     protected function getRecordTree1(): RecordTree
     {
-        $recordTree = $this->createMock(RecordTree::class);
+        $recordTree = $this->createStub(RecordTree::class);
         $recordTree->method('getChildren')->willReturn([
             [
                 $this->createDatabaseRecord(1, 'tablename', 'added'),
@@ -161,7 +158,7 @@ class PublisherServiceTest extends UnitTestCase
     // RT 1 DatabaseRecord with two child DatabaseRecords, one of them with classification 'pages'
     protected function getRecordTree2(): RecordTree
     {
-        $recordTree = $this->createMock(RecordTree::class);
+        $recordTree = $this->createStub(RecordTree::class);
 
         $record1 = $this->createDatabaseRecord(1, 'tablename', 'added');
         $record2 = $this->createDatabaseRecord(2, 'tablename', 'added');

@@ -18,7 +18,7 @@ class AddFolderInstructionTest extends UnitTestCase
         $driver = $this->createMock(LocalDriver::class);
         $driver->expects($this->once())->method('createFolder')->with('new_folder', '.', true);
 
-        $falDriverService = $this->createMock(FalDriverService::class);
+        $falDriverService = $this->createStub(FalDriverService::class);
         $falDriverService->method('getDriver')->willReturn($driver);
         $instruction = new AddFolderInstruction(1, 'new_folder');
         $instruction->execute($falDriverService);

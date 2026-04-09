@@ -22,15 +22,15 @@ class ExecuteCommandTest extends UnitTestCase
      */
     public function testCommandCanBeExecuted(): void
     {
-        $contextService = $this->createMock(ContextService::class);
+        $contextService = $this->createStub(ContextService::class);
         $contextService->method('isForeign')->willReturn(true);
 
         $envelope = new Envelope('foo far');
 
-        $letterbox = $this->createMock(Letterbox::class);
+        $letterbox = $this->createStub(Letterbox::class);
         $letterbox->method('receiveEnvelope')->willReturn($envelope);
 
-        $envelopeDispatcher = $this->createMock(EnvelopeDispatcher::class);
+        $envelopeDispatcher = $this->createStub(EnvelopeDispatcher::class);
         $envelopeDispatcher->method('dispatch')->willReturn(true);
 
         $input = new ArrayInput(['uid' => '16']);
@@ -40,7 +40,7 @@ class ExecuteCommandTest extends UnitTestCase
         $command = new ExecuteCommand($envelopeDispatcher);
         $command->injectContextService($contextService);
         $command->injectLetterbox($letterbox);
-        $command->setLogger($this->createMock(\Psr\Log\LoggerInterface::class));
+        $command->setLogger($this->createStub(\Psr\Log\LoggerInterface::class));
 
         $code = $command->run($input, $output);
 

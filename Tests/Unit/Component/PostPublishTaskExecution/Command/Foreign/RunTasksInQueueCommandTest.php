@@ -20,10 +20,10 @@ class RunTasksInQueueCommandTest extends UnitTestCase
      */
     public function testCommandCanBeExecuted(): void
     {
-        $contextService = $this->createMock(ContextService::class);
+        $contextService = $this->createStub(ContextService::class);
         $contextService->method('isForeign')->willReturn(true);
 
-        $taskRepository = $this->createMock(TaskRepository::class);
+        $taskRepository = $this->createStub(TaskRepository::class);
         $taskRepository->method('findByExecutionBegin')->willReturn([]);
 
         $input = new ArrayInput([]);

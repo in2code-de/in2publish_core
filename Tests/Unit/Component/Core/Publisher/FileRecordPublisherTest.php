@@ -14,6 +14,7 @@ use In2code\In2publishCore\Component\Core\Publisher\Instruction\ReplaceFileInstr
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
@@ -49,13 +50,13 @@ class FileRecordPublisherTest extends UnitTestCase
     {
         $fileRecordPublisher = new FileRecordPublisher();
 
-        $fileRecord = $this->createMock(FileRecord::class);
+        $fileRecord = $this->createStub(FileRecord::class);
         $this->assertTrue($fileRecordPublisher->canPublish($fileRecord));
 
-        $folderRecord = $this->createMock(FolderRecord::class);
+        $folderRecord = $this->createStub(FolderRecord::class);
         $this->assertFalse($fileRecordPublisher->canPublish($folderRecord));
 
-        $databaseRecord = $this->createMock(DatabaseRecord::class);
+        $databaseRecord = $this->createStub(DatabaseRecord::class);
         $this->assertFalse($fileRecordPublisher->canPublish($databaseRecord));
     }
 
@@ -122,7 +123,7 @@ class FileRecordPublisherTest extends UnitTestCase
     {
         $fileRecordPublisher = $this->createFileRecordPublisher();
 
-        $assetTransmitter = $this->createMock(AssetTransmitter::class);
+        $assetTransmitter = $this->createStub(AssetTransmitter::class);
         $fileRecordPublisher->injectAssetTransmitter($assetTransmitter);
 
         $changedFile = new FileRecord(
@@ -265,14 +266,19 @@ class FileRecordPublisherTest extends UnitTestCase
 
     protected function createFileRecordPublisher(string $temporaryFileIdentifier = '_undefined_'): FileRecordPublisher
     {
-        $fileRecordPublisher = $this->createPartialMock(FileRecordPublisher::class, ['transmitTemporaryFile']);
-        $remoteCommandResponse = $this->createMock(RemoteCommandResponse::class);
+        $fileRecordPublisher = new class($temporaryFileIdentifier) extends FileRecordPublisher {
+            public function __construct(private readonly string $tmpFile) {}
+
+            protected function transmitTemporaryFile(Record $record): string
+            {
+                return $this->tmpFile;
+            }
+        };
+        $remoteCommandResponse = $this->createStub(RemoteCommandResponse::class);
         $remoteCommandResponse->method('isSuccessful')->willReturn(true);
-        $remoteCommandDispatcher = $this->createMock(RemoteCommandDispatcher::class);
+        $remoteCommandDispatcher = $this->createStub(RemoteCommandDispatcher::class);
         $remoteCommandDispatcher->method('dispatch')->willReturn($remoteCommandResponse);
         $fileRecordPublisher->injectRemoteCommandDispatcher($remoteCommandDispatcher);
-
-        $fileRecordPublisher->method('transmitTemporaryFile')->willReturn($temporaryFileIdentifier);
 
         return $fileRecordPublisher;
     }

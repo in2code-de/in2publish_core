@@ -192,7 +192,7 @@ class AbstractDatabaseRecordTest extends UnitTestCase
 
         $this->fulfillDependencies($testRecord, $recordCollection);
 
-        $eventDispatcherMock = $this->createMock(EventDispatcher::class);
+        $eventDispatcherMock = $this->createStub(EventDispatcher::class);
         $eventDispatcherMock->method('dispatch')->willReturnCallback(
             static function (CollectReasonsWhyTheRecordIsNotPublishable $event): CollectReasonsWhyTheRecordIsNotPublishable {
                 return $event;
@@ -224,7 +224,7 @@ class AbstractDatabaseRecordTest extends UnitTestCase
 
         $this->fulfillDependencies($testRecord, $recordCollection);
 
-        $eventDispatcherMock = $this->createMock(EventDispatcher::class);
+        $eventDispatcherMock = $this->createStub(EventDispatcher::class);
         $eventDispatcherMock->method('dispatch')->willReturnCallback(
             static function (CollectReasonsWhyTheRecordIsNotPublishable $event): CollectReasonsWhyTheRecordIsNotPublishable {
                 return $event;
@@ -247,7 +247,7 @@ class AbstractDatabaseRecordTest extends UnitTestCase
 
         $this->fulfillDependencies($testRecord, $recordCollection);
 
-        $eventDispatcherMock = $this->createMock(EventDispatcher::class);
+        $eventDispatcherMock = $this->createStub(EventDispatcher::class);
         $eventDispatcherMock->method('dispatch')->willReturnCallback(
             static function (CollectReasonsWhyTheRecordIsNotPublishable $event): CollectReasonsWhyTheRecordIsNotPublishable {
                 return $event;
@@ -273,7 +273,7 @@ class AbstractDatabaseRecordTest extends UnitTestCase
 
         $this->fulfillDependencies($testRecord, $recordCollection);
 
-        $eventDispatcherMock = $this->createMock(EventDispatcher::class);
+        $eventDispatcherMock = $this->createStub(EventDispatcher::class);
         $eventDispatcherMock->method('dispatch')->willReturnCallback(
             static function (CollectReasonsWhyTheRecordIsNotPublishable $event): CollectReasonsWhyTheRecordIsNotPublishable {
                 $event->addReason(new Reason('foo'));
@@ -311,7 +311,7 @@ class AbstractDatabaseRecordTest extends UnitTestCase
 
         $this->fulfillDependencies($testRecord, $recordCollection);
 
-        $eventDispatcherMock = $this->createMock(EventDispatcher::class);
+        $eventDispatcherMock = $this->createStub(EventDispatcher::class);
         $eventDispatcherMock->method('dispatch')->willReturnCallback(
             static function (CollectReasonsWhyTheRecordIsNotPublishable $event): CollectReasonsWhyTheRecordIsNotPublishable {
                 return $event;
@@ -319,7 +319,7 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         );
         GeneralUtility::setSingletonInstance(EventDispatcherInterface::class, $eventDispatcherMock);
 
-        $backendUserMock = $this->createMock(BackendUserAuthentication::class);
+        $backendUserMock = $this->createStub(BackendUserAuthentication::class);
         $backendUserMock->method('isAdmin')->willReturn(false);
         $backendUserMock->method('checkLanguageAccess')->willReturn(false);
 

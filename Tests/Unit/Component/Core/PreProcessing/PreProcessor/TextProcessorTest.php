@@ -22,8 +22,8 @@ class TextProcessorTest extends UnitTestCase
 {
     public function testTextProcessorReturnsResolverForTextColumnWithEnableRichtext(): void
     {
-        $resolver = $this->createMock(TextResolver::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(TextResolver::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $textProcessor = new TextProcessor($container);
@@ -43,8 +43,8 @@ class TextProcessorTest extends UnitTestCase
     #[Depends('testTextProcessorReturnsResolverForTextColumnWithEnableRichtext')]
     public function testTextProcessorClosureResolvesDemandForTypo3PageUrns(): void
     {
-        $resolver = $this->createMock(TextResolver::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(TextResolver::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $textProcessor = new TextProcessor($container);
@@ -53,7 +53,7 @@ class TextProcessorTest extends UnitTestCase
             'enableRichtext' => true,
         ]);
 
-        $databaseRecord = $this->createMock(DatabaseRecord::class);
+        $databaseRecord = $this->createStub(DatabaseRecord::class);
         $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
         $databaseRecord->method('getId')->willReturn(1);
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala \'t3://page?uid=14\' fofofo']);
@@ -70,8 +70,8 @@ class TextProcessorTest extends UnitTestCase
     #[Depends('testTextProcessorReturnsResolverForTextColumnWithEnableRichtext')]
     public function testTextProcessorClosureResolvesDemandForTypo3FileUrns(): void
     {
-        $resolver = $this->createMock(TextResolver::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(TextResolver::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $textProcessor = new TextProcessor($container);
@@ -80,7 +80,7 @@ class TextProcessorTest extends UnitTestCase
             'enableRichtext' => true,
         ]);
 
-        $databaseRecord = $this->createMock(DatabaseRecord::class);
+        $databaseRecord = $this->createStub(DatabaseRecord::class);
         $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
         $databaseRecord->method('getId')->willReturn(1);
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala t3://file?uid=14 fofofo']);
@@ -95,8 +95,8 @@ class TextProcessorTest extends UnitTestCase
     #[Depends('testTextProcessorReturnsResolverForTextColumnWithEnableRichtext')]
     public function testTextProcessorClosureResolvesEmptyDemandWhenNoTextContainsNoValidUrl(): void
     {
-        $resolver = $this->createMock(TextResolver::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(TextResolver::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $textProcessor = new TextProcessor($container);
@@ -105,7 +105,7 @@ class TextProcessorTest extends UnitTestCase
             'enableRichtext' => true,
         ]);
 
-        $databaseRecord = $this->createMock(DatabaseRecord::class);
+        $databaseRecord = $this->createStub(DatabaseRecord::class);
         $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
         $databaseRecord->method('getId')->willReturn(1);
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalalat3://file?uid=14 fofofo']);
@@ -120,8 +120,8 @@ class TextProcessorTest extends UnitTestCase
     #[Depends('testTextProcessorReturnsResolverForTextColumnWithEnableRichtext')]
     public function testTextProcessorClosureResolvesDemandForDifferentLocalAndForeignValues(): void
     {
-        $resolver = $this->createMock(TextResolver::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(TextResolver::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $textProcessor = new TextProcessor($container);
@@ -130,7 +130,7 @@ class TextProcessorTest extends UnitTestCase
             'enableRichtext' => true,
         ]);
 
-        $databaseRecord = $this->createMock(DatabaseRecord::class);
+        $databaseRecord = $this->createStub(DatabaseRecord::class);
         $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
         $databaseRecord->method('getId')->willReturn(1);
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala t3://page?uid=14 fofofo']);
@@ -144,8 +144,8 @@ class TextProcessorTest extends UnitTestCase
 
     public function testTextProcessorReturnsIncompatibleResultWhenRichtextFieldIsMissing(): void
     {
-        $resolver = $this->createMock(TextResolver::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(TextResolver::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $textProcessor = new TextProcessor($container);
@@ -158,8 +158,8 @@ class TextProcessorTest extends UnitTestCase
 
     public function testTextProcessorReturnsIncompatibleResultWhenRichtextFieldIsFalse(): void
     {
-        $resolver = $this->createMock(TextResolver::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(TextResolver::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $textProcessor = new TextProcessor($container);

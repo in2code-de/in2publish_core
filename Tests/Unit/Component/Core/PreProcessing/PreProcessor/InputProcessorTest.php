@@ -15,8 +15,8 @@ class InputProcessorTest extends UnitTestCase
 {
     public function testInputProcessorProcessesFieldsWithTypolinkSoftref(): void
     {
-        $resolver = $this->createMock(TextResolver::class);
-        $container = $this->createMock(Container::class);
+        $resolver = $this->createStub(TextResolver::class);
+        $container = $this->createStub(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $inputProcessor = new InputProcessor($container);
@@ -30,7 +30,7 @@ class InputProcessorTest extends UnitTestCase
 
     public function testInputProcessorIgnoresFieldsWithoutSupportedSoftref(): void
     {
-        $inputProcessor = new InputProcessor($this->createMock(Container::class));
+        $inputProcessor = new InputProcessor($this->createStub(Container::class));
         $processingResult = $inputProcessor->process(
             'tableNameFoo',
             'fieldNameBar',
@@ -45,7 +45,7 @@ class InputProcessorTest extends UnitTestCase
 
     public function testInputProcessorIgnoresFieldsWithoutSoftref(): void
     {
-        $inputProcessor = new InputProcessor($this->createMock(Container::class));
+        $inputProcessor = new InputProcessor($this->createStub(Container::class));
         $processingResult = $inputProcessor->process('tableNameFoo', 'fieldNameBar', []);
         $this->assertFalse($processingResult->isCompatible());
     }

@@ -15,7 +15,7 @@ class DemandsFactoryTest extends TestCase
 {
     public function testBuildDemandReturnsDemandCollection(): void
     {
-        $configContainer = $this->createMock(ConfigContainer::class);
+        $configContainer = $this->createStub(ConfigContainer::class);
         $demandFactory = new DemandsFactory();
         $demandFactory->injectConfigContainer($configContainer);
         $this->assertInstanceOf(DemandsCollection::class, $demandFactory->createDemand());

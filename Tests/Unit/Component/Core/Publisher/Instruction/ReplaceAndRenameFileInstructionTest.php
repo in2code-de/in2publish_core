@@ -19,7 +19,7 @@ class ReplaceAndRenameFileInstructionTest extends UnitTestCase
         $driver->expects($this->once())->method('renameFile')->with('new_folder/oldFile.txt', 'newFileName.txt');
         $driver->expects($this->once())->method('replaceFile')->with('new_folder/newFileName.txt', '/tmp/foo.txt');
 
-        $falDriverService = $this->createMock(FalDriverService::class);
+        $falDriverService = $this->createStub(FalDriverService::class);
         $falDriverService->method('getDriver')->willReturn($driver);
         $instruction = new ReplaceAndRenameFileInstruction(
             1,

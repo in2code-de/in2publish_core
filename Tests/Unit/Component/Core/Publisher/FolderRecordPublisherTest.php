@@ -40,13 +40,13 @@ class FolderRecordPublisherTest extends UnitTestCase
     {
         $folderRecordPublisher = new FolderRecordPublisher();
 
-        $folderRecord = $this->createMock(FolderRecord::class);
+        $folderRecord = $this->createStub(FolderRecord::class);
         $this->assertTrue($folderRecordPublisher->canPublish($folderRecord));
 
-        $fileRecord = $this->createMock(FileRecord::class);
+        $fileRecord = $this->createStub(FileRecord::class);
         $this->assertFalse($folderRecordPublisher->canPublish($fileRecord));
 
-        $databaseRecord = $this->createMock(DatabaseRecord::class);
+        $databaseRecord = $this->createStub(DatabaseRecord::class);
         $this->assertFalse($folderRecordPublisher->canPublish($databaseRecord));
     }
 
@@ -114,9 +114,9 @@ class FolderRecordPublisherTest extends UnitTestCase
     public function createFolderRecordPublisher(): FolderRecordPublisher
     {
         $folderRecordPublisher = new FolderRecordPublisher();
-        $remoteCommandResponse = $this->createMock(RemoteCommandResponse::class);
+        $remoteCommandResponse = $this->createStub(RemoteCommandResponse::class);
         $remoteCommandResponse->method('isSuccessful')->willReturn(true);
-        $remoteCommandDispatcher = $this->createMock(RemoteCommandDispatcher::class);
+        $remoteCommandDispatcher = $this->createStub(RemoteCommandDispatcher::class);
         $remoteCommandDispatcher->method('dispatch')->willReturn($remoteCommandResponse);
         $folderRecordPublisher->injectRemoteCommandDispatcher($remoteCommandDispatcher);
         return $folderRecordPublisher;
