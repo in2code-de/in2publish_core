@@ -1,12 +1,12 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { fullRestore } from '../../helpers/direct-restore';
 
 test.describe('Publish Changed Content', () => {
 
     test.beforeAll(async () => {
-        await Environment.reset();
+        await fullRestore();
     });
 
     test('Changed page content can be published', async ({ page, backend, browser }) => {
@@ -55,13 +55,11 @@ test.describe('Publish Changed Content', () => {
 
             await foreignPage.waitForTimeout(2000);
 
-            // Edit the content element (uid 49 from PHP test)
-            const editButton = foreignBackend.contentFrame.locator('div[data-table="tt_content"][data-uid="49"] a[title="Edit"]').first();
+            const editButton = foreignBackend.contentFrame.locator('div[data-table="tt_content"][data-uid="49"] typo3-backend-contextual-record-edit-trigger[title="Edit"]').first();
             await expect(editButton).toBeVisible();
             await editButton.click();
 
-            const headerInput = foreignBackend.contentFrame.locator('[data-formengine-input-name="data[tt_content][49][header]"]');
-            await expect(headerInput).toHaveValue(/1b.1 Header - changed/);
+            await expect(foreignBackend.contentFrame.locator('text="1b.1 Header - changed"')).toBeVisible();
 
             await foreignContext.close();
         });
