@@ -40,7 +40,7 @@
 		"co-stack/mysql-loader": "@dev",
 		"co-stack/process-manager": "@dev",
 		"georgringer/news": "^14.0",
-		"helhum/typo3-console": "^8.2",
+		"helhum/typo3-console": "^8.3",
 		"in2code/in2publish_core": "dev-develop-v14",
 		"typo3/cms-adminpanel": "^14.2",
 		"typo3/cms-backend": "^14.2",
