@@ -110,9 +110,9 @@ restore: mysql-restore fileadmin-restore
 ## Restores the database from the dump files in SQLDUMPSDIR
 mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
-	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/
+	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/$(SQLDUMPSDIR)/local/
 	echo "$(EMOJI_robot) Restoring the foreign database"
-	docker compose exec local-php vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/
+	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/$(SQLDUMPSDIR)/foreign/
 
 
 ## Restores the fileadmin from .project/data/fileadmin
@@ -125,17 +125,6 @@ fileadmin-restore:
 workflow-ready:
 	echo "$(EMOJI_robot) Setting workflow states to 'Ready to Publish'"
 	docker compose exec -T mysql mysql -uroot -proot local -e "UPDATE tx_in2publish_workflow_state SET state_identifier = 1"
-
-## Create dumps of local and foreign database in dir .project/data/dumps
-dump-dbs: dump-local-database dump-foreign-database
-
-dump-local-database: .mysql-wait
-	echo "$(EMOJI_robot) Dumping the local database"
-	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/.project/data/dumps/local/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
-
-dump-foreign-database: .mysql-wait
-	echo "$(EMOJI_robot) Dumping the foreign database"
-	docker compose exec local-php vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/.project/data/dumps/foreign/ -xcache_ -xindex_ -xtx_styleguide_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
 
 unit:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml
@@ -166,13 +155,21 @@ acceptance-test:
 playwright: restore typo3-clearcache
 	docker compose exec -e CI=1 playwright npx playwright test $(FILE)
 
-## Open Playwright UI mode (http://localhost:9323). Use FILE= to filter tests.
-playwright-ui:
-	docker compose exec --service-ports playwright npx playwright test --ui --ui-host=0.0.0.0 --ui-port=9323 $(FILE)
+## Open Playwright UI mode (http://localhost:${PLAYWRIGHT_UI_PORT}). Use FILE= to filter tests.
+playwright-ui: restore typo3-clearcache
+	@echo "$(EMOJI_robot) Starting Playwright UI at http://localhost:$(PLAYWRIGHT_UI_PORT)"
+	@echo "Press Ctrl+C to stop"
+	docker compose stop playwright
+	docker compose run --rm --service-ports playwright npx playwright test --ui --ui-host=0.0.0.0 --ui-port=9323 $(FILE)
+	docker compose start playwright
 
-## Show the last Playwright HTML report (http://localhost:9323)
+## Show the last Playwright HTML report (http://localhost:${PLAYWRIGHT_UI_PORT})
 playwright-report:
-	docker compose exec --service-ports playwright npx playwright show-report --host=0.0.0.0 --port=9323
+	@echo "$(EMOJI_robot) Serving Playwright report at http://localhost:$(PLAYWRIGHT_UI_PORT)"
+	@echo "Press Ctrl+C to stop"
+	docker compose stop playwright
+	docker compose run --rm --service-ports playwright npx playwright show-report --host=0.0.0.0 --port=9323
+	docker compose start playwright
 
 setup-qa:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm phive install
@@ -210,6 +207,13 @@ typo3-rebuild-caches:
 	rm -rf Build/foreign/var/cache/code/
 	echo "$(EMOJI_hot_face) rebuilding DI cache on foreign"
 	docker compose exec foreign-php ./vendor/bin/typo3 help > /dev/null
+
+## Starts the TYPO3 Databasecompare
+typo3-comparedb:
+	echo "$(EMOJI_leftright) Running database:updateschema"
+	docker compose exec -u app local-php ./vendor/bin/typo3 database:updateschema --no-interaction;
+	docker compose exec -u app foreign-php ./vendor/bin/typo3 database:updateschema --no-interaction;
+
 
 ## Starts composer-update
 composer-update:
