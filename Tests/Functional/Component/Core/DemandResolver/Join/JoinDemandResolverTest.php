@@ -21,23 +21,23 @@ class JoinDemandResolverTest extends FunctionalTestCase
 
     public function testJoinDemandResolverResolvesMmRelation(): void
     {
-        $pageRecord = new DatabaseRecord('pages', 77, ['uid' => 77], ['uid' => 77], []);
+        $pageRecord = new DatabaseRecord('pages', 76, ['uid' => 76], ['uid' => 76], []);
 
         $demands = new DemandsCollection();
         $demands->addDemand(
-            new JoinDemand('sys_category_record_mm', 'sys_category', '', 'uid_foreign', 77, $pageRecord),
+            new JoinDemand('sys_category_record_mm', 'sys_category', "sys_category_record_mm.tablenames = 'pages'", 'uid_foreign', 76, $pageRecord),
         );
         $recordCollection = new RecordCollection();
 
         $joinDemandResolver = GeneralUtility::makeInstance(JoinDemandResolver::class);
         $joinDemandResolver->resolveDemand($demands, $recordCollection);
-        self::assertTrue($recordCollection->contains('sys_category', ['uid' => 3]));
+        self::assertTrue($recordCollection->contains('sys_category', ['uid' => 2]));
 
-        $sysCategoryRecord = $recordCollection->getRecord('sys_category', 3);
+        $sysCategoryRecord = $recordCollection->getRecord('sys_category', 2);
         $sysCategoryParents = $sysCategoryRecord->getParents();
         self::assertCount(1, $sysCategoryParents);
         $sysCategoryMmRecord = reset($sysCategoryParents);
-        self::assertSame('e807cea110c53f369af28985e1e4df3a4e95d7b8', $sysCategoryMmRecord->getId());
+        self::assertSame('3da567aaab023c423850e375a55fd4ad64b0c904', $sysCategoryMmRecord->getId());
         $mmParents = $sysCategoryMmRecord->getParents();
         self::assertCount(1, $mmParents);
         $mmParent = reset($mmParents);

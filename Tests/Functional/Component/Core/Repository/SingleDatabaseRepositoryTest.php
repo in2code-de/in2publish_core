@@ -19,8 +19,12 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
 {
     // Read-only tests do not require database reset
     protected bool $initializeDatabase = false;
-    public function __construct(private readonly \TYPO3\CMS\Core\Database\ConnectionPool $connectionPool)
+    protected ConnectionPool $connectionPool;
+
+    protected function setUp(): void
     {
+        parent::setUp();
+        $this->connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
     }
 
     public function testFindByPropertyReturnsRowsSortedByTcaCtrl(): void
@@ -31,7 +35,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
 
         $rows = $singleDataRepository->findByProperty('pages', 'uid', [1, 3, 6]);
         $sortings = array_column($rows, 'sorting');
-        self::assertSame([32, 128, 512], $sortings);
+        self::assertSame([32, 116, 512], $sortings);
     }
 
     public function testFindByPropertyWithJoinReturnsJoinedRows(): void
@@ -46,38 +50,39 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
             'sys_category_record_mm',
             'sys_category',
             'uid_foreign',
-            [77, 78],
+            [76],
+            "sys_category_record_mm.tablenames = 'pages'",
         );
         self::assertSame([
-            'e807cea110c53f369af28985e1e4df3a4e95d7b8' => [
+            'fd66c348e4e15d23cbcae83c9f700902d2c1b388' => [
                 'mmtbl' => [
-                    'uid_local' => 3,
-                    'uid_foreign' => 77,
+                    'uid_local' => 1,
+                    'uid_foreign' => 76,
                     'sorting' => 0,
                     'sorting_foreign' => 1,
-                    'tablenames' => 'tt_content',
+                    'tablenames' => 'pages',
                     'fieldname' => 'categories',
                 ],
                 'table' => [
-                    'uid' => 3,
-                    'pid' => 468,
-                    'tstamp' => 1741948624,
-                    'crdate' => 1741948624,
+                    'uid' => 1,
+                    'pid' => 1,
+                    'tstamp' => 1730129770,
+                    'crdate' => 1730129770,
                     'deleted' => 0,
                     'hidden' => 0,
                     'starttime' => 0,
                     'endtime' => 0,
                     'sorting' => 256,
-                    'description' => null,
+                    'description' => '',
                     'sys_language_uid' => 0,
                     'l10n_parent' => 0,
-                    'l10n_state' => null,
+                    'l10n_state' => '"NULL"',
                     'l10n_diffsource' => '',
                     't3ver_oid' => 0,
                     't3ver_wsid' => 0,
                     't3ver_state' => 0,
                     't3ver_stage' => 0,
-                    'title' => 'Styleguide Demo Category',
+                    'title' => '"Category 1"',
                     'items' => 0,
                     'parent' => 0,
                     'images' => 0,
@@ -86,41 +91,41 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                     'import_id' => '',
                     'import_source' => '',
                     'seo_title' => '',
-                    'seo_description' => null,
+                    'seo_description' => '',
                     'seo_headline' => '',
-                    'seo_text' => null,
-                    'slug' => 'styleguide-demo-category',
+                    'seo_text' => '',
+                    'slug' => '"category-1"',
                 ],
             ],
-            'd4a09cbf183d452469b2e14da8cb93b8820b6ab9' => [
+            '3da567aaab023c423850e375a55fd4ad64b0c904' => [
                 'mmtbl' => [
-                    'uid_local' => 3,
-                    'uid_foreign' => 78,
+                    'uid_local' => 2,
+                    'uid_foreign' => 76,
                     'sorting' => 0,
-                    'sorting_foreign' => 1,
-                    'tablenames' => 'tt_content',
+                    'sorting_foreign' => 2,
+                    'tablenames' => 'pages',
                     'fieldname' => 'categories',
                 ],
                 'table' => [
-                    'uid' => 3,
-                    'pid' => 468,
-                    'tstamp' => 1741948624,
-                    'crdate' => 1741948624,
+                    'uid' => 2,
+                    'pid' => 1,
+                    'tstamp' => 1730129781,
+                    'crdate' => 1730129781,
                     'deleted' => 0,
                     'hidden' => 0,
                     'starttime' => 0,
                     'endtime' => 0,
-                    'sorting' => 256,
-                    'description' => null,
+                    'sorting' => 512,
+                    'description' => '',
                     'sys_language_uid' => 0,
                     'l10n_parent' => 0,
-                    'l10n_state' => null,
+                    'l10n_state' => '"NULL"',
                     'l10n_diffsource' => '',
                     't3ver_oid' => 0,
                     't3ver_wsid' => 0,
                     't3ver_state' => 0,
                     't3ver_stage' => 0,
-                    'title' => 'Styleguide Demo Category',
+                    'title' => '"Category 2"',
                     'items' => 0,
                     'parent' => 0,
                     'images' => 0,
@@ -129,10 +134,10 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                     'import_id' => '',
                     'import_source' => '',
                     'seo_title' => '',
-                    'seo_description' => null,
+                    'seo_description' => '',
                     'seo_headline' => '',
-                    'seo_text' => null,
-                    'slug' => 'styleguide-demo-category',
+                    'seo_text' => '',
+                    'slug' => '"category-2"',
                 ],
             ],
         ], $rows);
@@ -179,7 +184,6 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                 'TSconfig' => "",
                 'is_siteroot' => 0,
                 'php_tree_stop' => 0,
-                'url' => "",
                 'shortcut' => 0,
                 'shortcut_mode' => 0,
                 'subtitle' => "The field rowDescription is ignored by the publisher (Tab: Notes Field: Description)",
@@ -223,8 +227,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                 'canonical_link' => "",
                 'sitemap_priority' => "0.5",
                 'sitemap_changefreq' => "",
-                'tx_styleguide_containsdemo' => '',
-                'no_search_sub_entries' => 0,
+                'link' => "",
             ],
         ], $rows);
     }

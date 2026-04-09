@@ -16,9 +16,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RunningRequestServiceTest extends FunctionalTestCase
 {
-    public function __construct(private readonly \TYPO3\CMS\Core\Database\ConnectionPool $connectionPool)
+    protected ConnectionPool $connectionPool;
+
+    protected function setUp(): void
     {
+        parent::setUp();
+        $this->connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
     }
+
     /**
      * @ticket https://projekte.in2code.de/issues/51299
      * @ticket https://projekte.in2code.de/issues/51301
@@ -42,7 +47,7 @@ class RunningRequestServiceTest extends FunctionalTestCase
         $connectionPool = $this->connectionPool;
         $connection = $connectionPool->getConnectionByName('Default');
 
-        $repo = new RunningRequestRepository();
+        $repo = GeneralUtility::makeInstance(RunningRequestRepository::class);
         $repo->injectLocalDatabase($connection);
         $service = new RunningRequestService($repo);
 

@@ -41,19 +41,17 @@ class RunningRequestRepository
     public const RUNNING_REQUEST_TABLE_NAME = 'tx_in2publishcore_running_request';
     protected array $inserts = [];
     protected array $rtc = [];
-    public function __construct(private readonly \TYPO3\CMS\Core\Context\Context $context)
-    {
-    }
 
     public function add(string $recordId, string $tableName, string $token): void
     {
+        $context = GeneralUtility::makeInstance(Context::class);
         $uniqueKey = $tableName . '/' . $recordId;
         $this->inserts[$uniqueKey] = [
             'uid' => null,
             'record_id' => $recordId,
             'table_name' => $tableName,
             'request_token' => $token,
-            'timestamp_begin' => $this->context->getPropertyFromAspect('date', 'timestamp'),
+            'timestamp_begin' => $context->getPropertyFromAspect('date', 'timestamp'),
         ];
     }
 
