@@ -1,3 +1,5 @@
+name: in2publish_core
+
 services:
   local:
     image: in2code/httpd:2.4-alpine
