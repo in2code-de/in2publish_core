@@ -14,6 +14,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function reset;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(SelectDemandResolver::class)]
 class SelectDemandResolverTest extends FunctionalTestCase
 {
     // Read-only tests do not require a database reset

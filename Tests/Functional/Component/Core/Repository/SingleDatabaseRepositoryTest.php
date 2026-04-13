@@ -12,9 +12,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_column;
 
-/**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(SingleDatabaseRepository::class)]
 class SingleDatabaseRepositoryTest extends FunctionalTestCase
 {
     // Read-only tests do not require database reset

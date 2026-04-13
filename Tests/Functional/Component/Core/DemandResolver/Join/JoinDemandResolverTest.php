@@ -14,6 +14,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function reset;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(JoinDemandResolver::class)]
 class JoinDemandResolverTest extends FunctionalTestCase
 {
     // Read-only tests do not require a database reset

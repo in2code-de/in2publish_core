@@ -14,6 +14,7 @@ use In2code\In2publishCore\Tests\FunctionalTestCase;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(RunningRequestService::class)]
 class RunningRequestServiceTest extends FunctionalTestCase
 {
     protected ConnectionPool $connectionPool;
@@ -59,17 +60,14 @@ class RunningRequestServiceTest extends FunctionalTestCase
         $query->select('*')
               ->from('tx_in2publishcore_running_request')
               ->where(
-                  $query->expr()->or(
-                      $query->expr()->and(
-                          $query->expr()->eq('record_id', 1),
-                          $query->expr()->eq('table_name', $query->createNamedParameter('foo')),
-                      ),
-                      $query->expr()->and(
-                          $query->expr()->eq('record_id', $query->createNamedParameter($mmId)),
-                          $query->expr()->eq('table_name', $query->createNamedParameter('foo_bar_mm')),
-                      ),
-                  ),
-              );
+                  '(record_id = :recordId AND table_name = :tableName)'
+                  . ' OR '
+                  . '(record_id = :mmRecordId AND table_name = :mmTableName)',
+              )
+              ->setParameter('recordId', 1)
+              ->setParameter('tableName', 'foo')
+              ->setParameter('mmRecordId', $mmId)
+              ->setParameter('mmTableName', 'foo_bar_mm');
         $result = $query->executeQuery();
         $rows = $result->fetchAllAssociative();
         $this->assertCount(2, $rows);

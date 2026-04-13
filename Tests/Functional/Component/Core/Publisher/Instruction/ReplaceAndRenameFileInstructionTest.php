@@ -16,6 +16,7 @@ use function CoStack\Lib\concat_paths;
 use function file_put_contents;
 use function touch;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(ReplaceAndRenameFileInstruction::class)]
 class ReplaceAndRenameFileInstructionTest extends FunctionalTestCase
 {
     protected bool $initializeDatabase = false;
@@ -38,7 +39,7 @@ class ReplaceAndRenameFileInstructionTest extends FunctionalTestCase
     {
         $driver = new LocalDriver(['basePath' => $this->testPath]);
         $driver->processConfiguration();
-        $falDriverService = $this->createMock(FalDriverService::class);
+        $falDriverService = $this->createStub(FalDriverService::class);
         $falDriverService->method('getDriver')->willReturn($driver);
 
         $tempFolder = concat_paths($this->testPath, 'tmp');
@@ -69,7 +70,7 @@ class ReplaceAndRenameFileInstructionTest extends FunctionalTestCase
         self::markTestSkipped('Skipped because this functionality does not seem to be required.');
         $driver = new LocalDriver(['basePath' => $this->testPath]);
         $driver->processConfiguration();
-        $falDriverService = $this->createMock(FalDriverService::class);
+        $falDriverService = $this->createStub(FalDriverService::class);
         $falDriverService->method('getDriver')->willReturn($driver);
 
         $tempFolder = concat_paths($this->testPath, 'tmp');

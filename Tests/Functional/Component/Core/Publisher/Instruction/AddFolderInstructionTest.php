@@ -13,6 +13,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function CoStack\Lib\concat_paths;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(AddFolderInstruction::class)]
 class AddFolderInstructionTest extends FunctionalTestCase
 {
     protected bool $initializeDatabase = false;
@@ -35,7 +36,7 @@ class AddFolderInstructionTest extends FunctionalTestCase
     {
         $driver = new LocalDriver(['basePath' => $this->testPath]);
         $driver->processConfiguration();
-        $falDriverService = $this->createMock(FalDriverService::class);
+        $falDriverService = $this->createStub(FalDriverService::class);
         $falDriverService->method('getDriver')->willReturn($driver);
         $instruction = new AddFolderInstruction(1, 'foo/baz');
 
