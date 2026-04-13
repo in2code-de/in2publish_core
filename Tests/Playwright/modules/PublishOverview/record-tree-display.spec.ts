@@ -8,18 +8,6 @@ test.describe('Record Tree Display', () => {
         await fullRestore();
     });
 
-    /**
-     * Tests that the page tree depth selector controls visible levels.
-     * Mirrors Tests/Browser/RecordTreeDisplayTest.php
-     *
-     * DB page names (naming inconsistency in DB dump, but hierarchy is correct):
-     * - "4 PageTree depth" (pid=4)
-     *   - "4.1 Subpage - Level 1" (pid=27)
-     *     - "4.1.1 Subpage - Level 2" (pid=28)
-     *       - "4.1.1.1 Subpage - Level 4" (pid=29) ← named Level 4 in DB
-     *         - "4.1.1.1.1 Subpage - Level 5" (pid=30) ← named Level 5 in DB
-     *           - "Subpage - Level 5" (pid=31) ← 5th level, ambiguous name
-     */
     test('The level of records to show can be selected', async ({ page, backend }) => {
 
         await test.step('Given I am logged in and navigate to the depth test page', async () => {
@@ -40,9 +28,11 @@ test.describe('Record Tree Display', () => {
             await expect(body).not.toContainText('Home');
             await expect(body).not.toContainText('EXT:in2publish_core');
             await expect(body).toContainText('4 PageTree depth');
-            await expect(body).toContainText('4.1 Subpage - Level 1');
-            await expect(body).not.toContainText('4.1.1 Subpage - Level 2');
-            await expect(body).not.toContainText('4.1.1.1 Subpage - Level 4');
+            await expect(body).toContainText('Subpage - Level 1');
+            await expect(body).not.toContainText('Subpage - Level 2');
+            await expect(body).not.toContainText('Subpage - Level 3');
+            await expect(body).not.toContainText('Subpage - Level 4');
+            await expect(body).not.toContainText('Subpage - Level 5');
             await expect(backend.contentFrame.locator('[data-record-identifier="pages-32"]')).not.toBeVisible();
         });
 
@@ -54,9 +44,11 @@ test.describe('Record Tree Display', () => {
             await expect(body).not.toContainText('Home');
             await expect(body).not.toContainText('EXT:in2publish_core');
             await expect(body).toContainText('4 PageTree depth');
-            await expect(body).toContainText('4.1 Subpage - Level 1');
-            await expect(body).toContainText('4.1.1 Subpage - Level 2');
-            await expect(body).not.toContainText('4.1.1.1 Subpage - Level 4');
+            await expect(body).toContainText('Subpage - Level 1');
+            await expect(body).toContainText('Subpage - Level 2');
+            await expect(body).not.toContainText('Subpage - Level 3');
+            await expect(body).not.toContainText('Subpage - Level 4');
+            await expect(body).not.toContainText('Subpage - Level 5');
             await expect(backend.contentFrame.locator('[data-record-identifier="pages-32"]')).not.toBeVisible();
         });
 
@@ -67,10 +59,11 @@ test.describe('Record Tree Display', () => {
             const body = backend.contentFrame.locator('body');
             await expect(body).not.toContainText('EXT:in2publish_core');
             await expect(body).toContainText('4 PageTree depth');
-            await expect(body).toContainText('4.1 Subpage - Level 1');
-            await expect(body).toContainText('4.1.1 Subpage - Level 2');
-            await expect(body).toContainText('4.1.1.1 Subpage - Level 4');
-            await expect(body).not.toContainText('4.1.1.1.1 Subpage - Level 5');
+            await expect(body).toContainText('Subpage - Level 1');
+            await expect(body).toContainText('Subpage - Level 2');
+            await expect(body).toContainText('Subpage - Level 3');
+            await expect(body).not.toContainText('Subpage - Level 4');
+            await expect(body).not.toContainText('Subpage - Level 5');
             await expect(backend.contentFrame.locator('[data-record-identifier="pages-32"]')).not.toBeVisible();
         });
 
@@ -81,10 +74,11 @@ test.describe('Record Tree Display', () => {
             const body = backend.contentFrame.locator('body');
             await expect(body).not.toContainText('EXT:in2publish_core');
             await expect(body).toContainText('4 PageTree depth');
-            await expect(body).toContainText('4.1 Subpage - Level 1');
-            await expect(body).toContainText('4.1.1 Subpage - Level 2');
-            await expect(body).toContainText('4.1.1.1 Subpage - Level 4');
-            await expect(body).toContainText('4.1.1.1.1 Subpage - Level 5');
+            await expect(body).toContainText('Subpage - Level 1');
+            await expect(body).toContainText('Subpage - Level 2');
+            await expect(body).toContainText('Subpage - Level 3');
+            await expect(body).toContainText('Subpage - Level 4');
+            await expect(body).not.toContainText('Subpage - Level 5');
             await expect(backend.contentFrame.locator('[data-record-identifier="pages-32"]')).not.toBeVisible();
         });
 
@@ -95,10 +89,11 @@ test.describe('Record Tree Display', () => {
             const body = backend.contentFrame.locator('body');
             await expect(body).not.toContainText('EXT:in2publish_core');
             await expect(body).toContainText('4 PageTree depth');
-            await expect(body).toContainText('4.1 Subpage - Level 1');
-            await expect(body).toContainText('4.1.1 Subpage - Level 2');
-            await expect(body).toContainText('4.1.1.1 Subpage - Level 4');
-            await expect(body).toContainText('4.1.1.1.1 Subpage - Level 5');
+            await expect(body).toContainText('Subpage - Level 1');
+            await expect(body).toContainText('Subpage - Level 2');
+            await expect(body).toContainText('Subpage - Level 3');
+            await expect(body).toContainText('Subpage - Level 4');
+            await expect(body).toContainText('Subpage - Level 5');
             await expect(backend.contentFrame.locator('[data-record-identifier="pages-32"]')).toBeVisible();
         });
     });

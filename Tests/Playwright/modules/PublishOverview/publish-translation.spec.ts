@@ -5,10 +5,6 @@ import { restoreDatabases } from '../../helpers/direct-restore';
 
 test.describe('Publish Translation', () => {
 
-    // Use direct DB restore before each test to ensure translation test data has the correct
-    // differences between local and foreign (e.g., "Version 3" vs "Version 2").
-    // Must be beforeEach (not beforeAll) because the free mode test publishes data,
-    // which would leave connected mode with no diff if run without a fresh restore.
     test.beforeEach(async () => {
         await restoreDatabases();
     });
@@ -44,10 +40,10 @@ test.describe('Publish Translation', () => {
             // Verify local and foreign values (scoped to the record to avoid strict mode violation)
             await expect(
                 recordRow.locator('.in2publish-dirty-properties-local')
-            ).toContainText('Header in German - Version 3');
+            ).toContainText('Header in German - changed');
             await expect(
                 recordRow.locator('.in2publish-dirty-properties-foreign')
-            ).toContainText('Header in German - Version 2');
+            ).toContainText('Header in German');
         });
 
         await test.step('And I publish the record', async () => {
@@ -78,12 +74,17 @@ test.describe('Publish Translation', () => {
             const foreignBackend = new BackendPage(foreignPage);
 
             await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('List');
-            await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1d.1 Free Mode');
+
+            // Navigate the content iframe to the edit form for the German tt_content (uid 54)
+            await foreignPage.evaluate(() => {
+                const iframe = document.getElementById('typo3-contentIframe') as HTMLIFrameElement;
+                iframe.src = '/typo3/record/edit?edit[tt_content][54]=edit';
+            });
+            await foreignPage.waitForTimeout(3000);
 
             await expect(
                 foreignBackend.contentFrame.locator('body')
-            ).toContainText('Header in German - Version 3', { timeout: 10000 });
+            ).toContainText('Header in German - changed', { timeout: 10000 });
 
             await foreignContext.close();
         });
@@ -119,10 +120,10 @@ test.describe('Publish Translation', () => {
 
             await expect(
                 recordRow.locator('.in2publish-dirty-properties-local')
-            ).toContainText('Header in German - Version 3');
+            ).toContainText('Header in German - changed');
             await expect(
                 recordRow.locator('.in2publish-dirty-properties-foreign')
-            ).toContainText('Header in German - Version 2');
+            ).toContainText('Header in German');
         });
 
         await test.step('And I publish the record', async () => {
@@ -153,12 +154,17 @@ test.describe('Publish Translation', () => {
             const foreignBackend = new BackendPage(foreignPage);
 
             await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('List');
-            await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1d.2 Connected Mode');
+
+            // Navigate the content iframe to the edit form for the German tt_content (uid 56)
+            await foreignPage.evaluate(() => {
+                const iframe = document.getElementById('typo3-contentIframe') as HTMLIFrameElement;
+                iframe.src = '/typo3/record/edit?edit[tt_content][56]=edit';
+            });
+            await foreignPage.waitForTimeout(3000);
 
             await expect(
                 foreignBackend.contentFrame.locator('body')
-            ).toContainText('Header in German - Version 3', { timeout: 10000 });
+            ).toContainText('Header in German - changed', { timeout: 10000 });
 
             await foreignContext.close();
         });

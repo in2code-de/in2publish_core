@@ -10,18 +10,13 @@ test.describe('Publish Overview Module', () => {
 
   test('Publish Overview module can be opened', async ({ page, backend }) => {
     await test.step('Given I am logged in and on the backend home page', async () => {
-      await backend.login();
+      await backend.login(config.local.baseUrl);
     });
+    await backend.gotoModule('Publish Overview');
+    await backend.searchInPageTreeAndSelectFirstOccurrence('EXT:in2publish_core');
 
-    await test.step('When I open "Publish Overview" and select "Home"', async () => {
-      await backend.gotoModule('Publish Overview');
-      await backend.searchInPageTreeAndSelectFirstOccurrence('Home');
-    });
-
-    await test.step('Then I should see the module content loaded', async () => {
-      await expect(
+    await expect(
         backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
-      ).toBeVisible({ timeout: 15000 });
-    });
+    ).toBeVisible({ timeout: 10000 });
   });
 });
