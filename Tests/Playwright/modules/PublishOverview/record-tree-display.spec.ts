@@ -1,11 +1,11 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { fullRestore } from '../../helpers/direct-restore';
 
 test.describe('Record Tree Display', () => {
 
     test.beforeAll(async () => {
-        await Environment.reset();
+        await fullRestore();
     });
 
     /**

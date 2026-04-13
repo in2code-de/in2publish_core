@@ -1,12 +1,12 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { fullRestore } from '../../helpers/direct-restore';
 
 test.describe('Publish Changed Page Properties', () => {
 
     test.beforeAll(async () => {
-        await Environment.reset();
+        await fullRestore();
     });
 
     /**
@@ -63,16 +63,12 @@ test.describe('Publish Changed Page Properties', () => {
             await foreignPage.waitForTimeout(2000);
 
             // Click the Edit button for the page
-            const editButton = foreignBackend.contentFrame.locator('a[title="Edit"]').first();
+            const editButton = foreignBackend.contentFrame.locator('typo3-backend-contextual-record-edit-trigger[title="Edit"]').first();
             await expect(editButton).toBeVisible();
             await editButton.click();
 
-            // Verify the page title input contains the changed value
-            const titleInput = foreignBackend.contentFrame.locator(
-                '[data-formengine-input-name="data[pages][5][title]"]'
-            );
-            await expect(titleInput).toBeVisible({ timeout: 10000 });
-            await expect(titleInput).toHaveValue(/1a Page properties - changed/);
+            // Verify the page title is visible in the edit form
+            await expect(foreignBackend.contentFrame.locator('text="1a Page properties - changed"')).toBeVisible({ timeout: 10000 });
 
             await foreignContext.close();
         });

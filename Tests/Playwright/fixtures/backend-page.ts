@@ -28,6 +28,7 @@ export class BackendPage extends BaseBackendPage {
     const v14ModuleNames: Record<string, string> = {
       'Page': 'Layout',
       'List': 'Records',
+      'Filelist': 'Media',
     };
     const resolvedName = v14ModuleNames[moduleName] || moduleName;
     const moduleLink = this.page.locator(`#modulemenu a.modulemenu-action[title="${resolvedName}"]`);
@@ -37,68 +38,90 @@ export class BackendPage extends BaseBackendPage {
       const baseUrl = this.page.url().split('/typo3/')[0];
       const fullUrl = href.startsWith('/') ? `${baseUrl}${href}` : href;
       await this.page.goto(fullUrl, { waitUntil: 'load', timeout: 30000 });
+      // Verify navigation succeeded by checking the URL contains the module path.
+      // The active class check is unreliable for page-tree modules (e.g. Publish Overview)
+      // because TYPO3 only marks them active after a tree item is selected.
+      const modulePath = href.split('?')[0];
+      const modulePathEscaped = modulePath.replace(/[/]/g, '\\/');
+      await expect(this.page).toHaveURL(new RegExp(modulePathEscaped), { timeout: 10000 });
     } else {
       await moduleLink.click({ timeout: 5000 });
+      await expect(moduleLink).toHaveClass(/modulemenu-action-active/, { timeout: 15000 });
     }
 
-    await expect(moduleLink).toHaveClass(/modulemenu-action-active/, { timeout: 15000 });
     await this.page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(1000);
   }
 
   /**
-   * Search for a page in the page tree with retry logic.
-   * The TYPO3 page tree can take variable time to load, so we retry
-   * the search up to 3 times with increasing waits between attempts.
-   */
-  async searchInPageTreeAndSelectFirstOccurrence(searchText: string): Promise<void> {
-    const maxRetries = 3;
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        // TYPO3 v14: page tree uses different selectors than the base class
-        await expect(
-          this.page.locator('typo3-backend-content-navigation')
-        ).toBeVisible({ timeout: 30000 });
+     * Search for a page in the page tree with retry logic.
+     * Optimized for TYPO3 v14 Web Components and Shadow DOM.
+     */
+    async searchInPageTreeAndSelectFirstOccurrence(searchText: string): Promise<void> {
+      const maxRetries = 3;
 
-        const searchInput = this.page.locator('input[placeholder="Search page tree"]');
-        await expect(searchInput).toBeVisible({ timeout: 30000 });
-        await searchInput.clear();
-        await searchInput.fill(searchText);
-        await searchInput.press('Enter');
-        await this.page.waitForTimeout(800);
-        await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          // 1. Ensure the navigation container is present
+          const navContainer = this.page.locator('typo3-backend-content-navigation');
+          await expect(navContainer).toBeAttached({ timeout: 15000 });
 
-        const treeItems = this.page.locator('[role="treeitem"]');
-        const matchingTreeItems = treeItems.filter({ hasText: searchText });
-        const count = await matchingTreeItems.count();
-        if (count === 0) {
-          throw new Error(`No page tree nodes found matching "${searchText}"`);
+          // 2. Handle Collapsed State:
+          // We look for the toggle component. If the action is 'expand', it's collapsed.
+          const expandToggle = this.page.locator('typo3-backend-content-navigation-toggle[action="expand"]');
+          if (await expandToggle.isVisible()) {
+            console.log(`[Attempt ${attempt}] Navigation collapsed. Expanding...`);
+            await expandToggle.click();
+            // Short wait for the CSS transition (width 0 -> 300px)
+            await this.page.waitForTimeout(500);
+          }
+
+          // 3. Target the Page Tree component and its search input
+          // Prefixing with the component tag helps Playwright pierce nested Shadow Roots
+          const treeComponent = this.page.locator('typo3-backend-navigation-component-pagetree');
+          const searchInput = treeComponent.locator('input#toolbarSearch');
+
+          // Wait for the input to be ready for interaction
+          await searchInput.waitFor({ state: 'visible', timeout: 10000 });
+
+          // Using fill() is safer for Lit components than type() to avoid event race conditions
+          await searchInput.fill(searchText);
+          await searchInput.press('Enter');
+
+          // 4. Locate results within the Shadow DOM
+          // We filter by text and look for the standard [role="treeitem"]
+          const treeItem = treeComponent.locator('[role="treeitem"]').filter({ hasText: searchText }).first();
+
+          // Increased timeout here as the tree filtering can be slow on large installations
+          await expect(treeItem).toBeVisible({ timeout: 15000 });
+
+          // 5. Click the actual label element
+          // .node-contentlabel is the standard TYPO3 class for the clickable text area
+          const clickableLabel = treeItem.locator('.node-contentlabel').first();
+          await clickableLabel.scrollIntoViewIfNeeded();
+          await clickableLabel.click({ force: true });
+
+          // Wait for TYPO3 to finish loading the content on the right side
+          await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+
+          return; // Success!
+
+        } catch (error) {
+          console.warn(`[Attempt ${attempt}] Search failed for "${searchText}": ${error.message}`);
+
+          if (attempt === maxRetries) {
+            throw error;
+          }
+
+          // Recovery: Instead of a full reload(), we do a "soft" navigation to the current URL.
+          // This resets the component state without getting stuck on the 'load' event.
+          await this.page.goto(this.page.url(), { waitUntil: 'commit', timeout: 15000 }).catch(() => {});
+
+          // Wait longer on each subsequent attempt
+          await this.page.waitForTimeout(2000 * attempt);
         }
-
-        const firstTreeItem = matchingTreeItems.first();
-        await expect(firstTreeItem).toBeVisible({ timeout: 10000 });
-        await this.page.waitForTimeout(500);
-
-        const clickableElement = firstTreeItem.locator('.node-contentlabel').first();
-        await expect(clickableElement).toBeVisible({ timeout: 5000 });
-        await clickableElement.scrollIntoViewIfNeeded();
-        await this.page.waitForTimeout(300);
-        await clickableElement.click({ force: true });
-
-        await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
-        await this.page.waitForTimeout(1500);
-        return;
-      } catch (error) {
-        if (attempt === maxRetries) {
-          throw error;
-        }
-        await this.page.waitForTimeout(1000 * attempt);
-        await this.page.reload();
-        await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
-        await this.page.waitForTimeout(1000);
       }
     }
-  }
 
   /**
    * Navigate through the file storage tree by clicking each path segment.

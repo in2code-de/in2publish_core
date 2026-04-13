@@ -1,11 +1,11 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { fullRestore } from '../../helpers/direct-restore';
 
 test.describe('Backend User Preferences Reset', () => {
 
     test.beforeAll(async () => {
-        await Environment.reset();
+        await fullRestore();
     });
 
     /**

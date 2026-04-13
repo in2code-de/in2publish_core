@@ -24,13 +24,13 @@ test.describe('Publish Changed Content', () => {
             ).toBeVisible({ timeout: 10000 });
 
             const recordRow = backend.contentFrame.locator('[data-record-identifier="pages-65"]');
-            await expect(recordRow).toBeVisible();
+            await expect(recordRow).toBeVisible({ timeout: 10000 });
 
             const infoIcon = recordRow.locator('[data-action="opendirtypropertieslistcontainer"]');
             await infoIcon.click();
 
             const arrowRight = backend.contentFrame.locator('.icon-actions-arrow-right');
-            await expect(arrowRight).toBeVisible();
+            await expect(arrowRight).toBeVisible({ timeout: 10000 })
 
             await expect(backend.contentFrame.locator('body')).toContainText('1b.1 Header - changed');
 

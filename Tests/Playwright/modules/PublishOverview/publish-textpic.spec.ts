@@ -1,12 +1,12 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { fullRestore } from '../../helpers/direct-restore';
 
 test.describe('Publish Textpic', () => {
 
     test.beforeAll(async () => {
-        await Environment.reset();
+        await fullRestore();
     });
 
     /**
