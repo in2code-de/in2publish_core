@@ -21,8 +21,10 @@ export class BackendPage extends BaseBackendPage {
 
   /**
    * Navigate to a TYPO3 backend module by name.
-   * Overrides base class to handle TYPO3 v14 module renames and use direct URL
-   * navigation for reliability after cache flushes.
+   * Overrides base class to handle TYPO3 v14 module renames.
+   *
+   * TYPO3 v14 loads modules inside #typo3-contentIframe — the main page URL
+   * does not change. So we click the menu link and verify the iframe src.
    */
   async gotoModule(moduleName: string): Promise<void> {
     const v14ModuleNames: Record<string, string> = {
@@ -33,22 +35,18 @@ export class BackendPage extends BaseBackendPage {
     const resolvedName = v14ModuleNames[moduleName] || moduleName;
     const moduleLink = this.page.locator(`#modulemenu a.modulemenu-action[title="${resolvedName}"]`);
 
-    const href = await moduleLink.getAttribute('href', { timeout: 5000 });
+    await moduleLink.click({ timeout: 5000 });
+
+    // TYPO3 v14 loads modules in the content iframe — verify the iframe src
+    // contains the module path from the menu link's href.
+    const href = await moduleLink.getAttribute('href');
     if (href) {
-      const baseUrl = this.page.url().split('/typo3/')[0];
-      const fullUrl = href.startsWith('/') ? `${baseUrl}${href}` : href;
-      await this.page.goto(fullUrl, { waitUntil: 'load', timeout: 30000 });
-      // Verify navigation succeeded by checking the URL contains the module path.
-      // The active class check is unreliable for page-tree modules (e.g. Publish Overview)
-      // because TYPO3 only marks them active after a tree item is selected.
       const modulePath = href.split('?')[0];
-      const modulePathEscaped = modulePath.replace(/[/]/g, '\\/');
-      await expect(this.page).toHaveURL(new RegExp(modulePathEscaped), { timeout: 10000 });
-    } else {
-      await moduleLink.click({ timeout: 5000 });
-      await expect(moduleLink).toHaveClass(/modulemenu-action-active/, { timeout: 15000 });
+      const iframe = this.page.locator('#typo3-contentIframe');
+      await expect(iframe).toHaveAttribute('src', new RegExp(modulePath.replace(/[/]/g, '\\/')), { timeout: 10000 });
     }
 
+    await expect(this.page.locator('#typo3-contentIframe')).toBeAttached({ timeout: 15000 });
     await this.page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(1000);
   }

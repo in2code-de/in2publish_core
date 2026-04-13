@@ -29,16 +29,16 @@ test.describe('Publish Changed Content', () => {
             const infoIcon = recordRow.locator('[data-action="opendirtypropertieslistcontainer"]');
             await infoIcon.click();
 
-            const arrowRight = backend.contentFrame.locator('.icon-actions-arrow-right');
-            await expect(arrowRight).toBeVisible({ timeout: 10000 })
+            const publishButton = recordRow.getByRole('link', { name: 'Publish' }).first();
+            await expect(publishButton).toBeVisible({ timeout: 10000 });
 
             await expect(backend.contentFrame.locator('body')).toContainText('1b.1 Header - changed');
 
-            await arrowRight.click();
+            await publishButton.click();
 
             await backend.waitUntilPublishingFinished();
-            await expect(backend.contentFrame.locator('body')).toContainText(
-                'The selected record has been published successfully',
+            await expect(recordRow).toContainText(
+                'Unchanged',
                 { timeout: 30000 }
             );
         });

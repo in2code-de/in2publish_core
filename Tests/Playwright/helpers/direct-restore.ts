@@ -66,6 +66,9 @@ export async function restoreDatabases(): Promise<void> {
     console.log(`[direct-restore] Connecting to MySQL at ${DB_HOST}:${DB_PORT} (${isDocker ? 'Docker' : 'host'} mode)`);
 
     try {
+        if (!isDocker) {
+            await connection.query("SET GLOBAL local_infile = 1");
+        }
         for (const db of ['local', 'foreign']) {
             console.log(`[direct-restore] Restoring ${db} database...`);
             await connection.query(`USE \`${db}\``);
