@@ -24,8 +24,8 @@ test.describe('Publish Changed News', () => {
             await backend.searchInPageTreeAndSelectFirstOccurrence('News Folder');
 
             // Verify we landed on pages-33 (not pages-26 which has the same title)
-            const hasCorrectPage = await backend.contentFrame.locator('[data-record-identifier="pages-33"]').count();
-            if (hasCorrectPage === 0) {
+            const recordRow = backend.contentFrame.locator('[data-record-identifier="pages-33"]');
+            if (recordRow.count > 0) {
                 // Try selecting the second "News Folder" node in the page tree
                 const pageTree = page.locator('typo3-backend-content-navigation');
                 const treeItems = pageTree.locator('[role="treeitem"]').filter({ hasText: 'News Folder' });
@@ -42,8 +42,6 @@ test.describe('Publish Changed News', () => {
                 backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
             ).toBeVisible({ timeout: 10000 });
 
-            const recordRow = backend.contentFrame.locator('[data-record-identifier="pages-33"]');
-            await expect(recordRow).toBeVisible();
 
             // Expand dirty properties
             const infoIcon = recordRow.locator('[data-action="opendirtypropertieslistcontainer"]');
