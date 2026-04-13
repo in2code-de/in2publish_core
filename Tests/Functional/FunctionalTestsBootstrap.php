@@ -25,6 +25,11 @@ call_user_func(function () {
     $testbase->createDirectory(ORIGINAL_ROOT . 'typo3temp/var/tests');
     $testbase->createDirectory(ORIGINAL_ROOT . 'typo3temp/var/transient');
 
+    $GLOBALS['EXEC_TIME'] = time();
+    $GLOBALS['ACCESS_TIME'] = $GLOBALS['EXEC_TIME'] - $GLOBALS['EXEC_TIME'] % 60;
+    $GLOBALS['SIM_EXEC_TIME'] = $GLOBALS['EXEC_TIME'];
+    $GLOBALS['SIM_ACCESS_TIME'] = $GLOBALS['ACCESS_TIME'];
+
     $context = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class);
-    $context->setAspect('date', new DateTimeAspect(new \DateTimeImmutable('@' . time())));
+    $context->setAspect('date', new DateTimeAspect(new \DateTimeImmutable('@' . $GLOBALS['EXEC_TIME'])));
 });
