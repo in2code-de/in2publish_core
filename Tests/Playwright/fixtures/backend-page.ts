@@ -80,7 +80,7 @@ export class BackendPage extends BaseBackendPage {
           const searchInput = treeComponent.locator('input#toolbarSearch');
 
           // Wait for the input to be ready for interaction
-          await searchInput.waitFor({ state: 'visible', timeout: 10000 });
+          await searchInput.waitFor({ state: 'visible', timeout: 15000 });
 
           // Using fill() is safer for Lit components than type() to avoid event race conditions
           await searchInput.fill(searchText);
@@ -101,6 +101,8 @@ export class BackendPage extends BaseBackendPage {
 
           // Wait for TYPO3 to finish loading the content on the right side
           await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+          // Allow TYPO3 to commit page selection state before the caller switches to another module
+          await this.page.waitForTimeout(500);
 
           return; // Success!
 

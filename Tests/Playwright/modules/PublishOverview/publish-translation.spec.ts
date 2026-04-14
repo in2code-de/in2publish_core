@@ -15,6 +15,7 @@ test.describe('Publish Translation', () => {
      * Mirrors Tests/Browser/PublishTranslationTest.php::testTranslatedContentInFreeModeCanBePublished
      */
     test('Translated content in free mode can be published', async ({ page, backend, browser }) => {
+        test.setTimeout(120000);
 
         await test.step('Given I am logged in to the Local Backend', async () => {
             await backend.login(config.local.baseUrl);

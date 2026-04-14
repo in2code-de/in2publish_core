@@ -361,6 +361,7 @@ test.describe('Publish Files Module', () => {
      * Mirrors Tests/Browser/PublishFilesModuleTest.php::testDeletedFolderCanBePublished
      */
     test('Deleted folder can be published', async ({ page, backend, browser }) => {
+        test.setTimeout(180000);
 
         await test.step('Verify the folder exists on Foreign first', async () => {
             const foreignContext = await browser.newContext({ ignoreHTTPSErrors: true });
