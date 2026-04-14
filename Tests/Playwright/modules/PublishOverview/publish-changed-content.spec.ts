@@ -1,13 +1,8 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { fullRestore } from '../../helpers/direct-restore';
 
 test.describe('Publish Changed Content', () => {
-
-    test.beforeAll(async () => {
-        await fullRestore();
-    });
 
     test('Changed page content can be published', async ({ page, backend, browser }) => {
 

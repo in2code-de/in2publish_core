@@ -5,6 +5,7 @@ import { restoreDatabases } from '../../helpers/direct-restore';
 
 test.describe('Publish Translation', () => {
 
+    // Each test publishes a translation record, so DB must be restored between tests
     test.beforeEach(async () => {
         await restoreDatabases();
     });

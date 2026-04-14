@@ -1,13 +1,8 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { fullRestore } from '../../helpers/direct-restore';
 
 test.describe('Publish Changed Page Properties', () => {
-
-    test.beforeAll(async () => {
-        await fullRestore();
-    });
 
     /**
      * Test Case 1a: Changed page properties can be published.

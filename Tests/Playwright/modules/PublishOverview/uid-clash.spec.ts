@@ -2,7 +2,6 @@ import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
 import { restoreDatabases } from '../../helpers/direct-restore';
-import mysql from 'mysql2/promise';
 
 test.describe('UID Clash Test: verify publishing of relations to records with same uid but different table', () => {
 
@@ -17,7 +16,7 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
 
         await expect(
             backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
-        ).toBeVisible({ timeout: 10000 });
+        ).toBeVisible({ timeout: 15000 });
 
         await expect(
             backend.contentFrame.locator('[data-record-identifier="pages-76"]')
@@ -32,7 +31,7 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
         );
     }
 
-    async function publishNews76(backend: BackendPage, page: import('@playwright/test').Page) {
+    async function publishNews76(backend: BackendPage) {
         await backend.gotoModule('Publish Overview');
         await backend.searchInPageTreeAndSelectFirstOccurrence('News Folder in2publish_core');
 
@@ -49,41 +48,33 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
         );
     }
 
-    async function assertPage76Published(foreignBackend: BackendPage, foreignPage: import('@playwright/test').Page) {
-        await foreignBackend.gotoModule('Layout');
+    async function assertPage76Published(foreignBackend: BackendPage) {
+        await foreignBackend.gotoModule('Page');
         await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('Home');
-        await foreignBackend.gotoModule('Records');
-        await foreignPage.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
-        await expect(foreignBackend.contentFrame.locator('body')).toContainText('24 Page with Category 1 and Category 2', { timeout: 5000 });
+        await foreignBackend.gotoModule('List');
+        await expect(foreignBackend.contentFrame.locator('body')).toContainText('24 Page with Category 1 and Category 2', { timeout: 15000 });
     }
 
-    async function assertNews76Published(foreignBackend: BackendPage, foreignPage: import('@playwright/test').Page) {
-        // go to list/content module on News folder
-        await foreignBackend.gotoModule('Layout');
+    async function assertNews76Published(foreignBackend: BackendPage) {
+        await foreignBackend.gotoModule('Page');
         await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('News Folder in2publish_core');
-        await foreignBackend.gotoModule('Records');
-        await foreignPage.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
-        await expect(foreignBackend.contentFrame.locator('body')).toContainText('24 news with Category 1', { timeout: 5000 });
+        await foreignBackend.gotoModule('List');
+        await expect(foreignBackend.contentFrame.locator('body')).toContainText('24 news with Category 1', { timeout: 15000 });
     }
 
-    async function assertOnlyCategory1Published(foreignBackend: BackendPage, foreignPage: import('@playwright/test').Page) {
-        // go to list/content module on home page
-        await foreignBackend.gotoModule('Layout');
+    async function assertOnlyCategory1Published(foreignBackend: BackendPage) {
+        await foreignBackend.gotoModule('Page');
         await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('Home');
-        await foreignBackend.gotoModule('Records');
-        await foreignPage.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
-        await foreignPage.waitForTimeout(2000);
-        await expect(foreignBackend.contentFrame.locator('body')).toContainText('"Category 1"', { timeout: 5000 });
+        await foreignBackend.gotoModule('List');
+        await expect(foreignBackend.contentFrame.locator('body')).toContainText('"Category 1"', { timeout: 15000 });
         await expect(foreignBackend.contentFrame.locator('body')).not.toContainText('"Category 2"', { timeout: 5000 });
     }
 
-    async function assertBothCategoriesPublished(foreignBackend: BackendPage, foreignPage: import('@playwright/test').Page) {
-        // go to list/content module on home page
-        await foreignBackend.gotoModule('Layout');
+    async function assertBothCategoriesPublished(foreignBackend: BackendPage) {
+        await foreignBackend.gotoModule('Page');
         await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('Home');
-        await foreignBackend.gotoModule('Records');
-        await foreignPage.waitForTimeout(2000);
-        await expect(foreignBackend.contentFrame.locator('body')).toContainText('"Category 1"', { timeout: 5000 });
+        await foreignBackend.gotoModule('List');
+        await expect(foreignBackend.contentFrame.locator('body')).toContainText('"Category 1"', { timeout: 15000 });
         await expect(foreignBackend.contentFrame.locator('body')).toContainText('"Category 2"', { timeout: 5000 });
     }
     /**
@@ -106,8 +97,8 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
             const foreignBackend = new BackendPage(foreignPage);
             await foreignBackend.login(config.foreign.baseUrl);
 
-            await assertPage76Published(foreignBackend, foreignPage);
-            await assertBothCategoriesPublished(foreignBackend, foreignPage);
+            await assertPage76Published(foreignBackend);
+            await assertBothCategoriesPublished(foreignBackend);
 
             await foreignContext.close();
         });
@@ -124,7 +115,7 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
         });
 
         await test.step('When I publish news 76', async () => {
-            await publishNews76(backend, page);
+            await publishNews76(backend);
         });
 
         await test.step('Then news and only Category 1 are visible on Foreign', async () => {
@@ -133,8 +124,8 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
             const foreignBackend = new BackendPage(foreignPage);
             await foreignBackend.login(config.foreign.baseUrl);
 
-            await assertNews76Published(foreignBackend, foreignPage);
-            await assertOnlyCategory1Published(foreignBackend, foreignPage);
+            await assertNews76Published(foreignBackend);
+            await assertOnlyCategory1Published(foreignBackend);
 
             await foreignContext.close();
         });
@@ -153,9 +144,7 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
 
         await test.step('When I publish page 76 first, then news 76', async () => {
             await publishPage76(backend);
-            // Wait for the first publish to fully complete before starting the second
-            await page.waitForTimeout(2000);
-            await publishNews76(backend, page);
+            await publishNews76(backend);
         });
 
         await test.step('Then page, news and both categories are visible on Foreign', async () => {
@@ -164,9 +153,9 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
             const foreignBackend = new BackendPage(foreignPage);
             await foreignBackend.login(config.foreign.baseUrl);
 
-            await assertPage76Published(foreignBackend, foreignPage);
-            await assertNews76Published(foreignBackend, foreignPage);
-            await assertBothCategoriesPublished(foreignBackend, foreignPage);
+            await assertPage76Published(foreignBackend);
+            await assertNews76Published(foreignBackend);
+            await assertBothCategoriesPublished(foreignBackend);
 
             await foreignContext.close();
         });

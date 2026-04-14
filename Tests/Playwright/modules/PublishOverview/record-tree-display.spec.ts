@@ -1,12 +1,7 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import config from '../../config';
-import { fullRestore } from '../../helpers/direct-restore';
 
 test.describe('Record Tree Display', () => {
-
-    test.beforeAll(async () => {
-        await fullRestore();
-    });
 
     test('The level of records to show can be selected', async ({ page, backend }) => {
 

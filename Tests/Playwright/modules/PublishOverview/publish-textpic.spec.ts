@@ -1,20 +1,12 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { fullRestore } from '../../helpers/direct-restore';
 
 test.describe('Publish page with textpic', () => {
-
-//     test.beforeAll(async () => {
-//         await fullRestore();
-//     });
 
     /**
      * Test Case 1e: Textpic content element with file reference can be published.
      * Mirrors Tests/Browser/PublishTextpicTest.php
-     *
-     * @todo Page '1e Page with textpic' (expected uid=79) does not exist in the current DB dump.
-     *       Either add the page/content to the DB dump or update this test once the dump is updated.
      */
     test('Textpic with file reference can be published', async ({ page, backend, browser }) => {
 

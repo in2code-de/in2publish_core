@@ -1,14 +1,7 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
-import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { restoreDatabases } from '../../helpers/direct-restore';
 
 test.describe('Publish Record With Dependency', () => {
-
-    // DB restore before each test (including retries) to ensure clean state.
-    test.beforeEach(async () => {
-        await restoreDatabases();
-    });
 
     /**
      * Tests that a record with unfulfilled dependency becomes publishable after dependencies are fulfilled.

@@ -1,13 +1,8 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { restoreDatabases } from '../../helpers/direct-restore';
 
 test.describe('Publish Changed News', () => {
-
-    test.beforeEach(async () => {
-        await restoreDatabases();
-    });
 
     /**
      * Test Case 1c: Changed news record with image can be published.
