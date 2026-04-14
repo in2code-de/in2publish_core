@@ -18,7 +18,6 @@
 265	tx_news_domain_model_news	4	26	0	0	26	1	1697027433	1		\N
 273	tx_news_domain_model_news	6	26	0	0	26	1	1697100365	1		\N
 278	pages	34	3	0	0	34	1	1697114516	0	Published	\N
-280	pages	35	34	0	0	35	1	1697114556	2	Autostate change	0
 304	pages	37	34	0	0	37	1	1697115198	0	Published	\N
 307	pages	41	39	0	0	41	1	1697536492	0	Initial state	0
 309	pages	39	1	0	0	39	1	1697536510	0	Published	\N
@@ -529,3 +528,4 @@
 1871	pages	1013	1012	0	0	1013	1	1773235365	1		\N
 1872	pages	277	0	0	0	277	1	1775563109	2	Autostate change	0
 1873	pages	468	0	0	0	468	1	1775563118	2	Autostate change	0
+1874	pages	35	34	0	0	35	1	1776176878	1		\N
