@@ -11,12 +11,8 @@ test.describe('Redirects Module', () => {
     /**
      * Tests that a redirect without site association can be published with site association.
      * Mirrors Tests/Browser/RedirectsModule/RedirectsModuleTest.php
-     *
-     * @todo All redirects in the current DB dump are already published (status shows ✓, no
-     *       "Publish with site association" action is available for redirect 19).
-     *       Either update the DB dump to have redirect 19 in unpublished state or fix the test data.
      */
-    test.skip('Redirect without association can be published with site association', async ({ page, backend }) => {
+    test('Redirect without association can be published with site association', async ({ page, backend }) => {
 
         await test.step('Given I am logged in to the Local Backend', async () => {
             await backend.login(config.local.baseUrl);
@@ -33,20 +29,25 @@ test.describe('Redirects Module', () => {
         });
 
         await test.step('And I click "Publish with site association"', async () => {
-            const publishLink = backend.contentFrame.locator('a[title="Publish with site association"]');
+            const row = backend.contentFrame.locator('tbody tr').filter({
+                hasText: '/extin2publish/8-treatremovedanddeletedasdifference',
+            });
+            const publishLink = row.getByRole('link', { name: 'Publish with site association' });
             await expect(publishLink).toBeVisible();
             await publishLink.click();
         });
 
         await test.step('And I select site "main" and publish', async () => {
             // Select the site association
-            await backend.contentFrame.locator('[name="properties[siteId]"]').selectOption('main');
+            const siteSelector = backend.contentFrame.locator('[name="properties[siteId]"]');
+            await expect(siteSelector).toBeVisible();
+            await siteSelector.selectOption('main');
 
             // Click save and publish
             await backend.contentFrame.locator('[name="_saveandpublish"]').click();
 
             await expect(backend.contentFrame.locator('body')).toContainText(
-                'Associated redirect Redirect [19] (local.v13.in2publish-core.de) /extin2publish/8-treatremovedanddeletedasdifference -> t3://page?uid=39&_language=0 with site main'
+                'Associated redirect Redirect [19] (local.v14.in2publish.de) /extin2publish/8-treatremovedanddeletedasdifference -> t3://page?uid=39&_language=0 with site main'
             );
         });
     });
