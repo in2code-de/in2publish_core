@@ -21,6 +21,8 @@ Resources/Private/Clickdummy/zextensions.css
 .project/artifacts
 Build/testing-docker/.env
 Build/.phpunit.result.cache
+Build/local/config/sites/main/setup.typoscript
+Build/foreign/config/sites/main/setup.typoscript
 .php-cs-fixer.cache
 composer.lock
 docker-compose.yaml
