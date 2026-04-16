@@ -6,48 +6,38 @@ import { execSync } from 'child_process';
 /**
  * Direct database and fileadmin restore for Playwright tests.
  *
- * Database: Connects to MySQL and re-imports dump data.
- * Fileadmin: Restores fileadmin from backup to both instances.
- *
- * Supports two execution contexts (auto-detected):
- * - Docker: Running inside the Playwright container (host=mysql, LOAD DATA INFILE)
- * - Host: Running on the developer's machine (host=127.0.0.1, LOAD DATA LOCAL INFILE)
- *
- * And two project contexts (auto-detected):
- * - Monorepo: Playwright at /work/packages/in2publish_core, app dirs at /work/app/{local,foreign}/
- * - Standalone: Playwright at /work, app dirs at /work/Build/{local,foreign}/
+ * Works in both the monorepo Playwright container and the in2publish_core
+ * standalone Docker stack. Paths are configured via environment variables;
+ * falls back to monorepo-relative paths when env vars are absent.
  *
  * Environment Variables:
- * - DB_HOST: MySQL host (default: auto-detect 'mysql' in Docker, '127.0.0.1' on host)
- * - DB_PORT: MySQL port (default: 3306 in Docker, 54444 on host)
- * - SQLDUMPSDIR: MySQL LOAD DATA path prefix (Docker only)
+ * - DB_HOST: MySQL host (default: 'mysql')
+ * - DB_PORT: MySQL port (default: 3306)
+ * - SQLDUMPSDIR: MySQL LOAD DATA path prefix (default: '.project/data/dumps')
+ * - DUMPS_DIR_PW: Filesystem path to dumps dir inside the container
+ * - FILEADMIN_BACKUP: Filesystem path to fileadmin backup dir
+ * - LOCAL_FILEADMIN: Filesystem path to local TYPO3 fileadmin dir
+ * - FOREIGN_FILEADMIN: Filesystem path to foreign TYPO3 fileadmin dir
+ * - LOCAL_VAR_CACHE: Filesystem path to local TYPO3 var/cache dir
+ * - FOREIGN_VAR_CACHE: Filesystem path to foreign TYPO3 var/cache dir
  */
-// in2publish_core package root (3 levels up from Tests/Playwright/helpers/)
-const PACKAGE_ROOT = path.resolve(__dirname, '../../..');
 
-// Detect monorepo vs standalone context:
-// In monorepo, PACKAGE_ROOT is /work/packages/in2publish_core and /work/app/ exists.
-// In standalone, PACKAGE_ROOT is /work and Build/local/ exists instead.
-const isMonorepo = fs.existsSync(path.resolve(PACKAGE_ROOT, '../../app'));
-const APP_ROOT = isMonorepo ? path.resolve(PACKAGE_ROOT, '../..') : PACKAGE_ROOT;
-const APP_PREFIX = isMonorepo ? 'app' : 'Build';
+// Fallback: monorepo root (helpers/ → Playwright/ → Tests/ → in2publish_core/ → packages/ → root)
+const MONOREPO_ROOT = path.resolve(__dirname, '../../../../..');
 
-// Detect Docker vs host: inside Docker, /.dockerenv exists.
-const isDocker = fs.existsSync('/.dockerenv');
-
-const DUMPS_DIR_PW = path.join(PACKAGE_ROOT, '.project/data/dumps');
-// MySQL LOAD DATA INFILE path: volume mount is ${SQLDUMPSDIR}:/${SQLDUMPSDIR},
-// so the container path is /${SQLDUMPSDIR} (with leading ./ stripped).
+const DUMPS_DIR_PW = process.env.DUMPS_DIR_PW ?? path.join(MONOREPO_ROOT, '.project/data/dumps');
+// MySQL LOAD DATA INFILE path: volume mount maps .project/data/dumps to /.project/data/dumps
 const SQLDUMPSDIR = process.env.SQLDUMPSDIR || '.project/data/dumps';
 const DUMPS_DIR_MYSQL = '/' + SQLDUMPSDIR.replace(/^\.\//, '').replace(/\/$/, '');
-const FILEADMIN_BACKUP = path.join(PACKAGE_ROOT, '.project/data/fileadmin');
-const LOCAL_FILEADMIN = path.join(APP_ROOT, APP_PREFIX, 'local/public/fileadmin');
-const FOREIGN_FILEADMIN = path.join(APP_ROOT, APP_PREFIX, 'foreign/public/fileadmin');
-const LOCAL_VAR_CACHE = path.join(APP_ROOT, APP_PREFIX, 'local/var/cache');
-const FOREIGN_VAR_CACHE = path.join(APP_ROOT, APP_PREFIX, 'foreign/var/cache');
 
-const DB_HOST = process.env.DB_HOST || (isDocker ? 'mysql' : '127.0.0.1');
-const DB_PORT = parseInt(process.env.DB_PORT || (isDocker ? '3306' : '54444'), 10);
+const FILEADMIN_BACKUP = process.env.FILEADMIN_BACKUP ?? path.join(MONOREPO_ROOT, '.project/data/fileadmin');
+const LOCAL_FILEADMIN = process.env.LOCAL_FILEADMIN ?? path.join(MONOREPO_ROOT, 'app/local/public/fileadmin');
+const FOREIGN_FILEADMIN = process.env.FOREIGN_FILEADMIN ?? path.join(MONOREPO_ROOT, 'app/foreign/public/fileadmin');
+const LOCAL_VAR_CACHE = process.env.LOCAL_VAR_CACHE ?? path.join(MONOREPO_ROOT, 'app/local/var/cache');
+const FOREIGN_VAR_CACHE = process.env.FOREIGN_VAR_CACHE ?? path.join(MONOREPO_ROOT, 'app/foreign/var/cache');
+
+const DB_HOST = process.env.DB_HOST || 'mysql';
+const DB_PORT = parseInt(process.env.DB_PORT || '3306', 10);
 
 /**
  * Restore both local and foreign databases from dump files.
@@ -59,16 +49,11 @@ export async function restoreDatabases(): Promise<void> {
         user: 'root',
         password: 'root',
         multipleStatements: true,
-        // LOAD DATA LOCAL INFILE requires this flag on the client side
-        ...(!isDocker ? { flags: ['+LOCAL_FILES'] } : {}),
     });
 
-    console.log(`[direct-restore] Connecting to MySQL at ${DB_HOST}:${DB_PORT} (${isDocker ? 'Docker' : 'host'} mode)`);
+    console.log(`[direct-restore] Connecting to MySQL at ${DB_HOST}:${DB_PORT}`);
 
     try {
-        if (!isDocker) {
-            await connection.query("SET GLOBAL local_infile = 1");
-        }
         for (const db of ['local', 'foreign']) {
             console.log(`[direct-restore] Restoring ${db} database...`);
             await connection.query(`USE \`${db}\``);
@@ -94,25 +79,15 @@ export async function restoreDatabases(): Promise<void> {
             const [rows] = await connection.query('SHOW TABLES') as any;
             const tables = rows.map((row: any) => Object.values(row)[0] as string);
 
-            // For each table with a CSV, truncate and import
+            // For each table with a CSV, truncate and import via LOAD DATA INFILE
             for (const table of tables) {
                 const csvPathPw = path.join(DUMPS_DIR_PW, db, `${table}.csv`);
                 if (fs.existsSync(csvPathPw)) {
                     await connection.query(`TRUNCATE TABLE \`${table}\``);
-                    if (isDocker) {
-                        // Inside Docker: MySQL server can read the file directly
-                        const csvPathMysql = `${DUMPS_DIR_MYSQL}/${db}/${table}.csv`;
-                        await connection.query(
-                            `LOAD DATA INFILE '${csvPathMysql}' INTO TABLE \`${table}\``
-                        );
-                    } else {
-                        // On host: send file from client to server
-                        await connection.query({
-                            sql: `LOAD DATA LOCAL INFILE ? INTO TABLE \`${table}\``,
-                            values: [csvPathPw],
-                            infileStreamFactory: () => fs.createReadStream(csvPathPw),
-                        } as any);
-                    }
+                    const csvPathMysql = `${DUMPS_DIR_MYSQL}/${db}/${table}.csv`;
+                    await connection.query(
+                        `LOAD DATA INFILE '${csvPathMysql}' INTO TABLE \`${table}\``
+                    );
                 }
             }
         }
@@ -138,13 +113,12 @@ export async function restoreDatabases(): Promise<void> {
 /**
  * Restore fileadmin directories for both local and foreign instances.
  * Removes the current fileadmin and copies from backup (mirrors rsync --delete).
- * Also clears TYPO3 filesystem caches (var/cache/) on both instances to prevent
+ * Also clears TYPO3 filesystem caches (var/cache/data/) on both instances to prevent
  * stale compiled data from interfering with the freshly restored state.
  */
 export function restoreFileadmin(): void {
     console.log('[direct-restore] Restoring fileadmin...');
     try {
-        // Remove current fileadmin contents and copy from backup
         execSync(`rm -rf "${LOCAL_FILEADMIN}"/* && cp -a "${FILEADMIN_BACKUP}/local/." "${LOCAL_FILEADMIN}/"`, {
             stdio: 'inherit', shell: '/bin/bash',
         });
@@ -152,7 +126,7 @@ export function restoreFileadmin(): void {
             stdio: 'inherit', shell: '/bin/bash',
         });
 
-        // Clear TYPO3 filesystem caches (data/ subdirectories only - keep code/ and di/ intact
+        // Clear TYPO3 filesystem caches (data/ only — keep code/ and di/ intact
         // as those don't change between tests and are expensive to rebuild)
         for (const cacheDir of [LOCAL_VAR_CACHE, FOREIGN_VAR_CACHE]) {
             const dataDir = path.join(cacheDir, 'data');
