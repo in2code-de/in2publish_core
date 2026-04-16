@@ -27,7 +27,7 @@ services:
       - ./:/app/
       - ./:/packages/in2publish_core/
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
+      - ../../.project/data/dumps:/${SQLDUMPSDIR}
     env_file:
       - .env
     environment:
@@ -82,7 +82,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - .project/docker/mysql/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
-      - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
+      - ../../.project/data/dumps:/${SQLDUMPSDIR}
     ports:
       - ${SQLPORT}:3306
 
@@ -92,27 +92,6 @@ services:
       VIRTUAL_HOST: ${MAIL_HOST}
       VIRTUAL_PORT: 8025
 
-  playwright:
-    image: mcr.microsoft.com/playwright:v1.58.2-noble
-    command: sleep infinity
-    user: ${USER_ID:-1000}
-    volumes:
-      - ./:/work
-    working_dir: /work
-    env_file:
-      - .env
-    environment:
-      CI: "1"
-      PLAYWRIGHT_BASE_URL: https://${HOST_LOCAL}/typo3/
-      PLAYWRIGHT_FOREIGN_BASE_URL: https://${HOST_FOREIGN}/typo3/
-      HOME: /work
-    ports:
-      - "9323:9323"
-    networks:
-      default:
-    depends_on:
-      - local
-      - foreign
 
 volumes:
   mysql-data:

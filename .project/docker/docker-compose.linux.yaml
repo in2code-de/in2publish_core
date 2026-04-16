@@ -32,7 +32,7 @@ services:
       - ./:/app/
       - ./:/packages/in2publish_core/
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
+      - ../../.project/data/dumps:/${SQLDUMPSDIR}
     env_file:
       - .env
     extra_hosts:
@@ -94,7 +94,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - .project/docker/mysql/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
-      - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
+      - ../../.project/data/dumps:/${SQLDUMPSDIR}
     ports:
       - ${SQLPORT}:3306
 
@@ -104,27 +104,38 @@ services:
       VIRTUAL_HOST: ${MAIL_HOST}
       VIRTUAL_PORT: 8025
 
+
   playwright:
-    image: mcr.microsoft.com/playwright:v1.57.0-noble
+    image: mcr.microsoft.com/playwright:v1.59.1-noble
     command: sleep infinity
     user: ${USER_ID:-1000}
     volumes:
       - ./:/work
+      - ../../.project/data/dumps:/.project/data/dumps
+      - ../../.project/data/fileadmin:/.project/data/fileadmin
     working_dir: /work
     env_file:
       - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       CI: ${CI:-0}
+      HOME: /work
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
       PLAYWRIGHT_BASE_URL: https://${HOST_LOCAL}/typo3/
       PLAYWRIGHT_FOREIGN_BASE_URL: https://${HOST_FOREIGN}/typo3/
-      HOME: /work
+      DUMPS_DIR_PW: /.project/data/dumps
+      FILEADMIN_BACKUP: /.project/data/fileadmin
+      LOCAL_FILEADMIN: /work/Build/local/public/fileadmin
+      FOREIGN_FILEADMIN: /work/Build/foreign/public/fileadmin
+      LOCAL_VAR_CACHE: /work/Build/local/var/cache
+      FOREIGN_VAR_CACHE: /work/Build/foreign/var/cache
     ports:
-      - "9323:9323"
+      - "${PLAYWRIGHT_UI_PORT:-9425}:9323"
     networks:
       default:
-    depends_on:
-      - local
-      - foreign
+        aliases:
+          - playwright
 
 volumes:
   mysql-data:
