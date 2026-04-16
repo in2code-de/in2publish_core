@@ -107,6 +107,17 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 
 restore: mysql-restore fileadmin-restore
 
+## Create dumps of local and foreign database in dir SQLDUMPSDIR using mysql-loader
+dump-dbs: dump-local-database dump-foreign-database
+
+dump-local-database: .mysql-wait
+	echo "$(EMOJI_robot) Dumping the local database to $(SQLDUMPSDIR)/local"
+	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/$(SQLDUMPSDIR)/local/ -xcache_ -xindex_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+
+dump-foreign-database: .mysql-wait
+	echo "$(EMOJI_robot) Dumping the foreign database to $(SQLDUMPSDIR)/foreign"
+	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/$(SQLDUMPSDIR)/foreign/ -xcache_ -xindex_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+
 ## Restores the database from the dump files in SQLDUMPSDIR
 mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
@@ -115,16 +126,36 @@ mysql-restore: .mysql-wait
 	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/$(SQLDUMPSDIR)/foreign/
 
 
-## Restores the fileadmin from .project/data/fileadmin
+## Restores the fileadmin from $(FILESDIR)
 fileadmin-restore:
 	echo "$(EMOJI_robot) Restoring the fileadmin"
-	rsync -a --delete .project/data/fileadmin/local/ Build/local/public/fileadmin/
-	rsync -a --delete .project/data/fileadmin/foreign/ Build/foreign/public/fileadmin/
+	rsync -a --delete $(FILESDIR)/local/ Build/local/public/fileadmin/
+	rsync -a --delete $(FILESDIR)/foreign/ Build/foreign/public/fileadmin/
 
 ## Set all workflow states to "Ready to Publish" (state=1) for test environments
 workflow-ready:
 	echo "$(EMOJI_robot) Setting workflow states to 'Ready to Publish'"
 	docker compose exec -T mysql mysql -uroot -proot local -e "UPDATE tx_in2publish_workflow_state SET state_identifier = 1"
+
+## Run all Playwright tests (restores DB and clears TYPO3 caches first). Use FILE= for individual tests.
+playwright: .link-compose-file restore typo3-clearcache
+	docker compose exec -e CI=1 playwright sh -c "npm install --silent && npx playwright test $(FILE)"
+
+## Open Playwright UI mode (http://localhost:${PLAYWRIGHT_UI_PORT}). Use FILE= to filter tests.
+playwright-ui: .link-compose-file restore typo3-clearcache
+	@echo "$(EMOJI_robot) Starting Playwright UI at http://localhost:$(PLAYWRIGHT_UI_PORT)"
+	@echo "Press Ctrl+C to stop"
+	docker compose stop playwright
+	docker compose run --rm --service-ports playwright sh -c "npm install --silent && npx playwright test --ui --ui-host=0.0.0.0 --ui-port=9323 $(FILE)"
+	docker compose start playwright
+
+## Show the last Playwright HTML report (http://localhost:${PLAYWRIGHT_UI_PORT})
+playwright-report: .link-compose-file
+	@echo "$(EMOJI_robot) Serving Playwright report at http://localhost:$(PLAYWRIGHT_UI_PORT)"
+	@echo "Press Ctrl+C to stop"
+	docker compose stop playwright
+	docker compose run --rm --service-ports playwright sh -c "npm install --silent && npx playwright show-report --host=0.0.0.0 --port=9323"
+	docker compose start playwright
 
 unit:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml
@@ -150,26 +181,6 @@ acceptance-test:
 		echo "Running all test methods in $(name)"; \
 		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)"; \
 	fi
-
-## Run all Playwright tests (restores DB and clears TYPO3 caches first). Use FILE= for individual tests.
-playwright: restore typo3-clearcache
-	docker compose exec -e CI=1 playwright npx playwright test $(FILE)
-
-## Open Playwright UI mode (http://localhost:${PLAYWRIGHT_UI_PORT}). Use FILE= to filter tests.
-playwright-ui: restore typo3-clearcache
-	@echo "$(EMOJI_robot) Starting Playwright UI at http://localhost:$(PLAYWRIGHT_UI_PORT)"
-	@echo "Press Ctrl+C to stop"
-	docker compose stop playwright
-	docker compose run --rm --service-ports playwright npx playwright test --ui --ui-host=0.0.0.0 --ui-port=9323 $(FILE)
-	docker compose start playwright
-
-## Show the last Playwright HTML report (http://localhost:${PLAYWRIGHT_UI_PORT})
-playwright-report:
-	@echo "$(EMOJI_robot) Serving Playwright report at http://localhost:$(PLAYWRIGHT_UI_PORT)"
-	@echo "Press Ctrl+C to stop"
-	docker compose stop playwright
-	docker compose run --rm --service-ports playwright npx playwright show-report --host=0.0.0.0 --port=9323
-	docker compose start playwright
 
 setup-qa:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm phive install
