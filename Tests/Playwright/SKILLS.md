@@ -17,7 +17,7 @@ Always import `{ test, expect }` from the project's fixtures file, **not** from 
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { fullRestore } from '../../helpers/direct-restore';
 ```
 
 ---
@@ -28,7 +28,7 @@ import { Environment } from '../../helpers/Environment';
 test.describe('Publish Changed Page Properties', () => {
 
     test.beforeAll(async () => {
-        await Environment.reset();  // Restores DB + fileadmin via 'make restore' (skipped in CI)
+        await fullRestore();  // Restores DB + fileadmin from csv files + filesystem
     });
 
     test('Test case description', async ({ page, backend, browser }) => {
@@ -65,11 +65,11 @@ const { backend } = fixtures;
 await backend.login(config.local.baseUrl);
 
 // Navigate to a module
-await backend.gotoModule('Page');
+await backend.gotoModule('Layout');           // Resolves to 'Layout' in TYPO3 v14
 await backend.gotoModule('Publish Overview');
 await backend.gotoModule('Publish Files');
-await backend.gotoModule('List');
-await backend.gotoModule('Filelist');
+await backend.gotoModule('List');            // Resolves to 'Records' in TYPO3 v14
+await backend.gotoModule('Filelist');        // Resolves to 'Media' in TYPO3 v14
 await backend.gotoModule('Publish Redirects');
 
 // Search and select in page tree
@@ -255,14 +255,16 @@ await backend.waitUntilPublishingFinished();
 config.local.baseUrl   // Local backend URL (e.g. https://local.v13.in2publish-core.de/typo3/)
 config.foreign.baseUrl // Foreign backend URL (e.g. https://foreign.v13.in2publish-core.de/typo3/)
 
-// Environment reset runs 'make restore' (DB + fileadmin) from monorepo root.
-// Skipped when CI=1 (Docker) — global.setup.ts uses direct-restore.ts instead.
-await Environment.reset();
+// Full restore (DB + fileadmin) — works in both Docker and host environments.
+import { fullRestore } from '../../helpers/direct-restore';
+test.beforeAll(async () => {
+    await fullRestore();
+});
 
-// For per-test DB reset in CI (e.g. tests that modify data):
+// For per-test DB-only reset (e.g. tests that modify data):
 import { restoreDatabases } from '../../helpers/direct-restore';
 test.beforeEach(async () => {
-    await restoreDatabases();  // Direct MySQL restore, works in Docker
+    await restoreDatabases();
 });
 ```
 

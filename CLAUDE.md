@@ -82,7 +82,10 @@ Configuration/
 ### Development Tools
 
 - **PHPUnit**: Via stack-test package (^9.6/^10.4/^11.5)
-- **Playwright**: Browser tests in `Tests/Playwright/`
+- **Playwright**: Browser tests in `Tests/Playwright/`. Uses its own Docker stack (`in2publish_core`
+  project, `PLAYWRIGHT_UI_PORT=9425`). Path variables (`DUMPS_DIR_PW`, `LOCAL_FILEADMIN`, etc.) are
+  injected via env vars in `docker-compose.darwin.yaml`; see `Tests/Playwright/helpers/direct-restore.ts`
+  for fallbacks.
 - **Gulp + Sass**: Frontend build in `Resources/Private/Build/`
 - No PHP CS Fixer, PHPStan, or Rector installed
 
@@ -111,6 +114,9 @@ Key targets:
 - `make login-local-php` / `make login-foreign-php` - Shell access
 - `make setup-qa` - QA tools setup
 - `make urls` - Show project URLs
+- `make playwright-ui` - Open Playwright UI (http://localhost:${PLAYWRIGHT_UI_PORT}); stack must be running first
+- `make playwright` - Run all Playwright tests headlessly
+- `make playwright-report` - Serve last HTML report
 
 ### TYPO3 v13 Guidelines
 

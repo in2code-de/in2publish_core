@@ -89,8 +89,8 @@ Tests rely on a clean, known database state restored from dumps in `.project/dat
 ### Environment Isolation
 
 The `in2publish_core` tests operate in an isolated environment:
-- **Local System**: `https://local.v13.in2publish-core.de`
-- **Foreign System**: `https://foreign.v13.in2publish-core.de`
+- **Local System**: `https://local.v14.in2publish-core.de`
+- **Foreign System**: `https://foreign.v14.in2publish-core.de`
 
 When running from the monorepo, the enterprise extension is uninstalled to ensure tests validate core functionality in isolation.
 
@@ -112,11 +112,11 @@ The Docker setup uses a dedicated Playwright service in docker-compose:
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PLAYWRIGHT_BASE_URL` | Base URL for local TYPO3 instance | `https://local.v13.in2publish-core.de/typo3/` |
-| `PLAYWRIGHT_FOREIGN_BASE_URL` | Base URL for foreign TYPO3 instance | `https://foreign.v13.in2publish-core.de/typo3/` |
-| `CI` | Enable CI mode (retries, forbidOnly) | `0` (set to `1` in CI) |
+| Variable | Description | Default                                         |
+|----------|-------------|-------------------------------------------------|
+| `PLAYWRIGHT_BASE_URL` | Base URL for local TYPO3 instance | `https://local.v14.in2publish-core.de/typo3/`   |
+| `PLAYWRIGHT_FOREIGN_BASE_URL` | Base URL for foreign TYPO3 instance | `https://foreign.v14.in2publish-core.de/typo3/` |
+| `CI` | Enable CI mode (retries, forbidOnly) | `0` (set to `1` in CI)                          |
 
 ### Accessing Both Instances in Tests
 
