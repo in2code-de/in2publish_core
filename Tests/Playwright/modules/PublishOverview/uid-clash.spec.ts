@@ -33,7 +33,7 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
 
     async function publishNews76(backend: BackendPage) {
         await backend.gotoModule('Publish Overview');
-        await backend.searchInPageTreeAndSelectFirstOccurrence('News Folder in2publish_core');
+        await backend.searchInPageTreeAndSelectFirstOccurrence('News Folder Core');
 
         await expect(
             backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
@@ -57,7 +57,7 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
 
     async function assertNews76Published(foreignBackend: BackendPage) {
         await foreignBackend.gotoModule('Page');
-        await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('News Folder in2publish_core');
+        await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('News Folder Core');
         await foreignBackend.gotoModule('List');
         await expect(foreignBackend.contentFrame.locator('body')).toContainText('24 news with Category 1', { timeout: 15000 });
     }

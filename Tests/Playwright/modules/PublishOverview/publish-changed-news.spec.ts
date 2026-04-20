@@ -14,29 +14,15 @@ test.describe('Publish Changed News', () => {
             await backend.login(config.local.baseUrl);
         });
 
-        await test.step('When I open "Publish Overview" and select the News Folder', async () => {
+        await test.step('When I open "Publish Overview" and select the News Folder Core', async () => {
             await backend.gotoModule('Publish Overview');
-            await backend.searchInPageTreeAndSelectFirstOccurrence('News Folder');
-
-            // Verify we landed on pages-33 (not pages-26 which has the same title)
-            const recordRow = backend.contentFrame.locator('[data-record-identifier="pages-33"]');
-            if (recordRow.count > 0) {
-                // Try selecting the second "News Folder" node in the page tree
-                const pageTree = page.locator('typo3-backend-content-navigation');
-                const treeItems = pageTree.locator('[role="treeitem"]').filter({ hasText: 'News Folder' });
-                const secondItem = treeItems.nth(1);
-                if (await secondItem.count() > 0) {
-                    const label = secondItem.locator('.node-contentlabel').first();
-                    await label.click({ force: true });
-                    await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
-                    await page.waitForTimeout(1000);
-                }
-            }
+            await backend.searchInPageTreeAndSelectFirstOccurrence('News Folder Core');
 
             await expect(
                 backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
             ).toBeVisible({ timeout: 10000 });
 
+            const recordRow = backend.contentFrame.locator('[data-record-identifier="pages-33"]');
 
             // Expand dirty properties
             const infoIcon = recordRow.locator('[data-action="opendirtypropertieslistcontainer"]');
@@ -67,7 +53,7 @@ test.describe('Publish Changed News', () => {
 
             await foreignBackend.login(config.foreign.baseUrl);
             await foreignBackend.gotoModule('List');
-            await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('News Folder');
+            await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('News Folder Core');
 
             await expect(
                 foreignBackend.contentFrame.locator('body')
