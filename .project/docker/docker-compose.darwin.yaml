@@ -33,7 +33,8 @@ services:
       - ./:/packages/in2publish_core/:cached
       - /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock
       - /var/run/docker.sock:/var/run/docker.sock
-      - ../../.project/data/dumps:/${SQLDUMPSDIR}:cached
+      - ../../.project/data/dumps:/${DUMPS_DIR}:cached
+      - ../../.project/data/fileadmin/:/${FILEADMIN_DIR}:cached
     env_file:
       - .env
     environment:
@@ -84,14 +85,14 @@ services:
 
   mysql:
     image: in2code/mysql:8.0
-    command: --secure-file-priv=${SQLDUMPSDIR}
+    command: --secure-file-priv=${DUMPS_DIR}
     user: '1000'
     env_file:
       - .env
     volumes:
       - mysql-data:/var/lib/mysql
       - .project/docker/mysql/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
-      - ../../.project/data/dumps:/${SQLDUMPSDIR}
+      - ../../.project/data/dumps:/${DUMPS_DIR}
     ports:
       - ${SQLPORT}:3306
 
@@ -108,7 +109,7 @@ services:
     volumes:
       - ./:/work:cached
       - ../../.project/data/dumps:/.project/data/dumps:cached
-      - ../../.project/data/fileadmin:/.project/data/fileadmin:cached
+      - ../../.project/data/fileadmin/:/${FILEADMIN_DIR}:cached
     working_dir: /work
     env_file:
       - .env
@@ -118,12 +119,12 @@ services:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
       PLAYWRIGHT_BASE_URL: https://${HOST_LOCAL}/typo3/
       PLAYWRIGHT_FOREIGN_BASE_URL: https://${HOST_FOREIGN}/typo3/
-      DUMPS_DIR_PW: /.project/data/dumps
-      FILEADMIN_BACKUP: /.project/data/fileadmin
-      LOCAL_FILEADMIN: /work/Build/local/public/fileadmin
-      FOREIGN_FILEADMIN: /work/Build/foreign/public/fileadmin
-      LOCAL_VAR_CACHE: /work/Build/local/var/cache
-      FOREIGN_VAR_CACHE: /work/Build/foreign/var/cache
+      DUMPS_DIR: /.project/data/dumps
+      FILEADMIN_DIR: /.project/data/fileadmin
+      LOCAL_FILEADMIN_DIR: /work/Build/local/public/fileadmin
+      FOREIGN_FILEADMIN_DIR: /work/Build/foreign/public/fileadmin
+      LOCAL_CACHE_DIR: /work/Build/local/var/cache
+      FOREIGN_CACHE_DIR: /work/Build/foreign/var/cache
     ports:
       - "${PLAYWRIGHT_UI_PORT:-9425}:9323"
     networks:

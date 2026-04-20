@@ -1,6 +1,7 @@
 # Settings
 MAKEFLAGS += --silent --always-make
 SHELL := /bin/bash
+-include .env
 
 # colors
 RED     := $(shell tput -Txterm setaf 1)
@@ -107,30 +108,29 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 
 restore: mysql-restore fileadmin-restore
 
-## Create dumps of local and foreign database in dir SQLDUMPSDIR using mysql-loader
+## Create dumps of local and foreign database in dir DUMPS_DIR using mysql-loader
 dump-dbs: dump-local-database dump-foreign-database
 
 dump-local-database: .mysql-wait
-	echo "$(EMOJI_robot) Dumping the local database to $(SQLDUMPSDIR)/local"
-	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/$(SQLDUMPSDIR)/local/ -xcache_ -xindex_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+	echo "$(EMOJI_robot) Dumping the local database to $(DUMPS_DIR)/local"
+	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/$(DUMPS_DIR)/local/ -xcache_ -xindex_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
 
 dump-foreign-database: .mysql-wait
-	echo "$(EMOJI_robot) Dumping the foreign database to $(SQLDUMPSDIR)/foreign"
-	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/$(SQLDUMPSDIR)/foreign/ -xcache_ -xindex_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
+	echo "$(EMOJI_robot) Dumping the foreign database to $(DUMPS_DIR)/foreign"
+	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/$(DUMPS_DIR)/foreign/ -xcache_ -xindex_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
 
-## Restores the database from the dump files in SQLDUMPSDIR
+## Restores the database from the dump files in DUMPS_DIR
 mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
-	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/$(SQLDUMPSDIR)/local/
+	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/$(DUMPS_DIR)/local/
 	echo "$(EMOJI_robot) Restoring the foreign database"
-	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/$(SQLDUMPSDIR)/foreign/
+	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/$(DUMPS_DIR)/foreign/
 
-
-## Restores the fileadmin from $(FILESDIR)
+## Restores the fileadmin from FILEADMIN_DIR
 fileadmin-restore:
 	echo "$(EMOJI_robot) Restoring the fileadmin"
-	rsync -a --delete $(FILESDIR)/local/ Build/local/public/fileadmin/
-	rsync -a --delete $(FILESDIR)/foreign/ Build/foreign/public/fileadmin/
+	docker compose exec local-php rsync -a --delete /$(FILEADMIN_DIR)/local/ /app/Build/local/public/fileadmin/
+	docker compose exec local-php rsync -a --delete /$(FILEADMIN_DIR)/foreign/ /app/Build/foreign/public/fileadmin/
 
 ## Set all workflow states to "Ready to Publish" (state=1) for test environments
 workflow-ready:
