@@ -27,7 +27,6 @@ services:
       - ./:/app/
       - ./:/packages/in2publish_core/
       - /var/run/docker.sock:/var/run/docker.sock
-      - ../../.project/data/dumps:/${SQLDUMPSDIR}
     env_file:
       - .env
     environment:
@@ -75,14 +74,12 @@ services:
 
   mysql:
     image: in2code/mysql:8.0
-    command: --secure-file-priv=${SQLDUMPSDIR}
     user: '1000'
     env_file:
       - .env
     volumes:
       - mysql-data:/var/lib/mysql
       - .project/docker/mysql/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
-      - ../../.project/data/dumps:/${SQLDUMPSDIR}
     ports:
       - ${SQLPORT}:3306
 

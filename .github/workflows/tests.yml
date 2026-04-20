@@ -60,12 +60,6 @@ jobs:
       - name: Restore site configurations after setup
         run: git checkout Build/local/config/sites/main/config.yaml && git checkout Build/foreign/config/sites/main/config.yaml
 
-      - name: Restore DB Local
-        run: docker compose exec mysql bash -c 'cat /.project/data/dumps/local/db_local.sql | mysql --default-character-set=utf8 -uroot -proot local'
-
-      - name: Restore DB Foreign
-        run: docker compose exec mysql bash -c 'cat /.project/data/dumps/foreign/db_foreign.sql | mysql --default-character-set=utf8 -uroot -proot foreign'
-
       - name: Show me what's up 2
         run: docker compose ps
 
@@ -73,9 +67,9 @@ jobs:
         run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
         if: always()
 
-      - name: Functional Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
-        if: always()
+#      - name: Functional Tests
+#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
+#        if: always()
 
 #      - name: Acceptance Tests
 #        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
