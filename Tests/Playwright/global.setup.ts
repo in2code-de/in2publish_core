@@ -1,5 +1,5 @@
 import { test as setup, expect } from '@playwright/test';
-import { createGlobalLoginSetup } from '@in2code/typo3-playwright/setup';
+import { createGlobalLoginSetup } from './shared/setup/index';
 import config from './config';
 import { fullRestore } from './helpers/direct-restore';
 

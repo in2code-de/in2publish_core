@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { BackendPage as BaseBackendPage } from '@in2code/typo3-playwright/fixtures';
+import { BackendPage as BaseBackendPage } from '../shared/fixtures/index';
 import config from '../config';
 
 /**

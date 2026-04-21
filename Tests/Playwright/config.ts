@@ -1,4 +1,4 @@
-import { createConfig } from '@in2code/typo3-playwright/helpers';
+import { createConfig } from './shared/helpers/index';
 
 /**
  * in2publish_core test configuration.
