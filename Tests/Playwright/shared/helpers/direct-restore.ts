@@ -76,6 +76,23 @@ export async function restoreDatabases(): Promise<void> {
   }
 }
 
+export async function executeLocalSql(sql: string): Promise<void> {
+  const connection = await mysql.createConnection({
+    host: DB_HOST,
+    port: DB_PORT,
+    user: 'root',
+    password: 'root',
+    multipleStatements: true,
+  });
+
+  try {
+    await connection.query('USE `local`');
+    await connection.query(sql);
+  } finally {
+    await connection.end();
+  }
+}
+
 export function restoreFileadmin(): void {
   console.log('[direct-restore] Restoring fileadmin...');
 
