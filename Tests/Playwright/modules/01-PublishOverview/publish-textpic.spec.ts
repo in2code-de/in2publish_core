@@ -47,7 +47,7 @@ test.describe('Publish page with textpic', () => {
             const foreignBackend = new BackendPage(foreignPage);
 
             await foreignBackend.login(config.foreign.baseUrl);
-            await foreignBackend.gotoModule('Page');
+            await foreignBackend.gotoModule('Layout');
             await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('1e page with textpic');
             const image = foreignBackend.contentFrame.locator('img[src*="1e_textpic/1e_textpic.jpg"]');
             await expect(image).toBeVisible();
