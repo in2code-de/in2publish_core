@@ -35,7 +35,7 @@ class SimpleStopwatch implements SingletonInterface, LoggerAwareInterface
             throw new StopwatchWasNotStartedException();
         }
         $duration = microtime(true) - $this->startTime;
-        [$sec, $msec] = explode('.', (string)$duration);
+        [$sec, $msec] = explode('.', number_format($duration, 4, '.', ''));
         return date('i:s', (int)$sec) . '.' . substr($msec, 0, 4);
     }
 }
