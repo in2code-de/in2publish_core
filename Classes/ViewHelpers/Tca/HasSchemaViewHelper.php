@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\ViewHelpers\Tca;
 
+use TYPO3\CMS\Core\Schema\TcaSchemaFactory;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
@@ -23,6 +25,6 @@ class HasSchemaViewHelper extends AbstractConditionViewHelper
 
     public static function verdict(array $arguments, RenderingContextInterface $renderingContext): bool
     {
-        return isset($GLOBALS['TCA'][$arguments['table']]);
+        return GeneralUtility::makeInstance(TcaSchemaFactory::class)->has($arguments['table']);
     }
 }
