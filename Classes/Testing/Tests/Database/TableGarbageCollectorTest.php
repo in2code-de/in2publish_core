@@ -33,7 +33,9 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
 
 class TableGarbageCollectorTest implements TestCaseInterface
 {
@@ -49,9 +51,19 @@ class TableGarbageCollectorTest implements TestCaseInterface
         $query->count('*')
               ->from('tx_scheduler_task')
               ->where(
-                  $query->expr()->like(
-                      'serialized_task_object',
-                      $query->createNamedParameter('%tx_in2publishcore_running_request%'),
+                  $query->expr()->eq(
+                      'tasktype',
+                      $query->createNamedParameter(TableGarbageCollectionTask::class),
+                  ),
+                  $query->expr()->or(
+                      $query->expr()->eq(
+                          'selected_tables',
+                          $query->createNamedParameter('tx_in2publishcore_running_request'),
+                      ),
+                      $query->expr()->eq(
+                          'all_tables',
+                          $query->createNamedParameter(1, Connection::PARAM_INT),
+                      ),
                   ),
               );
         $statement = $query->executeQuery();
