@@ -15,6 +15,16 @@ const FOREIGN_CACHE_DIR = process.env.FOREIGN_CACHE_DIR ?? path.join(MONOREPO_RO
 const DB_HOST = process.env.DB_HOST || 'mysql';
 const DB_PORT = parseInt(process.env.DB_PORT || '3306', 10);
 
+// Keep in sync with Makefile - restore-dbs
+// this truncates empty tables on foreign
+// empty tables are omitted by the mysql-loader during dumping - so this is the only way to clear these tables
+const FOREIGN_ONLY_EMPTY_TABLES = [
+  'sys_category',
+  'sys_category_record_mm',
+  'tx_in2publish_workflow_history',
+  'tx_in2publish_workflow_state',
+];
+
 export async function restoreDatabases(): Promise<void> {
   const connection = await mysql.createConnection({
     host: DB_HOST,
@@ -22,6 +32,7 @@ export async function restoreDatabases(): Promise<void> {
     user: 'root',
     password: 'root',
     multipleStatements: true,
+    infileStreamFactory: (filePath: string) => fs.createReadStream(filePath),
   });
 
   console.log(`[direct-restore] Connecting to MySQL at ${DB_HOST}:${DB_PORT}`);
@@ -32,7 +43,9 @@ export async function restoreDatabases(): Promise<void> {
       await connection.query(`USE \`${db}\``);
 
       const preamblePath = path.join(DUMPS_DIR, db, '_preamble.sql');
-      const preamble = fs.readFileSync(preamblePath, 'utf8').trim();
+      const preamble = fs.existsSync(preamblePath)
+        ? fs.readFileSync(preamblePath, 'utf8').trim()
+        : '';
 
       if (preamble) {
         await connection.query("SET sql_mode = ''");
@@ -54,8 +67,16 @@ export async function restoreDatabases(): Promise<void> {
 
         if (fs.existsSync(csvPathPw)) {
           await connection.query(`TRUNCATE TABLE \`${table}\``);
-          const csvPathMysql = `${DUMPS_DIR}/${db}/${table}.csv`;
-          await connection.query(`LOAD DATA INFILE '${csvPathMysql}' INTO TABLE \`${table}\``);
+          const csvPathMysql = `${DUMPS_DIR}/${db}/${table}.csv`.replace(/'/g, "\\'");
+          await connection.query(`LOAD DATA LOCAL INFILE '${csvPathMysql}' INTO TABLE \`${table}\``);
+        }
+      }
+
+      if (db === 'foreign') {
+        for (const table of FOREIGN_ONLY_EMPTY_TABLES) {
+          if (tables.includes(table)) {
+            await connection.query(`TRUNCATE TABLE \`${table}\``);
+          }
         }
       }
     }
@@ -67,6 +88,19 @@ export async function restoreDatabases(): Promise<void> {
       for (const row of cacheRows) {
         const tableName = Object.values(row)[0] as string;
         await connection.query(`TRUNCATE TABLE \`${tableName}\``);
+      }
+    }
+
+    for (const db of ['local', 'foreign']) {
+      await connection.query(`USE \`${db}\``);
+      const [pageCountRows] = await connection.query('SELECT COUNT(*) AS c FROM `pages`') as any;
+      const pageCount = Number(pageCountRows[0]?.c ?? 0);
+      console.log(`[direct-restore] ${db}.pages row count after restore: ${pageCount}`);
+      if (pageCount === 0) {
+        throw new Error(
+          `[direct-restore] Sanity check failed: ${db}.pages is empty after restore. ` +
+          `Expected rows from ${DUMPS_DIR}/${db}/pages.csv.`,
+        );
       }
     }
 
