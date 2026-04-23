@@ -46,6 +46,8 @@ class VersionedFileProvider extends FileProvider
     use ExtensionServiceInjection;
     use EarlyCacheInjection;
 
+    private static array $versionedRuntimeCache = [];
+
     public function getConfig(): array
     {
         $path = $this->getResolvedFilePath();
@@ -60,20 +62,33 @@ class VersionedFileProvider extends FileProvider
         ];
 
         foreach ($candidates as $file) {
-            if (file_exists($file)) {
-                $cacheKey = 'config_versioned_file_provider_' . hash_file('sha1', $file);
-                if (!$this->earlyCache->has($cacheKey)) {
-                    $yamlContents = file_get_contents($file);
-                    $yamlContents = str_replace(['groups: *', '---'], ['groups: "*"', ''], $yamlContents);
-                    $yaml = new Parser();
-                    $config = $yaml->parse($yamlContents);
-                    $code = 'return ' . var_export($config, true) . ';';
-                    //$this->earlyCache->flushByTag('config_versioned_file_provider');
-                    $this->earlyCache->set($cacheKey, $code, ['config_versioned_file_provider']);
-                }
-
-                return $this->earlyCache->require($cacheKey);
+            if (!file_exists($file)) {
+                continue;
             }
+
+            $cacheKey = 'config_versioned_file_provider_' . hash_file('sha1', $file);
+            if (isset(self::$versionedRuntimeCache[$cacheKey])) {
+                return self::$versionedRuntimeCache[$cacheKey];
+            }
+
+            if ($this->earlyCache->has($cacheKey)) {
+                try {
+                    return self::$versionedRuntimeCache[$cacheKey] = $this->earlyCache->require($cacheKey);
+                } catch (\ParseError) {
+                    // Corrupt cache file from a concurrent write; fall through and rebuild.
+                }
+            }
+
+            $yamlContents = file_get_contents($file);
+            $yamlContents = str_replace(['groups: *', '---'], ['groups: "*"', ''], $yamlContents);
+            $config = (new Parser())->parse($yamlContents);
+            $this->earlyCache->set(
+                $cacheKey,
+                'return ' . var_export($config, true) . ';',
+                ['config_versioned_file_provider'],
+            );
+
+            return self::$versionedRuntimeCache[$cacheKey] = $config;
         }
 
         return [];

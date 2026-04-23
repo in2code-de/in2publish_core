@@ -58,6 +58,7 @@ class FileProvider implements ProviderServiceInterface, LoggerAwareInterface
 
     protected const DEPRECATION_CONFIG_PATH_TYPO3CONF = 'Storing the content publisher config file in typo3conf is deprecated and considered insecure. Please consider storing your config in the TYPO3\'s config folder.';
     protected array $extConf;
+    private static array $runtimeCache = [];
 
     /**
      * @codeCoverageIgnore
@@ -82,17 +83,24 @@ class FileProvider implements ProviderServiceInterface, LoggerAwareInterface
         }
 
         $cacheKey = 'config_file_provider_' . hash_file('sha1', $file);
-        if (!$this->earlyCache->has($cacheKey)) {
-            $yamlContents = file_get_contents($file);
-            $yamlContents = str_replace(['groups: *', '---'], ['groups: "*"', ''], $yamlContents);
-            $yaml = new Parser();
-            $config = $yaml->parse($yamlContents);
-            $code = 'return ' . var_export($config, true) . ';';
-            //$this->earlyCache->flushByTag('config_file_provider');
-            $this->earlyCache->set($cacheKey, $code, ['config_file_provider']);
+        if (isset(self::$runtimeCache[$cacheKey])) {
+            return self::$runtimeCache[$cacheKey];
         }
 
-        return $this->earlyCache->require($cacheKey);
+        if ($this->earlyCache->has($cacheKey)) {
+            try {
+                return self::$runtimeCache[$cacheKey] = $this->earlyCache->require($cacheKey);
+            } catch (\ParseError) {
+                // Corrupt cache file from a concurrent write; fall through and rebuild.
+            }
+        }
+
+        $yamlContents = file_get_contents($file);
+        $yamlContents = str_replace(['groups: *', '---'], ['groups: "*"', ''], $yamlContents);
+        $config = (new Parser())->parse($yamlContents);
+        $this->earlyCache->set($cacheKey, 'return ' . var_export($config, true) . ';', ['config_file_provider']);
+
+        return self::$runtimeCache[$cacheKey] = $config;
     }
 
     public function getPriority(): int
