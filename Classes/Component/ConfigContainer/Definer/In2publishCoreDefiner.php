@@ -47,7 +47,6 @@ class In2publishCoreDefiner implements DefinerServiceInterface
         'be_users',
         'sys_history',
         'sys_log',
-        'tx_extensionmanager_domain_model_extension',
         'tx_in2code_in2publish_task',
         'tx_in2code_rpc_data',
         'tx_in2code_rpc_request',
