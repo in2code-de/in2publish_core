@@ -88,7 +88,7 @@ class FileProvider implements ProviderServiceInterface, LoggerAwareInterface
             $yaml = new Parser();
             $config = $yaml->parse($yamlContents);
             $code = 'return ' . var_export($config, true) . ';';
-            $this->earlyCache->flushByTag('config_file_provider');
+            //$this->earlyCache->flushByTag('config_file_provider');
             $this->earlyCache->set($cacheKey, $code, ['config_file_provider']);
         }
 
