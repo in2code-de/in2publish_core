@@ -81,11 +81,15 @@ Configuration/
 
 ### Development Tools
 
-- **PHPUnit**: Via stack-test package (^9.6/^10.4/^11.5)
-- **Playwright**: Browser tests in `Tests/Playwright/`. Uses its own Docker stack (`in2publish_core`
-  project, `PLAYWRIGHT_UI_PORT=9425`). Path variables (`DUMPS_DIR_PW`, `LOCAL_FILEADMIN`, etc.) are
-  injected via env vars in `docker-compose.darwin.yaml`; see `Tests/Playwright/helpers/direct-restore.ts`
-  for fallbacks.
+- **PHPUnit**: Via stack-test package (^9.6/^10.4/^11.5). Run from this extension or from the
+  monorepo root.
+- **Playwright**: Browser tests in `Tests/Playwright/`. **Run only from the monorepo root**
+  (`make playwright-core`, `make playwright-core-ui`, `make playwright-core-report`). The
+  `playwright` service lives in the main project's `docker-compose.darwin.yml` and is shared with
+  the enterprise suite via a `.playwright.lock` mutex (only one suite can run at a time). The
+  legacy extension-level `make playwright*` targets are no longer used. Path variables (`DUMPS_DIR`,
+  `LOCAL_FILEADMIN_DIR`, etc.) are injected via env vars on the main project `playwright` service;
+  see `Tests/Playwright/shared/helpers/direct-restore.ts` for fallbacks.
 - **Gulp + Sass**: Frontend build in `Resources/Private/Build/`
 - No PHP CS Fixer, PHPStan, or Rector installed
 
@@ -105,18 +109,23 @@ Tests/
 
 ### Makefile Commands
 
-Key targets:
-- `make install-project` - Full project setup (Docker, DB, composer)
-- `make start` / `make stop` / `make destroy` - Docker lifecycle
+Key targets available in this extension's directory:
+- `make start` / `make stop` / `make destroy` - Docker lifecycle for the (now optional) extension
+  stand-alone stack
 - `make composer-install` / `make composer-update` - Composer operations
-- `make restore` - Restore database and fileadmin from csv files
+- `make restore` - Restore database and fileadmin (reads from the monorepo's
+  `.project/data/dumps/` and `.project/data/fileadmin/` bind mounts)
 - `make typo3-clearcache` / `make typo3-rebuild-caches` - Cache management
 - `make login-local-php` / `make login-foreign-php` - Shell access
 - `make setup-qa` - QA tools setup
 - `make urls` - Show project URLs
-- `make playwright-ui` - Open Playwright UI (http://localhost:${PLAYWRIGHT_UI_PORT}); stack must be running first
-- `make playwright` - Run all Playwright tests headlessly
-- `make playwright-report` - Serve last HTML report
+- `make unit` / `make functional` / `make acceptance` - PHPUnit suites (unit/functional can also
+  be run from the monorepo root)
+
+Playwright is driven from the **monorepo root** only:
+- `make playwright-core` / `make playwright-core-ui` / `make playwright-core-report`
+- Both core and enterprise suites share a lock (`.playwright.lock`) — only one suite can run at a
+  time.
 
 ### TYPO3 v13 Guidelines
 

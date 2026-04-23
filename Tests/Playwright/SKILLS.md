@@ -5,7 +5,9 @@
 - **Shared package**: `@in2code/typo3-playwright` (from tarball, see package.json)
 - **Playwright version**: 1.57+
 - **Test location**: `Tests/Playwright/modules/<Area>/<test-name>.spec.ts`
-- **Runner**: `make playwright` (Docker, restores DB + clears caches)
+- **Runner**: `make playwright-core` from the **monorepo root** (Docker, restores DB + clears
+  caches). Playwright is not driven from this extension's Makefile — the run uses the main project's
+  `playwright` service and a mutex lock shared with the enterprise suite.
 
 ---
 

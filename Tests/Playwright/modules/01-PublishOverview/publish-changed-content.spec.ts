@@ -24,7 +24,7 @@ test.describe('Publish Changed Content', () => {
             const infoIcon = recordRow.locator('[data-action="opendirtypropertieslistcontainer"]');
             await infoIcon.click();
 
-            const publishButton = recordRow.locator('a.js-in2publish-loading-overlay').filter({ hasText: 'Publish' }).first();
+            const publishButton = recordRow.locator('.icon-actions-arrow-right').first();
             await expect(publishButton).toBeVisible({ timeout: 10000 });
 
             await expect(backend.contentFrame.locator('body')).toContainText('1b.1 Header - changed');

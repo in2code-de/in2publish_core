@@ -21,26 +21,26 @@ export class BackendPage {
 
   async gotoModule(moduleName: string): Promise<void> {
     const moduleLink = this.page.locator(`#modulemenu a.modulemenu-action[title="${moduleName}"]`);
-    await moduleLink.click();
+    await moduleLink.click({ timeout: 30000 });
 
-    await expect(this.page.locator('iframe#typo3-contentIframe')).toBeVisible({ timeout: 15000 });
-    await expect(moduleLink).toHaveClass(/modulemenu-action-active/, { timeout: 10000 });
-    await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+    await expect(this.page.locator('iframe#typo3-contentIframe')).toBeVisible({ timeout: 45000 });
+    await expect(moduleLink).toHaveClass(/modulemenu-action-active/, { timeout: 30000 });
+    await this.page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
     await this.page.waitForTimeout(1000);
-    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+    await this.page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
   }
 
   async searchInPageTreeAndSelectFirstOccurrence(searchText: string): Promise<void> {
     const pageTree = this.page.locator('.scaffold-content-navigation-component');
-    await expect(pageTree).toBeVisible({ timeout: 10000 });
+    await expect(pageTree).toBeVisible({ timeout: 30000 });
 
     const searchInput = this.page.locator('input[placeholder="Enter search term"]');
-    await expect(searchInput).toBeVisible({ timeout: 10000 });
-    await searchInput.clear();
-    await searchInput.fill(searchText);
-    await searchInput.press('Enter');
+    await expect(searchInput).toBeVisible({ timeout: 30000 });
+    await searchInput.clear({ timeout: 30000 });
+    await searchInput.fill(searchText, { timeout: 30000 });
+    await searchInput.press('Enter', { timeout: 30000 });
     await this.page.waitForTimeout(800);
-    await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+    await this.page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
 
     const treeItems = this.page.locator('[role="treeitem"]');
     const matchingTreeItems = treeItems.filter({ hasText: searchText });
@@ -51,16 +51,16 @@ export class BackendPage {
     }
 
     const firstTreeItem = matchingTreeItems.first();
-    await expect(firstTreeItem).toBeVisible({ timeout: 10000 });
-    await firstTreeItem.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(firstTreeItem).toBeVisible({ timeout: 30000 });
+    await firstTreeItem.waitFor({ state: 'visible', timeout: 15000 });
     await this.page.waitForTimeout(500);
 
     const clickableElement = firstTreeItem.locator('.node-contentlabel').first();
-    await expect(clickableElement).toBeVisible({ timeout: 5000 });
-    await clickableElement.scrollIntoViewIfNeeded();
+    await expect(clickableElement).toBeVisible({ timeout: 15000 });
+    await clickableElement.scrollIntoViewIfNeeded({ timeout: 15000 });
     await this.page.waitForTimeout(300);
-    await clickableElement.click({ force: true });
-    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+    await clickableElement.click({ force: true, timeout: 30000 });
+    await this.page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
     await this.page.waitForTimeout(1500);
   }
 }

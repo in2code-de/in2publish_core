@@ -1,8 +1,12 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
+import { fullRestore } from '../../helpers/direct-restore';
 
 test.describe('Publish Changed News', () => {
+    test.beforeEach(async () => {
+        await fullRestore();
+    });
 
     /**
      * Test Case 1c: Changed news record with image can be published.
@@ -29,14 +33,15 @@ test.describe('Publish Changed News', () => {
             await infoIcon.click();
 
             // Verify the new news record and its file reference are listed
-            const pageContent = backend.contentFrame.locator('.in2publish-page__content');
+            const pageContent = recordRow.locator('.in2publish-page__content');
             await expect(pageContent).toContainText('24 news with Category 1');
             await expect(pageContent).toContainText('1:/user_upload/roman-wimmers-STrq0wSBGIs-unsplash.jpg');
         });
 
         await test.step('And I publish the record', async () => {
-            const arrowRight = backend.contentFrame.locator('.icon-actions-arrow-right');
-            await expect(arrowRight).toBeVisible();
+            const recordRow = backend.contentFrame.locator('[data-record-identifier="pages-33"]');
+            const arrowRight = recordRow.locator('.icon-actions-arrow-right');
+            await expect(arrowRight).toBeVisible({ timeout: 10000 });
             await arrowRight.click();
 
             await backend.waitUntilPublishingFinished();

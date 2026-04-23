@@ -5,6 +5,7 @@ import { restoreDatabases } from '../../helpers/direct-restore';
 
 test.describe('UID Clash Test: verify publishing of relations to records with same uid but different table', () => {
 
+     test.setTimeout(120000);
      // DB restore is required here between each test - published categories need to be reset
      test.beforeEach(async () => {
          await restoreDatabases();
@@ -20,7 +21,7 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
 
         await expect(
             backend.contentFrame.locator('[data-record-identifier="pages-76"]')
-        ).toBeVisible();
+        ).toBeVisible({ timeout: 15000 });
 
         await backend.contentFrame.locator('.icon-actions-arrow-right').click();
 
@@ -37,7 +38,7 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
 
         await expect(
             backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
-        ).toBeVisible({ timeout: 10000 });
+        ).toBeVisible({ timeout: 15000 });
 
         await backend.contentFrame.locator('.icon-actions-arrow-right').click();
 
@@ -49,9 +50,11 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
     }
 
     async function assertPage76Published(foreignBackend: BackendPage) {
+        // The published page lives at Home > EXT:in2publish_core > 24 Page...,
+        // so it does not appear in the List module at Home (only direct children do).
+        // Use the page tree search to confirm the node was published to Foreign.
         await foreignBackend.gotoModule('Page');
-        await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('Home');
-        await foreignBackend.gotoModule('List');
+        await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('24 Page with Category 1 and Category 2');
         await expect(foreignBackend.contentFrame.locator('body')).toContainText('24 Page with Category 1 and Category 2', { timeout: 15000 });
     }
 

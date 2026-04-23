@@ -75,8 +75,6 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	git checkout Build/local/config/sites/main/config.yaml
 	git checkout Build/foreign/config/sites/main/config.yaml
 	make restore
-	npm install
-	npx playwright install
 
 ## Wait for the mysql container to be fully provisioned
 .mysql-wait:
@@ -136,26 +134,6 @@ fileadmin-restore:
 workflow-ready:
 	echo "$(EMOJI_robot) Setting workflow states to 'Ready to Publish'"
 	docker compose exec -T mysql mysql -uroot -proot local -e "UPDATE tx_in2publish_workflow_state SET state_identifier = 1"
-
-## Run all Playwright tests (restores DB and clears TYPO3 caches first). Use FILE= for individual tests.
-playwright: .link-compose-file restore typo3-clearcache
-	docker compose exec -e CI=1 playwright sh -c "npm install --silent && npx playwright test $(FILE)"
-
-## Open Playwright UI mode (http://localhost:${PLAYWRIGHT_UI_PORT}). Use FILE= to filter tests.
-playwright-ui: .link-compose-file restore typo3-clearcache
-	@echo "$(EMOJI_robot) Starting Playwright UI at http://localhost:$(PLAYWRIGHT_UI_PORT)"
-	@echo "Press Ctrl+C to stop"
-	docker compose stop playwright
-	docker compose run --rm --service-ports playwright sh -c "npm install --silent && npx playwright test --ui --ui-host=0.0.0.0 --ui-port=9323 $(FILE)"
-	docker compose start playwright
-
-## Show the last Playwright HTML report (http://localhost:${PLAYWRIGHT_UI_PORT})
-playwright-report: .link-compose-file
-	@echo "$(EMOJI_robot) Serving Playwright report at http://localhost:$(PLAYWRIGHT_UI_PORT)"
-	@echo "Press Ctrl+C to stop"
-	docker compose stop playwright
-	docker compose run --rm --service-ports playwright sh -c "npm install --silent && npx playwright show-report --host=0.0.0.0 --port=9323"
-	docker compose start playwright
 
 unit:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml

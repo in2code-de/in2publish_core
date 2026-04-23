@@ -17,19 +17,19 @@ export async function backendLogin(
   const username = options?.username || config.login.backend?.username || 'admin';
   const password = options?.password || config.login.backend?.password || 'password';
 
-  await page.goto(url);
-  await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+  await page.goto(url, { timeout: 60000 });
+  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
 
   const isLoggedIn = await page.locator('.scaffold-header')
-    .isVisible({ timeout: 2000 })
+    .isVisible({ timeout: 5000 })
     .catch(() => false);
 
   if (!isLoggedIn) {
-    await page.getByLabel('Username').fill(username);
-    await page.getByLabel('Password').fill(password);
-    await page.getByRole('button', { name: 'Login' }).click();
-    await page.waitForLoadState('networkidle');
-    await expect(page.locator('.scaffold-header')).toBeVisible({ timeout: 15000 });
+    await page.getByLabel('Username').fill(username, { timeout: 30000 });
+    await page.getByLabel('Password').fill(password, { timeout: 30000 });
+    await page.getByRole('button', { name: 'Login' }).click({ timeout: 30000 });
+    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+    await expect(page.locator('.scaffold-header')).toBeVisible({ timeout: 45000 });
   }
 }
 

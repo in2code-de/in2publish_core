@@ -5,12 +5,16 @@ import { execSync } from 'child_process';
 
 const MONOREPO_ROOT = path.resolve(__dirname, '../../../../../..');
 
-const DUMPS_DIR = process.env.DUMPS_DIR ?? path.join(MONOREPO_ROOT, '.project/data/dumps');
-const FILEADMIN_DIR = process.env.FILEADMIN_DIR ?? path.join(MONOREPO_ROOT, '.project/data/fileadmin');
-const LOCAL_FILEADMIN_DIR = process.env.LOCAL_FILEADMIN_DIR ?? path.join(MONOREPO_ROOT, 'app/local/public/fileadmin');
-const FOREIGN_FILEADMIN_DIR = process.env.FOREIGN_FILEADMIN_DIR ?? path.join(MONOREPO_ROOT, 'app/foreign/public/fileadmin');
-const LOCAL_CACHE_DIR = process.env.LOCAL_CACHE_DIR ?? path.join(MONOREPO_ROOT, 'app/local/var/cache');
-const FOREIGN_CACHE_DIR = process.env.FOREIGN_CACHE_DIR ?? path.join(MONOREPO_ROOT, 'app/foreign/var/cache');
+function resolveFromRoot(value: string): string {
+  return path.isAbsolute(value) ? value : path.join(MONOREPO_ROOT, value);
+}
+
+const DUMPS_DIR = resolveFromRoot(process.env.DUMPS_DIR ?? '.project/data/dumps');
+const FILEADMIN_DIR = resolveFromRoot(process.env.FILEADMIN_DIR ?? '.project/data/fileadmin');
+const LOCAL_FILEADMIN_DIR = resolveFromRoot(process.env.LOCAL_FILEADMIN_DIR ?? 'app/local/public/fileadmin');
+const FOREIGN_FILEADMIN_DIR = resolveFromRoot(process.env.FOREIGN_FILEADMIN_DIR ?? 'app/foreign/public/fileadmin');
+const LOCAL_CACHE_DIR = resolveFromRoot(process.env.LOCAL_CACHE_DIR ?? 'app/local/var/cache');
+const FOREIGN_CACHE_DIR = resolveFromRoot(process.env.FOREIGN_CACHE_DIR ?? 'app/foreign/var/cache');
 
 const DB_HOST = process.env.DB_HOST || 'mysql';
 const DB_PORT = parseInt(process.env.DB_PORT || '3306', 10);
@@ -26,6 +30,31 @@ const FOREIGN_ONLY_EMPTY_TABLES = [
 ];
 
 export async function restoreDatabases(): Promise<void> {
+  for (const db of ['local', 'foreign']) {
+    const dumpPath = path.join(DUMPS_DIR, db);
+    const pagesDumpPath = path.join(dumpPath, 'pages.csv');
+
+    if (!fs.existsSync(pagesDumpPath)) {
+      throw new Error(
+        `[direct-restore] Missing dump file ${pagesDumpPath}. ` +
+        `DUMPS_DIR must point to the monorepo dump directory.`,
+      );
+    }
+  }
+
+  const adminConnection = await mysql.createConnection({
+    host: DB_HOST,
+    port: DB_PORT,
+    user: 'root',
+    password: 'root',
+  });
+  const [[localInfileRow]] = await adminConnection.query(
+    "SHOW GLOBAL VARIABLES LIKE 'local_infile'",
+  ) as any;
+  const originalLocalInfile = String(localInfileRow?.Value ?? 'OFF').toUpperCase();
+  await adminConnection.query('SET GLOBAL local_infile = 1');
+  await adminConnection.end();
+
   const connection = await mysql.createConnection({
     host: DB_HOST,
     port: DB_PORT,
@@ -107,6 +136,17 @@ export async function restoreDatabases(): Promise<void> {
     console.log('[direct-restore] Database restore complete.');
   } finally {
     await connection.end();
+
+    if (originalLocalInfile !== 'ON') {
+      const resetConnection = await mysql.createConnection({
+        host: DB_HOST,
+        port: DB_PORT,
+        user: 'root',
+        password: 'root',
+      });
+      await resetConnection.query('SET GLOBAL local_infile = 0');
+      await resetConnection.end();
+    }
   }
 }
 
@@ -131,6 +171,15 @@ export function restoreFileadmin(): void {
   console.log('[direct-restore] Restoring fileadmin...');
 
   try {
+    for (const source of [path.join(FILEADMIN_DIR, 'local'), path.join(FILEADMIN_DIR, 'foreign')]) {
+      if (!fs.existsSync(source)) {
+        throw new Error(
+          `[direct-restore] Missing fileadmin source ${source}. ` +
+          `FILEADMIN_DIR must point to the monorepo fileadmin directory.`,
+        );
+      }
+    }
+
     execSync(`rm -rf "${LOCAL_FILEADMIN_DIR}"/* && cp -a "${FILEADMIN_DIR}/local/." "${LOCAL_FILEADMIN_DIR}/"`, {
       stdio: 'inherit',
       shell: '/bin/bash',

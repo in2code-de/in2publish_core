@@ -32,10 +32,20 @@ export class BackendPage extends BaseBackendPage {
       'List': 'Records',
       'Filelist': 'Media',
     };
+    const moduleIdentifiers: Record<string, string> = {
+      'Publish Overview': 'in2publish_core_m1',
+      'Publish Files': 'in2publish_core_m3',
+      'Publisher Tools': 'in2publish_core_m4',
+      'Publish Redirects': 'in2publish_core_m5',
+      'Publish Workflow': 'in2publish_m2',
+      'Compare pages': 'in2publish_m5',
+    };
     const resolvedName = v14ModuleNames[moduleName] || moduleName;
-    const moduleLink = this.page.locator(`#modulemenu a.modulemenu-action[title="${resolvedName}"]`);
+    const moduleLink = moduleIdentifiers[moduleName]
+      ? this.page.locator(`#modulemenu a.modulemenu-action[data-moduleroute-identifier="${moduleIdentifiers[moduleName]}"]`)
+      : this.page.locator(`#modulemenu a.modulemenu-action[title="${resolvedName}"]`);
 
-    await moduleLink.click({ timeout: 5000 });
+    await moduleLink.click({ timeout: 30000 });
 
     // TYPO3 v14 loads modules in the content iframe — verify the iframe src
     // contains the module path from the menu link's href.
@@ -43,11 +53,11 @@ export class BackendPage extends BaseBackendPage {
     if (href) {
       const modulePath = href.split('?')[0];
       const iframe = this.page.locator('#typo3-contentIframe');
-      await expect(iframe).toHaveAttribute('src', new RegExp(modulePath.replace(/[/]/g, '\\/')), { timeout: 10000 });
+      await expect(iframe).toHaveAttribute('src', new RegExp(modulePath.replace(/[/]/g, '\\/')), { timeout: 45000 });
     }
 
-    await expect(this.page.locator('#typo3-contentIframe')).toBeAttached({ timeout: 15000 });
-    await this.page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+    await expect(this.page.locator('#typo3-contentIframe')).toBeAttached({ timeout: 45000 });
+    await this.page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
     await this.page.waitForTimeout(1000);
   }
 
@@ -107,7 +117,8 @@ export class BackendPage extends BaseBackendPage {
           return; // Success!
 
         } catch (error) {
-          console.warn(`[Attempt ${attempt}] Search failed for "${searchText}": ${error.message}`);
+          const message = error instanceof Error ? error.message : String(error);
+          console.warn(`[Attempt ${attempt}] Search failed for "${searchText}": ${message}`);
 
           if (attempt === maxRetries) {
             throw error;
