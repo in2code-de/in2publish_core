@@ -24,7 +24,7 @@ test.describe('Publish Changed Content', () => {
             const infoIcon = recordRow.locator('[data-action="opendirtypropertieslistcontainer"]');
             await infoIcon.click();
 
-            const publishButton = recordRow.getByRole('link', { name: 'Publish' }).first();
+            const publishButton = recordRow.locator('a.js-in2publish-loading-overlay').filter({ hasText: 'Publish' }).first();
             await expect(publishButton).toBeVisible({ timeout: 10000 });
 
             await expect(backend.contentFrame.locator('body')).toContainText('1b.1 Header - changed');
@@ -32,10 +32,16 @@ test.describe('Publish Changed Content', () => {
             await publishButton.click();
 
             await backend.waitUntilPublishingFinished();
-            await expect(recordRow).toContainText(
-                'Unchanged',
-                { timeout: 30000 }
+            await expect(backend.contentFrame.locator('body')).toContainText(
+                'The selected record has been published successfully',
+                { timeout: 30000 },
             );
+
+            await backend.gotoModule('Publish Overview');
+            await backend.searchInPageTreeAndSelectFirstOccurrence('1b.1 Page content - changed');
+
+            const refreshedRecordRow = backend.contentFrame.locator('[data-record-identifier="pages-65"]');
+            await expect(refreshedRecordRow).toHaveAttribute('data-record-state', 'unchanged', { timeout: 30000 });
         });
 
         await test.step('Then the changes should be visible in the Foreign Backend', async () => {
