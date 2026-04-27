@@ -5,18 +5,18 @@ and the enterprise edition (`in2publish`).
 
 ## Quick Start
 
-**All Playwright tests are launched from the monorepo root.** The previous per-extension Docker
-stacks were removed because they interfered with each other. Both test suites now run inside the
-main project's `playwright` / `playwright-enterprise` service containers and share the same
-local/foreign TYPO3 instances, database, and fileadmin.
+Playwright runs are launched through the monorepo root wrappers or directly from the extension
+directories, but execution happens inside the **extension-local Docker stacks**:
+- `packages/in2publish_core` owns the core local/foreign TYPO3, MySQL, and Playwright services
+- `packages/in2publish` owns the enterprise local/foreign TYPO3, MySQL, Solr, and Playwright services
 
-Because the shared state cannot be used by both suites simultaneously, a `.playwright.lock`
-directory at the monorepo root enforces a strict **single-suite-at-a-time** rule. You can run
-core OR enterprise, but never both in parallel.
+Each extension stack restores only its own local/foreign DBs and fileadmin state from the monorepo
+root test data sources. This keeps Playwright isolated from the main dev stack and allows you to
+work in the main project while tests run in the extension stacks.
 
 ### Prerequisites
 
-1. The main project Docker stack must be running (`make start` from the monorepo root).
+1. The target extension stack must be runnable via its package-local Docker setup.
 2. Playwright npm dependencies must be installed once after cloning or after updates:
 
 ```bash
@@ -28,7 +28,7 @@ make setup-tests-core
 make setup-tests-enterprise
 ```
 
-### Running all tests (from monorepo root)
+### Running all tests
 
 ```bash
 # Run all core tests
@@ -43,16 +43,14 @@ make playwright
 
 Each `playwright-core` / `playwright-enterprise` run automatically:
 
-1. Acquires the `.playwright.lock`.
-2. Installs or removes the `in2code/in2publish` meta-package (core runs must remove enterprise;
-   enterprise runs must install it).
-3. Clears the TYPO3 DI code cache on both instances.
+1. Delegates into the appropriate extension directory.
+2. Starts that extension-local Docker stack if needed.
+3. Acquires the extension-local `.playwright.lock`.
 4. Restores DB and fileadmin from `.project/data/dumps/` and `.project/data/fileadmin/`.
-5. Clears TYPO3 caches.
-6. Runs the suite in the appropriate container and writes an HTML report to
-   `.reports/playwright/<suite>/html`.
+5. Runs TYPO3 schema update and cache flush in that extension-local stack.
+6. Runs the suite in the extension-local Playwright container.
 
-### Running a single test file (from monorepo root)
+### Running a single test file
 
 ```bash
 # Core: run one spec file
@@ -79,7 +77,7 @@ make playwright-core-ui FILE="Tests/Playwright/modules/01-PublishOverview/publis
 make playwright-enterprise-ui FILE="Tests/Playwright/tests/02-Workflow/page-workflow-publishing.spec.ts"
 ```
 
-UI ports are configurable via `.env`.
+UI ports are configurable via each extension's `.env`.
 
 In UI mode, make sure the **"chromium"** project is checked in the project filter at the top.
 
@@ -164,13 +162,13 @@ Contains the actual restore logic. Both `in2publish_core/helpers/direct-restore.
 ### Database / fileadmin restore
 
 Tests rely on a known, clean database state. The monorepo's `.project/data/dumps/` and
-`.project/data/fileadmin/` are the single source of truth and are bind-mounted into the main
-project's `local-php`, `foreign-php`, and `playwright*` service containers. There are two layers
-of restore:
+`.project/data/fileadmin/` are the single source of truth and are bind-mounted into each
+extension-local Docker stack. There are two layers of restore:
 
 **1. Suite-level restore (automatic)**
-The `make playwright-core` / `make playwright-enterprise` targets call `make restore` before each
-run, which executes `mysql-loader import` for both databases and `rsync` for the fileadmin.
+The `make playwright-core` / `make playwright-enterprise` targets delegate to the package-local
+`make playwright` targets, which call `make restore` before each run inside the target extension
+stack.
 
 **2. Per-test restore (in `test.beforeEach`)**
 Tests that modify data (publish actions, workflow state changes) call `restoreDatabases()` in
@@ -189,7 +187,17 @@ test.beforeEach(async () => {
 - Reads dump files from `.project/data/dumps/{local,foreign}/`
 - Truncates each table and reloads it via `LOAD DATA INFILE` from CSV
 - Cache tables are truncated but not reloaded
-- The path is resolved from the `DUMPS_DIR` env var that is set on the `playwright*` services
+- Ensures known empty tables that are omitted from the foreign dump still exist on `foreign`
+  before truncating them. The shared table list lives in
+  `Tests/Playwright/shared/helpers/foreign-only-empty-tables.txt`
+- The path is resolved from the `DUMPS_DIR` env var that is set on each extension-local
+  `playwright` service
+
+**How the suite-level `make restore` works:**
+- Imports the same monorepo dump and fileadmin sources into the extension-local stack
+- Recreates the same foreign-only empty tables from the shared
+  `Tests/Playwright/shared/helpers/foreign-only-empty-tables.txt` definition
+- This keeps manual restore and Playwright's direct MySQL restore consistent
 
 **Updating dumps** after a database change that should persist in test data:
 

@@ -15,6 +15,7 @@ const LOCAL_FILEADMIN_DIR = resolveFromRoot(process.env.LOCAL_FILEADMIN_DIR ?? '
 const FOREIGN_FILEADMIN_DIR = resolveFromRoot(process.env.FOREIGN_FILEADMIN_DIR ?? 'app/foreign/public/fileadmin');
 const LOCAL_CACHE_DIR = resolveFromRoot(process.env.LOCAL_CACHE_DIR ?? 'app/local/var/cache');
 const FOREIGN_CACHE_DIR = resolveFromRoot(process.env.FOREIGN_CACHE_DIR ?? 'app/foreign/var/cache');
+const FOREIGN_ONLY_EMPTY_TABLES_FILE = path.join(__dirname, 'foreign-only-empty-tables.txt');
 
 const DB_HOST = process.env.DB_HOST || 'mysql';
 const DB_PORT = parseInt(process.env.DB_PORT || '3306', 10);
@@ -22,12 +23,32 @@ const DB_PORT = parseInt(process.env.DB_PORT || '3306', 10);
 // Keep in sync with Makefile - restore-dbs
 // this truncates empty tables on foreign
 // empty tables are omitted by the mysql-loader during dumping - so this is the only way to clear these tables
-const FOREIGN_ONLY_EMPTY_TABLES = [
-  'sys_category',
-  'sys_category_record_mm',
-  'tx_in2publish_workflow_history',
-  'tx_in2publish_workflow_state',
-];
+const FOREIGN_ONLY_EMPTY_TABLES = fs
+  .readFileSync(FOREIGN_ONLY_EMPTY_TABLES_FILE, 'utf8')
+  .split('\n')
+  .map((line) => line.trim())
+  .filter((line) => line !== '' && !line.startsWith('#'));
+
+async function ensureForeignEmptyTablesExist(connection: mysql.Connection): Promise<void> {
+  await connection.query('USE `local`');
+  const [localRows] = await connection.query('SHOW TABLES') as any;
+  const localTables = new Set(localRows.map((row: any) => Object.values(row)[0] as string));
+
+  await connection.query('USE `foreign`');
+  const [foreignRows] = await connection.query('SHOW TABLES') as any;
+  const foreignTables = new Set(foreignRows.map((row: any) => Object.values(row)[0] as string));
+
+  for (const table of FOREIGN_ONLY_EMPTY_TABLES) {
+    if (!localTables.has(table)) {
+      continue;
+    }
+
+    if (!foreignTables.has(table)) {
+      await connection.query(`CREATE TABLE \`foreign\`.\`${table}\` LIKE \`local\`.\`${table}\``);
+      foreignTables.add(table);
+    }
+  }
+}
 
 export async function restoreDatabases(): Promise<void> {
   for (const db of ['local', 'foreign']) {
@@ -67,6 +88,8 @@ export async function restoreDatabases(): Promise<void> {
   console.log(`[direct-restore] Connecting to MySQL at ${DB_HOST}:${DB_PORT}`);
 
   try {
+    await ensureForeignEmptyTablesExist(connection);
+
     for (const db of ['local', 'foreign']) {
       console.log(`[direct-restore] Restoring ${db} database...`);
       await connection.query(`USE \`${db}\``);

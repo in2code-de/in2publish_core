@@ -21,6 +21,7 @@ EMOJI_face_with_rolling_eyes := "🙄"
 COMPOSER_AUTH_JSON := $(shell gh auth token 2>/dev/null | sed 's/.*/{"github-oauth":{"github.com":"&"}}/' || echo '{}')
 CURRENT_BRANCH := $(shell git branch --show-current 2>/dev/null || echo develop)
 IN2PUBLISH_DEV_VERSION := dev-$(CURRENT_BRANCH)
+FOREIGN_ONLY_EMPTY_TABLES_FILE := Tests/Playwright/shared/helpers/foreign-only-empty-tables.txt
 
 ## Show this help
 help:
@@ -104,7 +105,71 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	if [[ ! -f $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.crt -key-file $(HOME)/.dinghy/certs/${HOST_FOREIGN}.key ${HOST_FOREIGN}; fi;
 	if [[ ! -f $(HOME)/.dinghy/certs/${MAIL_HOST}.key ]]; then mkcert -cert-file $(HOME)/.dinghy/certs/${MAIL_HOST}.crt -key-file $(HOME)/.dinghy/certs/${MAIL_HOST}.key ${MAIL_HOST}; fi;
 
-restore: mysql-restore fileadmin-restore
+restore: mysql-restore ensure-foreign-empty-tables fileadmin-restore
+
+define with_playwright_lock
+	lockdir=".playwright.lock"; \
+	if ! mkdir "$$lockdir" 2>/dev/null; then \
+		if [ -f "$$lockdir/pid" ] && kill -0 "$$(cat "$$lockdir/pid")" 2>/dev/null; then \
+			echo "Another Playwright task is already running for in2publish_core."; \
+			exit 1; \
+		fi; \
+		rm -f "$$lockdir/pid"; \
+		rmdir "$$lockdir" 2>/dev/null || true; \
+		mkdir "$$lockdir" || { echo "Could not acquire Playwright lock."; exit 1; }; \
+	fi; \
+	echo $$$$ > "$$lockdir/pid"; \
+	trap 'rm -f "$$lockdir/pid"; rmdir "$$lockdir" 2>/dev/null || true' EXIT; \
+	$(1)
+endef
+
+define ensure_playwright_stack
+	$(MAKE) .link-compose-file; \
+	docker compose up -d >/dev/null
+endef
+
+define stop_playwright_tasks
+	$(MAKE) .link-compose-file; \
+	lockdir=".playwright.lock"; \
+	if [ -f "$$lockdir/pid" ]; then \
+		pid="$$(cat "$$lockdir/pid")"; \
+		if kill -0 "$$pid" 2>/dev/null; then \
+			kill "$$pid" 2>/dev/null || true; \
+			sleep 1; \
+			kill -9 "$$pid" 2>/dev/null || true; \
+		fi; \
+	fi; \
+	run_containers="$$(docker compose ps -a --format '{{.Name}}\t{{.Service}}' | awk '$$2 == "playwright" && $$1 ~ /-run-/ { print $$1 }')"; \
+	if [ -n "$$run_containers" ]; then \
+		docker rm -f $$run_containers >/dev/null 2>&1 || true; \
+	fi; \
+	docker compose stop playwright >/dev/null 2>&1 || true; \
+	rm -f "$$lockdir/pid"; \
+	rmdir "$$lockdir" 2>/dev/null || true
+endef
+
+## Install Playwright npm dependencies in the isolated core test stack
+playwright-install:
+	$(call with_playwright_lock,$(call ensure_playwright_stack); docker compose run --rm playwright npm install --silent)
+
+## Prepare Playwright npm dependencies in the isolated core test stack
+setup-tests: playwright-install
+
+## Run all Playwright tests in the isolated core test stack. Use FILE= for individual tests.
+playwright:
+	$(call with_playwright_lock,$(call ensure_playwright_stack); $(MAKE) restore; $(MAKE) typo3-comparedb; $(MAKE) typo3-clearcache; docker compose run --rm -e PLAYWRIGHT_HTML_OPEN=never playwright sh -lc "npm install --silent && npx playwright test $(FILE)")
+
+## Open Playwright UI mode in the isolated core test stack. Use FILE= to filter tests.
+playwright-ui:
+	$(call with_playwright_lock,$(call ensure_playwright_stack); $(MAKE) restore; $(MAKE) typo3-comparedb; $(MAKE) typo3-clearcache; docker compose stop playwright >/dev/null 2>&1 || true; echo "Open Playwright UI at http://localhost:$(PLAYWRIGHT_UI_PORT)"; docker compose run --rm --service-ports playwright sh -lc "npm install --silent && npx playwright test --ui --ui-host=0.0.0.0 --ui-port=9323 $(FILE)")
+
+## Show the last Playwright HTML report from the isolated core test stack
+playwright-report:
+	$(call with_playwright_lock,$(call ensure_playwright_stack); docker compose stop playwright >/dev/null 2>&1 || true; echo "Open Playwright report at http://localhost:$(PLAYWRIGHT_UI_PORT)"; docker compose run --rm --service-ports playwright sh -lc "npx playwright show-report --host=0.0.0.0 --port=9323")
+
+## Stop all Playwright tasks for the isolated core test stack
+stop-playwright:
+	$(call stop_playwright_tasks)
 
 ## Create dumps of local and foreign database in dir DUMPS_DIR using mysql-loader
 dump-dbs: dump-local-database dump-foreign-database
@@ -123,6 +188,17 @@ mysql-restore: .mysql-wait
 	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/$(DUMPS_DIR)/local/
 	echo "$(EMOJI_robot) Restoring the foreign database"
 	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/$(DUMPS_DIR)/foreign/
+
+## Ensure empty tables omitted from the foreign dump still exist on foreign
+ensure-foreign-empty-tables: .mysql-wait
+	echo "$(EMOJI_robot) Ensuring foreign-only empty tables exist on foreign"
+	sql=""; \
+	while IFS= read -r table; do \
+		[ -n "$$table" ] || continue; \
+		case "$$table" in \#*) continue ;; esac; \
+		sql="$$sql CREATE TABLE IF NOT EXISTS foreign.$$table LIKE local.$$table; TRUNCATE TABLE foreign.$$table;"; \
+	done < "$(FOREIGN_ONLY_EMPTY_TABLES_FILE)"; \
+	docker compose exec -T mysql mysql -uroot -proot -e "$$sql"
 
 ## Restores the fileadmin from FILEADMIN_DIR
 fileadmin-restore:
