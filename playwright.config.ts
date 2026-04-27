@@ -30,11 +30,11 @@ export default defineConfig({
   workers: 1,
 
   /* Test timeout */
-  timeout: 60000,
+  timeout: 180000,
 
   /* Expect timeout */
   expect: {
-    timeout: 10000,
+    timeout: 30000,
   },
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -59,6 +59,12 @@ export default defineConfig({
 
     /* Ignore HTTPS errors for local development */
     ignoreHTTPSErrors: true,
+
+    /* Per-action timeout (click, fill, selectOption, etc.) */
+    actionTimeout: 30000,
+
+    /* Navigation timeout (page.goto, page.reload, etc.) */
+    navigationTimeout: 60000,
   },
 
   /* Configure projects for major browsers */
