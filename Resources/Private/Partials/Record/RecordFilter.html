@@ -4,12 +4,11 @@
 	<fieldset class="form-section">
 		<div class="form-row">
 			<f:comment>
-				Filter by record name
+				Search
 			</f:comment>
-
 			<div class="form-group w-25">
 				<label for="in2publish__publishfilter_title" class="form-label">
-					<f:translate key="module_m1_filter_field_search">title</f:translate>
+					<f:translate key="module_m1_filter_field_search">Search</f:translate>
 				</label>
 				<input id="in2publish__publishfilter_title" placeholder="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.enterSearchString')}" type="search" class="form-control js-form-search" data-workflow-filter-field="true" name="record-title" />
 			</div>
@@ -18,7 +17,7 @@
 				Filter by change state
 			</f:comment>
 			<div class="form-group">
-				<label for="in2publish__publishfilter_state" class="form-label"><f:translate key="module_m1_filter_state">Filter by change state</f:translate></label>
+				<label for="in2publish__publishfilter_state" class="form-label"><f:translate key="module_m1_filter_state">Change state</f:translate></label>
 				<select id="in2publish__publishfilter_state" class="form-select js-in2publish-statefilter" data-workflow-filter-field="true">
 					<option value=""><f:translate key="module_m1_filter_state.all">All</f:translate></option>
 					<option value="changed"><f:translate key="record.state.changed.short">changed</f:translate></option>
@@ -33,7 +32,7 @@
 			</f:comment>
 
 			<div class="form-group">
-				<label for="in2publish__publishfilter_level" class="form-label"><f:translate key="module_m1_filter_field_level">level</f:translate></label>
+				<label for="in2publish__publishfilter_level" class="form-label"><f:translate key="module_m1_filter_field_level">Level</f:translate></label>
 				<select id="in2publish__publishfilter_level" class="form-select js-in2publish-levelfilter" data-workflow-filter-field="true" name="relative-level">
 					<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 0  })}" {f:if(condition: '{pageRecursionLimit} == 0', then: 'selected')}><f:translate key="m1.page_recursion.depths" arguments="{0: 0 }">0 levels</f:translate></option>
 					<option value="{f:uri.action(action: 'index', arguments: { pageRecursionLimit: 1  })}" {f:if(condition: '{pageRecursionLimit} == 1', then: 'selected')}><f:translate key="m1.page_recursion.depth" arguments="{0:  1 }">1 level</f:translate></option>
@@ -53,7 +52,7 @@
 			</f:comment>
 
 			<div class="form-group">
-				<label for="in2publish__publishfilter_language" class="form-label"><f:translate key="module_m1_filter_language">Filter by language</f:translate></label>
+				<label for="in2publish__publishfilter_language" class="form-label"><f:translate key="module_m1_filter_language">Language</f:translate></label>
 				<select id="in2publish__publishfilter_language" class="form-select js-in2publish-languagefilter" data-workflow-filter-field="true">
 					<option value="">
 						<f:translate key="module_m1_filter_language.all">Filter by language</f:translate>
