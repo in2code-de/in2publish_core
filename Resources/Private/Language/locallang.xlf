@@ -426,10 +426,10 @@
 				<source>Are you sure you want to publish the folder %s? This cannot be reversed.</source>
 			</trans-unit>
 			<trans-unit id="module_m1_filter_state">
-				<source>Filter by change state</source>
+				<source>Change state</source>
 			</trans-unit>
 			<trans-unit id="module_m1_filter_language">
-				<source>Filter by language</source>
+				<source>Language</source>
 			</trans-unit>
 			<trans-unit id="module_m1_filter_language.all">
 				<source>All</source>
@@ -438,10 +438,10 @@
 				<source>All</source>
 			</trans-unit>
 			<trans-unit id="module_m1_filter_field_level">
-				<source>Filter records by their level</source>
+				<source>Level</source>
 			</trans-unit>
-			<trans-unit id="module_m1_filter_field_title">
-				<source>Filter by title</source>
+			<trans-unit id="module_m1_filter_field_search">
+				<source>Search</source>
 			</trans-unit>
 		</body>
 	</file>

@@ -567,12 +567,12 @@
 				<target state="translated">Möchten Sie den Ordner %s wirklich veröffentlichen? Dies kann nicht rückgängig gemacht werden.</target>
 			</trans-unit>
 			<trans-unit id="module_m1_filter_state">
-				<source>Filter by change state</source>
-				<target>Filterung nach Änderungsstatus</target>
+				<source>Change state</source>
+				<target>Änderungsstatus</target>
 			</trans-unit>
 			<trans-unit id="module_m1_filter_language">
-				<source>Filter by change language</source>
-				<target>Filterung nach Sprache</target>
+				<source>Language</source>
+				<target>Sprache</target>
 			</trans-unit>
 			<trans-unit id="module_m1_filter_language.all">
 				<source>All</source>
@@ -583,12 +583,12 @@
 				<target>Alle</target>
 			</trans-unit>
 			<trans-unit id="module_m1_filter_field_level">
-				<source>Filter records by their level</source>
-				<target>Filterung nach Verschachtelungstiefe</target>
+				<source>Level</source>
+				<target>Tiefe</target>
 			</trans-unit>
-			<trans-unit id="module_m1_filter_field_title">
-				<source>Filter by title</source>
-				<target>Filterung nach Name</target>
+			<trans-unit id="module_m1_filter_field_search">
+				<source>Search</source>
+				<target>Suche</target>
 			</trans-unit>
 		</body>
 	</file>
