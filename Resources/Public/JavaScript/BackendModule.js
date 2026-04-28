@@ -250,18 +250,6 @@ class In2publishCoreModule {
 					}
 				});
 			}, 250).bindTo(searchForm);
-
-			const searchFormClear = document.querySelector('.js-form-search + .close');
-			if (searchFormClear) {
-				searchFormClear.addEventListener('click', () => {
-					document.querySelectorAll('.in2publish-stagelisting__item')
-						.forEach(item => {
-							if (item) {
-								item.classList.remove('d-none');
-							}
-						});
-				});
-			}
 		}
 	}
 
