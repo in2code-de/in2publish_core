@@ -1,4 +1,5 @@
 export {
+  executeLocalSql,
   fullRestore,
   restoreDatabases,
   restoreFileadmin,

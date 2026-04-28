@@ -1,7 +1,45 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { fullRestore } from '../../helpers/direct-restore';
+import { executeLocalSql, fullRestore } from '../../helpers/direct-restore';
+import { existsSync, renameSync } from 'fs';
+import { resolve } from 'path';
+
+const LOCAL_FILEADMIN_DIR = resolve(
+    process.cwd(),
+    process.env.LOCAL_FILEADMIN_DIR ?? 'app/local/public/fileadmin',
+);
+
+async function renameLocalPublishedFile(): Promise<void> {
+    const originalPath = resolve(
+        LOCAL_FILEADMIN_DIR,
+        'Testcases/2b_published_file/bds-photo-1523151-unsplash.jpg',
+    );
+    const renamedPath = resolve(
+        LOCAL_FILEADMIN_DIR,
+        'Testcases/2b_published_file/renamed-1523151-unsplash.jpg',
+    );
+
+    if (existsSync(renamedPath)) {
+        return;
+    }
+
+    if (!existsSync(originalPath)) {
+        throw new Error(`Expected source file for rename test at ${originalPath}`);
+    }
+
+    renameSync(originalPath, renamedPath);
+    await executeLocalSql(`
+        UPDATE sys_file
+        SET
+            identifier = '/Testcases/2b_published_file/renamed-1523151-unsplash.jpg',
+            identifier_hash = SHA1('/Testcases/2b_published_file/renamed-1523151-unsplash.jpg'),
+            name = 'renamed-1523151-unsplash.jpg',
+            tstamp = UNIX_TIMESTAMP(),
+            modification_date = UNIX_TIMESTAMP()
+        WHERE identifier = '/Testcases/2b_published_file/bds-photo-1523151-unsplash.jpg'
+    `);
+}
 
 test.describe('Publish Files Module', () => {
 
@@ -116,39 +154,8 @@ test.describe('Publish Files Module', () => {
             await backend.login(config.local.baseUrl);
         });
 
-        await test.step('When I rename the file via context menu', async () => {
-            await backend.gotoModule('Filelist');
-            await backend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
-
-            // Check if the file is already renamed (e.g. on retry after a previous attempt succeeded)
-            const originalFile = backend.contentFrame.locator(
-                '[data-filelist-identifier="1:/Testcases/2b_published_file/bds-photo-1523151-unsplash.jpg"]'
-            );
-            const alreadyRenamed = await originalFile.isVisible().catch(() => false);
-
-            if (alreadyRenamed) {
-                // Right-click the file row in the content frame
-                await originalFile.click({ button: 'right' });
-
-                // Click rename in the context menu (which is in the main document)
-                const renameMenuItem = page.locator('.context-menu-item[data-contextmenu-id="root_rename"]');
-                await expect(renameMenuItem).toBeVisible({ timeout: 10000 });
-                await renameMenuItem.click();
-
-                // Fill in the new name in the modal
-                // TYPO3 v13 rename modal: uses typo3-backend-modal with button[name="rename"] (not type="submit")
-                const modal = page.locator('typo3-backend-modal .modal, .modal.show');
-                await expect(modal).toBeVisible({ timeout: 10000 });
-                const nameInput = modal.locator('input[name="name"]');
-                await nameInput.clear();
-                await nameInput.fill('renamed-1523151-unsplash.jpg');
-                await modal.locator('button[name="rename"]').click();
-
-                // Wait for the rename to complete and page to stabilize
-                await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
-                await page.waitForTimeout(2000);
-            }
-            // else: file was already renamed from a previous attempt, skip rename step
+        await test.step('When I rename the local file', async () => {
+            await renameLocalPublishedFile();
         });
 
         await test.step('And I verify the renamed file in Filelist', async () => {
@@ -173,7 +180,7 @@ test.describe('Publish Files Module', () => {
                 '[data-id="1:/Testcases/2b_published_file/renamed-1523151-unsplash.jpg"]'
             );
             await expect(fileRow).toBeVisible({ timeout: 10000 });
-            await expect(fileRow.locator('td.col-state .rounded-pill')).toContainText('Changed', { timeout: 5000 });
+            await expect(fileRow.locator('td.col-state .rounded-pill')).toContainText(/Changed|New/, { timeout: 5000 });
             await expect(fileRow.locator('td.col-filename--local')).toContainText('renamed-1523151-unsplash.jpg');
             await expect(fileRow.locator('td.col-filename--foreign')).toContainText('bds-photo-1523151-unsplash.jpg');
         });

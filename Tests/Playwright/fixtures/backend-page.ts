@@ -44,12 +44,47 @@ export class BackendPage extends BaseBackendPage {
       'Publish Workflow': 'in2publish_m2',
       'Compare pages': 'in2publish_m5',
     };
+    const moduleGroups: Record<string, string> = {
+      'Page': 'Content',
+      'List': 'Content',
+      'Publish Overview': 'Content',
+      'Filelist': 'Media',
+      'Publish Files': 'Media',
+      'Publish Redirects': 'Sites',
+      'Publisher Tools': 'Administration',
+    };
     const resolvedName = v14ModuleNames[moduleName] || moduleName;
     const moduleLink = moduleIdentifiers[moduleName]
-      ? this.page.locator(`#modulemenu a.modulemenu-action[data-moduleroute-identifier="${moduleIdentifiers[moduleName]}"]`)
-      : this.page.locator(`#modulemenu a.modulemenu-action[title="${resolvedName}"]`);
+      ? this.page.locator(`#modulemenu a.modulemenu-action[data-moduleroute-identifier="${moduleIdentifiers[moduleName]}"]`).first()
+      : this.page.locator(`#modulemenu a.modulemenu-action[title="${resolvedName}"]`).first();
+    const visibleMenuItem = this.page.getByRole('menuitem', { name: resolvedName, exact: true }).first();
+    const parentGroup = moduleGroups[moduleName];
 
-    await moduleLink.click({ timeout: 30000 });
+    await expect(this.page.locator('#typo3-contentIframe')).toBeVisible({ timeout: 45000 });
+
+    if (parentGroup) {
+      const groupToggle = this.page
+        .getByRole('menubar', { name: 'Module Menu' })
+        .getByRole('menuitem', { name: parentGroup, exact: true })
+        .first();
+      const groupMenu = this.page.getByRole('menu', { name: parentGroup });
+      if (!await groupMenu.isVisible().catch(() => false)) {
+        await groupToggle.click({ timeout: 30000 });
+      }
+
+      const groupedMenuItem = groupMenu.getByRole('menuitem', { name: resolvedName, exact: true }).first();
+      if (await groupedMenuItem.isVisible().catch(() => false)) {
+        await groupedMenuItem.click({ timeout: 30000 });
+      } else if (moduleIdentifiers[moduleName] && await visibleMenuItem.isVisible().catch(() => false)) {
+        await visibleMenuItem.click({ timeout: 30000 });
+      } else {
+        await moduleLink.click({ timeout: 30000 });
+      }
+    } else if (moduleIdentifiers[moduleName] && await visibleMenuItem.isVisible().catch(() => false)) {
+      await visibleMenuItem.click({ timeout: 30000 });
+    } else {
+      await moduleLink.click({ timeout: 30000 });
+    }
 
     // TYPO3 v14 loads modules in the content iframe — verify the iframe src
     // contains the module path from the menu link's href.
@@ -61,82 +96,54 @@ export class BackendPage extends BaseBackendPage {
     }
 
     await expect(this.page.locator('#typo3-contentIframe')).toBeAttached({ timeout: 45000 });
-    await this.page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-    await this.page.waitForTimeout(1000);
+    await this.contentFrame.locator('body').waitFor({ state: 'visible', timeout: 45000 });
+    await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
   }
 
   /**
      * Search for a page in the page tree with retry logic.
      * Optimized for TYPO3 v14 Web Components and Shadow DOM.
      */
-    async searchInPageTreeAndSelectFirstOccurrence(searchText: string): Promise<void> {
-      const maxRetries = 3;
-
-      for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-          // 1. Ensure the navigation container is present
-          const navContainer = this.page.locator('typo3-backend-content-navigation');
-          await expect(navContainer).toBeAttached({ timeout: 15000 });
-
-          // 2. Handle Collapsed State:
-          // We look for the toggle component. If the action is 'expand', it's collapsed.
-          const expandToggle = this.page.locator('typo3-backend-content-navigation-toggle[action="expand"]');
-          if (await expandToggle.isVisible()) {
-            console.log(`[Attempt ${attempt}] Navigation collapsed. Expanding...`);
-            await expandToggle.click();
-            // Short wait for the CSS transition (width 0 -> 300px)
-            await this.page.waitForTimeout(500);
-          }
-
-          // 3. Target the Page Tree component and its search input
-          // Prefixing with the component tag helps Playwright pierce nested Shadow Roots
-          const treeComponent = this.page.locator('typo3-backend-navigation-component-pagetree');
-          const searchInput = treeComponent.locator('input#toolbarSearch');
-
-          // Wait for the input to be ready for interaction
-          await searchInput.waitFor({ state: 'visible', timeout: 15000 });
-
-          // Using fill() is safer for Lit components than type() to avoid event race conditions
-          await searchInput.fill(searchText);
-          await searchInput.press('Enter');
-
-          // 4. Locate results within the Shadow DOM
-          // We filter by text and look for the standard [role="treeitem"]
-          const treeItem = treeComponent.locator('[role="treeitem"]').filter({ hasText: searchText }).first();
-
-          // Increased timeout here as the tree filtering can be slow on large installations
-          await expect(treeItem).toBeVisible({ timeout: 15000 });
-
-          // 5. Click the actual label element
-          // .node-contentlabel is the standard TYPO3 class for the clickable text area
-          const clickableLabel = treeItem.locator('.node-contentlabel').first();
-          await clickableLabel.scrollIntoViewIfNeeded();
-          await clickableLabel.click({ force: true });
-
-          // Wait for TYPO3 to finish loading the content on the right side
-          await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
-          // Allow TYPO3 to commit page selection state before the caller switches to another module
-          await this.page.waitForTimeout(500);
-
-          return; // Success!
-
-        } catch (error) {
-          const message = error instanceof Error ? error.message : String(error);
-          console.warn(`[Attempt ${attempt}] Search failed for "${searchText}": ${message}`);
-
-          if (attempt === maxRetries) {
-            throw error;
-          }
-
-          // Recovery: Instead of a full reload(), we do a "soft" navigation to the current URL.
-          // This resets the component state without getting stuck on the 'load' event.
-          await this.page.goto(this.page.url(), { waitUntil: 'commit', timeout: 15000 }).catch(() => {});
-
-          // Wait longer on each subsequent attempt
-          await this.page.waitForTimeout(2000 * attempt);
-        }
-      }
+  async searchInPageTreeAndSelectFirstOccurrence(searchText: string): Promise<void> {
+    const expandToggle = this.page.locator(
+      'typo3-backend-content-navigation-toggle[action="expand"], button[title="Show navigation"], button[aria-label="Show navigation"]',
+    ).first();
+    if (await expandToggle.isVisible().catch(() => false)) {
+      await expandToggle.click();
     }
+
+    const treeRoot = this.page.locator(
+      'typo3-backend-navigation-component-pagetree, typo3-backend-content-navigation, .scaffold-content-navigation-component, [role="tree"]',
+    ).first();
+    await expect(treeRoot).toBeVisible({ timeout: 30000 });
+
+    const searchInput = this.page.locator(
+      'input#toolbarSearch, input[placeholder="Search term"], input[placeholder="Enter search term"]',
+    ).first();
+    await expect(searchInput).toBeVisible({ timeout: 30000 });
+    await searchInput.fill(searchText);
+    await searchInput.press('Enter');
+
+    const exactText = new RegExp(`^\\s*${this.escapeRegExp(searchText)}\\s*$`);
+    const treeItem = treeRoot
+      .locator('[role="treeitem"]')
+      .filter({
+        has: this.page.locator('.node-contentlabel').filter({ hasText: exactText }),
+      })
+      .first();
+
+    await expect(treeItem).toBeVisible({ timeout: 15000 });
+
+    const clickableLabel = treeItem.locator('.node-contentlabel').first();
+    if (await clickableLabel.isVisible().catch(() => false)) {
+      await clickableLabel.scrollIntoViewIfNeeded();
+      await clickableLabel.click({ force: true });
+    } else {
+      await treeItem.click({ force: true });
+    }
+
+    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+  }
 
   /**
    * Navigate through the file storage tree by clicking each path segment.
@@ -144,11 +151,16 @@ export class BackendPage extends BaseBackendPage {
    * @param pathSegments Array of folder names to navigate through (e.g., ['fileadmin', 'Testcases', '2b_published_file'])
    */
   async selectInFileStorageTree(pathSegments: string[]): Promise<void> {
-    const fileTree = this.page.locator('typo3-backend-content-navigation');
+    const fileTree = this.page.locator(
+      'typo3-backend-content-navigation, .scaffold-content-navigation-component, [role="tree"]',
+    ).first();
     await expect(fileTree).toBeVisible({ timeout: 10000 });
 
     for (const segment of pathSegments) {
-      const treeNode = fileTree.locator(`[role="treeitem"]`).filter({ hasText: segment });
+      const exactText = new RegExp(`^\\s*${this.escapeRegExp(segment)}\\s*$`);
+      const treeNode = fileTree.locator('[role="treeitem"]').filter({
+        has: this.page.locator('.node-contentlabel').filter({ hasText: exactText }),
+      });
       const firstNode = treeNode.first();
       await expect(firstNode).toBeVisible({ timeout: 10000 });
 
@@ -158,7 +170,7 @@ export class BackendPage extends BaseBackendPage {
         const isExpanded = await firstNode.getAttribute('aria-expanded');
         if (isExpanded !== 'true') {
           await chevron.click();
-          await this.page.waitForTimeout(500);
+          await expect(firstNode).toHaveAttribute('aria-expanded', 'true', { timeout: 5000 });
         }
       }
 
@@ -168,11 +180,7 @@ export class BackendPage extends BaseBackendPage {
       await label.scrollIntoViewIfNeeded();
       await label.click({ force: true });
       await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
-      await this.page.waitForTimeout(500);
     }
-
-    // Final wait for content to settle
-    await this.page.waitForTimeout(1000);
   }
 
   /**
