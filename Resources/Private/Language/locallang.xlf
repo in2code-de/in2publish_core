@@ -124,7 +124,10 @@
 				<source>Record State</source>
 			</trans-unit>
 			<trans-unit id="record.filter" resname="record.filter">
-				<source>Filter by:</source>
+				<source>Filter by</source>
+			</trans-unit>
+			<trans-unit id="record.search" resname="record.search">
+				<source>Search</source>
 			</trans-unit>
 			<trans-unit id="record.filename" resname="record.filename">
 				<source>Filename</source>

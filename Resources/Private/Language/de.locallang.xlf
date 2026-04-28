@@ -164,8 +164,12 @@
 				<target>Datensatz Status</target>
 			</trans-unit>
 			<trans-unit id="record.filter" resname="record.filter">
-				<source>Filter by:</source>
-				<target>Filtern nach:</target>
+				<source>Filter by</source>
+				<target>Filtern nach</target>
+			</trans-unit>
+			<trans-unit id="record.search" resname="record.search">
+				<source>Search</source>
+				<target>Suche</target>
 			</trans-unit>
 			<trans-unit id="record.filename" resname="record.filename">
 				<source>Filename</source>
