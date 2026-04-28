@@ -11,6 +11,10 @@ export class BackendPage extends BaseBackendPage {
     super(page, config);
   }
 
+  private escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
   /**
    * Login to TYPO3 backend.
    * @param baseUrl Optional base URL (defaults to local backend URL from config)
