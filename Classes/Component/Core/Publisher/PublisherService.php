@@ -143,7 +143,7 @@ class PublisherService
         $shouldProcessChildren = $wasPublished || !$this->isPublishAllMode;
 
         if ($shouldProcessChildren) {
-            $this->processTranslations($record, $includeChildPages, $wasPublished);
+            $this->processTranslations($record, $includeChildPages);
             $this->processChildRecords($record, $includeChildPages, $wasPublished);
         } elseif ($this->isPublishAllMode && $includeChildPages) {
             // in publishAll mode child pages need to be evaluated independently even if parent wasn't published
@@ -193,7 +193,7 @@ class PublisherService
         return true;
     }
 
-    private function processTranslations(Record $record, bool $includeChildPages, bool $parentWasPublished = false): void
+    private function processTranslations(Record $record, bool $includeChildPages): void
     {
         $state = $record->getState();
         if (
@@ -235,31 +235,20 @@ class PublisherService
     private function processChildRecords(Record $record, bool $includeChildPages, bool $parentWasPublished = false): void
     {
         foreach ($record->getChildren() as $table => $children) {
-            // Handle child pages based on mode and settings
-            if ($table === 'pages') {
-                if (!$includeChildPages && !$this->isPublishAllMode) {
-                    // Skip child pages only if not including them AND not in publishAll mode
-                    continue;
-                }
+            if ($table === 'pages' && !$includeChildPages && !$this->isPublishAllMode) {
+                continue;
             }
 
             foreach ($children as $child) {
-                // Determine if child should be treated as top-level for dependency checking
-                $isChildTopLevelCall = false;
-
-                if ($table === 'pages') {
-                    if ($this->isPublishAllMode) {
-                        // In publishAll mode: child pages get strict checking ONLY if their parent
-                        // was not published in the current run (independent evaluation)
-                        $isChildTopLevelCall = !$parentWasPublished;
-                    } elseif ($includeChildPages && !$this->isPublishAllMode) {
-                        // Child pages in regular mode with includeChildPages always get strict checking
-                        $isChildTopLevelCall = true;
-                    }
-                }
-
+                $isChildTopLevelCall = $this->resolveChildTopLevelCall($table, $parentWasPublished);
                 $this->publishRecord($child, $includeChildPages, $isChildTopLevelCall);
             }
         }
+    }
+
+    private function resolveChildTopLevelCall(string $table, bool $parentWasPublished): bool
+    {
+        // Pages need strict dependency checking unless the parent was already published in this run
+        return $table === 'pages' && (!$this->isPublishAllMode || !$parentWasPublished);
     }
 }
