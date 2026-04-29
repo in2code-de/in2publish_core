@@ -11,6 +11,7 @@ use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectStandaloneMmResolver;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 
+use function array_filter;
 use function array_key_exists;
 use function implode;
 
@@ -39,9 +40,6 @@ class SelectProcessor extends AbstractProcessor
         'MM_opposite_field',
     ];
 
-    /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
         if (array_key_exists('MM_opposite_field', $tca) && !$this->isSysCategoryField($tca)) {
@@ -75,47 +73,57 @@ class SelectProcessor extends AbstractProcessor
         $foreignTableWhere = $processedTca['foreign_table_where'] ?? '';
 
         if (isset($processedTca['MM'])) {
-            $mmTable = $processedTca['MM'];
-            $selectField = ($processedTca['MM_opposite_field'] ?? '') ? 'uid_foreign' : 'uid_local';
-
-            $foreignMatchFields = [];
-            foreach ($processedTca['MM_match_fields'] ?? [] as $matchField => $matchValue) {
-                if ((string)(int)$matchValue === (string)$matchValue) {
-                    $foreignMatchFields[] = $matchField . ' = ' . $matchValue;
-                } else {
-                    $foreignMatchFields[] = $matchField . ' = "' . $matchValue . '"';
-                }
-            }
-            $additionalWhere = implode(' AND ', $foreignMatchFields);
-            if (1 === preg_match(AbstractProcessor::ADDITIONAL_ORDER_BY_PATTERN, $foreignTableWhere, $matches) && !empty($matches['where'])) {
-                $foreignTableWhere = implode(' AND ', array_filter([$matches['where'], $additionalWhere]));
-                if (!empty($matches['col'])) {
-                    $foreignTableWhere .= ' ORDER BY ' . $matches['col'] . ($matches['dir'] ?? '');
-                }
-            } else {
-                $foreignTableWhere = implode(' AND ', array_filter([$foreignTableWhere, $additionalWhere]));
-            }
-            $foreignTableWhere = DatabaseUtility::stripLogicalOperatorPrefix($foreignTableWhere);
-            $foreignTableWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($foreignTableWhere);
-
-            if ('pages' === $foreignTable || $this->excludedTablesService->isExcludedTable($foreignTable)) {
-                $resolver = $this->container->get(SelectStandaloneMmResolver::class);
-                $resolver->configure($mmTable, $selectField);
-                return $resolver;
-            }
-
-            /** @var SelectMmResolver $resolver */
-            $resolver = $this->container->get(SelectMmResolver::class);
-            $resolver->configure($foreignTableWhere, $column, $mmTable, $foreignTable, $selectField);
-            return $resolver;
+            return $this->buildMmResolver($column, $processedTca, $foreignTable, $foreignTableWhere);
         }
 
         $foreignTableWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($foreignTableWhere);
-
-        /** @var SelectResolver $resolver */
         $resolver = $this->container->get(SelectResolver::class);
         $resolver->configure($column, $foreignTable, $foreignTableWhere);
         return $resolver;
+    }
+
+    private function buildMmResolver(string $column, array $processedTca, string $foreignTable, string $foreignTableWhere): Resolver
+    {
+        $mmTable = $processedTca['MM'];
+        $selectField = ($processedTca['MM_opposite_field'] ?? '') ? 'uid_foreign' : 'uid_local';
+
+        $additionalWhere = $this->buildMatchFieldConditions($processedTca['MM_match_fields'] ?? []);
+        $foreignTableWhere = $this->mergeForeignTableWhere($foreignTableWhere, $additionalWhere);
+        $foreignTableWhere = DatabaseUtility::stripLogicalOperatorPrefix($foreignTableWhere);
+        $foreignTableWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($foreignTableWhere);
+
+        if ('pages' === $foreignTable || $this->excludedTablesService->isExcludedTable($foreignTable)) {
+            $resolver = $this->container->get(SelectStandaloneMmResolver::class);
+            $resolver->configure($mmTable, $selectField);
+            return $resolver;
+        }
+
+        $resolver = $this->container->get(SelectMmResolver::class);
+        $resolver->configure($foreignTableWhere, $column, $mmTable, $foreignTable, $selectField);
+        return $resolver;
+    }
+
+    private function buildMatchFieldConditions(array $matchFields): string
+    {
+        $conditions = [];
+        foreach ($matchFields as $field => $value) {
+            $conditions[] = (string)(int)$value === (string)$value
+                ? $field . ' = ' . $value
+                : $field . ' = "' . $value . '"';
+        }
+        return implode(' AND ', $conditions);
+    }
+
+    private function mergeForeignTableWhere(string $foreignTableWhere, string $additionalWhere): string
+    {
+        if (1 === preg_match(AbstractProcessor::ADDITIONAL_ORDER_BY_PATTERN, $foreignTableWhere, $matches) && !empty($matches['where'])) {
+            $merged = implode(' AND ', array_filter([$matches['where'], $additionalWhere]));
+            if (!empty($matches['col'])) {
+                $merged .= ' ORDER BY ' . $matches['col'] . ($matches['dir'] ?? '');
+            }
+            return $merged;
+        }
+        return implode(' AND ', array_filter([$foreignTableWhere, $additionalWhere]));
     }
 
     /**
