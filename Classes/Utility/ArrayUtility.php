@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use InvalidArgumentException;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
@@ -87,7 +88,7 @@ class ArrayUtility
      * @return mixed
      *
      * @deprecated Implement the array access iterative with your own error handling
-     * @see \In2code\In2publishCore\Component\ConfigContainer\ConfigContainer::get()
+     * @see ConfigContainer::get()
      */
     public static function getValueByPath(array &$array, $path)
     {

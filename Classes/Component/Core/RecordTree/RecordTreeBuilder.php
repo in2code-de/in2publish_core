@@ -20,7 +20,6 @@ use In2code\In2publishCore\Component\Core\Service\RelevantTablesServiceInjection
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Service\Configuration\PageTypeServiceInjection;
 use In2code\In2publishCore\Service\Database\RawRecordServiceInjection;
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_flip;

@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  */
 
 use Doctrine\DBAL\Driver\Exception as DriverException;
-use TYPO3\CMS\Core\Resource\StorageRepository;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FileInfo;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\ForeignFileInfoServiceInjection;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProviderInjection;
@@ -42,6 +41,7 @@ use ReflectionException;
 use ReflectionProperty;
 use RuntimeException;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
+use TYPO3\CMS\Core\Resource\StorageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_keys;

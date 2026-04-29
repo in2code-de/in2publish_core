@@ -57,7 +57,7 @@ trait FileControllerModuleTemplate
     public function processRequest(RequestInterface $request): ResponseInterface
     {
         if ($request instanceof ServerRequestInterface) {
-            $this->moduleTemplate = $this->moduleTemplateFactory->create($request, );
+            $this->moduleTemplate = $this->moduleTemplateFactory->create($request);
             $this->moduleTemplate->setModuleId(strtolower(str_replace('\\', '_', static::class)));
         }
         return parent::processRequest($request);

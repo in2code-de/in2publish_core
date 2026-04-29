@@ -18,7 +18,6 @@ class MissingEvaluatorException extends In2publishCoreException
     /** @var array|string|null */
     protected $condition;
 
-
     public function __construct(array|string|null $condition, ?Throwable $previous = null)
     {
         $this->condition = $condition;

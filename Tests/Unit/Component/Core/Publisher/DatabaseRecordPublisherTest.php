@@ -89,7 +89,8 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     public function testFinishCommitsDatabaseChanges(): void
     {
         $databaseRecordPublisher = new DatabaseRecordPublisher();
-        $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);;
+        $foreignDatabase = $this->getForeignDatabaseMock($databaseRecordPublisher);
+        ;
         $foreignDatabase->method('isTransactionActive')->willReturn(true);
 
         $foreignDatabase->expects($this->once())->method('commit');

@@ -40,7 +40,6 @@ class DatabaseRecordPublisher implements Publisher, TransactionalPublisher
         if (!empty($newValues)) {
             $this->foreignDatabase->update($table, $newValues, $foreignIdentificationProps);
         }
-
     }
 
     public function start(): void

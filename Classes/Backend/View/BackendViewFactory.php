@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace In2code\In2publishCore\Backend\View;
 
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use TYPO3\CMS\Backend\Routing\Route;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Package\PackageManager;
@@ -25,9 +27,8 @@ final readonly class BackendViewFactory
 {
     public function __construct(
         protected RenderingContextFactory $renderingContextFactory,
-        protected PackageManager          $packageManager,
-    )
-    {
+        protected PackageManager $packageManager,
+    ) {
     }
 
     /**
@@ -91,7 +92,7 @@ final readonly class BackendViewFactory
                 foreach ($overrides as $override) {
                     $pathParts = GeneralUtility::trimExplode(':', $override, true);
                     if (count($pathParts) < 2) {
-                        throw new \RuntimeException(
+                        throw new RuntimeException(
                             'When overriding template paths, the syntax is "composer-package-name:path", example: "typo3/cms-seo:Resources/Private/TemplateOverrides/typo3/cms-backend"',
                             1643798660
                         );

@@ -266,8 +266,10 @@ class FileRecordPublisherTest extends UnitTestCase
 
     protected function createFileRecordPublisher(string $temporaryFileIdentifier = '_undefined_'): FileRecordPublisher
     {
-        $fileRecordPublisher = new class($temporaryFileIdentifier) extends FileRecordPublisher {
-            public function __construct(private readonly string $tmpFile) {}
+        $fileRecordPublisher = new class ($temporaryFileIdentifier) extends FileRecordPublisher {
+            public function __construct(private readonly string $tmpFile)
+            {
+            }
 
             protected function transmitTemporaryFile(Record $record): string
             {

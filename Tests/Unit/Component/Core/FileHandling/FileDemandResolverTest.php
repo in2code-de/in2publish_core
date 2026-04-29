@@ -15,8 +15,8 @@ use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
-
 use PHPUnit\Framework\Attributes\CoversMethod;
+
 use function bin2hex;
 use function hash;
 use function random_bytes;

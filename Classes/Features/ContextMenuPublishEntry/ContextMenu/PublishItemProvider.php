@@ -51,7 +51,7 @@ class PublishItemProvider extends AbstractProvider
     ];
     protected PermissionService $permissionService;
 
-    public function __construct(private readonly \TYPO3\CMS\Core\EventDispatcher\EventDispatcher $eventDispatcher, private readonly \TYPO3\CMS\Backend\Routing\UriBuilder $uriBuilder)
+    public function __construct(private readonly EventDispatcher $eventDispatcher, private readonly UriBuilder $uriBuilder)
     {
         parent::__construct(...func_get_args());
 

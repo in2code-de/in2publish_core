@@ -39,7 +39,7 @@ HTML;
         '/typo3/module/in2publish',
         '/module/web/In2publishM2',
     ];
-    public function __construct(private readonly \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer)
+    public function __construct(private readonly PageRenderer $pageRenderer)
     {
     }
 

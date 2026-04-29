@@ -56,8 +56,8 @@ class IsPropertyDirtyViewHelper extends AbstractViewHelper
         string $argumentsName,
         string $closureName,
         string &$initializationPhpCode,
-        \TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode $node,
-        \TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler $compiler
+        ViewHelperNode $node,
+        TemplateCompiler $compiler
     ): string {
         /** @noinspection PhpUnnecessaryCurlyVarSyntaxInspection */
         return "in_array({$argumentsName}['property'], {$argumentsName}['record']->getChangedProps(), true)";

@@ -8,12 +8,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Http\ApplicationType;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class EditUriViewHelper extends AbstractViewHelper
 {
-    public function __construct(private readonly \TYPO3\CMS\Backend\Routing\UriBuilder $uriBuilder)
+    public function __construct(private readonly UriBuilder $uriBuilder)
     {
     }
     public function initializeArguments(): void
@@ -32,7 +31,8 @@ class EditUriViewHelper extends AbstractViewHelper
         $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
 
         $returnUrl = '';
-        if ($request instanceof ServerRequestInterface
+        if (
+            $request instanceof ServerRequestInterface
             && ApplicationType::fromRequest($request)->isBackend()
         ) {
             $returnUrl = (string)$request->getUri();

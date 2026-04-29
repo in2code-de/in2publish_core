@@ -83,7 +83,7 @@ class SiteLanguageService
 
         ksort($languages);
         foreach ($languages as $index => $language) {
-                $languages[$index] = $language;
+            $languages[$index] = $language;
         }
         return $languages;
     }

@@ -7,8 +7,8 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core;
 use Exception;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
-
 use PHPUnit\Framework\Attributes\CoversMethod;
+
 use function bin2hex;
 use function random_bytes;
 

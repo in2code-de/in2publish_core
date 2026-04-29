@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Cache;
 use TYPO3\CMS\Core\Cache\Backend\FileBackend;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Cache\Frontend\PhpFrontend;
-use TYPO3\CMS\Core\Core\Environment;
 
 class EarlyCacheManager
 {

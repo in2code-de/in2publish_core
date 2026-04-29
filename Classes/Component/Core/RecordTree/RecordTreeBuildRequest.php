@@ -11,7 +11,7 @@ class RecordTreeBuildRequest
     private int $pageRecursionLimit;
     private int $dependencyRecursionLimit;
     private int $contentRecursionLimit;
-    /** @var null|array<int> */
+    /** @var array<int>|null */
     private ?array $languages;
 
     public function __construct(

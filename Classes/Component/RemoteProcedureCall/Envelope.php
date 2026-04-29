@@ -41,7 +41,6 @@ class Envelope
     /** @var mixed */
     protected $response = '';
 
-
     public function __construct(string $command, array $request = [], mixed $response = null, int|null $uid = null)
     {
         $this->setCommand($command);

@@ -87,7 +87,7 @@ class ConfigContainerDumper
 
     /**
      * @param array{
-     *     legacyProviders: array<class-string<ProviderInterface>, ProviderInterface|null|false>
+     *     legacyProviders: array<class-string<ProviderInterface>, ProviderInterface|false|null>
      * } $rawDump
      */
     private function dumpLegacyProvider(array $rawDump): array
@@ -121,7 +121,7 @@ class ConfigContainerDumper
 
     /**
      * @param array{
-     *     legacyDefiners: array<class-string<DefinerInterface>, DefinerInterface|null|false>
+     *     legacyDefiners: array<class-string<DefinerInterface>, DefinerInterface|false|null>
      * } $rawDump
      */
     private function dumpLegacyDefiners(array $rawDump): array

@@ -9,8 +9,6 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionServiceInjection;
 use In2code\In2publishCore\Event\BeforePublishingTranslationsEvent;
-use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
-use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecordWasPublished;
 use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;

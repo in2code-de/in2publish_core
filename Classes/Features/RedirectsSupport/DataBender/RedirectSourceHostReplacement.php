@@ -37,7 +37,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function in_array;
 
@@ -51,7 +50,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
         Record::S_ADDED,
         Record::S_MOVED,
     ];
-    public function __construct(private readonly \TYPO3\CMS\Core\LinkHandling\LinkService $linkService)
+    public function __construct(private readonly LinkService $linkService)
     {
     }
 

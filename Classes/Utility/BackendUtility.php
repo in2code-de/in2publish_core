@@ -36,6 +36,7 @@ use In2code\In2publishCore\Service\Routing\SiteService;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Throwable;
+use TYPO3\CMS\Backend\Controller\EditDocumentController;
 use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
@@ -318,7 +319,7 @@ class BackendUtility
      * @param array $parameters Should be an empty array by default
      * @param array $typoScript The TypoScript configuration
      *
-     * @see \TYPO3\CMS\Backend\Controller\EditDocumentController::parseAdditionalGetParameters
+     * @see EditDocumentController::parseAdditionalGetParameters
      *
      * Migrates a set of (possibly nested) GET parameters in TypoScript syntax to a plain array
      *

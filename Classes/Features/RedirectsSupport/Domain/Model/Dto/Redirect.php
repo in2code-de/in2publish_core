@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Dto;
 
 use AllowDynamicProperties;
+
 use function sprintf;
 
 #[AllowDynamicProperties]

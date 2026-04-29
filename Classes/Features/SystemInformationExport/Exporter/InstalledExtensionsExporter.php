@@ -35,7 +35,6 @@ use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
 
 class InstalledExtensionsExporter implements SystemInformationExporter
 {
-
     public function getUniqueKey(): string
     {
         return 'extensions';
@@ -43,7 +42,7 @@ class InstalledExtensionsExporter implements SystemInformationExporter
 
     public function getInformation(): array
     {
-        if(!ExtensionManagementUtility::isLoaded('extensionmanager')) {
+        if (!ExtensionManagementUtility::isLoaded('extensionmanager')) {
             return ['[NOTE] EXT:extensionmanager is not installed.'];
         }
 

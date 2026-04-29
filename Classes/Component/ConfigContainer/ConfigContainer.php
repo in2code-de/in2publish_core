@@ -269,9 +269,9 @@ class ConfigContainer implements SingletonInterface
     /**
      * @return array{
      *     providerServices: array<class-string<ProviderServiceInterface>, ProviderServiceInterface>,
-     *     legacyProviders: array<class-string<ProviderInterface>, ProviderInterface|null|false>,
+     *     legacyProviders: array<class-string<ProviderInterface>, ProviderInterface|false|null>,
      *     definerServices: array<class-string<DefinerServiceInterface>, DefinerServiceInterface>,
-     *     legacyDefiners: array<class-string<DefinerInterface>, DefinerInterface|null|false>,
+     *     legacyDefiners: array<class-string<DefinerInterface>, DefinerInterface|false|null>,
      *     migrationServices: array<class-string<MigrationServiceInterface>, MigrationServiceInterface>,
      *     legacyMigrations: array<class-string<MigrationInterface>, MigrationInterface|null>,
      *     postProcessorServices: array<class-string<PostProcessorServiceInterface>, PostProcessorServiceInterface>,

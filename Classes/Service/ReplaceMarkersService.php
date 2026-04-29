@@ -39,6 +39,8 @@ use In2code\In2publishCore\Component\Core\Record\Model\VirtualFlexFormRecord;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Backend\Form\FormDataProvider\AbstractItemProvider;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaFlexProcess;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
@@ -248,7 +250,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
     }
 
     /**
-     * @see \TYPO3\CMS\Backend\Form\FormDataProvider\AbstractItemProvider::quoteParsedSiteConfiguration
+     * @see AbstractItemProvider::quoteParsedSiteConfiguration
      */
     protected function quoteParsedSiteConfiguration(array $parsedSiteConfiguration): array
     {
@@ -283,7 +285,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
     }
 
     /**
-     * @see \TYPO3\CMS\Backend\Form\FormDataProvider\TcaFlexProcess::getSimplifiedDataStructureIdentifier
+     * @see TcaFlexProcess::getSimplifiedDataStructureIdentifier
      */
     protected function getSimplifiedDataStructureIdentifier(string $dataStructureIdentifier): string
     {

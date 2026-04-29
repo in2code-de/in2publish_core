@@ -6,10 +6,10 @@ namespace In2code\In2publishCore\Listener;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
+use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\Core\Reason\Reason;
 use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
-use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 
 use function array_diff;
 use function array_map;

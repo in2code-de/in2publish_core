@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 
-use In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 
 class FolderProcessor extends AbstractProcessor

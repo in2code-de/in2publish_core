@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\CommonInjection;
 
+use In2code\In2publishCore\Factory\ConnectionFactory;
 use TYPO3\CMS\Core\Database\Connection;
 
 /**
  * This always injects Foreign's database, regardless if injected on Local or Foreign.
- * @see \In2code\In2publishCore\Factory\ConnectionFactory::createOtherConnection()
+ * @see ConnectionFactory::createOtherConnection()
  *
  * @codeCoverageIgnore
  */
