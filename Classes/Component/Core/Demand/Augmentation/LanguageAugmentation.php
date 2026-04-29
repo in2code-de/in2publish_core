@@ -9,7 +9,6 @@ use In2code\In2publishCore\Component\Core\Demand\Type\SelectDemand;
 use In2code\In2publishCore\Component\Core\Demand\Type\SysRedirectDemand;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Event\DemandsWereCollected;
-use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function array_map;
@@ -27,49 +26,60 @@ class LanguageAugmentation implements SingletonInterface
         if (null === $this->request?->getLanguages()) {
             return;
         }
-        $languages = $this->request->getLanguages();
+
+        $languages = array_map('intval', array_unique(array_merge([-1, 0], $this->request->getLanguages())));
+        $languageArray = implode(',', $languages);
+
         $demands = $event->getDemands();
         $allDemands = $demands->getAll();
 
-        $languages = array_map('intval', array_unique(array_merge([-1, 0], $languages)));
-
-        $languageArray = implode(',', $languages);
-
         foreach ($allDemands as $type => $tables) {
-            switch ($type) {
-                case SysRedirectDemand::class:
-                case SelectDemand::class:
-                    foreach ($tables as $table => $wheres) {
-                        $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
-                        if ($languageField) {
-                            foreach ($wheres as $where => $value) {
-                                if (trim($where) !== '') {
-                                    $where .= ' AND ';
-                                }
-                                $where .= $table . '.' . $languageField . ' IN(' . $languageArray .')';
-                                $allDemands[$type][$table][$where] = $value;
-                            }
-                        }
-                    }
-                    break;
-                case JoinDemand::class:
-                    foreach ($tables as $table => $joinTables) {
-                        $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
-                        if ($languageField) {
-                            foreach ($joinTables as $joinTable => $wheres) {
-                                foreach ($wheres as $where => $value) {
-                                    if (trim($where) !== '') {
-                                        $where .= ' AND ';
-                                    }
-                                    $where .= $table . '.' . $languageField . ' IN(' . $languageArray;
-                                    $allDemands[$type][$table][$joinTable][$where] = $value;
-                                }
-                            }
-                        }
-                    }
-                    break;
+            $allDemands[$type] = match ($type) {
+                SelectDemand::class,
+                SysRedirectDemand::class => $this->augmentFlatDemands($tables, $languageArray),
+                JoinDemand::class => $this->augmentJoinDemands($tables, $languageArray),
+                default => $tables,
+            };
+        }
+
+        $demands->setAll($allDemands);
+    }
+
+    private function augmentFlatDemands(array $tables, string $languageArray): array
+    {
+        foreach ($tables as $table => $wheres) {
+            $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
+            if (null === $languageField) {
+                continue;
+            }
+            foreach ($wheres as $where => $value) {
+                $newWhere = $this->buildLanguageWhere((string)$where, $table, $languageField, $languageArray);
+                $tables[$table][$newWhere] = $value;
             }
         }
-        $demands->setAll($allDemands);
+        return $tables;
+    }
+
+    private function augmentJoinDemands(array $tables, string $languageArray): array
+    {
+        foreach ($tables as $table => $joinTables) {
+            $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
+            if (null === $languageField) {
+                continue;
+            }
+            foreach ($joinTables as $joinTable => $wheres) {
+                foreach ($wheres as $where => $value) {
+                    $newWhere = $this->buildLanguageWhere((string)$where, $table, $languageField, $languageArray);
+                    $tables[$table][$joinTable][$newWhere] = $value;
+                }
+            }
+        }
+        return $tables;
+    }
+
+    private function buildLanguageWhere(string $where, string $table, string $languageField, string $languageArray): string
+    {
+        $prefix = trim($where) !== '' ? $where . ' AND ' : '';
+        return $prefix . $table . '.' . $languageField . ' IN(' . $languageArray . ')';
     }
 }
