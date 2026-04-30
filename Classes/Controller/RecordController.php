@@ -96,6 +96,15 @@ class RecordController extends ActionController
         } else {
             $this->request = $this->request->withArgument('pageRecursionLimit', 1);
         }
+        if (!$this->request->hasArgument('freeText')) {
+            $this->request = $this->request->withArgument('freeText', '');
+        }
+        if (!$this->request->hasArgument('state')) {
+            $this->request = $this->request->withArgument('state', '');
+        }
+        if (!$this->request->hasArgument('language')) {
+            $this->request = $this->request->withArgument('language', '');
+        }
 
         $this->moduleTemplate->setModuleClass('in2publish_core_m1');
     }
@@ -105,7 +114,7 @@ class RecordController extends ActionController
      * If none is chosen, a Record with uid = 0 is created which
      * represents the instance root
      */
-    public function indexAction(int $pageRecursionLimit): ResponseInterface
+    public function indexAction(int $pageRecursionLimit, string $freeText = '', string $state = '', string $language = ''): ResponseInterface
     {
         $pid = BackendUtility::getPageIdentifier();
         if (!is_int($pid)) {
@@ -128,6 +137,9 @@ class RecordController extends ActionController
             'foreignDatabaseConnectionAvailable' => $foreignDbAvailable,
             'publishingAvailable' => $localDbAvailable && $foreignDbAvailable,
             'pageRecursionLimit' => $pageRecursionLimit,
+            'freeTextFilter' => $freeText,
+            'stateFilter' => $state,
+            'languageFilter' => $language,
             'languages' => $languages,
         ]);
         return $this->htmlResponse();

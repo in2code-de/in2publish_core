@@ -63,7 +63,22 @@ class In2publishCoreModule {
 		}
 
 		levelFilter.addEventListener('change', () => {
-			window.location = levelFilter.value;
+			const url = new URL(levelFilter.value, window.location.origin);
+			const freeTextFilter = document.querySelector('.js-form-search');
+			const stateFilter = document.querySelector('.js-in2publish-statefilter');
+			const languageFilter = document.querySelector('.js-in2publish-languagefilter');
+
+			if (freeTextFilter && freeTextFilter.value !== '') {
+				url.searchParams.set('freeText', freeTextFilter.value);
+			}
+			if (stateFilter && stateFilter.value !== '') {
+				url.searchParams.set('state', stateFilter.value);
+			}
+			if (languageFilter && languageFilter.value !== '') {
+				url.searchParams.set('language', languageFilter.value);
+			}
+
+			window.location = url.toString();
 		})
 	}
 
@@ -294,27 +309,27 @@ class In2publishCoreModule {
 			});
 		});
 
-		const searchForm = document.querySelector('.js-form-search');
-		if (searchForm) {
-			new DebounceEvent('input', event => {
-				if (!event.target) return;
+			const freeTextForm = document.querySelector('.js-form-search');
+			if (freeTextForm) {
+				new DebounceEvent('input', event => {
+					if (!event.target) return;
 
-				const searchValue = event.target.value.toLowerCase();
-				const elements = document.querySelectorAll('.in2publish-stagelisting__item');
+					const freeTextValue = event.target.value.toLowerCase();
+					const elements = document.querySelectorAll('.in2publish-stagelisting__item');
 
-				elements.forEach(item => {
-					if (!item) return;
+					elements.forEach(item => {
+						if (!item) return;
 
-					if (searchValue !== '') {
-						const searchable = item.getAttribute('data-searchable')?.toLowerCase() || '';
-						item.classList.toggle('d-none', !searchable.includes(searchValue));
-					} else {
-						item.classList.remove('d-none');
-					}
-				});
-			}, 250).bindTo(searchForm);
+						if (freeTextValue !== '') {
+							const searchable = item.getAttribute('data-searchable')?.toLowerCase() || '';
+							item.classList.toggle('d-none', !searchable.includes(freeTextValue));
+						} else {
+							item.classList.remove('d-none');
+						}
+					});
+				}, 250).bindTo(freeTextForm);
+			}
 		}
-	}
 
 	static setupClearableInputs() {
 		const clearableInputs = document.querySelectorAll('.t3js-clearable');
@@ -359,16 +374,16 @@ class In2publishCoreModule {
 	}
 
 	static addSearchListener() {
-		const searchForm = document.querySelector('.js-form-search');
+		const freeTextForm = document.querySelector('.js-form-search');
 
-		if (searchForm) {
+		if (freeTextForm) {
 			new DebounceEvent('input', function (event) {
-				const searchValue = event.target.value;
+				const freeTextValue = event.target.value;
 				const elements = document.querySelectorAll('[data-searchable]');
 				(Array.from(elements)).forEach(function (item) {
-					if (searchValue !== '') {
+					if (freeTextValue !== '') {
 						const searchable = item.getAttribute('data-searchable');
-						if (!searchable.includes(searchValue)) {
+						if (!searchable.includes(freeTextValue)) {
 							item.classList.add('d-none');
 						} else {
 							item.classList.remove('d-none');
@@ -377,11 +392,11 @@ class In2publishCoreModule {
 						item.classList.remove('d-none');
 					}
 				});
-			}, 250).bindTo(searchForm);
+				}, 250).bindTo(freeTextForm);
 
-			const searchFormClear = document.querySelector('.js-form-search + .close');
-			if (searchFormClear) {
-				searchFormClear.addEventListener('click', function () {
+			const freeTextFormClear = document.querySelector('.js-form-search + .close');
+			if (freeTextFormClear) {
+				freeTextFormClear.addEventListener('click', function () {
 					const elements = document.querySelectorAll('[data-searchable]');
 					(Array.from(elements)).forEach(function (item) {
 						item.classList.remove('d-none');
@@ -390,10 +405,37 @@ class In2publishCoreModule {
 			}
 		}
 	}
+
+	static applyInitialOverviewFilters() {
+		const stateFilter = document.querySelector('.js-in2publish-statefilter');
+		if (stateFilter && stateFilter.value !== '') {
+			this.setFilterForPageView();
+		}
+
+		const languageFilter = document.querySelector('.js-in2publish-languagefilter');
+		if (languageFilter && languageFilter.value !== '') {
+			this.filterItemsByLanguage(languageFilter.value);
+		}
+
+		const freeTextForm = document.querySelector('.js-form-search');
+		if (freeTextForm && freeTextForm.value !== '') {
+			const freeTextValue = freeTextForm.value;
+			const elements = document.querySelectorAll('[data-searchable]');
+			(Array.from(elements)).forEach(function (item) {
+				const searchable = item.getAttribute('data-searchable');
+				if (!searchable.includes(freeTextValue)) {
+					item.classList.add('d-none');
+				} else {
+					item.classList.remove('d-none');
+				}
+			});
+		}
+	}
 }
 
 DocumentService.ready().then(() => {
 	In2publishCoreModule.initialize();
+	In2publishCoreModule.applyInitialOverviewFilters();
 });
 
 export default In2publishCoreModule;
