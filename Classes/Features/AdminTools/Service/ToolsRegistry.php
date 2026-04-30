@@ -89,7 +89,7 @@ class ToolsRegistry implements SingletonInterface
                 $actions = GeneralUtility::trimExplode(',', $entry['action'], true);
 
                 if (!class_exists($controllerName)) {
-                    throw new ClassNotFoundException($controllerName, 9236774267);
+                    throw new ClassNotFoundException($controllerName);
                 }
 
                 foreach ($actions as $action) {

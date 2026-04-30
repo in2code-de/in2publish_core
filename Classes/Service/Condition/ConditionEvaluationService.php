@@ -61,6 +61,6 @@ class ConditionEvaluationService
                 return $evaluator->evaluate($condition);
             }
         }
-        throw new MissingEvaluatorException($condition, 6985416588);
+        throw new MissingEvaluatorException($condition);
     }
 }

@@ -64,7 +64,7 @@ class TaskExecutionService implements LoggerAwareInterface
                     'exit_status' => $response->getExitStatus(),
                 ],
             );
-            throw new TaskExecutionFailedException($response, 3293389134);
+            throw new TaskExecutionFailedException($response);
         }
         $this->logger->info('Task execution results', ['output' => $response->getOutput()]);
     }
