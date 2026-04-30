@@ -78,6 +78,7 @@ class In2publishCoreModule {
 				url.searchParams.set('language', languageFilter.value);
 			}
 
+			LoadingOverlay.showOverlay();
 			window.location = url.toString();
 		})
 	}
