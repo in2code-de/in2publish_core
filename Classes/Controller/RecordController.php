@@ -89,29 +89,38 @@ class RecordController extends ActionController
     public function initializeIndexAction(): void
     {
         $backendUser = $this->getBackendUser();
-        $data = $backendUser->getModuleData('tx_in2publishcore_m1') ?? ['pageRecursionLimit' => 1];
+        $data = $backendUser->getModuleData('tx_in2publishcore_m1') ?? [
+            'pageRecursionLimit' => 1,
+            'freeText' => '',
+            'state' => '',
+            'language' => '',
+        ];
 
         if ($this->request->hasArgument('pageRecursionLimit')) {
             $pageRecursionLimit = (int)$this->request->getArgument('pageRecursionLimit');
             $data['pageRecursionLimit'] = $pageRecursionLimit;
-            $backendUser->pushModuleData('tx_in2publishcore_m1', $data);
-
             $this->request = $this->request->withArgument(
                 'pageRecursionLimit',
                 (int)$this->request->getArgument('pageRecursionLimit'),
             );
         } else {
-            $this->request = $this->request->withArgument('pageRecursionLimit', 1);
+            $this->request = $this->request->withArgument('pageRecursionLimit', (int)($data['pageRecursionLimit'] ?? 1));
         }
         if (!$this->request->hasArgument('freeText')) {
-            $this->request = $this->request->withArgument('freeText', '');
+            $this->request = $this->request->withArgument('freeText', (string)($data['freeText'] ?? ''));
         }
         if (!$this->request->hasArgument('state')) {
-            $this->request = $this->request->withArgument('state', '');
+            $this->request = $this->request->withArgument('state', (string)($data['state'] ?? ''));
         }
         if (!$this->request->hasArgument('language')) {
-            $this->request = $this->request->withArgument('language', '');
+            $this->request = $this->request->withArgument('language', (string)($data['language'] ?? ''));
         }
+
+        $data['pageRecursionLimit'] = (int)$this->request->getArgument('pageRecursionLimit');
+        $data['freeText'] = (string)$this->request->getArgument('freeText');
+        $data['state'] = (string)$this->request->getArgument('state');
+        $data['language'] = (string)$this->request->getArgument('language');
+        $backendUser->pushModuleData('tx_in2publishcore_m1', $data);
 
         $this->moduleTemplate->setModuleClass('in2publish_core_m1');
     }
@@ -203,6 +212,22 @@ class RecordController extends ActionController
         return $this->jsonResponse(json_encode($return, JSON_THROW_ON_ERROR));
     }
 
+    public function updateOverviewFiltersAction(
+        string $freeText = '',
+        string $state = '',
+        string $language = '',
+        int $pageRecursionLimit = 1,
+    ): ResponseInterface {
+        $data = $this->getBackendUser()->getModuleData('tx_in2publishcore_m1') ?? [];
+        $data['freeText'] = $freeText;
+        $data['state'] = $state;
+        $data['language'] = $language;
+        $data['pageRecursionLimit'] = $pageRecursionLimit;
+        $this->getBackendUser()->pushModuleData('tx_in2publishcore_m1', $data);
+
+        return $this->jsonResponse(json_encode(['success' => true], JSON_THROW_ON_ERROR));
+    }
+
     /**
      * Add success message and redirect to indexAction
      */
@@ -231,6 +256,18 @@ class RecordController extends ActionController
         $queryParams = $this->request->getQueryParams();
         if (isset($queryParams['id'])) {
             $arguments['id'] = (int)$queryParams['id'];
+        }
+        if ($this->request->hasArgument('pageRecursionLimit')) {
+            $arguments['pageRecursionLimit'] = (int)$this->request->getArgument('pageRecursionLimit');
+        }
+        if ($this->request->hasArgument('freeText')) {
+            $arguments['freeText'] = (string)$this->request->getArgument('freeText');
+        }
+        if ($this->request->hasArgument('state')) {
+            $arguments['state'] = (string)$this->request->getArgument('state');
+        }
+        if ($this->request->hasArgument('language')) {
+            $arguments['language'] = (string)$this->request->getArgument('language');
         }
 
         return $this->redirect('index', 'Record', null, $arguments);

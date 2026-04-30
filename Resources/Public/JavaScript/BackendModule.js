@@ -39,6 +39,7 @@ class In2publishCoreModule {
 			this.addLanguageFilterListener();
 			this.addLevelFilterListener();
 			this.addSearchListener();
+			this.syncOverviewFilterArguments();
 		}
 	}
 
@@ -52,6 +53,8 @@ class In2publishCoreModule {
 
 		stateFilter.addEventListener('change', () => {
 			In2publishCoreModule.setFilterForPageView();
+			In2publishCoreModule.persistOverviewFilters();
+			In2publishCoreModule.syncOverviewFilterArguments();
 		})
 	}
 
@@ -78,6 +81,8 @@ class In2publishCoreModule {
 				url.searchParams.set('language', languageFilter.value);
 			}
 
+			this.persistOverviewFilters();
+			this.syncOverviewFilterArguments();
 			LoadingOverlay.showOverlay();
 			window.location = url.toString();
 		})
@@ -349,6 +354,8 @@ class In2publishCoreModule {
 
 		languageFilter.addEventListener('change', () => {
 			this.filterItemsByLanguage(languageFilter.value);
+			this.persistOverviewFilters();
+			this.syncOverviewFilterArguments();
 		})
 	}
 
@@ -393,6 +400,8 @@ class In2publishCoreModule {
 						item.classList.remove('d-none');
 					}
 				});
+				In2publishCoreModule.persistOverviewFilters();
+				In2publishCoreModule.syncOverviewFilterArguments();
 				}, 250).bindTo(freeTextForm);
 
 			const freeTextFormClear = document.querySelector('.js-form-search + .close');
@@ -402,6 +411,8 @@ class In2publishCoreModule {
 					(Array.from(elements)).forEach(function (item) {
 						item.classList.remove('d-none');
 					});
+					In2publishCoreModule.persistOverviewFilters();
+					In2publishCoreModule.syncOverviewFilterArguments();
 				});
 			}
 		}
@@ -431,6 +442,123 @@ class In2publishCoreModule {
 				}
 			});
 		}
+	}
+
+	static persistOverviewFilters() {
+		const filterContainer = document.querySelector('.in2publishjs__publishfilter');
+		const persistUri = filterContainer?.dataset.persistUri;
+		if (!persistUri) {
+			return;
+		}
+
+		const url = new URL(persistUri, window.location.origin);
+		const overviewFilters = this.getOverviewFilters();
+
+		url.searchParams.set('freeText', overviewFilters.freeText);
+		url.searchParams.set('state', overviewFilters.state);
+		url.searchParams.set('language', overviewFilters.language);
+		url.searchParams.set('pageRecursionLimit', overviewFilters.pageRecursionLimit);
+
+		fetch(url.toString(), {
+			credentials: 'same-origin',
+			keepalive: true,
+		});
+	}
+
+	static syncOverviewFilterArguments() {
+		const overviewFilters = this.getOverviewFilters();
+		const overviewReturnUrl = this.getOverviewReturnUrl(overviewFilters);
+		const publishAllLink = document.querySelector('.js-publish-all-records');
+		if (publishAllLink?.href) {
+			const url = new URL(publishAllLink.href, window.location.origin);
+			url.searchParams.set('pageRecursionLimit', overviewFilters.pageRecursionLimit);
+			url.searchParams.set('freeText', overviewFilters.freeText);
+			url.searchParams.set('state', overviewFilters.state);
+			url.searchParams.set('language', overviewFilters.language);
+			publishAllLink.href = url.toString();
+		}
+
+		const publishBagForm = document.querySelector('#publishBagForm');
+		if (publishBagForm) {
+			const pageRecursionLimitInput = publishBagForm.querySelector('input[name="pageRecursionLimit"]');
+			if (pageRecursionLimitInput) {
+				pageRecursionLimitInput.value = overviewFilters.pageRecursionLimit;
+			}
+
+			const freeTextInput = publishBagForm.querySelector('input[name="freeText"]');
+			if (freeTextInput) {
+				freeTextInput.value = overviewFilters.freeText;
+			}
+
+			const stateInput = publishBagForm.querySelector('input[name="state"]');
+			if (stateInput) {
+				stateInput.value = overviewFilters.state;
+			}
+
+			const languageInput = publishBagForm.querySelector('input[name="language"]');
+			if (languageInput) {
+				languageInput.value = overviewFilters.language;
+			}
+		}
+
+		document.querySelectorAll('.js-in2publish-workflowbutton[data-details-uri]').forEach((workflowButton) => {
+			const detailsUri = workflowButton.dataset.detailsUri;
+			if (!detailsUri) {
+				return;
+			}
+
+			const detailsUrl = new URL(detailsUri, window.location.origin);
+			detailsUrl.searchParams.set('returnUrl', overviewReturnUrl);
+			workflowButton.dataset.detailsUri = detailsUrl.toString();
+		});
+	}
+
+	static getOverviewFilters() {
+		const freeTextFilter = document.querySelector('.js-form-search');
+		const stateFilter = document.querySelector('.js-in2publish-statefilter');
+		const languageFilter = document.querySelector('.js-in2publish-languagefilter');
+		const levelFilter = document.querySelector('.js-in2publish-levelfilter');
+
+		return {
+			freeText: freeTextFilter?.value || '',
+			state: stateFilter?.value || '',
+			language: languageFilter?.value || '',
+			pageRecursionLimit: this.getSelectedPageRecursionLimit(levelFilter),
+		};
+	}
+
+	static getSelectedPageRecursionLimit(levelFilter) {
+		if (!levelFilter?.value) {
+			return '1';
+		}
+
+		const levelUrl = new URL(levelFilter.value, window.location.origin);
+		return levelUrl.searchParams.get('pageRecursionLimit') || '1';
+	}
+
+	static getOverviewReturnUrl(overviewFilters) {
+		const url = new URL(window.location.href);
+		url.searchParams.set('pageRecursionLimit', overviewFilters.pageRecursionLimit);
+
+		if (overviewFilters.freeText === '') {
+			url.searchParams.delete('freeText');
+		} else {
+			url.searchParams.set('freeText', overviewFilters.freeText);
+		}
+
+		if (overviewFilters.state === '') {
+			url.searchParams.delete('state');
+		} else {
+			url.searchParams.set('state', overviewFilters.state);
+		}
+
+		if (overviewFilters.language === '') {
+			url.searchParams.delete('language');
+		} else {
+			url.searchParams.set('language', overviewFilters.language);
+		}
+
+		return url.toString();
 	}
 }
 

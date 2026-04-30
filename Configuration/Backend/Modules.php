@@ -60,7 +60,7 @@ return [
         'extensionName' => 'in2publish_core',
         'iconIdentifier' => 'in2publish-core-overview-module',
         'controllerActions' => [
-            RecordController::class => ['index', 'detail', 'publishRecord', 'toggleFilterStatus'],
+            RecordController::class => ['index', 'detail', 'publishRecord', 'toggleFilterStatus', 'updateOverviewFilters'],
         ],
     ],
     'in2publish_core_m3' => [
