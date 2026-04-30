@@ -132,30 +132,93 @@ class In2publishCoreModule {
 			return;
 		}
 
-		this.changedFilter = stateFilter.value === 'changed';
-		this.addedFilter = stateFilter.value === 'added';
-		this.deletedFilter = stateFilter.value === 'deleted';
-		this.movedFilter = stateFilter.value === 'moved';
+		const selectedState = stateFilter.value;
+		const rootGroups = document.querySelectorAll('.in2publish-stagelisting > .in2publish-page-group');
 
-		if (this.changedFilter || this.addedFilter || this.deletedFilter || this.movedFilter) {
-			const unchangedElements = document.querySelectorAll('.in2publish-page[data-record-state="unchanged"]');
-			unchangedElements.forEach(el => {
-				if (el?.parentElement) {
-					el.parentElement.style.display = 'none';
-				}
+		if (selectedState === '') {
+			rootGroups.forEach(group => {
+				this.resetPageGroupVisibility(group);
 			});
-
-			this.processFilteredElements('.in2publish-page[data-record-state="changed"]', this.changedFilter);
-			this.processFilteredElements('.in2publish-page[data-record-state="added"]', this.addedFilter);
-			this.processFilteredElements('.in2publish-page[data-record-state="deleted"]', this.deletedFilter);
-			this.processFilteredElements('.in2publish-page[data-record-state="moved"]', this.movedFilter);
-		} else {
-			document.querySelectorAll('.in2publish-page').forEach(el => {
-				if (el?.parentElement) {
-					el.parentElement.style.display = 'block';
-				}
-			});
+			return;
 		}
+
+		rootGroups.forEach(group => {
+			this.applyStateFilterToGroup(group, selectedState);
+		});
+	}
+
+	static resetPageGroupVisibility(group) {
+		if (!group) {
+			return;
+		}
+
+		group.style.display = 'block';
+
+		const page = this.getDirectChildByClass(group, 'in2publish-page');
+		if (page) {
+			page.style.display = 'block';
+		}
+
+		const childrenContainer = this.getDirectChildByClass(group, 'in2publish-page-group__children');
+		if (childrenContainer) {
+			childrenContainer.style.display = 'block';
+			Array.from(childrenContainer.children)
+				.filter(child => child.classList.contains('in2publish-page-group'))
+				.forEach(childGroup => this.resetPageGroupVisibility(childGroup));
+		}
+	}
+
+	static applyStateFilterToGroup(group, selectedState) {
+		if (!group) {
+			return false;
+		}
+
+		const page = this.getDirectChildByClass(group, 'in2publish-page');
+		const childrenContainer = this.getDirectChildByClass(group, 'in2publish-page-group__children');
+
+		let hasVisibleChildren = false;
+		if (childrenContainer) {
+			hasVisibleChildren = Array.from(childrenContainer.children)
+				.filter(child => child.classList.contains('in2publish-page-group'))
+				.map(childGroup => this.applyStateFilterToGroup(childGroup, selectedState))
+				.some(Boolean);
+			childrenContainer.style.display = hasVisibleChildren ? 'block' : 'none';
+		}
+
+		const pageMatches = page ? this.pageMatchesStateFilter(page, selectedState) : false;
+		if (page) {
+			page.style.display = pageMatches ? 'block' : 'none';
+		}
+
+		const groupShouldBeVisible = pageMatches || hasVisibleChildren;
+		group.style.display = groupShouldBeVisible ? 'block' : 'none';
+
+		return groupShouldBeVisible;
+	}
+
+	static pageMatchesStateFilter(page, selectedState) {
+		if (!page) {
+			return false;
+		}
+
+		const recordState = page.getAttribute('data-record-state') || '';
+		if (recordState === selectedState) {
+			return true;
+		}
+
+		if (selectedState === 'deleted' && (recordState === 'soft_deleted' || recordState === 'deleted')) {
+			return true;
+		}
+
+		return false;
+	}
+
+	static getDirectChildByClass(element, className) {
+		if (!element) {
+			return null;
+		}
+
+		return Array.from(element.children).find(child => child.classList.contains(className)) || null;
 	}
 
 	static processFilteredElements(selector, filterStatus) {
