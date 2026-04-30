@@ -88,14 +88,13 @@ class RecordController extends ActionController
 
     public function initializeIndexAction(): void
     {
-        $backendUser = $this->getBackendUser();
-        $data = $backendUser->getModuleData('tx_in2publishcore_m1') ?? ['pageRecursionLimit' => 1];
         if ($this->request->hasArgument('pageRecursionLimit')) {
-            $pageRecursionLimit = (int)$this->request->getArgument('pageRecursionLimit');
-            $data['pageRecursionLimit'] = $pageRecursionLimit;
-            $backendUser->pushModuleData('tx_in2publishcore_m1', $data);
+            $this->request = $this->request->withArgument(
+                'pageRecursionLimit',
+                (int)$this->request->getArgument('pageRecursionLimit'),
+            );
         } else {
-            $this->request = $this->request->withArgument('pageRecursionLimit', $data['pageRecursionLimit'] ?? 1);
+            $this->request = $this->request->withArgument('pageRecursionLimit', 1);
         }
 
         $this->moduleTemplate->setModuleClass('in2publish_core_m1');
