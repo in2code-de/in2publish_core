@@ -218,4 +218,26 @@ export class BackendPage extends BaseBackendPage {
     await button.click();
     await this.page.waitForTimeout(500);
   }
+
+  async openContextMenuOfSelectedPageInPageTree(): Promise<void> {
+      const treeItem = this.page.locator(
+          'typo3-backend-navigation-component-pagetree .node-selected',
+      ).first();
+
+      const clickableLabel = treeItem.locator('.node-contentlabel').first();
+
+      await clickableLabel.scrollIntoViewIfNeeded();
+      await clickableLabel.click({ button: 'right'});
+      await this.page.waitForTimeout(500);
+  }
+
+  async clickPageTreeContextMenuItem(optionText: string): Promise<void> {
+      const contextMenu = this.page.locator('typo3-backend-context-menu');
+      await expect(contextMenu).toContainText(optionText);
+
+      const button = contextMenu.locator('[aria-label="' + optionText + '"]');
+      await expect(button).toBeVisible();
+      await button.click();
+      await this.page.waitForTimeout(500);
+  }
 }
