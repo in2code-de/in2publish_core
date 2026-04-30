@@ -237,24 +237,24 @@ acceptance-test:
 	fi
 
 setup-qa:
-	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm phive install
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.3-fpm phive install
 
 qa: qa-php-cs-fixer qa-php-code-sniffer qa-php-mess-detector
 
 qa-php-cs-fixer:
-	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.2-fpm .project/phars/php-cs-fixer check --config=.project/qa/php-cs-fixer.php --diff
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.3-fpm .project/phars/php-cs-fixer check --config=.project/qa/php-cs-fixer.php --diff
 
 fix-php-cs-fixer:
-	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.2-fpm .project/phars/php-cs-fixer fix --config=.project/qa/php-cs-fixer.php --diff
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.3-fpm .project/phars/php-cs-fixer fix -vvv --config=.project/qa/php-cs-fixer.php --diff
 
 qa-php-code-sniffer:
-	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.2-fpm .project/phars/phpcs --basepath="$$PWD" --standard=.project/qa/phpcs.xml -s
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.3-fpm .project/phars/phpcs --basepath="$$PWD" --standard=.project/qa/phpcs.xml -s
 
 fix-php-code-sniffer:
-	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.2-fpm .project/phars/phpcbf --basepath="$$PWD" --standard=.project/qa/phpcs.xml
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.3-fpm .project/phars/phpcbf --basepath="$$PWD" --standard=.project/qa/phpcs.xml
 
 qa-php-mess-detector:
-	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.2-fpm .project/phars/phpmd Classes ansi .project/qa/phpmd.xml
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.3-fpm .project/phars/phpmd Classes ansi .project/qa/phpmd.xml
 
 ## Clears TYPO3 caches via typo3-console
 typo3-clearcache:
@@ -295,7 +295,11 @@ composer-install:
 ## Install all phars required with phive
 .phive-install:
 	mkdir -p ~/.phive/
-	docker run --rm -it -u1000:1000 -v "$$PWD":/app -v $$HOME/.phive/:/tmp/phive/ -e PHIVE_HOME=/tmp/phive/ in2code/php:7.4-fpm phive install
+	docker run --rm -it -u1000:1000 -v "$$PWD":/app -v $$HOME/.phive/:/tmp/phive/ -e PHIVE_HOME=/tmp/phive/ in2code/php:8.3-fpm phive install
+
+.phive-update:
+	mkdir -p ~/.phive/
+	docker run --rm -it -u1000:1000 -v "$$PWD":/app -v $$HOME/.phive/:/tmp/phive/ -e PHIVE_HOME=/tmp/phive/ in2code/php:8.3-fpm phive update
 
 
 ## Print Project URIs

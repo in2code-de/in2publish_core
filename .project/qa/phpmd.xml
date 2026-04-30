@@ -19,6 +19,7 @@
     <rule ref="rulesets/naming.xml">
         <exclude name="LongVariable"/>
         <exclude name="ShortVariable"/>
+        <exclude name="LongClassName"/>
     </rule>
     <rule ref="rulesets/unusedcode.xml"/>
 

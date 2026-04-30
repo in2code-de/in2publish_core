@@ -19,6 +19,7 @@ Resources/Private/Clickdummy/zextensions.css
 .project/phars
 .project/temp
 .project/artifacts
+.local
 Build/testing-docker/.env
 Build/.phpunit.result.cache
 Build/local/config/sites/main/setup.typoscript
