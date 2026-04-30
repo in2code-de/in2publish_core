@@ -40,6 +40,7 @@ class SelectProcessor extends AbstractProcessor
         'MM_opposite_field',
     ];
 
+    /** @SuppressWarnings(PHPMD.CyclomaticComplexity) */
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
         if (array_key_exists('MM_opposite_field', $tca) && !$this->isSysCategoryField($tca)) {

@@ -23,6 +23,7 @@ class HasSchemaViewHelper extends AbstractConditionViewHelper
         $this->registerArgument('table', 'string', 'The table name to check', true);
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
     public static function verdict(array $arguments, RenderingContextInterface $renderingContext): bool
     {
         return GeneralUtility::makeInstance(TcaSchemaFactory::class)->has($arguments['table']);

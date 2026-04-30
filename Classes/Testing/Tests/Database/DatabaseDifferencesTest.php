@@ -46,6 +46,7 @@ use function strpos;
 
 use const PHP_INT_MAX;
 
+/** @SuppressWarnings(PHPMD.ExcessiveClassComplexity) */
 class DatabaseDifferencesTest implements TestCaseInterface
 {
     use LocalDatabaseInjection;

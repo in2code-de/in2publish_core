@@ -29,6 +29,7 @@ use function implode;
 
 use const PHP_EOL;
 
+/** @SuppressWarnings(PHPMD.CouplingBetweenObjects) */
 abstract class AbstractRecord implements Record
 {
     use RecordExtensionTrait;
@@ -349,6 +350,7 @@ abstract class AbstractRecord implements Record
 
     /**
      * @noinspection PhpUnused (Used in View)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getUnfulfilledDependenciesHumanReadableRecursively(): array
     {

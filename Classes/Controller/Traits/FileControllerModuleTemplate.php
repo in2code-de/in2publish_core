@@ -63,6 +63,7 @@ trait FileControllerModuleTemplate
         return parent::processRequest($request);
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
     protected function htmlResponse(?string $html = null): ResponseInterface
     {
         return $this->render();

@@ -12,6 +12,7 @@ use function json_decode;
 
 use const JSON_THROW_ON_ERROR;
 
+/** @SuppressWarnings(PHPMD.ExcessiveClassComplexity) */
 abstract class AbstractDatabaseRecord extends AbstractRecord
 {
     public const CTRL_PROP_LANGUAGE_FIELD = 'languageField';

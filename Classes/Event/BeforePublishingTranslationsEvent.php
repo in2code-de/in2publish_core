@@ -7,7 +7,7 @@ final class BeforePublishingTranslationsEvent
     private $record;
     private $shouldProcessTranslations = false;
 
-    public function __construct($record, bool $includeChildPages)
+    public function __construct($record)
     {
         $this->record = $record;
     }

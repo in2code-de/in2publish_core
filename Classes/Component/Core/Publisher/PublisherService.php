@@ -200,7 +200,7 @@ class PublisherService
             !($state === Record::S_SOFT_DELETED)
             && !($state === Record::S_DELETED)
         ) {
-            $translationEvent = new BeforePublishingTranslationsEvent($record, $includeChildPages);
+            $translationEvent = new BeforePublishingTranslationsEvent($record);
             $this->eventDispatcher->dispatch($translationEvent);
 
             if (

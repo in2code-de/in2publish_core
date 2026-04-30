@@ -46,6 +46,7 @@ class Dependency
      */
     private bool $ownerIsBeingDeleted;
 
+    /** @SuppressWarnings(PHPMD.BooleanArgumentFlag) */
     public function __construct(
         Record $record,
         string $classification,
@@ -149,6 +150,7 @@ class Dependency
         }
     }
 
+    /** @SuppressWarnings(PHPMD.NPathComplexity) */
     protected function recordMatchesRequirements(Record $record): bool
     {
         if (self::REQ_FULL_PUBLISHED === $this->requirement) {

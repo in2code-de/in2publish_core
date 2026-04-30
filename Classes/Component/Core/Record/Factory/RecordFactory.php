@@ -45,6 +45,7 @@ use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/** @SuppressWarnings(PHPMD.CouplingBetweenObjects) */
 class RecordFactory
 {
     use RecordIndexInjection;

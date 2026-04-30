@@ -53,7 +53,7 @@ class DatabaseUtility
     protected static ?Logger $logger = null;
     protected static ?Connection $foreignConnection = null;
 
-    protected static $FOREIGN_CONNECTION_NAME = 'in2publish_foreign';
+    private const FOREIGN_CONNECTION_NAME = 'in2publish_foreign';
 
     /**
      * @throws Throwable
@@ -80,9 +80,9 @@ class DatabaseUtility
                 }
 
                 /** @noinspection PhpInternalEntityUsedInspection */
-                if (!in_array(self::$FOREIGN_CONNECTION_NAME, $connectionPool->getConnectionNames(), true)) {
+                if (!in_array(self::FOREIGN_CONNECTION_NAME, $connectionPool->getConnectionNames(), true)) {
                     $default = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'];
-                    $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections'][self::$FOREIGN_CONNECTION_NAME] = [
+                    $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections'][self::FOREIGN_CONNECTION_NAME] = [
                         'dbname' => $configuration['name'],
                         'driver' => 'mysqli',
                         'host' => $configuration['hostname'],
@@ -93,10 +93,10 @@ class DatabaseUtility
                         'tableoptions' => $default['tableoptions'] ?? [],
                     ];
                 }
-                $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections'][self::$FOREIGN_CONNECTION_NAME]['initCommands'] = $initCommands;
+                $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections'][self::FOREIGN_CONNECTION_NAME]['initCommands'] = $initCommands;
 
                 try {
-                    $foreignConnection = $connectionPool->getConnectionByName(self::$FOREIGN_CONNECTION_NAME);
+                    $foreignConnection = $connectionPool->getConnectionByName(self::FOREIGN_CONNECTION_NAME);
                     static::$foreignConnection = $foreignConnection;
                     // TODO: restore removal of event listeners in v13
                 } catch (Throwable $e) {
