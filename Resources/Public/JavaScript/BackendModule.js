@@ -26,6 +26,8 @@ class In2publishCoreModule {
 	static addedFilter = false;
 	static deletedFilter = false;
 	static movedFilter = false;
+	static overviewFilterPersistTimeout = null;
+	static overviewFilterPersistAbortController = null;
 
 	static initialize() {
 		this.toggleDirtyPropertiesListContainerListener();
@@ -58,7 +60,7 @@ class In2publishCoreModule {
 
 		stateFilter.addEventListener('change', () => {
 			In2publishCoreModule.setFilterForPageView();
-			In2publishCoreModule.persistOverviewFilters();
+			In2publishCoreModule.scheduleOverviewFilterPersistence({ immediate: true });
 			In2publishCoreModule.syncOverviewFilterArguments();
 		})
 	}
@@ -359,7 +361,7 @@ class In2publishCoreModule {
 
 		languageFilter.addEventListener('change', () => {
 			this.filterItemsByLanguage(languageFilter.value);
-			this.persistOverviewFilters();
+			this.scheduleOverviewFilterPersistence({ immediate: true });
 			this.syncOverviewFilterArguments();
 		})
 	}
@@ -405,7 +407,7 @@ class In2publishCoreModule {
 						item.classList.remove('d-none');
 					}
 				});
-				In2publishCoreModule.persistOverviewFilters();
+				In2publishCoreModule.scheduleOverviewFilterPersistence();
 				In2publishCoreModule.syncOverviewFilterArguments();
 				}, 250).bindTo(freeTextForm);
 
@@ -416,7 +418,7 @@ class In2publishCoreModule {
 					(Array.from(elements)).forEach(function (item) {
 						item.classList.remove('d-none');
 					});
-					In2publishCoreModule.persistOverviewFilters();
+					In2publishCoreModule.scheduleOverviewFilterPersistence({ immediate: true });
 					In2publishCoreModule.syncOverviewFilterArguments();
 				});
 			}
@@ -459,7 +461,24 @@ class In2publishCoreModule {
 		}
 	}
 
-	static persistOverviewFilters() {
+	static scheduleOverviewFilterPersistence({ immediate = false } = {}) {
+		if (this.overviewFilterPersistTimeout) {
+			window.clearTimeout(this.overviewFilterPersistTimeout);
+			this.overviewFilterPersistTimeout = null;
+		}
+
+		if (immediate) {
+			this.persistOverviewFilters();
+			return;
+		}
+
+		this.overviewFilterPersistTimeout = window.setTimeout(() => {
+			this.persistOverviewFilters();
+			this.overviewFilterPersistTimeout = null;
+		}, 500);
+	}
+
+	static persistOverviewFilters({ keepalive = false } = {}) {
 		const filterContainer = document.querySelector('.in2publishjs__publishfilter');
 		const persistUri = filterContainer?.dataset.persistUri;
 		if (!persistUri) {
@@ -474,9 +493,19 @@ class In2publishCoreModule {
 		url.searchParams.set('language', overviewFilters.language);
 		url.searchParams.set('pageRecursionLimit', overviewFilters.pageRecursionLimit);
 
+		if (this.overviewFilterPersistAbortController && !keepalive) {
+			this.overviewFilterPersistAbortController.abort();
+		}
+
+		this.overviewFilterPersistAbortController = new AbortController();
 		fetch(url.toString(), {
 			credentials: 'same-origin',
-			keepalive: true,
+			keepalive,
+			signal: this.overviewFilterPersistAbortController.signal,
+		}).catch((error) => {
+			if (error.name !== 'AbortError') {
+				throw error;
+			}
 		});
 	}
 
