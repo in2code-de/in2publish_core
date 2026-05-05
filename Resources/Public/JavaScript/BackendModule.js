@@ -16,6 +16,10 @@ class In2publishCoreModule {
 		document.querySelector('.module[data-module-name="in2publish_core_m3"]') !== null
 		|| document.querySelector('.module[data-module-name="file_In2publishCoreM3"]') !== null
 	);
+	static isPublishOverviewModule = (
+		document.querySelector('.module[data-module-name="in2publish_core_m1"]') !== null
+		|| document.querySelector('.module[data-module-name="web_In2publishCoreM1"]') !== null
+	);
 
 	static unchangedFilter = false;
 	static changedFilter = false;
@@ -29,7 +33,7 @@ class In2publishCoreModule {
 			this.filterItemsByStatus();
 			this.setupFilterListeners();
 			this.setupClearableInputs();
-		} else {
+		} else if (this.isPublishOverviewModule) {
 			const changedElement = document.querySelector('.in2publish-icon-status-changed');
 			if (changedElement) {
 				this.setFilterForPageView();
@@ -564,7 +568,9 @@ class In2publishCoreModule {
 
 DocumentService.ready().then(() => {
 	In2publishCoreModule.initialize();
-	In2publishCoreModule.applyInitialOverviewFilters();
+	if (In2publishCoreModule.isPublishOverviewModule) {
+		In2publishCoreModule.applyInitialOverviewFilters();
+	}
 });
 
 export default In2publishCoreModule;
