@@ -526,6 +526,20 @@ class In2publishCoreModule {
 			detailsUrl.searchParams.set('returnUrl', overviewReturnUrl);
 			workflowButton.dataset.detailsUri = detailsUrl.toString();
 		});
+
+		document.querySelectorAll('.js-in2publish-workflowbutton[href]').forEach((workflowButton) => {
+			if (!workflowButton.href || workflowButton.getAttribute('href') === '#') {
+				return;
+			}
+
+			const workflowUrl = new URL(workflowButton.href, window.location.origin);
+			workflowUrl.searchParams.set('returnUrl', overviewReturnUrl);
+			workflowButton.href = workflowUrl.toString();
+		});
+
+		document.querySelectorAll('.js-in2publish-workflowrow-details input[name="returnUrl"]').forEach((input) => {
+			input.value = overviewReturnUrl;
+		});
 	}
 
 	static getOverviewFilters() {
