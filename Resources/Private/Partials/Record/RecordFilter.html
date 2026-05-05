@@ -55,18 +55,30 @@
 			<div class="form-group">
 				<label for="in2publish__publishfilter_language" class="form-label"><f:translate key="module_m1_filter_language">Language</f:translate></label>
 					<select id="in2publish__publishfilter_language" class="form-select js-in2publish-languagefilter" data-workflow-filter-field="true" name="language">
-						<option value="">
+						<option value="" {f:if(condition: '{languageFilter} == \'\'', then: 'selected')}>
 							<f:translate key="module_m1_filter_language.all">Filter by language</f:translate>
 						</option>
 						<f:for each="{languages}" as="language">
 							<f:if condition="{language.uid} >= 0">
-								<option
-									value="{language.uid}"
-									{f:if(condition: '{languageFilter} == \'{language.uid}\'', then: 'selected')}
-									data-icon="{core:icon(identifier: '{language.flagIcon}') -> f:format.htmlspecialchars()}"
-								>
-									{language.title}
-							</option>
+								<f:if condition="{languageFilter} == {language.uid}">
+									<f:then>
+										<option
+											value="{language.uid}"
+											selected="selected"
+											data-icon="{core:icon(identifier: '{language.flagIcon}') -> f:format.htmlspecialchars()}"
+										>
+											{language.title}
+										</option>
+									</f:then>
+									<f:else>
+										<option
+											value="{language.uid}"
+											data-icon="{core:icon(identifier: '{language.flagIcon}') -> f:format.htmlspecialchars()}"
+										>
+											{language.title}
+										</option>
+									</f:else>
+								</f:if>
 						</f:if>
 					</f:for>
 				</select>
