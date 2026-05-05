@@ -43,6 +43,7 @@ class In2publishCoreModule {
 			this.addLanguageFilterListener();
 			this.addLevelFilterListener();
 			this.addSearchListener();
+			this.addWorkflowButtonListener();
 			this.syncOverviewFilterArguments();
 		}
 	}
@@ -85,7 +86,7 @@ class In2publishCoreModule {
 				url.searchParams.set('language', languageFilter.value);
 			}
 
-			this.persistOverviewFilters();
+			this.persistOverviewFilters({ keepalive: true });
 			this.syncOverviewFilterArguments();
 			LoadingOverlay.showOverlay();
 			window.location = url.toString();
@@ -420,6 +421,16 @@ class In2publishCoreModule {
 				});
 			}
 		}
+	}
+
+	static addWorkflowButtonListener() {
+		document.querySelectorAll('.js-in2publish-workflowbutton[href]').forEach((workflowButton) => {
+			workflowButton.addEventListener('click', () => {
+				this.syncOverviewFilterArguments();
+				this.persistOverviewFilters({ keepalive: true });
+				LoadingOverlay.showOverlay();
+			});
+		});
 	}
 
 	static applyInitialOverviewFilters() {
