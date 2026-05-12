@@ -18,7 +18,6 @@ EMOJI_robot := "🤖️"
 EMOJI_ping_pong := "🏓"
 EMOJI_face_with_rolling_eyes := "🙄"
 
-COMPOSER_AUTH_JSON := $(shell gh auth token 2>/dev/null | sed 's/.*/{"github-oauth":{"github.com":"&"}}/' || echo '{}')
 CURRENT_BRANCH := $(shell git branch --show-current 2>/dev/null || echo develop)
 IN2PUBLISH_DEV_VERSION := dev-$(CURRENT_BRANCH)
 FOREIGN_ONLY_EMPTY_TABLES_FILE := Tests/Playwright/shared/helpers/foreign-only-empty-tables.txt
@@ -283,14 +282,14 @@ typo3-comparedb:
 ## Starts composer-update
 composer-update:
 	echo "$(EMOJI_package) updating composer dependencies"
-	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-local-php-1 composer u -W
-	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 composer u -W
+	docker exec -u1000 in2publish_core-local-php-1 composer u -W
+	docker exec -u1000 in2publish_core-foreign-php-1 composer u -W
 
 ## Starts composer-install
 composer-install:
 	echo "$(EMOJI_package) Installing composer dependencies"
-	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-local-php-1 composer install
-	docker exec -u1000 -e COMPOSER_AUTH='$(COMPOSER_AUTH_JSON)' in2publish_core-foreign-php-1 composer install
+	docker exec -u1000 in2publish_core-local-php-1 composer install
+	docker exec -u1000 in2publish_core-foreign-php-1 composer install
 
 ## Install all phars required with phive
 .phive-install:
