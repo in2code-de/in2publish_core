@@ -29,6 +29,10 @@
 		"4": {
 			"type": "vcs",
 			"url": "https://github.com/in2code-de/process-manager"
+		},
+		"5": {
+			"type": "vcs",
+			"url": "https://github.com/in2code-de/lib"
 		}
 	},
 	"require": {
