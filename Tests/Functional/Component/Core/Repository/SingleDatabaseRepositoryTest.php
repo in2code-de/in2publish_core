@@ -166,7 +166,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                 'l10n_parent' => 0,
                 'l10n_source' => 0,
                 'l10n_state' => null,
-                'l10n_diffsource' => '{"hidden":""}',
+                'l10n_diffsource' => '"{""hidden"":""""}"',
                 't3ver_oid' => 0,
                 't3ver_wsid' => 0,
                 't3ver_state' => 0,
