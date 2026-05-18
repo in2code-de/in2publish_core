@@ -1,6 +1,7 @@
 # In2publish Core Change Log
 
-14.0.0
+14.0.1
+- [META] Set the EM conf version number to 14.0.1
 - [DOCS] add upgrade documentation
 - [TEST] fix assertion in SingleDatabaseRepositoryTest
 - [DEV] do not execute asset:publish task until TYPO3 is set up
