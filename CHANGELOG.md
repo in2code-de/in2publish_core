@@ -1,5 +1,138 @@
 # In2publish Core Change Log
 
+14.0.0
+- [DOCS] add upgrade documentation
+- [TEST] fix assertion in SingleDatabaseRepositoryTest
+- [DEV] do not execute asset:publish task until TYPO3 is set up
+- [DEV] use local composer auth.json mounted to the php containers for composer authentication
+- [TASK] add vcs path for co-stack/lib package
+- [CLEANUP] remove unused grumphp from phive.xml
+- [TASK] update overview backend module icon
+- [BUGFIX] restore selected language in overview filter
+- [TASK] reduce overview filter persistence requests
+- [BUGFIX] forward overview return url to workflow actions
+- [BUGFIX] persist overview filters before editing workflows in Overview Module
+- [BUGFIX] restrict backend module overview logic to publish overview
+- [TASK] update backend module icons to V14 style
+- [TASK] Fix and suppress PHPMD violations
+- [CODESTYLE] Fix and suppress PHPMD violations
+- [BUGFIX] Save filter settings in PublishOverview moduleData in order to maintain state after publishAll and changing of workflow state
+- [BUGFIX] Show LoadingOverlay while request for levelFilter is running
+- [BUGFIX] Restore saving of pageRecursionLimit in moduleData between requests in OverviewModule
+- [BUGFIX] Fix filtering for multiple criteria in OverviewModule
+- [BUGFIX] Fix filtering for change state in Overview Module
+- [TASK] Always use pageRecursionLimit to level 1 when changing modules
+- [BUGFIX] add state unchanged to filter options for Change state in Overview Module
+- [TASK] Update QA pipeline handling
+- [CLEANUP] remove obsolete playwright tgz
+- [BUGFIX] Remove incorrect integer passed as Throwable to custom exceptions
+- [BUGFIX] fix publishing via pageTree context menu
+- [CODESTYLE] Fix PHPMD violations in PublisherService
+- [CODESTYLE] Reduce cyclomatic complexity of SelectProcessor::buildResolver
+- [CODESTYLE] Reduce cyclomatic complexity of LanguageAugmentation
+- [CODESTYLE] run fix-php-cs-fixer and fix-php-code-sniffer
+- [TASK] minor label chanches
+- [TASK] update filter styling
+- [TASK] remove obsolete searchFormClear javascript
+- [TASK] update filter styling for TYPO3 V14
+- [TEST] Fix and harden playwright tests and db restore before tests
+- [TEST] Escape regex metacharacters in tree label matching
+- [DEV][TEST] isolated Playwright in2publish_core test setup and creation of foreign empty tables
+- [TEST] increase playwright timeouts
+- [DEV][TEST] fix playwright tests and adjust documentation
+- [DEV][TEST] truncate some foreign tables during direct-restore
+- [TEST] fix playwright test
+- [CLEANUP] remove table tx_extensionmanager_domain_model_extension from config
+- [BUGFIX] Fix TableGarbageCollectorTest to reflect new structure of scheduler tasks
+- [BUGFIX] eliminate exceptions due to cache read/write race conditions
+- [BUGFIX] disable cash flush in FileProviders which seems to produce a race condition
+- [BUGFIX] use new tcaSchemaFactory instead of TCA to eliminate errors for mm tables without schema
+- [TEST] restore function executeLocalSql in direct-restore.ts
+- [BUGFIX] avoid exception in SimpleStopwatch if number of digits is not exactly four
+- [REFACTOR] rename playwright tests in order to adjust order of execution
+- [REFACTOR] move playwright helper functions from separate npm package to in2publish_core
+- [TEST] Rename news folder in playwright tests
+- [DEV] consistently use .env names DUMPS_DIR and FILEADMIN_DIR in local setup
+- [CLEANUP] remove functional tests from github pipeline
+- [TASK] update playwright test package version
+- [TASK] adjust .gitignore
+- [TEST] adjust path to fileadmin restore in FunctionalTestCase
+- [BUGFIX] remove stale second argument for CacheableValueCanNotBeGeneratedException
+- [TEST] adjust direct-restore.ts for Playwright tests to use data from monorepo
+- [DOCS] update documentation
+- [BUGFIX] add namespace for in2publish_core ViewHelpers to List.html
+- [DEV] add make tasks for db restore and playwright tests
+- [DEV] move dumps for local testing to dev repo
+- [TEST] add some more timeouts to fix failing tests
+- [TEST] fix backend-user-preferences-reset.spec.ts
+- [TEST] remove unnecesary db restores in between tests and clean up files
+- [TEST] fix redirects-module.spec.ts
+- [TEST] Fix dumps for test case 1d translated content
+- [TEST] Fix dump for use case 1e textpic
+- [TEST] Fix uid-clash.spec.ts
+- [DEV] fix dumps for test case 24 uid clash test
+- [TEST] Fix publish-textpc.spec.ts
+- [TEST] fix dumps for test case 24 uid clash test
+- [TEST] fix playwright tests
+- [DEV] add workflow tables to foreign dumps
+- [TEST] fix publish-changed-news.spec.ts
+- [BUGFIX] restore flash messages in Overview Module
+- [TEST] fix publish-changed-content test
+- [TESTS][WIP] fix failing acceptance tests
+- [TEST] remove deprecations in functional tests
+- [DEV] add file for test case 1e to fileadmin
+- [TEST] fix functional tests
+- [DEV] adjust path to SQLDUMPSDIR
+- [CLEANUP] stop tracking settings.local.json
+- [DEV] update dumps for test case 1d
+- [BUGFIX] Use correct layout and section names in Record/Index.html
+- [CLEANUP] Remove legacy acceptance tests
+- [TEST] Fix Unit tests
+- [DEV] Adjust Makefile
+- [DEV] explicilty set name in2publish_core for docker containers
+- [BUGFIX] Fix failing functional tests
+- [BUGFIX] Fix failing unit tests
+- [TEST] Fix publish changed content test
+- [DEV] Remove styleguide extension from test setup
+- [CLEANUP] Remove csv files for styleguide elements
+- [DEV] adjust dumps for local development and testing
+- [DEV] remove composer.lock backup during setup and adjust container name
+- [DEV update composer.json for test setup
+- [DEV] adjust urls and ports in .env
+- [DEV] gitignore files generated during playwright tests
+- [DEV] Simplify Playwright make targets and fix dev dependency versions
+- [TEST] Use page id=65 in publish-overview-module test to avoid access denied with in2publish installed
+- [DOCS] Update Playwright docs to reflect consolidated test setup
+- [DEV] Remove workflow state manipulation from core test setup
+- [DEV] Add  missing foreign site configs
+- [TEST] fix playwright tests
+- [DEV] Unify database dumps as central test data source
+- [BUGFIX] Use StorageRepository::getDefaultStorage() instead of removed ResourceFactory method
+- [CLEANUP] remove selenium containers from docker setup
+- [TASK] load CSS for backend modules in LoadingOverlayMiddleware
+- [BUGFIX] eliminate error ResourceFactory::getStorageObject()  in Publish Files module
+- [BUGFIX] Fix backend module registration
+- [BUGFIX] Explicitly load BackendModule.js in backend modules
+- [BUGFIX] eliminate undefined method error for ResourceFactory::getStorageObject()
+- [BUGFIX] add SiteTypoScript to the import and the allowed classes list
+- [BUGFIX] replace required dir typo3 by _assets in SshConnectionTests
+- [BUGFIX] Initialize legacyAdapters in ReomoteAdapterRegistry
+- [BUGFIX] Hide backend modules on Foreign instance
+- [TASK] Bump picomatch in /Resources/Private/Build
+- [DEV] Skip broken Rector rules for inject-method and makeInstance patterns
+- [TASK] Fix v14 bootstrap incompatibilities in Modules.php and FAL test
+- [DEV] Add Rector config and update CLAUDE.md for v14
+- [TEST] Adapt tests for TYPO3 v14 compatibility
+- [CODESTYLE] Add missing return type declarations
+- [TASK] Fix miscellaneous TYPO3 v14 API changes
+- [TASK] Convert inject-methods and makeInstance calls to constructor injection
+- [BUGFIX] Replace removed DataHandler->admin property for TYPO3 v14
+- [BUGFIX] Inject ComponentFactory into custom ModuleTemplateFactory
+- [BUGFIX] Fix ViewHelper compatibility with typo3fluid/fluid v4
+- [TASK] Bump version and requirements for TYPO3 v14
+- [AI] Adjust CLAUDE.md
+- [TASK] use unique ports for selenium tests
+
 13.4.0
 - [META] Set the EM conf version number to 13.4.0
 - [DOCS] Update Changelog.md
@@ -108,7 +241,7 @@
 - [BUGFIX] remove StopwatchAlreadyStartedException keep the startTime if already set
 - [BUGFIX] Fix implicit nullable in Builder
 - [BUGFIX] Prevent exception if request is not set in LanguageAugmentations
-- 
+-
 13.0.1
 
 - [META] Set the EM conf version number to 13.0.1
