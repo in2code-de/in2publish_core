@@ -1,7 +1,14 @@
 # In2publish Core Change Log
 
 14.0.1
+- [META] Set the EM conf version number to 14.0.2
+- [DOCS] update Changelog.md
+  [TASK] Set state to stable in ext_emconf.php
+- [DEV][CI] change branch name for local development
+
+14.0.1
 - [META] Set the EM conf version number to 14.0.1
+- [DOCS] update Changelog.md
 - [DOCS] add upgrade documentation
 - [TEST] fix assertion in SingleDatabaseRepositoryTest
 - [DEV] do not execute asset:publish task until TYPO3 is set up
