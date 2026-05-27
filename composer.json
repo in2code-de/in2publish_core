@@ -60,6 +60,16 @@
 	"config": {
 		"sort-packages": true
 	},
+	"funding": [
+		{
+			"type": "other",
+			"url": "https://www.in2code.de/supportopensource"
+		},
+		{
+			"type": "github",
+			"url": "https://github.com/orgs/in2code-de/sponsoring"
+		}
+	],
 	"extra": {
 		"typo3/cms": {
 			"extension-key": "in2publish_core"
