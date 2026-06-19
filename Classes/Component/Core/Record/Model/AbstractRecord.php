@@ -488,14 +488,17 @@ abstract class AbstractRecord implements Record
 
     public function hasUnfulfilledDependenciesRecursively(): bool
     {
+        if (isset($this->rtc['hasUnfulfilledDependenciesRecursively'])) {
+            return $this->rtc['hasUnfulfilledDependenciesRecursively'];
+        }
         /** @var array<Dependency> $allDependencies */
         $allDependencies = $this->getAllDependencies();
         foreach ($allDependencies as $dependency) {
             if (!$dependency->isFulfilled() && !$dependency->canBeFulfilledBy($this)) {
-                return true;
+                return $this->rtc['hasUnfulfilledDependenciesRecursively'] = true;
             }
         }
-        return false;
+        return $this->rtc['hasUnfulfilledDependenciesRecursively'] = false;
     }
 
     public function isPublishableIgnoringUnreachableDependencies(): bool
