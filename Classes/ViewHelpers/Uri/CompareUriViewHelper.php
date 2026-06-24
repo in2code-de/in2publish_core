@@ -70,7 +70,8 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
         $route = $identifier;
         $page = $this->rawRecordService->getRawRecord('pages', $identifier, 'local');
         if (
-            null !== $languageField
+            null !== $page
+            && null !== $languageField
             && null !== $transOrigPointerField
             && array_key_exists($languageField, $page)
             && $page[$languageField] > 0
