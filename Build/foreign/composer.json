@@ -99,9 +99,9 @@
 	},
 	"require-dev": {
 		"typo3/testing-framework": "^9.1",
-		"co-stack/stack-test": "dev-develop-v13",
+		"co-stack/stack-test": "@dev",
 		"co-stack/build-essentials": "@dev",
-		"co-stack/mysql-loader": "dev-develop-v13",
+		"co-stack/mysql-loader": "@dev",
 		"co-stack/process-manager": "@dev"
 	}
 }
