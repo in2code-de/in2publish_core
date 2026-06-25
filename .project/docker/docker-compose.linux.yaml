@@ -29,6 +29,8 @@ services:
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
+      - $HOME/.composer/auth.json:/tmp/composer/auth.json
+      - $HOME/.composer/cache/:/tmp/composer/cache/
       - /var/run/docker.sock:/var/run/docker.sock
       - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
     env_file:
@@ -72,6 +74,8 @@ services:
     volumes:
       - ./:/app/
       - ./:/packages/in2publish_core/
+      - $HOME/.composer/auth.json:/tmp/composer/auth.json
+      - $HOME/.composer/cache/:/tmp/composer/cache/
     env_file:
       - .env
     extra_hosts:

@@ -29,6 +29,8 @@ services:
     volumes:
       - ./:/app/:cached
       - ./:/packages/in2publish_core/:cached
+      - $HOME/.composer/auth.json:/tmp/composer/auth.json:cached
+      - $HOME/.composer/cache/:/tmp/composer/cache/:cached
       - /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock
       - /var/run/docker.sock:/var/run/docker.sock
       - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}:cached
@@ -71,6 +73,8 @@ services:
     volumes:
       - ./:/app/:cached
       - ./:/packages/in2publish_core/:cached
+      - $HOME/.composer/auth.json:/tmp/composer/auth.json:cached
+      - $HOME/.composer/cache/:/tmp/composer/cache/:cached
     env_file:
       - .env
     environment:
