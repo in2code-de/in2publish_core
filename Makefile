@@ -193,7 +193,7 @@ playwright-docker-report:
 	docker compose exec playwright npx playwright show-report
 
 setup-qa:
-	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm phive install
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm phive install --trust-gpg-keys AA36B9960B5B823D,BBAB5DF0A0D6672989CF1869E82B2FB314E9906E,D91D86963AF3A29B6520462297B02DD8E5071466,E7A745102ECC980F7338B3079093F8B32E4815AA
 
 qa: qa-php-cs-fixer qa-php-code-sniffer qa-php-mess-detector
 
