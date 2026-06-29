@@ -26,8 +26,7 @@ class DiffViewHelper extends AbstractViewHelper
     public function render(): string
     {
         $diffUtility = GeneralUtility::makeInstance(DiffUtility::class);
-        $diffUtility->stripTags = false;
-        return $diffUtility->makeDiffDisplay(
+        return $diffUtility->diff(
             (string)$this->arguments[self::ARG_OLD],
             (string)$this->arguments[self::ARG_NEW],
         );
