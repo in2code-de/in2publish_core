@@ -29,6 +29,8 @@ services:
     volumes:
       - ./:/app/:cached
       - ./:/packages/in2publish_core/:cached
+      - $HOME/.composer/auth.json:/tmp/composer/auth.json:cached
+      - $HOME/.composer/cache/:/tmp/composer/cache/:cached
       - /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock
       - /var/run/docker.sock:/var/run/docker.sock
       - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}:cached
@@ -71,6 +73,8 @@ services:
     volumes:
       - ./:/app/:cached
       - ./:/packages/in2publish_core/:cached
+      - $HOME/.composer/auth.json:/tmp/composer/auth.json:cached
+      - $HOME/.composer/cache/:/tmp/composer/cache/:cached
     env_file:
       - .env
     environment:
@@ -97,56 +101,6 @@ services:
     environment:
       VIRTUAL_HOST: ${MAIL_HOST}
       VIRTUAL_PORT: 8025
-
-  selenium-hub:
-    image: ${SELENIUM_HUB_IMAGE:-seleniarm/hub}
-    shm_size: 2gb
-    healthcheck:
-      test: '/opt/bin/check-grid.sh --host 0.0.0.0 --port 4444'
-      interval: 15s
-      timeout: 30s
-      retries: 5
-    environment:
-      SE_EVENT_BUS_PUBLISH_PORT: 4442
-      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-      SE_NODE_OVERRIDE_MAX_SESSIONS: true
-      SE_NODE_MAX_SESSIONS: 5
-    volumes:
-      - ./:/app/
-
-  selenium-node-chrome:
-    image: ${SELENIUM_NODE_CHROME_IMAGE:-seleniarm/node-chromium}
-    shm_size: 2gb
-    environment:
-      SE_EVENT_BUS_HOST: selenium-hub
-      SE_EVENT_BUS_PUBLISH_PORT: 4442
-      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-      SE_NODE_OVERRIDE_MAX_SESSIONS: true
-      SE_NODE_MAX_SESSIONS: 5
-      SE_VNC_NO_PASSWORD: 1
-    volumes:
-      - ./:/app/
-      - /dev/shm:/dev/shm
-    ports:
-      - ${SELENIUM_NODE_CHROME_VNC_PORT:-13320}:5900
-      - ${SELENIUM_NODE_CHROME_NOVNC_PORT:-13330}:7900
-
-  selenium-node-firefox:
-    image: ${SELENIUM_NODE_CHROME_IMAGE:-seleniarm/node-firefox}
-    shm_size: 2gb
-    environment:
-      SE_EVENT_BUS_HOST: selenium-hub
-      SE_EVENT_BUS_PUBLISH_PORT: 4442
-      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-      SE_NODE_OVERRIDE_MAX_SESSIONS: true
-      SE_NODE_MAX_SESSIONS: 5
-      SE_VNC_NO_PASSWORD: 1
-    volumes:
-      - ./:/app/
-      - /dev/shm:/dev/shm
-    ports:
-      - ${SELENIUM_NODE_FIREFOX_VNC_PORT:-13321}:5900
-      - ${SELENIUM_NODE_FIREFOX_NOVNC_PORT:-13331}:7900
 
   playwright:
     image: mcr.microsoft.com/playwright:v1.58.2-noble

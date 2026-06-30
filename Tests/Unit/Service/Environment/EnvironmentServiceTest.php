@@ -59,7 +59,10 @@ class EnvironmentServiceTest extends UnitTestCase
         $configurationHash = sha1(serialize($configurationArray));
 
         /** @var Registry|MockObject $registry */
-        $registry = $this->getMockBuilder(Registry::class)->onlyMethods(['set'])->getMock();
+        $registry = $this->getMockBuilder(Registry::class)
+            ->onlyMethods(['set'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $registry->expects($this->once())->method('set')->with(
             'tx_in2publishcore',
             'test_result',
