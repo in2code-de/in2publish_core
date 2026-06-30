@@ -22,6 +22,14 @@ CURRENT_BRANCH := $(shell git branch --show-current 2>/dev/null || echo develop)
 IN2PUBLISH_DEV_VERSION := dev-$(CURRENT_BRANCH)
 FOREIGN_ONLY_EMPTY_TABLES_FILE := Tests/Playwright/shared/helpers/foreign-only-empty-tables.txt
 
+# Forward a host composer auth.json into the containers to avoid GitHub API rate limits.
+# Falls back to no authentication when no auth.json is present.
+COMPOSER_AUTH_FILE := $(firstword $(wildcard $(HOME)/.composer/auth.json $(HOME)/.config/composer/auth.json))
+ifneq ($(COMPOSER_AUTH_FILE),)
+export COMPOSER_AUTH := $(shell cat $(COMPOSER_AUTH_FILE))
+COMPOSER_AUTH_OPT := -e COMPOSER_AUTH
+endif
+
 ## Show this help
 help:
 	echo "$(EMOJI_interrobang) Makefile help "
@@ -68,8 +76,8 @@ start: .link-compose-file
 
 setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	@echo "Installing in2publish_core as $(IN2PUBLISH_DEV_VERSION)"
-	docker exec -u1000 -e TYPO3_SKIP_ASSET_PUBLISH=1 in2publish_core-local-php-1 composer u -W
-	docker exec -u1000 -e TYPO3_SKIP_ASSET_PUBLISH=1 in2publish_core-foreign-php-1 composer u -W
+	docker exec -u1000 $(COMPOSER_AUTH_OPT) -e TYPO3_SKIP_ASSET_PUBLISH=1 in2publish_core-local-php-1 composer u -W
+	docker exec -u1000 $(COMPOSER_AUTH_OPT) -e TYPO3_SKIP_ASSET_PUBLISH=1 in2publish_core-foreign-php-1 composer u -W
 	docker exec -u1000 in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
 	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
 	docker exec -u1000 in2publish_core-local-php-1 vendor/bin/typo3 asset:publish
@@ -273,14 +281,14 @@ typo3-comparedb:
 ## Starts composer-update
 composer-update:
 	echo "$(EMOJI_package) updating composer dependencies"
-	docker exec -u1000 $(COMPOSER_OPT) in2publish_core-local-php-1 composer u -W
-	docker exec -u1000 $(COMPOSER_OPT) in2publish_core-foreign-php-1 composer u -W
+	docker exec -u1000 $(COMPOSER_AUTH_OPT) $(COMPOSER_OPT) in2publish_core-local-php-1 composer u -W
+	docker exec -u1000 $(COMPOSER_AUTH_OPT) $(COMPOSER_OPT) in2publish_core-foreign-php-1 composer u -W
 
 ## Starts composer-install
 composer-install:
 	echo "$(EMOJI_package) Installing composer dependencies"
-	docker exec -u1000 $(COMPOSER_OPT) in2publish_core-local-php-1 composer install
-	docker exec -u1000 $(COMPOSER_OPT) in2publish_core-foreign-php-1 composer install
+	docker exec -u1000 $(COMPOSER_AUTH_OPT) $(COMPOSER_OPT) in2publish_core-local-php-1 composer install
+	docker exec -u1000 $(COMPOSER_AUTH_OPT) $(COMPOSER_OPT) in2publish_core-foreign-php-1 composer install
 
 ## Install all phars required with phive
 .phive-install:
