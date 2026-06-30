@@ -187,27 +187,22 @@ mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the foreign database"
 	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/$(DUMPS_DIR)/foreign/
 
-## Ensure empty tables omitted from the foreign dump still exist on foreign
+## Ensure empty tables omitted from the foreign dump still exist (empty) on foreign
 ensure-foreign-empty-tables: .mysql-wait
 	echo "$(EMOJI_robot) Ensuring foreign-only empty tables exist on foreign"
+	local_tables=$$(docker compose exec -T mysql mysql -uroot -proot --batch --skip-column-names -e 'SHOW TABLES IN `local`'); \
 	sql=""; \
 	while IFS= read -r table; do \
-		[ -n "$$table" ] || continue; \
-		case "$$table" in \#*) continue ;; esac; \
-		sql="$$sql CREATE TABLE IF NOT EXISTS foreign.$$table LIKE local.$$table; TRUNCATE TABLE foreign.$$table;"; \
-	done < "$(FOREIGN_ONLY_EMPTY_TABLES_FILE)"; \
-	docker compose exec -T mysql mysql -uroot -proot -e "$$sql"
+		grep -qxF "$$table" <<<"$$local_tables" || continue; \
+		sql+="CREATE TABLE IF NOT EXISTS \`foreign\`.\`$$table\` LIKE \`local\`.\`$$table\`; TRUNCATE TABLE \`foreign\`.\`$$table\`;"; \
+	done < <(grep -vE '^[[:space:]]*(#|$$)' "$(FOREIGN_ONLY_EMPTY_TABLES_FILE)"); \
+	[ -z "$$sql" ] || docker compose exec -T mysql mysql -uroot -proot -e "$$sql"
 
 ## Restores the fileadmin from FILEADMIN_DIR
 fileadmin-restore:
 	echo "$(EMOJI_robot) Restoring the fileadmin"
 	docker compose exec local-php rsync -a --delete /$(FILEADMIN_DIR)/local/ /app/Build/local/public/fileadmin/
 	docker compose exec local-php rsync -a --delete /$(FILEADMIN_DIR)/foreign/ /app/Build/foreign/public/fileadmin/
-
-## Set all workflow states to "Ready to Publish" (state=1) for test environments
-workflow-ready:
-	echo "$(EMOJI_robot) Setting workflow states to 'Ready to Publish'"
-	docker compose exec -T mysql mysql -uroot -proot local -e "UPDATE tx_in2publish_workflow_state SET state_identifier = 1"
 
 unit:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml
@@ -281,14 +276,14 @@ typo3-comparedb:
 ## Starts composer-update
 composer-update:
 	echo "$(EMOJI_package) updating composer dependencies"
-	docker exec -u1000 $(COMPOSER_AUTH_OPT) $(COMPOSER_OPT) in2publish_core-local-php-1 composer u -W
-	docker exec -u1000 $(COMPOSER_AUTH_OPT) $(COMPOSER_OPT) in2publish_core-foreign-php-1 composer u -W
+	docker exec -u1000 $(COMPOSER_AUTH_OPT) in2publish_core-local-php-1 composer u -W
+	docker exec -u1000 $(COMPOSER_AUTH_OPT) in2publish_core-foreign-php-1 composer u -W
 
 ## Starts composer-install
 composer-install:
 	echo "$(EMOJI_package) Installing composer dependencies"
-	docker exec -u1000 $(COMPOSER_AUTH_OPT) $(COMPOSER_OPT) in2publish_core-local-php-1 composer install
-	docker exec -u1000 $(COMPOSER_AUTH_OPT) $(COMPOSER_OPT) in2publish_core-foreign-php-1 composer install
+	docker exec -u1000 $(COMPOSER_AUTH_OPT) in2publish_core-local-php-1 composer install
+	docker exec -u1000 $(COMPOSER_AUTH_OPT) in2publish_core-foreign-php-1 composer install
 
 ## Install all phars required with phive
 .phive-install:
@@ -298,6 +293,14 @@ composer-install:
 .phive-update:
 	mkdir -p ~/.phive/
 	docker run --rm -it -u1000:1000 -v "$$PWD":/app -v $$HOME/.phive/:/tmp/phive/ -e PHIVE_HOME=/tmp/phive/ in2code/php:8.3-fpm phive update
+
+hosts:
+	if grep -qF "$(HOST_LOCAL)" /etc/hosts; then \
+		echo "$(EMOJI_robot) Hosts entry for $(HOST_LOCAL) already present"; \
+	else \
+		echo "$(EMOJI_robot) Adding development hostnames to /etc/hosts (sudo required)"; \
+		printf '\n127.0.0.1 $(HOST_LOCAL) $(HOST_FOREIGN) $(MAIL_HOST) $(SOLR_LOCAL) $(SOLR_FOREIGN)\n' | sudo tee -a /etc/hosts > /dev/null; \
+	fi
 
 
 ## Print Project URIs

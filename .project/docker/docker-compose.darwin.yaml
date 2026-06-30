@@ -35,8 +35,8 @@ services:
       - $HOME/.composer/cache/:/tmp/composer/cache/
       - /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock
       - /var/run/docker.sock:/var/run/docker.sock
-      - ../../.project/data/dumps:/${DUMPS_DIR}:cached
-      - ../../.project/data/fileadmin/:/${FILEADMIN_DIR}:cached
+      - ./.project/data/dumps:/${DUMPS_DIR}:cached
+      - ./.project/data/fileadmin/:/${FILEADMIN_DIR}:cached
     env_file:
       - .env
     environment:
@@ -96,7 +96,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - .project/docker/mysql/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
-      - ../../.project/data/dumps:/${DUMPS_DIR}
+      - ./.project/data/dumps:/${DUMPS_DIR}
     ports:
       - ${SQLPORT}:3306
 

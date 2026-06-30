@@ -9,32 +9,20 @@
 			"email": "oliver.eglseder@in2code.de"
 		}
 	],
-	"repositories": {
-		"0": {
-			"type": "path",
-			"url": "/packages/*"
-		},
-		"1": {
-			"type": "vcs",
-			"url": "https://github.com/in2code-de/stack-test"
-		},
-		"2": {
+	"repositories": [
+		{
 			"type": "vcs",
 			"url": "https://github.com/in2code-de/mysql-loader"
 		},
-		"3": {
+		{
 			"type": "vcs",
 			"url": "https://github.com/in2code-de/build-essentials"
 		},
-		"4": {
+		{
 			"type": "vcs",
 			"url": "https://github.com/in2code-de/process-manager"
-		},
-		"5": {
-			"type": "vcs",
-			"url": "https://github.com/in2code-de/lib"
 		}
-	},
+	],
 	"require": {
 		"php": ">= 8.2.0 <= 8.4.99",
 		"ext-json": "*",
