@@ -1,6 +1,7 @@
 # .gitattributes
 
 /.github                            export-ignore
+/.local                             export-ignore
 /.project                           export-ignore
 /Build                              export-ignore
 .gitkeep                            export-ignore

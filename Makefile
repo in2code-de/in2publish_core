@@ -172,17 +172,6 @@ playwright-report:
 stop-playwright:
 	$(call stop_playwright_tasks)
 
-## Create dumps of local and foreign database in dir DUMPS_DIR using mysql-loader
-dump-dbs: dump-local-database dump-foreign-database
-
-dump-local-database: .mysql-wait
-	echo "$(EMOJI_robot) Dumping the local database to $(DUMPS_DIR)/local"
-	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dlocal -f/$(DUMPS_DIR)/local/ -xcache_ -xindex_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
-
-dump-foreign-database: .mysql-wait
-	echo "$(EMOJI_robot) Dumping the foreign database to $(DUMPS_DIR)/foreign"
-	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader dump -r -Hmysql -uroot -proot -Dforeign -f/$(DUMPS_DIR)/foreign/ -xcache_ -xindex_ -xbackend_layout -xbe_dashboards -xbe_sessions -xfe_sessions -xsys_file_processedfile -xsys_history -xsys_http_report -xsys_lockedrecords -xsys_log -xsys_messenger_messages -xsys_refindex -xtx_in2code_ -xtx_in2publish_notification -xtx_in2publish_wfpn_demand -xtx_in2publishcore_ -xtx_solr_ -Q"sys_registry:entry_namespace != 'core' AND entry_key != 'formProtectionSessionToken'"
-
 ## Restores the database from the dump files in DUMPS_DIR
 mysql-restore: .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
@@ -284,14 +273,14 @@ typo3-comparedb:
 ## Starts composer-update
 composer-update:
 	echo "$(EMOJI_package) updating composer dependencies"
-	docker exec -u1000 in2publish_core-local-php-1 composer u -W
-	docker exec -u1000 in2publish_core-foreign-php-1 composer u -W
+	docker exec -u1000 $(COMPOSER_OPT) in2publish_core-local-php-1 composer u -W
+	docker exec -u1000 $(COMPOSER_OPT) in2publish_core-foreign-php-1 composer u -W
 
 ## Starts composer-install
 composer-install:
 	echo "$(EMOJI_package) Installing composer dependencies"
-	docker exec -u1000 in2publish_core-local-php-1 composer install
-	docker exec -u1000 in2publish_core-foreign-php-1 composer install
+	docker exec -u1000 $(COMPOSER_OPT) in2publish_core-local-php-1 composer install
+	docker exec -u1000 $(COMPOSER_OPT) in2publish_core-foreign-php-1 composer install
 
 ## Install all phars required with phive
 .phive-install:
