@@ -3,6 +3,8 @@ MAKEFLAGS += --silent --always-make
 SHELL := /bin/bash
 -include .env
 
+PHIVE_TRUST_KEYS := 0x97B02DD8E5071466,0x31C7E470E2138192,0xE82B2FB314E9906E,0xA4E55EA12C7C085C,0x9093F8B32E4815AA
+
 # colors
 RED     := $(shell tput -Txterm setaf 1)
 GREEN   := $(shell tput -Txterm setaf 2)
@@ -211,7 +213,7 @@ functional:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.functional.xml
 
 setup-qa:
-	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.3-fpm phive install
+	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.3-fpm phive install --trust-gpg-keys $(PHIVE_TRUST_KEYS)
 
 qa: qa-php-cs-fixer qa-php-code-sniffer qa-php-mess-detector
 
@@ -269,11 +271,11 @@ composer-install:
 ## Install all phars required with phive
 .phive-install:
 	mkdir -p ~/.phive/
-	docker run --rm -it -u1000:1000 -v "$$PWD":/app -v $$HOME/.phive/:/tmp/phive/ -e PHIVE_HOME=/tmp/phive/ in2code/php:8.3-fpm phive install
+	docker run --rm -it -u1000:1000 -v "$$PWD":/app -v $$HOME/.phive/:/tmp/phive/ -e PHIVE_HOME=/tmp/phive/ in2code/php:8.3-fpm phive install --trust-gpg-keys $(PHIVE_TRUST_KEYS)
 
 .phive-update:
 	mkdir -p ~/.phive/
-	docker run --rm -it -u1000:1000 -v "$$PWD":/app -v $$HOME/.phive/:/tmp/phive/ -e PHIVE_HOME=/tmp/phive/ in2code/php:8.3-fpm phive update
+	docker run --rm -it -u1000:1000 -v "$$PWD":/app -v $$HOME/.phive/:/tmp/phive/ -e PHIVE_HOME=/tmp/phive/ in2code/php:8.3-fpm phive update --trust-gpg-keys $(PHIVE_TRUST_KEYS)
 
 hosts:
 	if grep -qF "$(HOST_LOCAL)" /etc/hosts; then \
