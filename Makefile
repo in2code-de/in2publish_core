@@ -179,7 +179,7 @@ playwright-report:
 	$(call with_playwright_lock,$(call ensure_playwright_stack); docker compose stop playwright >/dev/null 2>&1 || true; echo "Open Playwright report at http://localhost:$(PLAYWRIGHT_UI_PORT)"; docker compose run --rm --service-ports playwright sh -lc "npx playwright show-report --host=0.0.0.0 --port=9323")
 
 ## Stop all Playwright tasks for the isolated core test stack
-stop-playwright:
+playwright-stop:
 	$(call stop_playwright_tasks)
 
 ## Restores the database from the dump files in DUMPS_DIR
