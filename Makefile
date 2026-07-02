@@ -36,10 +36,10 @@ setup-tests: playwright-install
 # RESTORING DATA
 #############################################################################################
 
-restore: mysql-restore .ensure-foreign-empty-tables fileadmin-restore
+restore: restore-db fileadmin-restore
 
 ## Restore only the databases (no fileadmin) - used by Playwright specs that don't touch files
-restore-db: mysql-restore .ensure-foreign-empty-tables
+restore-db: mysql-restore .ensure-foreign-empty-tables typo3-comparedb
 
 ## Restores the database from the dump files in DUMPS_DIR
 mysql-restore: .mysql-wait
