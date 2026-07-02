@@ -11,6 +11,13 @@
 	],
 	"repositories": [
 		{
+			"type": "path",
+			"url": "../../",
+			"options": {
+				"symlink": true
+			}
+		},
+		{
 			"type": "vcs",
 			"url": "https://github.com/in2code-de/mysql-loader"
 		},

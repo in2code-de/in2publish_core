@@ -10,6 +10,13 @@
 		}
 	],
 	"repositories": {
+		"in2publish_core": {
+			"type": "path",
+			"url": "../../",
+			"options": {
+				"symlink": true
+			}
+		},
 		"mysql-loader": {
 			"type": "vcs",
 			"url": "https://github.com/in2code-de/mysql-loader"
