@@ -42,6 +42,7 @@ CREATE TABLE `be_users` (
   `password_reset_token` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `user_settings` json DEFAULT NULL,
   `tsconfig_includes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `tx_styleguide_isdemorecord` smallint unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`uid`),
   KEY `parent` (`pid`,`deleted`,`disable`),
   KEY `username` (`username`)
@@ -123,6 +124,7 @@ CREATE TABLE `pages` (
   `sitemap_priority` decimal(2,1) NOT NULL DEFAULT '0.5',
   `sitemap_changefreq` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `link` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb3''),
+  `tx_styleguide_containsdemo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`uid`),
   KEY `determineSiteRoot` (`is_siteroot`),
   KEY `language_identifier` (`l10n_parent`,`sys_language_uid`),
@@ -345,6 +347,7 @@ CREATE TABLE `tt_content` (
   `selected_categories` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `tx_impexp_origuid` int NOT NULL DEFAULT '0',
   `tx_news_related_news` int NOT NULL DEFAULT '0',
+  `tx_styleguide_containsdemo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`uid`),
   KEY `index_newscontent` (`tx_news_related_news`),
   KEY `language_identifier` (`l18n_parent`,`sys_language_uid`),

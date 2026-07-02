@@ -13,8 +13,6 @@ DROP TABLE IF EXISTS `sys_redirect`;
 DROP TABLE IF EXISTS `sys_registry`;
 DROP TABLE IF EXISTS `sys_template`;
 DROP TABLE IF EXISTS `tt_content`;
-DROP TABLE IF EXISTS `tx_in2publish_workflow_history`;
-DROP TABLE IF EXISTS `tx_in2publish_workflow_state`;
 DROP TABLE IF EXISTS `tx_news_domain_model_news`;
 DROP TABLE IF EXISTS `tx_scheduler_task`;
 CREATE TABLE `be_groups` (
@@ -44,6 +42,7 @@ CREATE TABLE `be_groups` (
   `workspace_perms` smallint unsigned NOT NULL DEFAULT '0',
   `category_perms` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `tsconfig_includes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `tx_styleguide_isdemorecord` smallint unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`uid`),
   KEY `parent` (`pid`,`deleted`,`hidden`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -81,6 +80,7 @@ CREATE TABLE `be_users` (
   `password_reset_token` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `user_settings` json DEFAULT NULL,
   `tsconfig_includes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `tx_styleguide_isdemorecord` smallint unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`uid`),
   KEY `parent` (`pid`,`deleted`,`disable`),
   KEY `username` (`username`)
@@ -96,6 +96,7 @@ CREATE TABLE `fe_groups` (
   `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `subgroup` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
   `felogin_redirectPid` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `tx_styleguide_containsdemo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`uid`),
   KEY `parent` (`pid`,`deleted`,`hidden`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -134,6 +135,7 @@ CREATE TABLE `fe_users` (
   `mfa` mediumblob,
   `felogin_redirectPid` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `felogin_forgotHash` varchar(160) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `tx_styleguide_containsdemo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`uid`),
   KEY `felogin_forgotHash` (`felogin_forgotHash`),
   KEY `is_online` (`is_online`),
@@ -217,6 +219,7 @@ CREATE TABLE `pages` (
   `sitemap_priority` decimal(2,1) NOT NULL DEFAULT '0.5',
   `sitemap_changefreq` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `link` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb3''),
+  `tx_styleguide_containsdemo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`uid`),
   KEY `determineSiteRoot` (`is_siteroot`),
   KEY `language_identifier` (`l10n_parent`,`sys_language_uid`),
@@ -522,48 +525,13 @@ CREATE TABLE `tt_content` (
   `selected_categories` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `tx_impexp_origuid` int NOT NULL DEFAULT '0',
   `tx_news_related_news` int NOT NULL DEFAULT '0',
+  `tx_styleguide_containsdemo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`uid`),
   KEY `index_newscontent` (`tx_news_related_news`),
   KEY `language_identifier` (`l18n_parent`,`sys_language_uid`),
   KEY `parent` (`pid`,`sorting`),
   KEY `t3ver_oid` (`t3ver_oid`,`t3ver_wsid`),
   KEY `translation_source` (`l10n_source`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-CREATE TABLE `tx_in2publish_workflow_history` (
-  `uid` int unsigned NOT NULL AUTO_INCREMENT,
-  `pid` int unsigned NOT NULL DEFAULT '0',
-  `record_table` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `record_identifier` int unsigned NOT NULL DEFAULT '0',
-  `record_pid` int unsigned NOT NULL DEFAULT '0',
-  `record_language` int DEFAULT NULL,
-  `record_language_parent` int unsigned DEFAULT NULL,
-  `record_page_uid` int unsigned DEFAULT NULL,
-  `backend_user` int unsigned NOT NULL DEFAULT '0',
-  `creation_date` int unsigned NOT NULL DEFAULT '0',
-  `state_identifier` int unsigned NOT NULL DEFAULT '0',
-  `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `scheduled_publish` int DEFAULT NULL,
-  `obsolete` smallint unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`uid`),
-  KEY `record` (`record_table`,`record_identifier`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-CREATE TABLE `tx_in2publish_workflow_state` (
-  `uid` int unsigned NOT NULL AUTO_INCREMENT,
-  `record_table` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `record_identifier` int unsigned NOT NULL DEFAULT '0',
-  `record_pid` int unsigned NOT NULL DEFAULT '0',
-  `record_language` int DEFAULT NULL,
-  `record_language_parent` int unsigned DEFAULT NULL,
-  `record_page_uid` int unsigned DEFAULT NULL,
-  `backend_user` int unsigned NOT NULL DEFAULT '0',
-  `creation_date` int unsigned NOT NULL DEFAULT '0',
-  `state_identifier` int unsigned NOT NULL DEFAULT '0',
-  `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `scheduled_publish` int DEFAULT NULL,
-  PRIMARY KEY (`uid`),
-  KEY `custom` (`record_pid`),
-  KEY `find_by_record_or_table` (`record_table`,`record_identifier`),
-  KEY `find_scheduled` (`state_identifier`,`scheduled_publish`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 CREATE TABLE `tx_news_domain_model_news` (
   `uid` int unsigned NOT NULL AUTO_INCREMENT,
@@ -635,7 +603,7 @@ CREATE TABLE `tx_scheduler_task` (
   `lastexecution_context` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `serialized_task_object` mediumblob,
   `serialized_executions` mediumblob,
-  `task_group` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `task_group` int unsigned NOT NULL DEFAULT '0',
   `pid` int unsigned NOT NULL DEFAULT '0',
   `tasktype` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `priority` int unsigned NOT NULL DEFAULT '100',
