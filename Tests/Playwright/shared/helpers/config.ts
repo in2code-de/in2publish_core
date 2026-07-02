@@ -28,15 +28,5 @@ export function createConfig(overrides: Partial<Typo3TestConfig> = {}): Typo3Tes
     storageStatePath: overrides.storageStatePath,
   };
 
-  if (overrides.db || process.env.DB_HOST) {
-    config.db = overrides.db ?? {
-      host: process.env.DB_HOST || 'mysql',
-      port: parseInt(process.env.DB_PORT || '3306', 10),
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || 'root',
-      database: process.env.DB_NAME || 'testing',
-    };
-  }
-
   return config;
 }

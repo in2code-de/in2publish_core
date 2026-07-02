@@ -100,35 +100,36 @@ packages/
 │   ├── shared/                         # Shared code loaded by both extensions
 │   │   ├── fixtures/
 │   │   │   ├── backend-page.ts         # Base BackendPage fixture
-│   │   │   └── setup-fixtures.ts       # Base test setup
+│   │   │   ├── setup-fixtures.ts       # createBackendTest() factory
+│   │   │   └── index.ts
 │   │   ├── helpers/
-│   │   │   ├── direct-restore.ts       # Database + fileadmin restore logic
 │   │   │   ├── backend-login.helper.ts
+│   │   │   ├── command.helper.ts       # execInContainer() / execTypo3Command()
 │   │   │   ├── config.ts
-│   │   │   ├── environment.helper.ts
-│   │   │   └── typo3.helper.ts
-│   │   └── setup/
-│   │       └── global-login-setup.ts
+│   │   │   ├── make.helper.ts          # execMake() — runs Makefile targets
+│   │   │   ├── typo3.helper.ts
+│   │   │   └── index.ts
+│   │   ├── setup/
+│   │   │   └── global-login-setup.ts
+│   │   ├── playwright.ts
+│   │   └── types.ts
 │   ├── fixtures/                        # Core-specific fixtures
 │   │   ├── backend-page.ts             # Core BackendPage (extends shared)
 │   │   └── setup-fixtures.ts
-│   ├── helpers/
-│   │   └── direct-restore.ts           # Re-exports from shared
 │   ├── modules/                         # Core test files (by module)
 │   │   ├── 00-PublisherTools/
 │   │   ├── 01-PublishOverview/
 │   │   ├── 02-PublishFiles/
 │   │   ├── 03-RedirectsModule/
-│   │   └── 04-Miscellaneous/
+│   │   ├── 04-Miscellaneous/
+│   │   └── 05-PageTree/
 │   ├── config.ts
-│   └── global.setup.ts
+│   └── global.setup.ts                  # Restore + login (runs `make restore` via execMake)
 │
 └── in2publish/Tests/Playwright/
     ├── fixtures/
     │   ├── backend-page.ts             # Enterprise BackendPage (extends core BackendPage)
-    │   └── setup-fixtures.ts           # Re-exports from shared
-    ├── helpers/
-    │   └── direct-restore.ts           # Re-exports from shared
+    │   └── setup-fixtures.ts           # Adds auto restore/login (runs `make restore`)
     ├── tests/                           # Enterprise test files (by feature)
     │   ├── 00-PublisherTools/
     │   ├── 01-PublishNewPage/
@@ -137,8 +138,7 @@ packages/
     │   ├── 04-SingleRecordPublishing/
     │   ├── 05-ScheduledPublishing/
     │   └── 06-Miscellaneous/
-    ├── config.ts
-    └── global.setup.ts
+    └── config.ts
 ```
 
 ### Shared code in in2publish_core
@@ -155,49 +155,62 @@ Provides `login()`, `gotoModule()`, `searchInPageTreeAndSelectFirstOccurrence()`
 Extends the base with workflow helpers: `waitUntilPublishingFinished()`, `clickWorkflowPublishButton()`,
 `setWorkflowState()`, `searchAndWaitForWorkflowRecords()`, `assertNodeHasStatus()`, etc.
 
-**`direct-restore.ts`** (`shared/helpers/direct-restore.ts`):
-Contains the actual restore logic. Both `in2publish_core/helpers/direct-restore.ts` and
-`in2publish/helpers/direct-restore.ts` simply re-export from it.
+**Command helpers** (`shared/helpers/command.helper.ts`, `shared/helpers/make.helper.ts`):
+`execMake('<target>')` runs a Makefile target from the extension root;
+`execInContainer(project, service, cmd)` and `execTypo3Command(project, service, cmd)` run commands
+in a sibling compose service via the mounted Docker socket. These are how tests trigger
+database/fileadmin restores and other setup steps — there is no TypeScript restore logic anymore.
 
 ### Database / fileadmin restore
 
 Tests rely on a known, clean database state. The monorepo's `.project/data/dumps/` and
 `.project/data/fileadmin/` are the single source of truth and are bind-mounted into each
-extension-local Docker stack. There are two layers of restore:
+extension-local Docker stack. Restore is driven entirely through **Makefile targets**, invoked from
+the Playwright container via `execMake()`. The Playwright image ships the Docker CLI and mounts the
+host Docker socket, so `make` (run at the extension root) can reach the sibling containers.
 
-**1. Suite-level restore (automatic)**
-The `make playwright-core` / `make playwright-enterprise` targets delegate to the package-local
-`make playwright` targets, which call `make restore` before each run inside the target extension
-stack.
+**Restore targets** (defined in each extension Makefile):
+- `make restore` — databases + fileadmin (plus `ensure-foreign-empty-tables`)
+- `make restore-db` — databases only, no fileadmin; used by core specs that don't touch files
+- `make restore` — container-safe restore entry point used by the enterprise auto-fixture
 
-**2. Per-test restore (in `test.beforeEach`)**
-Tests that modify data (publish actions, workflow state changes) call `restoreDatabases()` in
-`test.beforeEach()` to reset before each test case.
+**Suite-level restore (automatic):**
+`make playwright-core` / `make playwright-enterprise` run `make restore` once before the suite
+(alongside `typo3-comparedb` and `typo3-clearcache`) inside the target extension stack.
+
+**Per-test restore:**
+- **Core** specs that mutate data restore explicitly in `beforeEach` / `beforeAll`:
+
+  ```typescript
+  import { execMake } from '../../shared/helpers';
+
+  test.beforeEach(() => {
+      execMake('restore-db');   // or 'restore' for DB + fileadmin
+  });
+  ```
+
+- **Enterprise** specs restore automatically: the `prepareBackend` auto-fixture in
+  `fixtures/setup-fixtures.ts` runs `execMake('restore')` before each test (controlled by the
+  `autoRestore` option), so specs usually don't restore explicitly.
+
+**What the restore does** (see `mysql-restore` / `fileadmin-restore` / `ensure-foreign-empty-tables`
+in the Makefile):
+- Imports the dump CSVs into the local + foreign databases via `mysql-loader` (`LOAD DATA INFILE`)
+- Syncs fileadmin from `.project/data/fileadmin/{local,foreign}`
+- Recreates and truncates the foreign-only empty tables that are omitted from the dumps
+  (the `FOREIGN_ONLY_EMPTY_TABLES` Makefile variable)
+
+**Ad-hoc SQL** in a test (rare) uses `execInContainer` against the `mysql` service instead of a
+Makefile target — e.g. the file-rename fixture in `02-PublishFiles`:
 
 ```typescript
-import { restoreDatabases } from '../../helpers/direct-restore';
+import { execInContainer } from '../../shared/helpers';
 
-test.beforeEach(async () => {
-    await restoreDatabases();
-});
+execInContainer('in2publish_core', 'mysql', `mysql -uroot -proot local -e "UPDATE ..."`);
 ```
 
-**How the per-test restore works:**
-- Connects directly to MySQL from inside the Playwright Docker container
-- Reads dump files from `.project/data/dumps/{local,foreign}/`
-- Truncates each table and reloads it via `LOAD DATA INFILE` from CSV
-- Cache tables are truncated but not reloaded
-- Ensures known empty tables that are omitted from the foreign dump still exist on `foreign`
-  before truncating them. The shared table list lives in
-  `Tests/Playwright/shared/helpers/foreign-only-empty-tables.txt`
-- The path is resolved from the `DUMPS_DIR` env var that is set on each extension-local
-  `playwright` service
-
-**How the suite-level `make restore` works:**
-- Imports the same monorepo dump and fileadmin sources into the extension-local stack
-- Recreates the same foreign-only empty tables from the shared
-  `Tests/Playwright/shared/helpers/foreign-only-empty-tables.txt` definition
-- This keeps manual restore and Playwright's direct MySQL restore consistent
+Reusable state resets should get their own Makefile target instead (e.g. the enterprise
+`workflow-published` target).
 
 **Updating dumps** after a database change that should persist in test data:
 
@@ -241,12 +254,10 @@ test.describe('Publish Overview Module', () => {
 
 ```typescript
 import { test, expect } from '../../fixtures/setup-fixtures';
-import { restoreDatabases } from '../../helpers/direct-restore';
 
 test.describe('Workflow Publishing', () => {
-  test.beforeEach(async () => {
-    await restoreDatabases();
-  });
+  // Database + fileadmin are restored automatically before each test by the
+  // prepareBackend auto-fixture (autoRestore). No explicit restore needed here.
 
   test('should publish a page through workflow', async ({ backend }) => {
     test.setTimeout(180000);
@@ -304,23 +315,21 @@ The MySQL container must be started with `--local-infile=1` / `--secure-file-pri
 
 ### Updating Playwright version
 
-Update the image version in the main project's `.project/docker/docker-compose.darwin.yml` for
-both services:
+Each extension builds its Playwright container from a Dockerfile
+(`.project/docker/playwright/Dockerfile`) that extends the official image with the Docker CLI.
+Update the base image tag in **both** extensions' Dockerfiles:
 
-```yaml
-playwright:
-  image: mcr.microsoft.com/playwright:v1.XX.X-noble
-playwright-enterprise:
-  image: mcr.microsoft.com/playwright:v1.XX.X-noble
+```dockerfile
+FROM mcr.microsoft.com/playwright:v1.XX.X-noble
 ```
 
 Also update `@playwright/test` in each extension's `package.json` to match exactly. A mismatch
 between the package version and the Docker image version causes test runner errors.
 
-Recreate the containers after updating:
+Rebuild the image afterwards (also happens automatically on the next `make playwright-*` run):
 
 ```bash
-docker compose up -d playwright playwright-enterprise
+docker compose build playwright
 ```
 
 ### Resources

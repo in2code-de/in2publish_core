@@ -1,9 +1,11 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { executeLocalSql, fullRestore } from '../../helpers/direct-restore';
+import { execInContainer, execMake } from '../../shared/helpers';
 import { existsSync, renameSync } from 'fs';
 import { resolve } from 'path';
+
+const COMPOSE_PROJECT = process.env.COMPOSE_PROJECT_NAME ?? 'in2publish_core';
 
 const LOCAL_FILEADMIN_DIR = resolve(
     process.cwd(),
@@ -29,16 +31,16 @@ async function renameLocalPublishedFile(): Promise<void> {
     }
 
     renameSync(originalPath, renamedPath);
-    await executeLocalSql(`
-        UPDATE sys_file
-        SET
-            identifier = '/Testcases/2b_published_file/renamed-1523151-unsplash.jpg',
-            identifier_hash = SHA1('/Testcases/2b_published_file/renamed-1523151-unsplash.jpg'),
-            name = 'renamed-1523151-unsplash.jpg',
-            tstamp = UNIX_TIMESTAMP(),
-            modification_date = UNIX_TIMESTAMP()
-        WHERE identifier = '/Testcases/2b_published_file/bds-photo-1523151-unsplash.jpg'
-    `);
+
+    const updateSql =
+        "UPDATE sys_file SET "
+        + "identifier = '/Testcases/2b_published_file/renamed-1523151-unsplash.jpg', "
+        + "identifier_hash = SHA1('/Testcases/2b_published_file/renamed-1523151-unsplash.jpg'), "
+        + "name = 'renamed-1523151-unsplash.jpg', "
+        + "tstamp = UNIX_TIMESTAMP(), "
+        + "modification_date = UNIX_TIMESTAMP() "
+        + "WHERE identifier = '/Testcases/2b_published_file/bds-photo-1523151-unsplash.jpg'";
+    execInContainer(COMPOSE_PROJECT, 'mysql', `mysql -uroot -proot local -e ${JSON.stringify(updateSql)}`);
 }
 
 test.describe('Publish Files Module', () => {
@@ -50,7 +52,7 @@ test.describe('Publish Files Module', () => {
     // Uses direct restore for both databases and fileadmin to ensure a clean state.
     // Environment.reset() is skipped in CI, so we must restore explicitly.
     test.beforeEach(async ({ backend }) => {
-        await fullRestore();
+        execMake('restore');
         // Flush TYPO3 caches via the backend UI after restore.
         // The PHP-FPM processes may have OPcache or in-memory state from the previous test
         // that doesn't reflect the freshly restored database/fileadmin state.

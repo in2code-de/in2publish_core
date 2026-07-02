@@ -1,13 +1,13 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { restoreDatabases } from '../../helpers/direct-restore';
+import { execMake } from '../../shared/helpers';
 
 test.describe('Publish Translation', () => {
 
     // Each test publishes a translation record, so DB must be restored between tests
     test.beforeEach(async () => {
-        await restoreDatabases();
+        execMake('restore-db');
     });
 
     /**

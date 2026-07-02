@@ -8,14 +8,6 @@ export interface FrontendLoginCredentials {
   password: string;
 }
 
-export interface DbConfig {
-  host: string;
-  port: number;
-  user: string;
-  password: string;
-  database: string;
-}
-
 export interface Typo3TestConfig {
   baseUrl: string;
   backendUrl: string;
@@ -23,12 +15,5 @@ export interface Typo3TestConfig {
     backend?: BackendLoginCredentials;
     frontend?: FrontendLoginCredentials;
   };
-  db?: DbConfig;
   storageStatePath?: string;
-}
-
-export interface EnvironmentResetOptions {
-  command: string;
-  cwd?: string;
-  skipInCi?: boolean;
 }

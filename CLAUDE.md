@@ -90,9 +90,9 @@ Configuration/
   `make setup-tests-core`). Core uses a package-local `.playwright.lock` and restores only its own
   local/foreign TYPO3 instances from the monorepo root dump/fileadmin sources. Path variables
   (`DUMPS_DIR`, `LOCAL_FILEADMIN_DIR`, etc.) are injected via the extension-local `playwright`
-  service; see `Tests/Playwright/shared/helpers/direct-restore.ts` for fallbacks. Restore also
-  guarantees a small set of known empty tables exists on `foreign`, using the shared definition in
-  `Tests/Playwright/shared/helpers/foreign-only-empty-tables.txt`.
+  service. Restore is driven through the extension Makefile (`make restore` / `make restore-db`,
+  run from the Playwright container), which also guarantees a small set of known empty tables
+  exists on `foreign` (the `FOREIGN_ONLY_EMPTY_TABLES` Makefile variable / `ensure-foreign-empty-tables` target).
 - **Gulp + Sass**: Frontend build in `Resources/Private/Build/`
 - No PHP CS Fixer, PHPStan, or Rector installed
 
@@ -118,8 +118,7 @@ Key targets available in this extension's directory:
 - `make composer-install` / `make composer-update` - Composer operations
 - `make restore` - Restore database and fileadmin (reads from the monorepo's
   `.project/data/dumps/` and `.project/data/fileadmin/` bind mounts). This also recreates the
-  foreign-only empty tables listed in
-  `Tests/Playwright/shared/helpers/foreign-only-empty-tables.txt`.
+  foreign-only empty tables defined in the `FOREIGN_ONLY_EMPTY_TABLES` Makefile variable.
 - `make typo3-clearcache` / `make typo3-rebuild-caches` - Cache management
 - `make login-local-php` / `make login-foreign-php` - Shell access
 - `make setup-qa` - QA tools setup

@@ -107,13 +107,16 @@ services:
       VIRTUAL_PORT: 8025
 
   playwright:
-    image: mcr.microsoft.com/playwright:v1.59.1-noble
+    build:
+      context: .project/docker/playwright
+      dockerfile: Dockerfile
     command: sleep infinity
     user: ${USER_ID:-1000}
+    group_add:
+      - "${DOCKER_GID:-999}"
     volumes:
       - ./:/work:cached
-      - ../../.project/data/dumps:/.project/data/dumps:cached
-      - ../../.project/data/fileadmin/:/${FILEADMIN_DIR}:cached
+      - /var/run/docker.sock:/var/run/docker.sock
     working_dir: /work
     env_file:
       - .env
@@ -123,12 +126,8 @@ services:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
       PLAYWRIGHT_BASE_URL: https://${HOST_LOCAL}/typo3/
       PLAYWRIGHT_FOREIGN_BASE_URL: https://${HOST_FOREIGN}/typo3/
-      DUMPS_DIR: /.project/data/dumps
-      FILEADMIN_DIR: /.project/data/fileadmin
+      COMPOSE_PROJECT_NAME: in2publish_core
       LOCAL_FILEADMIN_DIR: /work/Build/local/public/fileadmin
-      FOREIGN_FILEADMIN_DIR: /work/Build/foreign/public/fileadmin
-      LOCAL_CACHE_DIR: /work/Build/local/var/cache
-      FOREIGN_CACHE_DIR: /work/Build/foreign/var/cache
     ports:
       - "${PLAYWRIGHT_UI_PORT:-9425}:9323"
     networks:

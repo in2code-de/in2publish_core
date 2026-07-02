@@ -1,14 +1,14 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { restoreDatabases } from '../../helpers/direct-restore';
+import { execMake } from '../../shared/helpers';
 
 test.describe('UID Clash Test: verify publishing of relations to records with same uid but different table', () => {
 
      test.setTimeout(120000);
      // DB restore is required here between each test - published categories need to be reset
      test.beforeEach(async () => {
-         await restoreDatabases();
+         execMake('restore-db');
      });
 
     async function publishPage76(backend: BackendPage) {

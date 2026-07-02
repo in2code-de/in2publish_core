@@ -1,11 +1,11 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { fullRestore } from '../../helpers/direct-restore';
+import { execMake } from '../../shared/helpers';
 
 test.describe('Publish Changed News', () => {
     test.beforeEach(async () => {
-        await fullRestore();
+        execMake('restore');
     });
 
     /**

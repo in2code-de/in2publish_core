@@ -19,7 +19,7 @@ Always import `{ test, expect }` from the project's fixtures file, **not** from 
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { fullRestore } from '../../helpers/direct-restore';
+import { execMake } from '../../shared/helpers';
 ```
 
 ---
@@ -29,8 +29,8 @@ import { fullRestore } from '../../helpers/direct-restore';
 ```typescript
 test.describe('Publish Changed Page Properties', () => {
 
-    test.beforeAll(async () => {
-        await fullRestore();  // Restores DB + fileadmin from csv files + filesystem
+    test.beforeAll(() => {
+        execMake('restore');  // Restores DB + fileadmin via the Makefile
     });
 
     test('Test case description', async ({ page, backend, browser }) => {
@@ -257,17 +257,23 @@ await backend.waitUntilPublishingFinished();
 config.local.baseUrl   // Local backend URL (e.g. https://local.v13.in2publish-core.de/typo3/)
 config.foreign.baseUrl // Foreign backend URL (e.g. https://foreign.v13.in2publish-core.de/typo3/)
 
-// Full restore (DB + fileadmin) — works in both Docker and host environments.
-import { fullRestore } from '../../helpers/direct-restore';
-test.beforeAll(async () => {
-    await fullRestore();
+// Restore is driven through Makefile targets, run from the Playwright container
+// (which has the Docker CLI + socket). execMake runs `make <target>` at the extension root.
+import { execMake } from '../../shared/helpers';
+
+// Full restore (DB + fileadmin):
+test.beforeAll(() => {
+    execMake('restore');
 });
 
 // For per-test DB-only reset (e.g. tests that modify data):
-import { restoreDatabases } from '../../helpers/direct-restore';
-test.beforeEach(async () => {
-    await restoreDatabases();
+test.beforeEach(() => {
+    execMake('restore-db');
 });
+
+// Run an arbitrary command in a compose service (e.g. ad-hoc SQL):
+import { execInContainer } from '../../shared/helpers';
+execInContainer('in2publish_core', 'mysql', `mysql -uroot -proot local -e "UPDATE ..."`);
 ```
 
 ---

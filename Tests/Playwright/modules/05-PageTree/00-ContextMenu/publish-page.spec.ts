@@ -1,11 +1,11 @@
 import { test, expect } from '../../../fixtures/setup-fixtures';
 import config from '../../../config';
-import { fullRestore } from '../../../helpers/direct-restore';
+import { execMake } from '../../../shared/helpers';
 
 test.describe('Page Tree - Context Menu', () => {
 
     test.beforeAll(async () => {
-        await fullRestore();
+        execMake('restore');
     });
 
     /**
