@@ -1,5 +1,15 @@
 # In2publish Core Change Log
 
+12.9.0
+- [META] Set the EM conf version number to 12.9.0
+- [DOCS] Update Changelog.md
+- [META] adjust branch aliases in composer.json
+- [TEST] Add performance regression test for recursive dependency check
+- [BUGFIX] Memoize recursive dependency check while publishing
+- [META] Update PHP version constraint to >=8.0 <8.4
+- [BUGFIX] Use strict typing when comparing records
+- [DEV][AI] Add claude.md project information
+
 12.8.0
 - [META] Set the EM conf version number to 12.8.0
 - [DOCS] Update Changelog.md
