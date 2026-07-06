@@ -10,33 +10,26 @@ test-functional:
 
 ## Run all Playwright tests in the isolated core test stack. Use FILE= for individual tests.
 test-playwright:
-	$(call with_playwright_lock,$(call ensure_playwright_stack); $(MAKE) restore; $(MAKE) typo3-comparedb; $(MAKE) typo3-clearcache; docker compose run --rm -e PLAYWRIGHT_HTML_OPEN=never playwright sh -lc "npm install --silent && npx playwright test $(FILE)")
+	$(call with_playwright_lock,$(call ensure_playwright_stack); docker compose run --rm -e PLAYWRIGHT_HTML_OPEN=never playwright sh -lc "npm install --silent && npx playwright test $(FILE)")
 
 ## Open Playwright UI mode in the isolated core test stack. Use FILE= to filter tests.
 playwright-ui:
-	$(call with_playwright_lock,$(call ensure_playwright_stack); $(MAKE) restore; $(MAKE) typo3-comparedb; $(MAKE) typo3-clearcache; docker compose stop playwright >/dev/null 2>&1 || true; echo "Open Playwright UI at http://localhost:$(PLAYWRIGHT_UI_PORT)"; docker compose run --rm --service-ports playwright sh -lc "npm install --silent && npx playwright test --ui --ui-host=0.0.0.0 --ui-port=9323 $(FILE)")
+	$(call with_playwright_lock,$(call ensure_playwright_stack); echo "Open Playwright UI at http://localhost:$(PLAYWRIGHT_UI_PORT)"; docker compose run --rm --service-ports playwright sh -lc "npm install --silent && npx playwright test --ui --ui-host=0.0.0.0 --ui-port=9323 $(FILE)")
 
 ## Show the last Playwright HTML report from the isolated core test stack
 playwright-report:
-	$(call with_playwright_lock,$(call ensure_playwright_stack); docker compose stop playwright >/dev/null 2>&1 || true; echo "Open Playwright report at http://localhost:$(PLAYWRIGHT_UI_PORT)"; docker compose run --rm --service-ports playwright sh -lc "npx playwright show-report --host=0.0.0.0 --port=9323")
+	$(call with_playwright_lock,$(call ensure_playwright_stack); echo "Open Playwright report at http://localhost:$(PLAYWRIGHT_UI_PORT)"; docker compose run --rm --service-ports playwright sh -lc "npm install --silent && npx playwright show-report --host=0.0.0.0 --port=9323")
 
 ## Stop all Playwright tasks for the isolated core test stack
 playwright-stop:
 	$(call stop_playwright_tasks)
-
-## Install Playwright npm dependencies in the isolated core test stack
-playwright-install:
-	$(call with_playwright_lock,$(call ensure_playwright_stack); docker compose run --rm playwright npm install --silent)
-
-## Prepare Playwright npm dependencies in the isolated core test stack
-setup-tests: playwright-install
 
 
 #############################################################################################
 # RESTORING DATA
 #############################################################################################
 
-restore: restore-db fileadmin-restore
+restore: restore-db fileadmin-restore typo3-clearcache
 
 ## Restore only the databases (no fileadmin) - used by Playwright specs that don't touch files
 restore-db: mysql-restore .ensure-foreign-empty-tables typo3-comparedb
@@ -296,7 +289,6 @@ define stop_playwright_tasks
 	if [ -n "$$run_containers" ]; then \
 		docker rm -f $$run_containers >/dev/null 2>&1 || true; \
 	fi; \
-	docker compose stop playwright >/dev/null 2>&1 || true; \
 	rm -f "$$lockdir/pid"; \
 	rmdir "$$lockdir" 2>/dev/null || true
 endef

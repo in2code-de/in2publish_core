@@ -107,6 +107,8 @@ services:
 
 
   playwright:
+    profiles:
+      - tools
     build:
       context: .project/docker/playwright
       dockerfile: Dockerfile

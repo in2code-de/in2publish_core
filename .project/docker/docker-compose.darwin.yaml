@@ -107,6 +107,8 @@ services:
       VIRTUAL_PORT: 8025
 
   playwright:
+    profiles:
+      - tools
     build:
       context: .project/docker/playwright
       dockerfile: Dockerfile
