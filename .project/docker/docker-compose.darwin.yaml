@@ -115,7 +115,9 @@ services:
     command: sleep infinity
     user: ${USER_ID:-1000}
     group_add:
-      - "${DOCKER_GID:-999}"
+      # Docker Desktop mounts the docker socket as root:root into containers,
+      # so the root group is required to access it (no docker group on macOS).
+      - "0"
     volumes:
       - ./:/work:cached
       - /var/run/docker.sock:/var/run/docker.sock
