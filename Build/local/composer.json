@@ -76,6 +76,7 @@
 		"typo3/cms-tstemplate": "^14.2",
 		"typo3/cms-viewpage": "^14.2",
 		"typo3/cms-workspaces": "^14.2",
+		"typo3/cms-styleguide": "^14.3",
 		"typo3/testing-framework": "^9.1"
 	},
 	"config": {
