@@ -34,8 +34,16 @@ restore: restore-db fileadmin-restore typo3-clearcache
 ## Restore only the databases (no fileadmin) - used by Playwright specs that don't touch files
 restore-db: mysql-restore .ensure-foreign-empty-tables typo3-comparedb
 
+## Fail early when the extension-local TYPO3 instances are not provisioned yet
+.ensure-provisioned:
+	if [ ! -f Build/local/vendor/bin/mysql-loader ] || [ ! -f Build/foreign/vendor/bin/typo3 ]; then \
+		echo "$(EMOJI_face_with_rolling_eyes) The extension-local TYPO3 instances are not provisioned yet (Build/*/vendor is missing)."; \
+		echo "Run 'make setup' in packages/in2publish_core once, then re-run this target."; \
+		exit 1; \
+	fi
+
 ## Restores the database from the dump files in DUMPS_DIR
-mysql-restore: .mysql-wait
+mysql-restore: .ensure-provisioned .mysql-wait
 	echo "$(EMOJI_robot) Restoring the local database"
 	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/$(DUMPS_DIR)/local/
 	echo "$(EMOJI_robot) Restoring the foreign database"
@@ -208,8 +216,15 @@ help:
 ## Wait for the mysql container to be fully provisioned
 .mysql-wait:
 	echo "$(EMOJI_ping_pong) Checking DB up and running"
-	while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do \
-		echo "$(EMOJI_face_with_rolling_eyes) Waiting for database ..."; \
+	attempt=0; \
+	while ! error="$$(docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" 2>&1 >/dev/null)"; do \
+		attempt=$$((attempt + 1)); \
+		if [ "$$attempt" -ge 40 ]; then \
+			echo "$(EMOJI_face_with_rolling_eyes) Database is not reachable, giving up. Last error:"; \
+			echo "$$error"; \
+			exit 1; \
+		fi; \
+		echo "$(EMOJI_face_with_rolling_eyes) Waiting for database ($$attempt/40): $$error"; \
 		sleep 3; \
 	done;
 
@@ -271,6 +286,7 @@ endef
 
 define ensure_playwright_stack
 	$(MAKE) .link-compose-file; \
+	$(MAKE) .ensure-provisioned || exit 1; \
 	docker compose up -d >/dev/null
 endef
 
