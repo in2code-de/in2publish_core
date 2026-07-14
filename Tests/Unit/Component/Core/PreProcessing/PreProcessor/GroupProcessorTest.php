@@ -37,10 +37,8 @@ class GroupProcessorTest extends UnitTestCase
 
         $tca = ['type' => 'group'];
 
-        $this->expectException(\Error::class);
-        // Error message differs depending on PHP version
-        //$this->expectErrorMessage('Undefined array key "allowed"');
-        $groupProcessor->process('table_foo', 'field_bar', $tca);
+        $processingResult = $groupProcessor->process('table_foo', 'field_bar', $tca);
+        $this->assertFalse($processingResult->isCompatible());
     }
 
     public function testProcessInternalTypeMustBeDb(): void

@@ -218,7 +218,9 @@ abstract class AbstractRecord implements Record
             }
 
             foreach ($movedIndicatorFields as $movedIndicatorField) {
-                if ($this->localProps[$movedIndicatorField] !== $this->foreignProps[$movedIndicatorField]) {
+                $localValue = $this->localProps[$movedIndicatorField] ?? null;
+                $foreignValue = $this->foreignProps[$movedIndicatorField] ?? null;
+                if ($localValue !== $foreignValue) {
                     return Record::S_MOVED;
                 }
             }

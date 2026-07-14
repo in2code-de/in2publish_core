@@ -51,7 +51,7 @@ class GroupProcessor extends AbstractProcessor
         if ($internalType !== 'db') {
             return ['The internal type "' . $internalType . '" is not supported'];
         }
-        $allowed = $tca['allowed'];
+        $allowed = $tca['allowed'] ?? '';
 
         if ($allowed === '') {
             return ['The field "allowed" is empty'];
