@@ -1,6 +1,41 @@
 # In2publish Core Change Log
 
-14.0.1
+14.0.3
+[META] Set the EM conf version number to 14.0.3
+[DOCS] update Changelog.md
+[TASK] Migrate functional PHPUnit config to schema 12.5
+[TEST][TASK] Replace deprecated DatabaseWriter logTable with custom log writer
+[TEST][BUGFIX] fix php warnings for undefined array keys when running Functional Tests
+[TEST] Increase PHP memory_limit in functional test suite
+[TEST][BUGFIX] fix php warnings for undefined array keys when running Unit Tests
+[DEV] fail early with setup hint when test stack is not build
+[DEV] fix docker socket access for playwright container on macOS
+[DEV] align linux compose file with darwin composer mounts
+[DEV] run playwright only as one-off container via compose profile
+[DEV] add cms-styleguide to dev environment dependencies
+[TASK] Update package-lock after removing the mysql2 dependency
+[TASK] Regenerate test dumps
+[DEV] Run database compare as part of restore-db
+[DEV] Install in2publish_core from the local working copy
+[TASK] Do Playwright restore via Makefile and add container command helpers
+[DEV] align playwright command naming
+[DEV] add phive trust gpg keys for qa pipeline
+[CLEANUP] remove any remnants of the old acceptance test suite
+[DEV] update local development stack
+[DEV] Forward host composer auth.json into containers
+[DEV] remove obsolete development tables
+[DEV] provide core base data for local development stack
+[BUGFIX] Use new DiffUtility::diff() API in DiffViewHelper
+[META] adjust branch alias to reflect new branch naming
+[BUGFIX] Guard against missing page record in CompareUriViewHelper
+[BUGFIX] Disable original constructor in Registry mock
+[TEST] Add performance regression test for recursive dependency check
+[BUGFIX] Memoize recursive dependency check while publishing
+[BUGFIX] add backendGlobal.js only in backend context
+[TASK] add composer funding section
+[DEV][CI] adjust composer requirements for in2publish_core in test setup
+
+14.0.2
 - [META] Set the EM conf version number to 14.0.2
 - [DOCS] update Changelog.md
   [TASK] Set state to stable in ext_emconf.php
