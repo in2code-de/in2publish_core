@@ -5,11 +5,11 @@ use In2code\In2publishCore\Component\Core\Record\Model\Extension\RecordExtension
 use In2code\In2publishCore\Controller\FrontendController;
 use In2code\In2publishCore\Log\Processor\BackendUserProcessor;
 use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
+use In2code\In2publishCore\Log\Writer\DatabaseWriter;
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Log\LogLevel;
-use TYPO3\CMS\Core\Log\Writer\DatabaseWriter;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
@@ -58,9 +58,7 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
     $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
         'writerConfiguration' => [
             $logLevel => [
-                DatabaseWriter::class => [
-                    'logTable' => 'tx_in2publishcore_log',
-                ],
+                DatabaseWriter::class => [],
             ],
         ],
         'processorConfiguration' => [
