@@ -16,6 +16,14 @@
         <testdoxHtml outputFile=".project/artifacts/functionaltests/testdox.html"/>
         <testdoxText outputFile=".project/artifacts/functionaltests/testdox.txt"/>
     </logging>
+    <php>
+        <!--
+            Functional tests boot the full local TYPO3 instance, so the compiled TcaSchema and the
+            backed-up $GLOBALS['TCA'] are large. The container default of 256M is not enough for the
+            whole suite (peak grows across tests), so raise the limit for functional test runs.
+        -->
+        <ini name="memory_limit" value="512M"/>
+    </php>
     <testsuites>
         <testsuite name="Functional">
             <directory>Tests/Functional/</directory>
