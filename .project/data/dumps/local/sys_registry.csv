@@ -61,3 +61,4 @@
 64	tx_reports	status.highestSeverity	i:2;
 67	installUpdate	TYPO3\\CMS\\Install\\Updates\\BackendModulePermissionMigration	i:1;
 69	installUpdate	TYPO3\\CMS\\Install\\Updates\\PasswordPolicyForFrontendUsersUpdate	i:1;
+71	tx_in2publishcore	test_result	a:3:{s:7:"success";b:1;s:13:"packages_hash";s:40:"cdc104653877471fa65298a069b9df22ed97a54b";s:18:"configuration_hash";s:40:"495b42c69f963501481311311f793a57223b4c5b";}

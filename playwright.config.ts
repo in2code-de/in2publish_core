@@ -18,14 +18,18 @@ import { defineConfig, devices } from '@playwright/test';
  *
  * See https://playwright.dev/docs/test-configuration.
  */
+/* Treat the CI env var as a real flag: unset, empty and "0" all mean "not CI".
+ * (docker-compose passes CI="0" by default, which is truthy as a JS string.) */
+const isCi = !!process.env.CI && process.env.CI !== '0' && process.env.CI !== 'false';
+
 export default defineConfig({
   testDir: './Tests/Playwright',
   /* Run tests in files in parallel */
   fullyParallel: false, // TYPO3 tests share database state
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
+  forbidOnly: isCi,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  retries: isCi ? 2 : 0,
   /* Sequential execution for shared database */
   workers: 1,
 

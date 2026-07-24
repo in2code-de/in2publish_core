@@ -1,15 +1,16 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { restoreDatabases } from '../../helpers/DbRestore';
+import { execMake } from '../../shared/helpers';
+
 
 test.describe('UID Clash', () => {
 
-    // Each use case requires a fresh DB state (mirrors PHP AbstractBrowserTestCase::setUp)
-    // Uses direct mysql2 connection — works inside the Playwright Docker container
-    test.beforeEach(async () => {
-        await restoreDatabases();
-    });
+     test.setTimeout(120000);
+     // DB restore is required here between each test - published categories need to be reset
+     test.beforeEach(async () => {
+         execMake('restore-db');
+     });
 
     /**
      * Helper: Publish page 76 via Publish Overview.
@@ -79,9 +80,9 @@ test.describe('UID Clash', () => {
         await foreignBackend.gotoModule('List');
         await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('Home');
 
-        const body = foreignBackend.contentFrame.locator('body');
-        await expect(body).toContainText('Category 1', { timeout: 10000 });
-        await expect(body).toContainText('Category 2');
+        const categories = foreignBackend.contentFrame.locator('#recordlist-sys_category');
+        await expect(categories).toContainText('Category 1', { timeout: 10000 });
+        await expect(categories).toContainText('Category 2');
     }
 
     /**
@@ -91,9 +92,9 @@ test.describe('UID Clash', () => {
         await foreignBackend.gotoModule('List');
         await foreignBackend.searchInPageTreeAndSelectFirstOccurrence('Home');
 
-        const body = foreignBackend.contentFrame.locator('body');
-        await expect(body).toContainText('Category 1', { timeout: 10000 });
-        await expect(body).not.toContainText('Category 2');
+        const categories = foreignBackend.contentFrame.locator('#recordlist-sys_category');
+        await expect(categories).toContainText('Category 1', { timeout: 10000 });
+        await expect(categories).not.toContainText('Category 2');
     }
 
     /**

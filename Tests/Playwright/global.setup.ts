@@ -1,11 +1,14 @@
-import { test as setup } from '@playwright/test';
-import { createGlobalLoginSetup } from '@in2code/typo3-playwright/setup';
+import { test as setup, expect } from '@playwright/test';
+import { createGlobalLoginSetup } from './shared/setup/index';
+import { execMake } from './shared/helpers';
 import config from './config';
-import { Environment } from './helpers/Environment';
 
 const performLogin = createGlobalLoginSetup(config, 'Tests/Playwright/.auth/login.json');
 
 setup('reset environment and authenticate', async ({ page }) => {
-  await Environment.reset();
+
+  // Reset the local + foreign database and fileadmin.
+  execMake('restore');
+
   await performLogin(page);
 });

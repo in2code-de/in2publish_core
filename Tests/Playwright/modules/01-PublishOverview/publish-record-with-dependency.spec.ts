@@ -1,13 +1,8 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
 
 test.describe('Publish Record With Dependency', () => {
-
-    test.beforeAll(async () => {
-        await Environment.reset();
-    });
 
     /**
      * Tests that a record with unfulfilled dependency becomes publishable after dependencies are fulfilled.
@@ -16,18 +11,16 @@ test.describe('Publish Record With Dependency', () => {
      * Uses 'publisher-page-tree-publish' user (not admin) to test permission-based publishing.
      */
     test('Record with unfulfilled dependency is publishable after dependencies are fulfilled', async ({ browser }) => {
-        const context = await browser.newContext();
+        const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
         const page = await context.newPage();
         const backend = new BackendPage(page);
 
         await test.step('Given I am logged in as publisher-page-tree-publish', async () => {
             // Fresh context without storageState — navigate directly to login page
             await page.goto(config.local.baseUrl);
-            await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
             await page.getByLabel('Username').fill('publisher-page-tree-publish');
             await page.getByLabel('Password').fill('publisher-page-tree-publish');
             await page.getByRole('button', { name: 'Login' }).click();
-            await page.waitForLoadState('networkidle');
             await expect(page.locator('.scaffold-header')).toBeVisible({ timeout: 15000 });
         });
 
@@ -62,7 +55,7 @@ test.describe('Publish Record With Dependency', () => {
 
             const recordRow = backend.contentFrame.locator('[data-record-identifier="pages-36"]');
             await expect(recordRow).toContainText(
-                'requires that the page "5c.1 Parent not published" is published first'
+                'The page "5c.1 Parent not published" must be published first.'
             );
             await expect(recordRow).toContainText(
                 'requires that the page "5c.1.1 Child Ready to Publish" is published first'

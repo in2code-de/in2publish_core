@@ -1,13 +1,8 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
 
 test.describe('Publish Changed Page Properties', () => {
-
-    test.beforeAll(async () => {
-        await Environment.reset();
-    });
 
     /**
      * Test Case 1a: Changed page properties can be published.
