@@ -20,9 +20,12 @@ class ContextMenuActions {
 				return response.json()
 			})
 			.then(body => {
-				console.log(body)
 				if (body.error) {
 					Notification.error(body.message)
+					return
+				}
+				if (!body.success) {
+					Notification.warning(body.message)
 					return
 				}
 				Notification.success(body.message)

@@ -34,9 +34,12 @@ use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilderInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
+use In2code\In2publishCore\Service\Database\RawRecordServiceInjection;
 use In2code\In2publishCore\Service\Permission\PermissionServiceInjection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Http\Response;
@@ -46,11 +49,13 @@ use function json_encode;
 
 use const JSON_THROW_ON_ERROR;
 
-class PublishPageAjaxController
+class PublishPageAjaxController implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
     use RecordTreeBuilderInjection;
     use PublisherServiceInjection;
     use PermissionServiceInjection;
+    use RawRecordServiceInjection;
 
     public function publishPage(ServerRequestInterface $request): ResponseInterface
     {
@@ -60,7 +65,7 @@ class PublishPageAjaxController
 
         $content = [
             'success' => false,
-            'label' => 'Unknown error',
+            'label' => 'context_menu_publish_entry.unknown_error',
             'lArgs' => [],
             'error' => true,
         ];
@@ -68,46 +73,65 @@ class PublishPageAjaxController
         if (!$this->permissionService->isUserAllowedToPublish()) {
             $content['label'] = 'context_menu_publish_entry.forbidden';
             $content['error'] = false;
-        }
-
-        if (null === $page) {
+        } elseif (null === $page) {
             $content['label'] = 'context_menu_publish_entry.missing_page';
         } else {
-            try {
-                // TODO: reimplement isPublishable method in Record
-                $rawRecordService = GeneralUtility::makeInstance(
-                    RawRecordService::class,
-                );
-                $record = $rawRecordService->getRawRecord('pages', (int)$page, 'local');
-                $languageUid = (int)($record['sys_language_uid'] ?? null);
-                $recordTreeBuildRequest = new RecordTreeBuildRequest('pages', (int)$page, 0);
-                $recordTree = $this->recordTreeBuilder->buildRecordTree($recordTreeBuildRequest);
-                $record = $recordTree->getChild('pages', (int)$page, 0);
-                $publishingContext = new PublishingContext($recordTree);
-                if (null !== $record && $record->isPublishable()) {
-                    try {
-                        $this->publisherService->publish($publishingContext);
-                        $content['success'] = true;
-                        $content['error'] = false;
-                        $content['label'] = 'context_menu_publish_entry.page_published';
-                    } catch (TaskExecutionFailedException $exception) {
-                        $content['label'] = 'context_menu_publish_entry.publishing_error';
-                    }
-                    $record = $recordTree->getChild('pages', (int)$page);
-                    $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProps());
-                } else {
-                    $content['error'] = false;
-                    $content['label'] = 'context_menu_publish_entry.not_publishable';
-                }
-            } catch (Throwable $exception) {
-                $content['label'] = (string)$exception;
-            }
+            $content = $this->publishPageAndBuildContent((int)$page, $content);
         }
 
         $lArgs = !empty($content['lArgs']) ? $content['lArgs'] : null;
-        $content['message'] = LocalizationUtility::translate($content['label'], 'In2publishCore', $lArgs);
+        $content['message'] = LocalizationUtility::translate($content['label'], 'In2publishCore', $lArgs)
+            ?? $content['label'];
         $response->getBody()->write(json_encode($content, JSON_THROW_ON_ERROR));
 
         return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    protected function publishPageAndBuildContent(int $page, array $content): array
+    {
+        try {
+            $languageUid = $this->resolveLanguageUid($page);
+            $recordTreeBuildRequest = new RecordTreeBuildRequest('pages', $page, 0, 3, 8, [$languageUid]);
+            $recordTree = $this->recordTreeBuilder->buildRecordTree($recordTreeBuildRequest);
+            $record = $recordTree->getChild('pages', $page);
+            if (null === $record) {
+                $content['error'] = false;
+                $content['label'] = 'context_menu_publish_entry.record_not_found';
+            } elseif ($record->isPublishable() === false) {
+                $content['error'] = false;
+                $content['label'] = 'context_menu_publish_entry.not_publishable';
+            } else {
+                try {
+                    $this->publisherService->publish(new PublishingContext($recordTree));
+                    $content['success'] = true;
+                    $content['error'] = false;
+                    $content['label'] = 'context_menu_publish_entry.page_published';
+                } catch (TaskExecutionFailedException $exception) {
+                    $content['label'] = 'context_menu_publish_entry.publishing_error';
+                }
+                $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProps());
+            }
+        } catch (Throwable $exception) {
+            $this->logger->error(
+                'Publishing a page via the context menu failed',
+                ['pageId' => $page, 'exception' => $exception],
+            );
+            $content['label'] = 'context_menu_publish_entry.unknown_error';
+        }
+
+        return $content;
+    }
+
+    protected function resolveLanguageUid(int $pageId): ?int
+    {
+        $record = $this->rawRecordService->getRawRecord('pages', $pageId, 'local');
+        if (null === $record) {
+            $record = $this->rawRecordService->getRawRecord('pages', $pageId, 'foreign');
+        }
+        $languageUid = null;
+        if (isset($record['sys_language_uid'])) {
+            $languageUid = (int)$record['sys_language_uid'];
+        }
+        return $languageUid;
     }
 }

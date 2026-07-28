@@ -308,6 +308,14 @@
 				<source>This record is not yet publishable.</source>
 				<target>Diese Seite ist noch nicht veröffentlichbar.</target>
 			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.record_not_found" resname="context_menu_publish_entry.record_not_found">
+				<source>This page has no publishable changes.</source>
+				<target>Diese Seite enthält keine veröffentlichbaren Änderungen.</target>
+			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.unknown_error" resname="context_menu_publish_entry.unknown_error">
+				<source>An error occurred while publishing this page. Please check your logs.</source>
+				<target>Beim Veröffentlichen dieser Seite ist ein Fehler aufgetreten. Weitere Informationen finden Sie in den Logs.</target>
+			</trans-unit>
 			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_page_uid.label" resname="tca.sys_redirect.columns.tx_in2publishcore_page_uid.label">
 				<source>Associated page</source>
 				<target>Verknüpfte Seite</target>

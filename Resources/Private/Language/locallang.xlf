@@ -232,6 +232,12 @@
 			<trans-unit id="context_menu_publish_entry.not_publishable" resname="context_menu_publish_entry.not_publishable">
 				<source>This record is not yet publishable.</source>
 			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.record_not_found" resname="context_menu_publish_entry.record_not_found">
+				<source>This page has no publishable changes.</source>
+			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.unknown_error" resname="context_menu_publish_entry.unknown_error">
+				<source>An error occurred while publishing this page. Please check your logs.</source>
+			</trans-unit>
 			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_page_uid.label" resname="tca.sys_redirect.columns.tx_in2publishcore_page_uid.label">
 				<source>Associated page</source>
 			</trans-unit>
