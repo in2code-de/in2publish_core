@@ -6,6 +6,9 @@
 			<trans-unit id="publish_page">
 				<source>Publish this page</source>
 			</trans-unit>
+			<trans-unit id="publish_page_pending">
+				<source>Publishing started</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

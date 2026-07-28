@@ -7,6 +7,10 @@
 				<source>Publish this page</source>
 				<target state="translated">Diese Seite veröffentlichen</target>
 			</trans-unit>
+			<trans-unit id="publish_page_pending">
+				<source>Publishing started</source>
+				<target state="translated">Die Veröffentlichung wurde gestartet</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

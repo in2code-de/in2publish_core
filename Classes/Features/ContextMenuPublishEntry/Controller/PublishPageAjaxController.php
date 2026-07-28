@@ -100,6 +100,7 @@ class PublishPageAjaxController implements LoggerAwareInterface
             } elseif ($record->isPublishable() === false) {
                 $content['error'] = false;
                 $content['label'] = 'context_menu_publish_entry.not_publishable';
+                $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProps());
             } else {
                 try {
                     $this->publisherService->publish(new PublishingContext($recordTree));

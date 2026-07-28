@@ -1,8 +1,9 @@
 import Notification from "@typo3/backend/notification.js";
 
+const PENDING_NOTIFICATION_DURATION = 3
+
 class ContextMenuActions {
 	static publishRecord(table, uid, element) {
-		Notification.info("Page " + uid + " is published in the background")
 		if ("pages" !== table) {
 			Notification.warning("Can not publish non-page via context menu entry")
 			return;
@@ -12,6 +13,7 @@ class ContextMenuActions {
 			Notification.error("Publish URL is not set for this page")
 			return
 		}
+		Notification.info(element["publishPendingLabel"], "", PENDING_NOTIFICATION_DURATION)
 		fetch(publishUrl)
 			.then(response => {
 				if (!response.ok) {

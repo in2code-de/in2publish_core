@@ -305,8 +305,8 @@
 				<target>Beim veröffentlichen der Seite &quot;%s&quot; ist ein Fehler aufgetreten. Weitere Informationen finden Sie in den Logs.</target>
 			</trans-unit>
 			<trans-unit id="context_menu_publish_entry.not_publishable" resname="context_menu_publish_entry.not_publishable">
-				<source>This record is not yet publishable.</source>
-				<target>Diese Seite ist noch nicht veröffentlichbar.</target>
+				<source>The page &quot;%s&quot; is not publishable yet. Please check the module &quot;Publish Overview&quot; or &quot;Publish Workflow&quot; for details.</source>
+				<target>Die Seite &quot;%s&quot; ist noch nicht veröffentlichbar. Die Gründe dafür finden Sie im Modul &quot;Publisher Übersicht&quot; oder &quot;Publisher Workflow&quot;.</target>
 			</trans-unit>
 			<trans-unit id="context_menu_publish_entry.record_not_found" resname="context_menu_publish_entry.record_not_found">
 				<source>This page has no publishable changes.</source>

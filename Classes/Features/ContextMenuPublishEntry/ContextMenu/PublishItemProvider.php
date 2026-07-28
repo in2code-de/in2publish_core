@@ -42,6 +42,8 @@ use function func_get_args;
 
 class PublishItemProvider extends AbstractProvider
 {
+    private const string LLL_FILE = 'LLL:EXT:in2publish_core/Resources/Private/Language/Features/ContextMenuPublishEntry.xlf';
+
     protected $itemsConfiguration = [
         'publish' => [
             'label' => 'LLL:EXT:in2publish_core/Resources/Private/Language/Features/ContextMenuPublishEntry.xlf:publish_page',
@@ -99,6 +101,9 @@ class PublishItemProvider extends AbstractProvider
                 ['id' => $this->identifier],
             );
             $attributes['data-publish-url'] = $publishUrl;
+            $attributes['data-publish-pending-label'] = $this->languageService->sL(
+                self::LLL_FILE . ':publish_page_pending',
+            );
             $attributes['data-callback-module'] = '@in2code/in2publish_core/context-menu-actions';
         }
         return $attributes;
