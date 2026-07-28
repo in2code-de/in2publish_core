@@ -53,15 +53,21 @@ class FlushFrontendPageCacheTask extends AbstractTask
      */
     protected function executeTask(): bool
     {
-        $dataHandler = $this->getDataHandler();
         $commands = GeneralUtility::trimExplode(',', (string)($this->configuration['pid'] ?? ''), true);
-        // TODO: find an alternative solution to reverted commit  tf7bed554f1896dfc8e4921e07e6557247e832fd8o
-        // https://github.com/in2code-de/in2publish_core/pull/122
-        foreach ($commands as $command) {
-            $dataHandler->clear_cacheCmd($command);
-            $this->addMessage('Cleared frontend cache with configuration clearCacheCmd=' . $command);
+        if ([] === $commands) {
+            $this->addMessage('Skipped flushing the frontend cache because the task configuration contains no PID');
+            $success = false;
+        } else {
+            $dataHandler = $this->getDataHandler();
+            // TODO: find an alternative solution to reverted commit  tf7bed554f1896dfc8e4921e07e6557247e832fd8o
+            // https://github.com/in2code-de/in2publish_core/pull/122
+            foreach ($commands as $command) {
+                $dataHandler->clear_cacheCmd($command);
+                $this->addMessage('Cleared frontend cache with configuration clearCacheCmd=' . $command);
+            }
+            $success = true;
         }
-        return true;
+        return $success;
     }
 
     protected function getDataHandler(): DataHandler
