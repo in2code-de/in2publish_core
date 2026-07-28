@@ -45,10 +45,10 @@ class FlushNewsCacheTask extends AbstractTask
     {
         /** @var CacheManager $cacheManager */
         $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
-        foreach ($this->configuration['uid'] as $cacheTag) {
+        foreach ($this->configuration['uid'] ?? [] as $cacheTag) {
             $cacheManager->flushCachesByTag('tx_news_uid_' . $cacheTag);
         }
-        foreach ($this->configuration['pid'] as $cacheTag) {
+        foreach ($this->configuration['pid'] ?? [] as $cacheTag) {
             $cacheManager->flushCachesByTag('tx_news_pid_' . $cacheTag);
         }
         return true;
