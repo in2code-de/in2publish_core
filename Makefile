@@ -132,6 +132,22 @@ dump-foreign-database: .mysql-wait
 unit:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml
 
+## Run single unit test
+unit-test:
+	@if [ -z "$(name)" ]; then \
+		echo "Usage: make unit-test name=TestClassName [method=testMethodName]"; \
+		echo "Example: make unit-test name=FlushFrontendPageCacheTaskTest"; \
+		echo "Example: make unit-test name=FlushFrontendPageCacheTaskTest method=testTaskFailsWithoutFlushingAnyCacheIfNoCommandIsConfigured"; \
+		exit 1; \
+	fi
+	@if [ -n "$(method)" ]; then \
+		echo "Running test method $(method) in $(name)"; \
+		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml --filter "$(name)::$(method)"; \
+	else \
+		echo "Running all test methods in $(name)"; \
+		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.unit.xml --filter "$(name)"; \
+	fi
+
 functional:
 	docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.functional.xml
 
