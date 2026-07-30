@@ -455,6 +455,93 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         );
     }
 
+    /**
+     * Builds use case 31: a new page holding shortcuts whose target record lives on a new subpage.
+     *
+     * The subpage requires its parent page to be published first, while the shortcuts require the
+     * target on the subpage to be published first. Because the records field of a shortcut is a TCA
+     * group relation, the target is a child of the shortcut record even though it belongs to the
+     * subpage, so its own "requires parent page" dependency travels into the parent page's check.
+     *
+     * @return array{0: DatabaseRecord, 1: DatabaseRecord}
+     */
+    private function createCircularShortcutDependencyTree(): array
+    {
+        $GLOBALS['TCA']['pages']['ctrl'] = [];
+        $GLOBALS['TCA']['tt_content']['ctrl'] = [];
+
+        $parentPage = new DatabaseRecord('pages', 1012, ['uid' => 1012, 'pid' => 0], [], []);
+        $subPage = new DatabaseRecord('pages', 1013, ['uid' => 1013, 'pid' => 1012], [], []);
+        $target = new DatabaseRecord('tt_content', 9020, ['uid' => 9020, 'pid' => 1013], [], []);
+        $shortcut = new TtContentDatabaseRecord(
+            'tt_content',
+            9021,
+            ['uid' => 9021, 'pid' => 1012, 'CType' => 'shortcut', 'records' => 'tt_content_9020'],
+            [],
+            [],
+        );
+
+        $parentPage->addChild($subPage);
+        $parentPage->addChild($shortcut);
+        $subPage->addChild($target);
+        $shortcut->addChild($target);
+
+        self::assertSame(Record::S_ADDED, $parentPage->getState());
+        self::assertSame(Record::S_ADDED, $subPage->getState());
+        self::assertSame(Record::S_ADDED, $target->getState());
+
+        $recordCollection = new RecordCollection([$parentPage, $subPage, $target, $shortcut]);
+        $this->fulfillDependencies($parentPage, $recordCollection);
+
+        $eventDispatcherMock = $this->createMock(EventDispatcher::class);
+        $eventDispatcherMock->method('dispatch')->willReturnCallback(
+            static function (CollectReasonsWhyTheRecordIsNotPublishable $event): CollectReasonsWhyTheRecordIsNotPublishable {
+                return $event;
+            },
+        );
+        GeneralUtility::setSingletonInstance(EventDispatcherInterface::class, $eventDispatcherMock);
+
+        return [$parentPage, $subPage];
+    }
+
+    public function testCircularShortcutDependenciesDoNotBlockPublishingIncludingChildPages(): void
+    {
+        // Acceptance criterion: circular dependencies must not block publishing completely. Publishing
+        // the page including its subpages writes the whole subtree to foreign within one transaction,
+        // which fulfills both directions of the cycle.
+        [$parentPage] = $this->createCircularShortcutDependencyTree();
+
+        self::assertTrue(
+            $parentPage->isPublishableIncludingChildPages(),
+            'Publishing a page including its subpages must not be blocked by dependencies within that subtree',
+        );
+    }
+
+    public function testCircularShortcutDependenciesStillBlockPublishingWithoutChildPages(): void
+    {
+        // Publishing the page alone stays blocked on purpose: subpage 1013 is not part of that run, so
+        // the shortcut target would be written to foreign while the page it belongs to is missing.
+        [$parentPage] = $this->createCircularShortcutDependencyTree();
+
+        self::assertFalse(
+            $parentPage->isPublishable(),
+            'Publishing the page without its subpages must stay blocked to avoid an orphaned record',
+        );
+    }
+
+    public function testSubpageStillRequiresItsParentPageToBePublished(): void
+    {
+        // The parent page is not part of the subpage's own subtree, so publishing the subpage alone
+        // remains blocked regardless of the scope.
+        [, $subPage] = $this->createCircularShortcutDependencyTree();
+
+        self::assertFalse($subPage->isPublishable());
+        self::assertFalse(
+            $subPage->isPublishableIncludingChildPages(),
+            'A subpage must still require its parent page, which is not part of its own publish set',
+        );
+    }
+
     protected function createRecord(
         string $table,
         int $id,
