@@ -54,3 +54,6 @@ Tests/Playwright/debug/
 .cache
 .npm
 .pki
+
+# Playwright task lock (see the with_playwright_lock helper in the Makefile)
+.playwright.lock/
