@@ -26,6 +26,9 @@ Build/local/config/sites/main/setup.typoscript
 Build/foreign/config/sites/main/setup.typoscript
 .php-cs-fixer.cache
 composer.lock
+# The extension-local TYPO3 instances are applications: pin their dependencies so CI cannot drift
+!Build/local/composer.lock
+!Build/foreign/composer.lock
 docker-compose.yaml
 node_modules/
 
