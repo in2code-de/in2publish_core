@@ -5,9 +5,11 @@ namespace PHPSTORM_META {
     registerArgumentsSet('side', 'local', 'foreign');
     registerArgumentsSet(
         'DependencyRequirement',
+        \In2code\In2publishCore\Component\Core\Record\Model\Dependency::REQ_CONSISTENT_EXISTENCE,
         \In2code\In2publishCore\Component\Core\Record\Model\Dependency::REQ_EXISTING,
         \In2code\In2publishCore\Component\Core\Record\Model\Dependency::REQ_ENABLECOLUMNS,
         \In2code\In2publishCore\Component\Core\Record\Model\Dependency::REQ_FULL_PUBLISHED,
+        \In2code\In2publishCore\Component\Core\Record\Model\Dependency::REQ_FULL_PUBLISHED_OR_LOCALLY_DELETED,
     );
 
     expectedReturnValues(
