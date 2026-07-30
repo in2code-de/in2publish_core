@@ -1,13 +1,8 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
 
 test.describe('Publish Changed Content', () => {
-
-    test.beforeAll(async () => {
-        await Environment.reset();
-    });
 
     test('Changed page content can be published', async ({ page, backend, browser }) => {
 

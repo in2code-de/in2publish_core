@@ -1,3 +1,5 @@
+name: in2publish_core
+
 services:
   local:
     image: in2code/httpd:2.4-alpine
@@ -27,7 +29,8 @@ services:
       - ./:/app/
       - ./:/packages/in2publish_core/
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
+      - ./.project/data/dumps:/${DUMPS_DIR}
+      - ./.project/data/fileadmin/:/${FILEADMIN_DIR}
     env_file:
       - .env
     environment:
@@ -75,14 +78,14 @@ services:
 
   mysql:
     image: in2code/mysql:8.0
-    command: --secure-file-priv=${SQLDUMPSDIR}
+    command: --secure-file-priv=${DUMPS_DIR}
     user: '1000'
     env_file:
       - .env
     volumes:
       - mysql-data:/var/lib/mysql
       - .project/docker/mysql/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
-      - ${SQLDUMPSDIR}:/${SQLDUMPSDIR}
+      - ./.project/data/dumps:/${DUMPS_DIR}
     ports:
       - ${SQLPORT}:3306
 
@@ -93,25 +96,35 @@ services:
       VIRTUAL_PORT: 8025
 
   playwright:
-    image: mcr.microsoft.com/playwright:v1.62.0-noble
+    profiles:
+      - tools
+    build:
+      context: .project/docker/playwright
+      dockerfile: Dockerfile
+    command: sleep infinity
     user: ${USER_ID:-1000}
+    group_add:
+      - "${DOCKER_GID:-999}"
     volumes:
       - ./:/work
+      - /var/run/docker.sock:/var/run/docker.sock
     working_dir: /work
     env_file:
       - .env
     environment:
       CI: "1"
+      HOME: /work
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
       PLAYWRIGHT_BASE_URL: https://${HOST_LOCAL}/typo3/
       PLAYWRIGHT_FOREIGN_BASE_URL: https://${HOST_FOREIGN}/typo3/
-      HOME: /work
+      COMPOSE_PROJECT_NAME: in2publish_core
+      LOCAL_FILEADMIN_DIR: /work/Build/local/public/fileadmin
     ports:
       - "9323:9323"
     networks:
       default:
-    depends_on:
-      - local
-      - foreign
+        aliases:
+          - playwright
 
 volumes:
   mysql-data:

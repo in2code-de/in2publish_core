@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { BackendPage as BaseBackendPage } from '@in2code/typo3-playwright/fixtures';
+import { BackendPage as BaseBackendPage } from '../shared/fixtures/index';
 import config from '../config';
 
 /**
@@ -48,7 +48,6 @@ export class BackendPage extends BaseBackendPage {
       await expect(label).toBeVisible({ timeout: 5000 });
       await label.scrollIntoViewIfNeeded();
       await label.click({ force: true });
-      await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
       await this.page.waitForTimeout(500);
     }
 

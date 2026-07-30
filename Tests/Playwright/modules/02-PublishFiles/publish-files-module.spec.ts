@@ -1,13 +1,9 @@
+import * as path from 'path';
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
 
 test.describe('Publish Files Module', () => {
-
-    test.beforeAll(async () => {
-        await Environment.reset();
-    });
 
     /**
      * Test Case 2a + 2e: A newly uploaded file can be published.
@@ -38,10 +34,10 @@ test.describe('Publish Files Module', () => {
 
             // Upload the file via the form
             const fileInput = backend.contentFrame.locator('input[name="upload_1[]"]');
-            await fileInput.setInputFiles('/work/packages/in2publish_core/Tests/Browser/files/carson-masterson-1540698-unsplash.jpg');
-            await backend.contentFrame.locator('#FileUploadController').locator('button[type="submit"]').click();
+            await fileInput.setInputFiles(path.resolve(__dirname, '../../../Browser/files/carson-masterson-1540698-unsplash.jpg'));
+            await backend.contentFrame.locator('#FileUploadController').locator('input[type="submit"]').click();
 
-            await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+            await page.waitForTimeout(1000);
         });
 
         await test.step('And I navigate to Publish Files for the folder', async () => {
@@ -140,7 +136,7 @@ test.describe('Publish Files Module', () => {
             await nameInput.fill('renamed-1523151-unsplash.jpg');
             await modal.locator('button[name="rename"]').click();
 
-            await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+            await page.waitForTimeout(1000);
         });
 
         await test.step('And I verify the renamed file in Filelist', async () => {

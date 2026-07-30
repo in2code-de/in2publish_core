@@ -1,13 +1,8 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
 
 test.describe('Publish Translation', () => {
-
-    test.beforeAll(async () => {
-        await Environment.reset();
-    });
 
     /**
      * Test Case 1d.1: Translated content in free mode can be published.
@@ -43,10 +38,10 @@ test.describe('Publish Translation', () => {
 
             // Verify local and foreign values
             await expect(
-                backend.contentFrame.locator('.in2publish-dirty-properties-local')
+                recordRow.locator('.in2publish-dirty-properties-local')
             ).toContainText('Header in German - Version 3');
             await expect(
-                backend.contentFrame.locator('.in2publish-dirty-properties-foreign')
+                recordRow.locator('.in2publish-dirty-properties-foreign')
             ).toContainText('Header in German - Version 2');
         });
 
@@ -120,10 +115,10 @@ test.describe('Publish Translation', () => {
             await infoIcon.click();
 
             await expect(
-                backend.contentFrame.locator('.in2publish-dirty-properties-local')
+                recordRow.locator('.in2publish-dirty-properties-local')
             ).toContainText('Header in German - Version 3');
             await expect(
-                backend.contentFrame.locator('.in2publish-dirty-properties-foreign')
+                recordRow.locator('.in2publish-dirty-properties-foreign')
             ).toContainText('Header in German - Version 2');
         });
 

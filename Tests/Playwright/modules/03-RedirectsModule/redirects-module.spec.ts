@@ -1,12 +1,7 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
 
 test.describe('Redirects Module', () => {
-
-    test.beforeAll(async () => {
-        await Environment.reset();
-    });
 
     /**
      * Tests that a redirect without site association can be published with site association.
