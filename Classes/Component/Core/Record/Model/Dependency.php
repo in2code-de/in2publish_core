@@ -45,6 +45,25 @@ class Dependency
      * reasons remain available for informational display, but they never block publishing.
      */
     private bool $ownerIsBeingDeleted;
+    /**
+     * False when fulfill() could not select any target record.
+     *
+     * All dependency targets are looked up in the local AND the foreign database before fulfill() is
+     * called, without any query restriction.
+     * @see RecordCollection::processDependencies
+     *
+     * A target which is not selectable at that point therefore holds nothing that could be published:
+     * either its row is absent from both databases, or the RecordFactory intentionally discarded it
+     * because it is soft deleted identically in both databases.
+     * @see \In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory::shouldIgnoreRecord
+     *
+     * Such a dependency must never block publishing: the requirement would be met anyway if the record
+     * had been kept (a record which is deleted in both databases is S_UNCHANGED and has consistent
+     * existence), and there is no publishing action an editor could perform to resolve it.
+     *
+     * see: https://projekte.in2code.de/issues/81908
+     */
+    private bool $targetExists = true;
 
     public function __construct(
         Record $record,
@@ -128,6 +147,7 @@ class Dependency
     {
         $records = $recordIndex->getRecordsByProperties($this->classification, $this->properties);
         if (empty($records)) {
+            $this->targetExists = false;
             $propertiesString = [];
             foreach ($this->properties as $key => $value) {
                 $propertiesString[] = $key . '=' . $value;
@@ -190,6 +210,10 @@ class Dependency
         // dependencies for a record, which is being deleted, do not need to be fulfilled: publishing the deletion
         // makes it invisible on foreign regardless of the state of related records.
         if ($this->ownerIsBeingDeleted) {
+            return true;
+        }
+        // A target which exists in neither database holds nothing publishable and can not block.
+        if ($this->targetExists === false) {
             return true;
         }
         if ($this->isSupersededByUnfulfilledDependency()) {
