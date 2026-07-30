@@ -28,4 +28,13 @@ call_user_func(function () {
     $context = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class);
     $context->setAspect('date', new DateTimeAspect(new \DateTimeImmutable('@' . time())));
     $GLOBALS['EXEC_TIME'] = time();
+
+    // PHPUnit resets $GLOBALS to this snapshot after every test because backupGlobals is enabled.
+    // Destructors running during garbage collection or shutdown therefore see a configuration
+    // without an encryption key, which makes HashService emit warnings and create invalid HMACs.
+    $settingsFile = dirname($testbase->getPackagesPath()) . '/config/system/settings.php';
+    if (file_exists($settingsFile)) {
+        $settings = require $settingsFile;
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] = $settings['SYS']['encryptionKey'] ?? '';
+    }
 });
