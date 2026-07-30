@@ -93,8 +93,7 @@ services:
       VIRTUAL_PORT: 8025
 
   playwright:
-    image: mcr.microsoft.com/playwright:v1.58.2-noble
-    command: sleep infinity
+    image: mcr.microsoft.com/playwright:v1.62.0-noble
     user: ${USER_ID:-1000}
     volumes:
       - ./:/work

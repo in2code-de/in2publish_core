@@ -5,31 +5,11 @@ This document contains the documentation for end-to-end browser tests for in2pub
 
 ## Overview
 
-The test setup supports two execution modes:
-
-1. **Local Execution** - Fast iteration for test development
-2. **Docker Execution** - Platform-independent, CI/CD ready (following TYPO3's approach)
+The test setup runs in Docker. Browser binaries are provided by the Playwright
+container and are not installed on the host machine.
 
 ## Prerequisites
 
-### For Local Execution
-- Node.js 18+ (required for Playwright)
-- npm 9+
-
-Check with: `node -v && npm -v`
-
-```bash
-# Install Node.js dependencies and Playwright browsers
-npm install
-npx playwright install
-```
-
-Playwright is also installed automatically when running the project setup:
-```bash
-make setup
-```
-
-### For Docker Execution
 - Docker must be installed and running
 - TYPO3 instances (local/foreign) must be running: `make start`
 - No local Node.js installation required
@@ -38,13 +18,16 @@ make setup
 
 All Playwright commands must be run from the `packages/in2publish_core` directory.
 
-### Local Development (Recommended for Writing Tests)
+### Docker workflow
 
 ```bash
-# Run all tests in headless mode
+# Create the container and install the test dependencies inside it
+make playwright-install
+
+# Run all tests in headless mode in Docker
 make playwright
 
-# Open Playwright UI for interactive test development
+# Open Playwright UI at http://localhost:<PLAYWRIGHT_UI_PORT>
 make playwright-ui
 
 # Run tests with visible browser (headed mode)
@@ -60,37 +43,7 @@ make playwright-report
 make playwright FILE="modules/PublishOverview/publish-changed-content.spec.ts"
 ```
 
-### Docker Execution (Recommended for CI/CD)
-
-```bash
-# Run all tests in Docker (headless)
-make playwright-docker
-
-# Run tests with UI mode in Docker (accessible at http://localhost:9323)
-make playwright-docker-ui
-
-# Run specific test file in Docker
-make playwright-docker-file FILE="Tests/Playwright/modules/PublishOverview/publish-changed-content.spec.ts"
-
-# Show test report from Docker tests
-make playwright-docker-report
-```
-
-## When to Use Which Mode
-
-### Use Local Execution When:
-- Writing new tests (fastest feedback loop)
-- Debugging test failures interactively
-- Generating test code with Playwright codegen
-- Developing test fixtures and helpers
-- Quick iteration during development
-
-### Use Docker Execution When:
-- Running tests in CI/CD pipelines
-- Validating tests on different platforms
-- Ensuring consistent execution environment
-- Team members without local Node.js setup
-- Final validation before committing
+`PLAYWRIGHT_UI_PORT` is configured in `.env` (currently `9325`).
 
 ## Architecture
 
@@ -138,7 +91,7 @@ Tests use authenticated sessions stored in `Tests/Playwright/.auth/login.json`. 
 
 The Docker setup uses a dedicated Playwright service in docker-compose:
 
-1. Playwright runs in Microsoft's official Playwright Docker image (v1.57.0)
+1. Playwright runs in Microsoft's official Playwright Docker image
 2. The container joins your existing Docker network (`in2publish_core_default`)
 3. Tests access your already-running TYPO3 instances (local + foreign) through the network
 4. Test files and results are mounted via volume at `/work`
@@ -213,13 +166,6 @@ Click on the failed test and open the "Trace" tab to time-travel through the tes
 
 ## Troubleshooting
 
-### Local Execution Issues
-
-**Browsers not installed:**
-```bash
-npx playwright install
-```
-
 **Tests not visible in UI mode:**
 - Make sure the "chromium" project is checked in the project filter at the top of the UI
 - The UI remembers your selection in browser localStorage
@@ -229,13 +175,7 @@ npx playwright install
 
 ### Updating Playwright
 
-**Local:**
-```bash
-npm update @playwright/test
-npx playwright install
-```
-
-**Docker:**
+Update the npm package and matching Docker image together:
 Update the image version in `.project/docker/docker-compose.*.yaml` files:
 ```yaml
 playwright:

@@ -1,6 +1,7 @@
 # Settings
 MAKEFLAGS += --silent --always-make
 SHELL := /bin/bash
+PLAYWRIGHT_UI_PORT ?= $(shell sed -n 's/^PLAYWRIGHT_UI_PORT=//p' .env)
 
 # colors
 RED     := $(shell tput -Txterm setaf 1)
@@ -71,8 +72,7 @@ setup: stop destroy .install-packages .create-certificate start .mysql-wait
 	git checkout Build/local/config/sites/main/config.yaml
 	git checkout Build/foreign/config/sites/main/config.yaml
 	make restore
-	npm install
-	npx playwright install
+	$(MAKE) playwright-install
 
 ## Wait for the mysql container to be fully provisioned
 .mysql-wait:
@@ -170,29 +170,36 @@ acceptance-test:
 		docker compose exec local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --filter "$(name)"; \
 	fi
 
-## Run all Playwright tests (headless) - LOCAL
+## Install Playwright test dependencies in the Docker service
+playwright-install: .link-compose-file
+	docker compose run --rm playwright npm ci
+
+## Run all Playwright tests in Docker (headless)
 playwright:
-	npx playwright test $(FILE)
+	docker compose run --rm -e CI=1 playwright npx playwright test $(FILE)
 
-## Open Playwright UI mode - LOCAL
+## Open Playwright UI mode in Docker
 playwright-ui:
-	npx playwright test --ui $(FILE)
+	echo "Open Playwright UI at http://localhost:$(PLAYWRIGHT_UI_PORT)"
+	echo "Press Ctrl+C to stop"
+	docker compose rm -sf playwright
+	docker compose run --rm --service-ports playwright npx playwright test --ui --ui-host=0.0.0.0 --ui-port=9323 $(FILE)
 
-## Open the last Playwright HTML report
+## Open the last Playwright HTML report in Docker
 playwright-report:
-	npx playwright show-report
+	docker compose run --rm --service-ports playwright npx playwright show-report --host=0.0.0.0 --port=9323
 
-## Run all Playwright tests in headed mode (watch) - LOCAL
+## Run all Playwright tests in headed mode in Docker
 playwright-watch:
-	npx playwright test --headed $(FILE)
+	docker compose run --rm playwright npx playwright test --headed $(FILE)
 
-## Run Playwright tests in debug mode - LOCAL
+## Run Playwright tests in debug mode in Docker
 playwright-debug:
-	npx playwright test --debug $(FILE)
+	docker compose run --rm playwright npx playwright test --debug $(FILE)
 
 ## Run Playwright tests in Docker (headless) - PLATFORM INDEPENDENT
 playwright-docker:
-	docker compose exec -e CI=1 playwright npx playwright test
+	docker compose run --rm -e CI=1 playwright npx playwright test
 
 
 ## Run Playwright tests in Docker with specific file - PLATFORM INDEPENDENT
@@ -202,11 +209,11 @@ playwright-docker-file:
 		echo "Example: make playwright-docker-file FILE=Tests/Playwright/modules/PublishOverview/publish-changed-content.spec.ts"; \
 		exit 1; \
 	fi
-	docker compose exec -e CI=1 playwright npx playwright test $(FILE)
+	docker compose run --rm -e CI=1 playwright npx playwright test $(FILE)
 
 ## Show Playwright report from Docker tests
 playwright-docker-report:
-	docker compose exec playwright npx playwright show-report
+	docker compose run --rm --service-ports playwright npx playwright show-report --host=0.0.0.0 --port=9323
 
 setup-qa:
 	docker run --rm -w "$$PWD" -v "$$PWD":"$$PWD" -v "$$HOME"/.phive/:/tmp/phive/ in2code/php:8.1-fpm phive install --trust-gpg-keys AA36B9960B5B823D,BBAB5DF0A0D6672989CF1869E82B2FB314E9906E,D91D86963AF3A29B6520462297B02DD8E5071466,E7A745102ECC980F7338B3079093F8B32E4815AA

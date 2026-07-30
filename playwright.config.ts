@@ -3,9 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * Playwright Configuration for in2publish_core
  *
- * This configuration supports both:
- * - Local execution: Fast iteration for test development (npm/npx)
- * - Docker execution: Platform-independent CI/CD (docker-compose)
+ * This configuration runs in the Playwright Docker service.
  *
  * Environment Variables:
  * - PLAYWRIGHT_BASE_URL: Override local instance URL (default: https://local.v13.in2publish-core.de/typo3/)
@@ -13,8 +11,9 @@ import { defineConfig, devices } from '@playwright/test';
  * - CI: Set to 1/true for CI mode (enables retries, enforces forbidOnly)
  *
  * Usage:
- *   Local:  make playwright-ui              (fast, for development)
- *   Docker: make playwright-docker          (platform-independent, for CI)
+ *   Install: make playwright-install
+ *   Test:    make playwright
+ *   UI:      make playwright-ui
  *
  * See https://playwright.dev/docs/test-configuration.
  */
