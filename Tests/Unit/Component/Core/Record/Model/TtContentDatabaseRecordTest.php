@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Model;
 
+use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Dependency;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\Record\Model\TtContentDatabaseRecord;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 
 #[CoversMethod(TtContentDatabaseRecord::class, '__construct')]
@@ -58,13 +60,13 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         $this->assertInstanceOf(Dependency::class, $dependency1);
         $this->assertSame('table_bar', $dependency1->getClassification());
         $this->assertSame(['uid' => '1'], $dependency1->getProperties());
-        $this->assertSame(Dependency::REQ_FULL_PUBLISHED, $dependency1->getRequirement());
+        $this->assertSame(Dependency::REQ_FULL_PUBLISHED_OR_LOCALLY_DELETED, $dependency1->getRequirement());
 
         $dependency2 = $ttContentDatabaseRecord->calculateDependencies()[1];
         $this->assertInstanceOf(Dependency::class, $dependency2);
         $this->assertSame('table_bar', $dependency2->getClassification());
         $this->assertSame(['uid' => '2'], $dependency2->getProperties());
-        $this->assertSame(Dependency::REQ_FULL_PUBLISHED, $dependency2->getRequirement());
+        $this->assertSame(Dependency::REQ_FULL_PUBLISHED_OR_LOCALLY_DELETED, $dependency2->getRequirement());
 
         $recordWithinDependency = $dependency1->getRecord();
         $this->assertInstanceOf(TtContentDatabaseRecord::class, $recordWithinDependency);
@@ -147,9 +149,12 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         }
     }
 
-    public function testActiveShortcutWithMissingTargetIsStillBlocked(): void
+    public function testActiveShortcutWithMissingTargetIsNotBlocked(): void
     {
-        // Scenario: an active shortcut pointing to a non-existent target must remain blocked.
+        // Scenario: an active shortcut references a target which has been deleted and published, so the
+        // target exists in neither database. TYPO3 keeps the dangling reference in the records field.
+        // Publishing must not be blocked: there is nothing left to publish for the target and no
+        // editor action could resolve it.
         $localProps = ['CType' => 'shortcut', 'records' => 'table_bar_1'];
         $foreignProps = ['CType' => 'shortcut', 'records' => 'table_bar_1'];
 
@@ -162,16 +167,93 @@ class TtContentDatabaseRecordTest extends UnitTestCase
             $dependency->fulfill($emptyCollection);
         }
 
-        $hasUnfulfilled = false;
         foreach ($record->getDependencies() as $dependency) {
-            if (!$dependency->isFulfilled()) {
+            self::assertTrue(
+                $dependency->isFulfilled(),
+                'A shortcut dependency with a target missing in both databases must not block publishing',
+            );
+        }
+    }
+
+    /**
+     * @return array<string, array{0: array<string, mixed>, 1: array<string, mixed>, 2: string}>
+     */
+    public static function unpublishedTargetDeletionDataProvider(): array
+    {
+        return [
+            'soft deleted on local, still present on foreign' => [
+                ['uid' => 1, 'deleted' => 1],
+                ['uid' => 1, 'deleted' => 0],
+                Record::S_SOFT_DELETED,
+            ],
+            'hard deleted on local, still present on foreign' => [
+                [],
+                ['uid' => 1, 'deleted' => 0],
+                Record::S_DELETED,
+            ],
+        ];
+    }
+
+    #[DataProvider('unpublishedTargetDeletionDataProvider')]
+    public function testShortcutIsNotBlockedByATargetWhoseDeletionIsNotPublishedYet(
+        array $targetLocalProps,
+        array $targetForeignProps,
+        string $expectedTargetState
+    ): void {
+        // Scenario: the shortcut target has been deleted on local, but that deletion has not been
+        // published yet. The editor can not see the target anymore, so the demand to publish it first
+        // is not actionable. TYPO3 tolerates a missing shortcut target without showing an error.
+        $GLOBALS['TCA']['table_bar']['ctrl']['delete'] = 'deleted';
+
+        $shortcut = new TtContentDatabaseRecord(
+            'table_foo',
+            42,
+            ['CType' => 'shortcut', 'records' => 'table_bar_1'],
+            ['CType' => 'shortcut', 'records' => 'table_bar_1'],
+            [],
+        );
+        $target = new DatabaseRecord('table_bar', 1, $targetLocalProps, $targetForeignProps, []);
+
+        self::assertSame($expectedTargetState, $target->getState());
+
+        $recordCollection = new RecordCollection([$target]);
+        foreach ($shortcut->getDependencies() as $dependency) {
+            $dependency->fulfill($recordCollection);
+            self::assertTrue(
+                $dependency->isFulfilled(),
+                'A shortcut target which no longer exists on local must not block publishing',
+            );
+        }
+    }
+
+    public function testShortcutIsStillBlockedByAnUnpublishedTarget(): void
+    {
+        // Scenario: the shortcut target is new and not deleted. Publishing the shortcut without the
+        // target must keep being blocked, because the editor can resolve this by publishing the target.
+        $GLOBALS['TCA']['table_bar']['ctrl']['delete'] = 'deleted';
+
+        $shortcut = new TtContentDatabaseRecord(
+            'table_foo',
+            42,
+            ['CType' => 'shortcut', 'records' => 'table_bar_1'],
+            ['CType' => 'shortcut', 'records' => 'table_bar_1'],
+            [],
+        );
+        $target = new DatabaseRecord('table_bar', 1, ['uid' => 1, 'deleted' => 0], [], []);
+
+        self::assertSame(Record::S_ADDED, $target->getState());
+
+        $recordCollection = new RecordCollection([$target]);
+        $hasUnfulfilled = false;
+        foreach ($shortcut->getDependencies() as $dependency) {
+            $dependency->fulfill($recordCollection);
+            if ($dependency->isFulfilled() === false) {
                 $hasUnfulfilled = true;
-                break;
             }
         }
         self::assertTrue(
             $hasUnfulfilled,
-            'An active shortcut with a missing target must still have unfulfilled dependencies',
+            'A shortcut pointing to an unpublished, existing target must still block publishing',
         );
     }
 

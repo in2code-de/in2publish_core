@@ -108,7 +108,7 @@ class DependencyTest extends UnitTestCase
         );
     }
 
-    public function testFulfillReturnsFalseIfRecordDoesNotExist(): void
+    public function testFulfillDoesNotBlockButRecordsAReasonIfRecordDoesNotExist(): void
     {
         // arrange
         $dependency = new Dependency(
@@ -128,7 +128,8 @@ class DependencyTest extends UnitTestCase
         $dependency->fulfill($recordCollection);
 
         // assert
-        self::assertFalse($dependency->isFulfilled());
+        // A target which exists in neither database holds nothing publishable, so it must not block.
+        self::assertTrue($dependency->isFulfilled());
 
         $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
         $reflectionProperty->setAccessible(true);
@@ -140,6 +141,64 @@ class DependencyTest extends UnitTestCase
         $actualLabel = $reasons->getAll()[0]->getLabel();
 
         self::assertSame($expectedReasonLabel, $actualLabel);
+    }
+
+    public function testFullPublishedRequirementIsNotRelaxedForLocallyDeletedTargets(): void
+    {
+        // REQ_FULL_PUBLISHED is public API for third party record types (see
+        // Documentation/Developers/RecordDependencies.md) and keeps demanding an unchanged target.
+        // Only REQ_FULL_PUBLISHED_OR_LOCALLY_DELETED tolerates a target deleted on local.
+        $dependency = new Dependency(
+            $this->createMock(Record::class),
+            'classification',
+            ['uid' => 1],
+            Dependency::REQ_FULL_PUBLISHED,
+            'label',
+            static function () {
+                return ['arguments'];
+            },
+        );
+
+        $record = new DatabaseRecord('classification', 1, [], ['uid' => 1, 'deleted' => 0], []);
+        $recordCollection = new RecordCollection([$record]);
+
+        $dependency->fulfill($recordCollection);
+
+        self::assertSame(Record::S_DELETED, $record->getState());
+        self::assertFalse(
+            $dependency->isFulfilled(),
+            'REQ_FULL_PUBLISHED must keep blocking for a target which is deleted on local',
+        );
+    }
+
+    public function testInconsistentExistenceOfAnExistingTargetStillBlocks(): void
+    {
+        // Regression guard for the missing target relaxation: a target which is deleted on local but
+        // still present on foreign is never discarded by the RecordFactory, so it remains selectable
+        // and must keep blocking. Publishing it anyway would let local and foreign disagree about the
+        // existence of a relation target, e.g. a translation parent.
+        $dependency = new Dependency(
+            $this->createMock(Record::class),
+            'classification',
+            ['uid' => 1],
+            Dependency::REQ_CONSISTENT_EXISTENCE,
+            'label',
+            static function () {
+                return ['arguments'];
+            },
+        );
+
+        $record = $this->createMock(DatabaseRecord::class);
+        $record->method('hasConsistentExistence')->willReturn(false);
+        $recordCollection = $this->createMock(RecordCollection::class);
+        $recordCollection->expects($this->once())->method('getRecordsByProperties')->willReturn([$record]);
+
+        $dependency->fulfill($recordCollection);
+
+        self::assertFalse(
+            $dependency->isFulfilled(),
+            'A target with inconsistent existence across local and foreign must still block publishing',
+        );
     }
 
     public function testFulfillReturnsTrueIfRecordIsUnchangedAndRequirementIsFullyPublished(): void
@@ -381,7 +440,7 @@ class DependencyTest extends UnitTestCase
         );
         $recordCollection = new RecordCollection([$record]);
         $dependency->fulfill($recordCollection);
-        self::assertFalse($dependency->isFulfilled());
+        self::assertTrue($dependency->isFulfilled());
         self::assertTrue($dependency->isReachable());
     }
 

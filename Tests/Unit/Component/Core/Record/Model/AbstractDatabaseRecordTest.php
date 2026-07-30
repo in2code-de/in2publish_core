@@ -188,7 +188,11 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         $child = $this->createRecord('foo', 235, $childLocalProps, $childForeignProps, []);
         $testRecord->addChild($child);
 
-        $recordCollection = new RecordCollection([$testRecord, $child]);
+        // The parent pages exist, but only in the local database, so they do not meet REQ_EXISTING.
+        $unpublishedPageOne = new DatabaseRecord('pages', 7, ['uid' => 7], [], []);
+        $unpublishedPageTwo = new DatabaseRecord('pages', 18, ['uid' => 18], [], []);
+
+        $recordCollection = new RecordCollection([$testRecord, $child, $unpublishedPageOne, $unpublishedPageTwo]);
 
         $this->fulfillDependencies($testRecord, $recordCollection);
 
@@ -243,7 +247,10 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         ];
         $testRecord = $this->createRecord('foo', 123, $localProps, $foreignProps, []);
 
-        $recordCollection = new RecordCollection([$testRecord]);
+        // The parent page exists, but only in the local database, so it does not meet REQ_EXISTING.
+        $unpublishedPage = new DatabaseRecord('pages', 7, ['uid' => 7], [], []);
+
+        $recordCollection = new RecordCollection([$testRecord, $unpublishedPage]);
 
         $this->fulfillDependencies($testRecord, $recordCollection);
 
@@ -426,10 +433,12 @@ class AbstractDatabaseRecordTest extends UnitTestCase
         );
     }
 
-    public function testActiveTranslationWithNonExistentLanguageParentIsStillBlocked(): void
+    public function testActiveTranslationWithNonExistentLanguageParentIsNotBlocked(): void
     {
-        // Scenario: an active (non-deleted) translation with a non-existent language parent.
-        // Publishing must be blocked because of the missing language parent.
+        // Scenario: an active (non-deleted) translation whose language parent exists in neither
+        // database. The translation is already orphaned on local, and publishing copies
+        // sys_lang_parent verbatim, so both databases keep the very same dangling relation.
+        // Blocking would only prevent local and foreign from becoming equal.
         $localProps = [
             'uid' => 123,
             'sys_lang' => 1,
@@ -449,9 +458,50 @@ class AbstractDatabaseRecordTest extends UnitTestCase
             $dependency->fulfill($emptyCollection);
         }
 
+        self::assertFalse(
+            $testRecord->hasUnfulfilledDependenciesRecursively(),
+            'A translation whose language parent exists in neither database must not be blocked',
+        );
+    }
+
+    public function testTranslationWithInconsistentlyDeletedLanguageParentIsStillBlocked(): void
+    {
+        // Scenario: the language parent is soft deleted on local but still present on foreign. Such a
+        // record is never discarded by the RecordFactory, so it stays selectable and must keep
+        // blocking: publishing the translation would let local and foreign disagree about whether the
+        // translation parent exists.
+        $localProps = [
+            'uid' => 123,
+            'sys_lang' => 1,
+            'sys_lang_parent' => 99,
+            'deleted' => 0,
+        ];
+        $foreignProps = [
+            'uid' => 123,
+            'sys_lang' => 1,
+            'sys_lang_parent' => 99,
+            'deleted' => 1,
+        ];
+        $testRecord = $this->createRecord('foo', 123, $localProps, $foreignProps, []);
+
+        $GLOBALS['TCA']['foo']['ctrl'][AbstractDatabaseRecord::CTRL_PROP_DELETE] = 'deleted';
+        $languageParent = $this->createRecord(
+            'foo',
+            99,
+            ['uid' => 99, 'deleted' => 1],
+            ['uid' => 99, 'deleted' => 0],
+            [],
+        );
+        $recordCollection = new RecordCollection([$testRecord, $languageParent]);
+
+        foreach ($testRecord->getDependencies() as $dependency) {
+            $dependency->fulfill($recordCollection);
+        }
+
+        self::assertFalse($languageParent->hasConsistentExistence());
         self::assertTrue(
             $testRecord->hasUnfulfilledDependenciesRecursively(),
-            'An active translation with a missing language parent must still be blocked',
+            'A language parent which is deleted on local but present on foreign must still block',
         );
     }
 
