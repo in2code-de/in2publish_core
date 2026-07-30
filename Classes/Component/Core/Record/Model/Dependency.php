@@ -24,6 +24,7 @@ class Dependency
     public const REQ_EXISTING = 'existing';
     public const REQ_ENABLECOLUMNS = 'enablecolumns';
     public const REQ_FULL_PUBLISHED = 'fully_published';
+    public const REQ_FULL_PUBLISHED_OR_LOCALLY_DELETED = 'fully_published_or_locally_deleted';
     private Record $record;
     private string $classification;
     private array $properties;
@@ -172,6 +173,12 @@ class Dependency
     protected function recordMatchesRequirements(Record $record): bool
     {
         if (self::REQ_FULL_PUBLISHED === $this->requirement) {
+            return $record->getState() === Record::S_UNCHANGED;
+        }
+        if (self::REQ_FULL_PUBLISHED_OR_LOCALLY_DELETED === $this->requirement) {
+            if ($record instanceof AbstractDatabaseRecord && $record->isDeletedInLocalDatabase()) {
+                return true;
+            }
             return $record->getState() === Record::S_UNCHANGED;
         }
         if (self::REQ_EXISTING === $this->requirement) {

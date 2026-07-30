@@ -8,11 +8,32 @@ published so that the depending record can be published.
 * `record`: The record which has the dependency
 * `classification`: The classification of the record that is required
 * `properties`: An array of `['property' => 'value']` pairs that identify the required record, usually `['uid' => 123]`.
-* `requirement`: One of the `Dependency::REQ_*` constants.
+* `requirement`: One of the `Dependency::REQ_*` constants, see [Requirements](#requirements).
 * `label`: A full label identifier (starting with `LLL:`) which is rendered when the required record does not meet the
   requirements.
 * `labelArgumentsFactory`: A `Closure` with signature `function (Record $record): array;` which returns an array of
   values for interpolation with the label.
+
+## Requirements
+
+The requirement defines which condition the required record must meet.
+
+| Constant | The required record must ... |
+|---|---|
+| `REQ_EXISTING` | exist on foreign, i.e. its state must not be "added". |
+| `REQ_CONSISTENT_EXISTENCE` | exist on both sides or on neither side. Used for translation parents to prevent local and foreign from disagreeing about the existence of the relation target. |
+| `REQ_ENABLECOLUMNS` | have all inherited enable columns (hidden, starttime, ...) published. |
+| `REQ_FULL_PUBLISHED` | have no changes between local and foreign, i.e. its state must be "unchanged". |
+| `REQ_FULL_PUBLISHED_OR_LOCALLY_DELETED` | like `REQ_FULL_PUBLISHED`, but a target which is deleted in the local database is accepted, no matter whether that deletion has been published already. |
+
+Use `REQ_FULL_PUBLISHED_OR_LOCALLY_DELETED` for soft references which the frontend renders tolerantly. TYPO3 keeps
+such references when the target is deleted, e.g. the `records` field of a shortcut content element. Because an editor
+can neither see nor restore a target which is gone on local, demanding its publication would block the depending
+record permanently. `REQ_FULL_PUBLISHED` is the right choice whenever a missing target would break the depending
+record.
+
+A dependency to a record which exists in neither the local nor the foreign database never blocks publishing,
+regardless of the requirement: there is nothing that could be published for such a target.
 
 ## Example
 
