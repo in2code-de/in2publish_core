@@ -115,6 +115,12 @@ interface Record extends Node
     public function isPublishable(): bool;
 
     /**
+     * Publishability for a publishing run which includes child pages and therefore publishes this
+     * record's whole subtree.
+     */
+    public function isPublishableIncludingChildPages(): bool;
+
+    /**
      * @return array<string>
      */
     public function getReasonsWhyTheRecordIsNotPublishableHumanReadable(): array;

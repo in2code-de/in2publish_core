@@ -459,6 +459,19 @@ abstract class AbstractRecord implements Record
             && !$this->hasReasonsWhyTheRecordIsNotPublishable();
     }
 
+    /**
+     * Publishability for a publishing run which includes child pages.
+     *
+     * Such a run publishes this record's whole subtree, so dependencies between records of that
+     * subtree are fulfilled by the run itself and must not block it.
+     * @see PublisherService::publishAllPublishable
+     */
+    public function isPublishableIncludingChildPages(): bool
+    {
+        return !$this->hasUnfulfilledDependenciesIncludingChildPages()
+            && !$this->hasReasonsWhyTheRecordIsNotPublishable();
+    }
+
     public function getReasonsWhyTheRecordIsNotPublishableHumanReadable(): array
     {
         $string = [];
@@ -486,17 +499,64 @@ abstract class AbstractRecord implements Record
 
     public function hasUnfulfilledDependenciesRecursively(): bool
     {
-        if (isset($this->rtc['hasUnfulfilledDependenciesRecursively'])) {
-            return $this->rtc['hasUnfulfilledDependenciesRecursively'];
+        return $this->hasUnfulfilledDependencies(false);
+    }
+
+    public function hasUnfulfilledDependenciesIncludingChildPages(): bool
+    {
+        return $this->hasUnfulfilledDependencies(true);
+    }
+
+    protected function hasUnfulfilledDependencies(bool $includeChildPages): bool
+    {
+        $cacheKey = 'hasUnfulfilledDependencies' . ($includeChildPages ? 'IncludingChildPages' : '');
+        if (isset($this->rtc[$cacheKey])) {
+            return $this->rtc[$cacheKey];
         }
+        $publishSet = $this->getPublishSet($includeChildPages);
         /** @var array<Dependency> $allDependencies */
         $allDependencies = $this->getAllDependencies();
         foreach ($allDependencies as $dependency) {
-            if (!$dependency->isFulfilled() && !$dependency->canBeFulfilledBy($this)) {
-                return $this->rtc['hasUnfulfilledDependenciesRecursively'] = true;
+            if (!$dependency->isFulfilled() && !$dependency->canBeFulfilledByPublishing($publishSet)) {
+                return $this->rtc[$cacheKey] = true;
             }
         }
-        return $this->rtc['hasUnfulfilledDependenciesRecursively'] = false;
+        return $this->rtc[$cacheKey] = false;
+    }
+
+    /**
+     * All records which a publishing run started on this record writes to foreign.
+     *
+     * Non-page children are always published together with their parent, child pages only when the run
+     * includes them.
+     * @see PublisherService::processChildRecords
+     *
+     * @param array<string, array<array-key, true>> $publishSet
+     * @return array<string, array<array-key, true>>
+     */
+    public function getPublishSet(bool $includeChildPages, array &$publishSet = []): array
+    {
+        $classification = $this->getClassification();
+        $id = $this->getId();
+        if (isset($publishSet[$classification][$id])) {
+            return $publishSet;
+        }
+        $publishSet[$classification][$id] = true;
+
+        foreach ($this->children as $childClassification => $children) {
+            if ('pages' === $childClassification && false === $includeChildPages) {
+                continue;
+            }
+            foreach ($children as $child) {
+                $child->getPublishSet($includeChildPages, $publishSet);
+            }
+        }
+        foreach ($this->translations as $translatedRecords) {
+            foreach ($translatedRecords as $translatedRecord) {
+                $translatedRecord->getPublishSet($includeChildPages, $publishSet);
+            }
+        }
+        return $publishSet;
     }
 
     public function isPublishableIgnoringUnreachableDependencies(): bool

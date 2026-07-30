@@ -136,7 +136,7 @@ class PublisherService
 
         $this->eventDispatcher->dispatch(new RecordWasSelectedForPublishing($record));
 
-        $wasPublished = $this->publishRecordIfPublishable($record, $isTopLevelCall);
+        $wasPublished = $this->publishRecordIfPublishable($record, $isTopLevelCall, $includeChildPages);
 
         // Always process children if record was published
         // Also process children if we're not in publishAll mode (individual publishing)
@@ -153,8 +153,11 @@ class PublisherService
         }
     }
 
-    private function publishRecordIfPublishable(Record $record, bool $isTopLevelCall): bool
-    {
+    private function publishRecordIfPublishable(
+        Record $record,
+        bool $isTopLevelCall,
+        bool $includeChildPages = false
+    ): bool {
         if ($record->hasReasonsWhyTheRecordIsNotPublishable()) {
             return false;
         }
@@ -164,7 +167,7 @@ class PublisherService
         }
 
         // Determine if record is publishable based on context
-        $shouldPublish = $this->shouldRecordBePublished($record, $isTopLevelCall);
+        $shouldPublish = $this->shouldRecordBePublished($record, $isTopLevelCall, $includeChildPages);
 
         if ($shouldPublish) {
             $this->publisherCollection->publish($record);
@@ -176,15 +179,22 @@ class PublisherService
         return false;
     }
 
-    private function shouldRecordBePublished(Record $record, bool $isTopLevelCall): bool
-    {
+    private function shouldRecordBePublished(
+        Record $record,
+        bool $isTopLevelCall,
+        bool $includeChildPages = false
+    ): bool {
         // If not in publishAll mode, use the less strict check
         if (!$this->isPublishAllMode) {
             return true;
         }
 
         if ($isTopLevelCall && $record->getClassification() === 'pages') {
-            // Top-level pages and independent child pages must pass strict dependency check
+            // Top-level pages and independent child pages must pass strict dependency check. When the
+            // run includes child pages, dependencies within the published subtree do not block it.
+            if ($includeChildPages) {
+                return $record->isPublishableIncludingChildPages();
+            }
             return $record->isPublishable();
         }
 

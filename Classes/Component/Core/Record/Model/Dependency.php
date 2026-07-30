@@ -229,6 +229,34 @@ class Dependency
         return true;
     }
 
+    /**
+     * Whether publishing the given set of records fulfills this dependency.
+     *
+     * All records of a publishing run are written to foreign within a single transaction, so a target
+     * which is part of that run meets the requirement as soon as the transaction is committed. Without
+     * this, records which depend on each other across a page boundary can block each other
+     * permanently: a page can not be published because a shortcut target on one of its subpages is not
+     * published yet, while that subpage can not be published because its parent page is missing on
+     * foreign.
+     *
+     * @param array<string, array<array-key, true>> $publishSet Keys are classification and record id
+     */
+    public function canBeFulfilledByPublishing(array $publishSet): bool
+    {
+        if ($this->selectedRecords->isEmpty()) {
+            return false;
+        }
+        foreach ($this->selectedRecords as $selectedRecord) {
+            if (
+                !isset($publishSet[$selectedRecord->getClassification()][$selectedRecord->getId()])
+                && !$this->recordMatchesRequirements($selectedRecord)
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function getReasonsHumanReadable(): string
     {
         return implode(PHP_EOL, $this->reasons->map(static fn (Reason $reason) => $reason->getReadableLabel()));
