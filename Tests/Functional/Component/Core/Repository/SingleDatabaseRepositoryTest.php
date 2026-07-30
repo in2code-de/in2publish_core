@@ -17,8 +17,8 @@ use function array_column;
  */
 class SingleDatabaseRepositoryTest extends FunctionalTestCase
 {
-    // Read-only tests do not require database reset
-    protected bool $initializeDatabase = false;
+    // The tests assert against the fixture dumps, so they must not run on a mutated database
+    protected bool $initializeDatabase = true;
 
     public function testFindByPropertyReturnsRowsSortedByTcaCtrl(): void
     {
@@ -28,7 +28,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
 
         $rows = $singleDataRepository->findByProperty('pages', 'uid', [1, 3, 6]);
         $sortings = array_column($rows, 'sorting');
-        self::assertSame([128, 512, 544], $sortings);
+        self::assertSame([32, 128, 512], $sortings);
     }
 
     public function testFindByPropertyWithJoinReturnsJoinedRows(): void
@@ -43,93 +43,93 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
             'sys_category_record_mm',
             'sys_category',
             'uid_foreign',
-            [77, 78],
+            [470, 471],
         );
         self::assertSame([
-            '6ed754e2fa2e937739af04a069a6f6d9e96db685' => [
+            '6e04e475f8bd1c56c0b8ec573e3014ebac9a19be' => [
                 'mmtbl' => [
-                    'uid_local' => 1,
-                    'uid_foreign' => 77,
-                    'sorting' => 3,
+                    'uid_local' => 3,
+                    'uid_foreign' => 470,
+                    'sorting' => 0,
                     'sorting_foreign' => 1,
-                    'tablenames' => "pages",
-                    'fieldname' => "categories",
+                    'tablenames' => 'pages',
+                    'fieldname' => 'categories',
                 ],
                 'table' => [
-                    'uid' => 1,
-                    'pid' => 1,
-                    'tstamp' => 1730129770,
-                    'crdate' => 1730129770,
+                    'uid' => 3,
+                    'pid' => 468,
+                    'tstamp' => 1741948624,
+                    'crdate' => 1741948624,
                     'deleted' => 0,
                     'hidden' => 0,
                     'starttime' => 0,
                     'endtime' => 0,
                     'sorting' => 256,
-                    'description' => "",
+                    'description' => null,
                     'sys_language_uid' => 0,
                     'l10n_parent' => 0,
                     'l10n_state' => null,
-                    'l10n_diffsource' => "",
+                    'l10n_diffsource' => '',
                     't3ver_oid' => 0,
                     't3ver_wsid' => 0,
                     't3ver_state' => 0,
                     't3ver_stage' => 0,
-                    'title' => '"Category 1"',
+                    'title' => 'Styleguide Demo Category',
                     'items' => 0,
                     'parent' => 0,
                     'images' => 0,
                     'single_pid' => 0,
                     'shortcut' => 0,
-                    'import_id' => "",
-                    'import_source' => "",
-                    'seo_title' => "",
-                    'seo_description' => '',
-                    'seo_headline' => "",
-                    'seo_text' => '',
-                    'slug' => '"category-1"',
+                    'import_id' => '',
+                    'import_source' => '',
+                    'seo_title' => '',
+                    'seo_description' => null,
+                    'seo_headline' => '',
+                    'seo_text' => null,
+                    'slug' => 'styleguide-demo-category',
                 ],
             ],
-            'a991a8cbb167889a955eecbdba10bb99a9d8ec4d' => [
+            'deda66f4a31170256196697aaebff628ac686bf4' => [
                 'mmtbl' => [
-                    'uid_local' => 2,
-                    'uid_foreign' => 78,
+                    'uid_local' => 3,
+                    'uid_foreign' => 471,
                     'sorting' => 0,
                     'sorting_foreign' => 1,
-                    'tablenames' => "pages",
-                    'fieldname' => "categories",
+                    'tablenames' => 'pages',
+                    'fieldname' => 'categories',
                 ],
                 'table' => [
-                    'uid' => 2,
-                    'pid' => 1,
-                    'tstamp' => 1730129781,
-                    'crdate' => 1730129781,
+                    'uid' => 3,
+                    'pid' => 468,
+                    'tstamp' => 1741948624,
+                    'crdate' => 1741948624,
                     'deleted' => 0,
                     'hidden' => 0,
                     'starttime' => 0,
                     'endtime' => 0,
-                    'sorting' => 512,
-                    'description' => "",
+                    'sorting' => 256,
+                    'description' => null,
                     'sys_language_uid' => 0,
                     'l10n_parent' => 0,
                     'l10n_state' => null,
-                    'l10n_diffsource' => "",
+                    'l10n_diffsource' => '',
                     't3ver_oid' => 0,
                     't3ver_wsid' => 0,
                     't3ver_state' => 0,
                     't3ver_stage' => 0,
-                    'title' => '"Category 2"',
+                    'title' => 'Styleguide Demo Category',
                     'items' => 0,
                     'parent' => 0,
                     'images' => 0,
                     'single_pid' => 0,
                     'shortcut' => 0,
-                    'import_id' => "",
-                    'import_source' => "",
-                    'seo_title' => "",
-                    'seo_description' => '',
-                    'seo_headline' => "",
-                    'seo_text' => '',
-                    'slug' => '"category-2"',
+                    'import_id' => '',
+                    'import_source' => '',
+                    'seo_title' => '',
+                    'seo_description' => null,
+                    'seo_headline' => '',
+                    'seo_text' => null,
+                    'slug' => 'styleguide-demo-category',
                 ],
             ],
         ], $rows);
@@ -153,7 +153,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                 'starttime' => 0,
                 'endtime' => 0,
                 'fe_group' => "",
-                'sorting' => 6912,
+                'sorting' => 8448,
                 'rowDescription' => "Old row description",
                 'editlock' => 0,
                 'sys_language_uid' => 0,
@@ -221,6 +221,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                 'sitemap_priority' => "0.5",
                 'sitemap_changefreq' => "",
                 'tx_styleguide_containsdemo' => "",
+                'no_search_sub_entries' => 0,
             ],
         ], $rows);
     }
