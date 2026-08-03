@@ -69,6 +69,11 @@ test.describe('Publish Record With Dependency', () => {
             await backend.contentFrame.locator(
                 '[data-record-identifier="pages-35"] .icon-actions-arrow-right'
             ).click();
+
+            await expect(backend.contentFrame.locator('body')).toContainText(
+                'The selected record has been published successfully',
+                { timeout: 60000 }
+            );
         });
 
         await test.step('Then after re-opening Publish Overview, the child should now be publishable', async () => {
