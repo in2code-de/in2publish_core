@@ -1,5 +1,49 @@
 # In2publish Core Change Log
 
+13.4.1
+- [META] Set the EM conf version number to 13.4.1
+- [DOCS] Update Changelog.md
+- [TEST] fix test publish-record-with-dependency.spec.ts by waiting for completed publishing before checking for visibility of icons
+- [TASK] use associative array keys for TCA items
+- [TEST][AI] adjust SKILLS.md for generating playwright tests
+- [TEST][WORKAROUND] fix publish-files-mdoule.spec.ts by adding second selection step
+- [TEST] stabilise Playwright suite against environment reset
+- [BUGFIX] eliminate undefined array key errors
+- [BUGFIX][CI] use mysql loader for DB restore in order to fix failing CI pipelines
+- [TEST] increase test timeout in order to fix some failing tests
+- [TEST] fix functional tests
+- [DEV] add .playwright.lock to .gitignore
+- [TEST][BUGFIX] Eliminate warning: Undefined global variable $TYPO3_CONF_VARS in /app/Build/local/vendor/typo3/cms-core/Classes/Crypto/HashService during execution of functional tests
+- [DEV] commit composer.lock for dev instances to avoid drift of packages between local development and CI
+- [DEV][TASK] Merge remote-tracking branch 'origin/feature/81586-playwright-backport' into typo3_13
+- [DEV][AI] stop tracking settings.local.json
+- [DEV] update playwright image and eliminate local playwright setup
+- [TEST] adjust Unit tests to reflect adjusted dependency handling
+- [BUGFIX] Do not block publishing on shortcuts targets which are deleted in local database
+- [BUGFIX] Do not block publishing on dependency targets which exist in neither database
+- [TASK] Improve the notifications during the context menu publishing
+- [BUGFIX] Fix publishing a page via the context menu
+- [DEV] add make task for running a single unit test
+- [TASK] Guard the news cache task against missing configuration keys
+- [TEST] Add unit test for FlushFrontendPageCacheTask
+- [TASK] Report a frontend cache flush task without PID as failed
+- [BUGFIX] Fix TypeError in the frontend page cache flush task
+- [TEST] backport of playwright and playwright tests to typo3_13
+- [TASK] update package-lock.json
+- [DEV] update phive packages
+- [DEV] add trusted keys for phive package installation to restore setup-qa task
+- [TASK] adjust composer requirements for co-stack packages
+- [DEV] mount local composer auth.json to docker for test setup
+- [TASK] add branch alias to composer.json
+- [BUGFIX] Disable original constructor in Registry mock
+- [TEST] Add performance regression test for recursive dependency check
+- [BUGFIX] Memoize recursive dependency check while publishing
+- [BUGFIX] add backendGlobal.js only in backend context
+- [CLEANUP] remove selenium containers from docker setup
+- [BUGFIX] Merge pull request #128 from zecm-via/bugfix/strict-array-comparison
+- [BUGFIX] Merge pull request #131 from in2code-de/dependabot/npm_and_yarn/Resources/Private/Build/multi-bf05dc1ecf
+- [UPGRADE]Bump picomatch in /Resources/Private/Build
+
 13.4.0
 - [META] Set the EM conf version number to 13.4.0
 - [DOCS] Update Changelog.md
@@ -108,7 +152,7 @@
 - [BUGFIX] remove StopwatchAlreadyStartedException keep the startTime if already set
 - [BUGFIX] Fix implicit nullable in Builder
 - [BUGFIX] Prevent exception if request is not set in LanguageAugmentations
-- 
+-
 13.0.1
 
 - [META] Set the EM conf version number to 13.0.1
