@@ -26,12 +26,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
                 'eval' => 'trim',
                 'items' => [
                     [
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.config.items.null',
-                        null,
+                        'label' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.config.items.null',
+                        'value' => null,
                     ],
                     [
-                        'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host_global_text',
-                        '*',
+                        'label' => 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host_global_text',
+                        'value' => '*',
                     ],
                 ],
                 'itemsProcFunc' => ForeignSiteIdentifierItemProcFunc::class . '->addData',

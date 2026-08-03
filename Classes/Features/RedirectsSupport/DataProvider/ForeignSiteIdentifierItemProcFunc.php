@@ -39,7 +39,10 @@ class ForeignSiteIdentifierItemProcFunc
     {
         $sites = $this->foreignSiteFinder->getAllSites();
         foreach ($sites as $site) {
-            $result['items'][] = [$site->getIdentifier() . ' (' . $site->getBase() . ')', $site->getIdentifier()];
+            $result['items'][] = [
+                'label' => $site->getIdentifier() . ' (' . $site->getBase() . ')',
+                'value' => $site->getIdentifier(),
+            ];
         }
     }
 }
