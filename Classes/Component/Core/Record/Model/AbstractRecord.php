@@ -195,8 +195,8 @@ abstract class AbstractRecord implements Record
         $isSoftDeleted = false;
         $deleteField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['delete'] ?? null;
         if (null !== $deleteField) {
-            $isSoftDeleted = $this->localProps[$deleteField];
-            if ($isSoftDeleted && $this->foreignProps[$deleteField]) {
+            $isSoftDeleted = $this->localProps[$deleteField] ?? false;
+            if ($isSoftDeleted && ($this->foreignProps[$deleteField] ?? false)) {
                 $isSoftDeleted = false;
             }
         }
@@ -217,7 +217,9 @@ abstract class AbstractRecord implements Record
             }
 
             foreach ($movedIndicatorFields as $movedIndicatorField) {
-                if ($this->localProps[$movedIndicatorField] !== $this->foreignProps[$movedIndicatorField]) {
+                $localValue = $this->localProps[$movedIndicatorField] ?? null;
+                $foreignValue = $this->foreignProps[$movedIndicatorField] ?? null;
+                if ($localValue !== $foreignValue) {
                     return Record::S_MOVED;
                 }
             }
