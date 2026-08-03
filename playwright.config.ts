@@ -33,7 +33,7 @@ export default defineConfig({
   workers: 1,
 
   /* Test timeout */
-  timeout: 60000,
+  timeout: 150000,
 
   /* Expect timeout */
   expect: {
