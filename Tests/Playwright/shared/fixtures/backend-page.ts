@@ -21,10 +21,29 @@ export class BackendPage {
 
   async gotoModule(moduleName: string): Promise<void> {
     const moduleLink = this.page.locator(`#modulemenu a.modulemenu-action[title="${moduleName}"]`);
+    const moduleHref = await moduleLink.getAttribute('href', { timeout: 30000 });
+    const modulePath = new URL(moduleHref ?? '', this.page.url()).pathname;
+
     await moduleLink.click({ timeout: 30000 });
 
     await expect(this.page.locator('iframe#typo3-contentIframe')).toBeVisible({ timeout: 45000 });
     await expect(moduleLink).toHaveClass(/modulemenu-action-active/, { timeout: 30000 });
+
+    // The content iframe element survives module switches, so its visibility says nothing about which module is
+    // rendered inside it. Without waiting for the embedded document itself, assertions can still run against the
+    // old module.
+    await this.page.waitForFunction(
+      (expectedPath) => {
+        const iframe = document.querySelector('iframe#typo3-contentIframe') as HTMLIFrameElement | null;
+        const iframeDocument = iframe?.contentDocument ?? null;
+
+        return iframeDocument !== null
+          && iframeDocument.readyState === 'complete'
+          && iframeDocument.location.pathname === expectedPath;
+      },
+      modulePath,
+      { timeout: 45000 },
+    );
     await this.page.waitForTimeout(1000);
   }
 

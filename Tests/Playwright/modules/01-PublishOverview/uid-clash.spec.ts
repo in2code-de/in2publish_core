@@ -1,15 +1,15 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { execMake } from '../../shared/helpers';
+import { resetEnvironment } from '../../shared/helpers';
 
 
 test.describe('UID Clash', () => {
 
      test.setTimeout(120000);
      // DB restore is required here between each test - published categories need to be reset
-     test.beforeEach(async () => {
-         execMake('restore-db');
+     test.beforeEach(async ({ page }) => {
+         await resetEnvironment(page, 'restore-db');
      });
 
     /**

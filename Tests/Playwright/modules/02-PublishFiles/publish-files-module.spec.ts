@@ -2,8 +2,13 @@ import * as path from 'path';
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
+import { resetEnvironment } from '../../shared/helpers';
 
 test.describe('Publish Files Module', () => {
+
+    test.beforeEach(async ({ page }) => {
+        await resetEnvironment(page);
+    });
 
     /**
      * Test Case 2a + 2e: A newly uploaded file can be published.

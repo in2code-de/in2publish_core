@@ -1,6 +1,6 @@
-import { test as setup, expect } from '@playwright/test';
+import { test as setup} from '@playwright/test';
 import { createGlobalLoginSetup } from './shared/setup/index';
-import { execMake } from './shared/helpers';
+import { resetEnvironment } from './shared/helpers';
 import config from './config';
 
 const performLogin = createGlobalLoginSetup(config, 'Tests/Playwright/.auth/login.json');
@@ -8,7 +8,7 @@ const performLogin = createGlobalLoginSetup(config, 'Tests/Playwright/.auth/logi
 setup('reset environment and authenticate', async ({ page }) => {
 
   // Reset the local + foreign database and fileadmin.
-  execMake('restore');
+  await resetEnvironment(page);
 
   await performLogin(page);
 });
