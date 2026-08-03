@@ -2,10 +2,13 @@
 
 ## Project Setup
 
-- **Shared package**: `@in2code/typo3-playwright` (from tarball, see package.json)
-- **Playwright version**: 1.57+
+- **Shared helpers**: vendored in `Tests/Playwright/shared/` (fixtures, helpers, setup)
+- **Playwright version**: 1.62+
 - **Test location**: `Tests/Playwright/modules/<Area>/<test-name>.spec.ts`
-- **Runner**: `make playwright` (Docker) or `npx playwright test` (local)
+- **Runner**: `make test-playwright` (all tests), `make playwright-ui` (UI mode), both use `FILE=` to select a test
+
+Tests always run inside the `playwright` container. That image ships `make` and the Docker CLI and has the Docker
+socket mounted, which is what lets a spec reset the environment through the Makefile.
 
 ---
 
@@ -17,7 +20,7 @@ Always import `{ test, expect }` from the project's fixtures file, **not** from 
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { Environment } from '../../helpers/Environment';
+import { execMake } from '../../shared/helpers';
 ```
 
 ---
@@ -27,8 +30,10 @@ import { Environment } from '../../helpers/Environment';
 ```typescript
 test.describe('Publish Changed Page Properties', () => {
 
-    test.beforeAll(async () => {
-        await Environment.reset();  // Restores DB + fileadmin via 'make restore'
+    // Only needed when the spec changes state that later tests rely on.
+    // 'restore' resets DB + fileadmin + caches, 'restore-db' only the databases.
+    test.beforeEach(() => {
+        execMake('restore');
     });
 
     test('Test case description', async ({ page, backend, browser }) => {
@@ -255,10 +260,14 @@ await backend.waitUntilPublishingFinished();
 config.local.baseUrl   // Local backend URL (e.g. https://local.v13.in2publish-core.de/typo3/)
 config.foreign.baseUrl // Foreign backend URL (e.g. https://foreign.v13.in2publish-core.de/typo3/)
 
-// Environment reset runs 'make restore' (DB + fileadmin) from monorepo root
-// Skipped automatically when CI=1 (inside Docker)
-await Environment.reset();
+// Environment reset runs a Makefile target from the extension root inside the
+// container. It always runs, in CI as well, because specs rely on it for isolation.
+execMake('restore');     // databases + fileadmin + TYPO3 caches
+execMake('restore-db');  // databases only (faster, for specs that don't touch files)
 ```
+
+A reset takes roughly 20 seconds and counts towards the test timeout, so keep
+`timeout` in `playwright.config.ts` in mind when adding one to a slow spec.
 
 ---
 
@@ -266,4 +275,5 @@ await Environment.reset();
 
 - Use kebab-case: `publish-changed-page-properties.spec.ts`
 - Location: `Tests/Playwright/modules/<Area>/`
-- Module areas: `PublishOverview/`, `PublishFiles/`, `RedirectsModule/`, `Regression/`
+- Module areas are numbered to pin their execution order: `00-PublisherTools/`,
+  `01-PublishOverview/`, `02-PublishFiles/`, `03-RedirectsModule/`, `04-Miscellaneous/`
