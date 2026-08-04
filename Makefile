@@ -287,8 +287,28 @@ endef
 define ensure_playwright_stack
 	$(MAKE) .link-compose-file; \
 	$(MAKE) .ensure-provisioned || exit 1; \
-	docker compose up -d >/dev/null
+	docker compose up -d >/dev/null; \
+	$(MAKE) .build-playwright-image
 endef
+
+# The playwright service is profile-gated, so "docker compose up -d" never (re)builds it: the image is
+# built once and then keeps its original Playwright base image forever. As soon as the Dockerfile pins a
+# different version, the browser revisions baked into the image stop matching the driver installed from
+# package.json, which surfaces as "Executable doesn't exist at /ms-playwright/...". Comparing the pinned
+# base image against the one the current image was built from keeps this cheap: a full cached rebuild
+# costs several seconds on every test run, the comparison only pays that price on an actual mismatch.
+.build-playwright-image:
+	image="$$(docker compose config --images playwright)"; \
+	pinned="$$(sed -n 's~^FROM \(mcr\.microsoft\.com/playwright:[^ ]*\).*~\1~p' $(PLAYWRIGHT_DOCKERFILE))"; \
+	built=''; \
+	if docker image inspect "$$image" >/dev/null 2>&1; then \
+		built="$$(docker run --rm --entrypoint sh "$$image" -c 'cat /ms-playwright/.docker-info' 2>/dev/null \
+			| sed -n 's~.*"dockerImageName": *"\([^"]*\)".*~\1~p')"; \
+	fi; \
+	if [ "$$pinned" != "$$built" ]; then \
+		echo "$(EMOJI_robot) Rebuilding the Playwright image ($${built:-not built yet} -> $$pinned)"; \
+		docker compose --profile tools build playwright; \
+	fi
 
 define stop_playwright_tasks
 	$(MAKE) .link-compose-file; \
@@ -322,6 +342,9 @@ PHIVE_TRUST_KEYS := 0x97B02DD8E5071466,0x31C7E470E2138192,0xE82B2FB314E9906E,0xA
 # the mounted docker socket (execInContainer / execTypo3Command). Empty on hosts
 # without a docker group; the compose file then falls back to a default.
 export DOCKER_GID := $(shell getent group docker 2>/dev/null | cut -d: -f3)
+
+# Single source of truth for the pinned Playwright base image, read by .build-playwright-image
+PLAYWRIGHT_DOCKERFILE := .project/docker/playwright/Dockerfile
 
 # colors
 RED     := $(shell tput -Txterm setaf 1)
