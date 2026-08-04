@@ -1,5 +1,5 @@
 import { expect } from '../playwright';
-import type { Page } from '../playwright';
+import type { Locator, Page } from '../playwright';
 import { backendLogin } from '../helpers/backend-login.helper';
 import { Typo3TestConfig } from '../types';
 
@@ -21,13 +21,47 @@ export class BackendPage {
 
   async gotoModule(moduleName: string): Promise<void> {
     const moduleLink = this.page.locator(`#modulemenu a.modulemenu-action[title="${moduleName}"]`);
+    const modulePath = await this.resolveModulePath(moduleLink);
+
     await moduleLink.click({ timeout: 30000 });
 
     await expect(this.page.locator('iframe#typo3-contentIframe')).toBeVisible({ timeout: 45000 });
     await expect(moduleLink).toHaveClass(/modulemenu-action-active/, { timeout: 30000 });
+    await this.waitForModuleDocument(modulePath);
     await this.page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
     await this.page.waitForTimeout(1000);
     await this.page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+  }
+
+  /**
+   * Resolve the path the given module menu link navigates the content iframe to.
+   */
+  protected async resolveModulePath(moduleLink: Locator): Promise<string> {
+    const moduleHref = await moduleLink.getAttribute('href', { timeout: 30000 });
+
+    return new URL(moduleHref ?? '', this.page.url()).pathname;
+  }
+
+  /**
+   * Wait until the content iframe really shows the module reachable under the given path.
+   *
+   * The content iframe element survives module switches, so its visibility says nothing about which module is
+   * rendered inside it. Without waiting for the embedded document itself, assertions can still run against the
+   * old module.
+   */
+  protected async waitForModuleDocument(modulePath: string): Promise<void> {
+    await this.page.waitForFunction(
+      (expectedPath) => {
+        const iframe = document.querySelector('iframe#typo3-contentIframe') as HTMLIFrameElement | null;
+        const iframeDocument = iframe?.contentDocument ?? null;
+
+        return iframeDocument !== null
+          && iframeDocument.readyState === 'complete'
+          && iframeDocument.location.pathname === expectedPath;
+      },
+      modulePath,
+      { timeout: 45000 },
+    );
   }
 
   async searchInPageTreeAndSelectFirstOccurrence(searchText: string): Promise<void> {

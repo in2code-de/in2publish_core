@@ -86,14 +86,9 @@ export class BackendPage extends BaseBackendPage {
       await moduleLink.click({ timeout: 30000 });
     }
 
-    // TYPO3 v14 loads modules in the content iframe — verify the iframe src
-    // contains the module path from the menu link's href.
-    const href = await moduleLink.getAttribute('href');
-    if (href) {
-      const modulePath = href.split('?')[0];
-      const iframe = this.page.locator('#typo3-contentIframe');
-      await expect(iframe).toHaveAttribute('src', new RegExp(modulePath.replace(/[/]/g, '\\/')), { timeout: 45000 });
-    }
+    // TYPO3 v14 loads modules in the content iframe. Its 'src' is set as soon as the switch starts, so waiting for
+    // the embedded document itself is what actually proves the new module is rendered.
+    await this.waitForModuleDocument(await this.resolveModulePath(moduleLink));
 
     await expect(this.page.locator('#typo3-contentIframe')).toBeAttached({ timeout: 45000 });
     await this.contentFrame.locator('body').waitFor({ state: 'visible', timeout: 45000 });
