@@ -78,13 +78,13 @@ mysql-restore: .ensure-provisioned .mysql-wait
 playwright-clear-runtime-state: .mysql-wait
 	echo "$(EMOJI_broom) Clearing Playwright runtime state"
 	for database in local foreign; do \
-		tables="$$(docker compose exec -T mysql mysql -uroot -proot -N -B -e \
+		tables="$$(docker compose exec -T $(MYSQL_ROOT_ENV) mysql mysql -uroot -N -B -e \
 			"SELECT table_name FROM information_schema.tables \
 			 WHERE table_schema = '$$database' \
 			 AND table_name IN ('be_sessions', 'fe_sessions', 'sys_lockedrecords', 'sys_messenger_messages')")"; \
 		sql="SET FOREIGN_KEY_CHECKS=0;"; \
 		for table in $$tables; do sql="$$sql DELETE FROM \`$$table\`;"; done; \
-		docker compose exec -T mysql mysql -uroot -proot "$$database" \
+		docker compose exec -T $(MYSQL_ROOT_ENV) mysql mysql -uroot "$$database" \
 			-e "$$sql SET FOREIGN_KEY_CHECKS=1;"; \
 	done
 
@@ -269,18 +269,21 @@ help:
 
 ## Wait for the mysql container to be fully provisioned
 .mysql-wait:
-	echo "$(EMOJI_ping_pong) Checking DB up and running"
+	echo "$(EMOJI_ping_pong) Waiting for the database (initialising a fresh volume takes about 30 seconds)"
 	attempt=0; \
-	while ! error="$$(docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" 2>&1 >/dev/null)"; do \
+	while ! error="$$(docker compose exec -T $(MYSQL_ROOT_ENV) mysql mysql -uroot local -e "SELECT 1;" 2>&1 >/dev/null)"; do \
 		attempt=$$((attempt + 1)); \
-		if [ "$$attempt" -ge 40 ]; then \
-			echo "$(EMOJI_face_with_rolling_eyes) Database is not reachable, giving up. Last error:"; \
+		if [ "$$attempt" -ge $(MYSQL_WAIT_ATTEMPTS) ]; then \
+			echo ""; \
+			echo "$(EMOJI_face_with_rolling_eyes) Database is not reachable after $$attempt attempts, giving up. Last error:"; \
 			echo "$$error"; \
 			exit 1; \
 		fi; \
-		echo "$(EMOJI_face_with_rolling_eyes) Waiting for database ($$attempt/40): $$error"; \
-		sleep 3; \
-	done;
+		printf "."; \
+		sleep $(MYSQL_WAIT_INTERVAL); \
+	done; \
+	echo ""; \
+	echo "$(EMOJI_robot) Database is up and running"
 
 .install-packages:
 	if [[ "$$OSTYPE" == "linux-gnu" ]]; then \
