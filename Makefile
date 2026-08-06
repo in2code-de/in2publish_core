@@ -45,10 +45,19 @@ playwright-stop:
 # RESTORING DATA
 #############################################################################################
 
-restore: restore-db fileadmin-restore typo3-clearcache
+restore: restore-db fileadmin-restore typo3-clear-pagecache
 
 ## Restore only the databases (no fileadmin) - used by Playwright specs that don't touch files
 restore-db: mysql-restore .ensure-foreign-empty-tables typo3-comparedb
+
+## Prepare a pristine environment once before a Playwright run
+playwright-prepare: playwright-reset fileadmin-restore typo3-comparedb typo3-clear-pagecache
+
+## Reset database state between Playwright tests without booting TYPO3
+playwright-reset: mysql-restore .ensure-foreign-empty-tables playwright-clear-runtime-state
+
+## Reset database and fileadmin state for Playwright tests that modify files
+playwright-reset-files: playwright-reset fileadmin-restore
 
 ## Fail early when the extension-local TYPO3 instances are not provisioned yet
 .ensure-provisioned:
@@ -64,6 +73,21 @@ mysql-restore: .ensure-provisioned .mysql-wait
 	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dlocal -f/$(DUMPS_DIR)/local/
 	echo "$(EMOJI_robot) Restoring the foreign database"
 	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/$(DUMPS_DIR)/foreign/
+
+## Clear database-backed caches and volatile state excluded from fixture dumps without booting TYPO3
+playwright-clear-runtime-state: .mysql-wait
+	echo "$(EMOJI_broom) Clearing Playwright runtime state"
+	for database in local foreign; do \
+		tables="$$(docker compose exec -T mysql mysql -uroot -proot -N -B -e \
+			"SELECT table_name FROM information_schema.tables \
+			 WHERE table_schema = '$$database' \
+			 AND (table_name LIKE 'cache\\\\_%' ESCAPE '\\\\' \
+			 OR table_name IN ('be_sessions', 'fe_sessions', 'sys_lockedrecords', 'sys_messenger_messages'))")"; \
+		sql="SET FOREIGN_KEY_CHECKS=0;"; \
+		for table in $$tables; do sql="$$sql DELETE FROM \`$$table\`;"; done; \
+		docker compose exec -T mysql mysql -uroot -proot "$$database" \
+			-e "$$sql SET FOREIGN_KEY_CHECKS=1;"; \
+	done
 
 ## Restores the fileadmin from FILEADMIN_DIR
 fileadmin-restore:
@@ -136,6 +160,12 @@ typo3-clearcache:
 	echo "$(EMOJI_broom) Clearing TYPO3 caches"
 	docker compose exec -u app local-php ./vendor/bin/typo3 cache:flush
 	docker compose exec -u app foreign-php ./vendor/bin/typo3 cache:flush
+
+## Clears database-dependent caches without invalidating the expensive DI cache
+typo3-clear-pagecache:
+	echo "$(EMOJI_broom) Clearing TYPO3 page caches"
+	docker compose exec -u app local-php ./vendor/bin/typo3 cache:flush --group pages
+	docker compose exec -u app foreign-php ./vendor/bin/typo3 cache:flush --group pages
 
 ## Hard-deletes all caches (including DI) and rebuilds them on the fly
 typo3-rebuild-caches:

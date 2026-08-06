@@ -30,12 +30,6 @@ import { execMake } from '../../shared/helpers';
 ```typescript
 test.describe('Publish Changed Page Properties', () => {
 
-    // Only needed when the spec changes state that later tests rely on.
-    // 'restore' resets DB + fileadmin + caches, 'restore-db' only the databases.
-    test.beforeEach(() => {
-        execMake('restore');
-    });
-
     test('Test case description', async ({ page, backend, browser }) => {
 
         await test.step('Given I am logged in', async () => {
@@ -55,7 +49,8 @@ test.describe('Publish Changed Page Properties', () => {
 
 **Rules:**
 - Tests run sequentially (`workers: 1`, `fullyParallel: false`) — DB state is shared
-- `test.beforeAll` resets the environment once per describe block
+- The fixture restores database state automatically before every test
+- File-changing specs use `test.use({ autoRestore: false })` plus `playwright-reset-files`
 - Use `test.step()` for complex multi-step flows
 
 ---
@@ -260,13 +255,13 @@ await backend.waitUntilPublishingFinished();
 config.local.baseUrl   // Local backend URL (e.g. https://local.v13.in2publish-core.de/typo3/)
 config.foreign.baseUrl // Foreign backend URL (e.g. https://foreign.v13.in2publish-core.de/typo3/)
 
-// Environment reset runs a Makefile target from the extension root inside the
-// container. It always runs, in CI as well, because specs rely on it for isolation.
-execMake('restore');     // databases + fileadmin + TYPO3 caches
-execMake('restore-db');  // databases only (faster, for specs that don't touch files)
+// The setup project runs the expensive preparation once. The fixture resets DB state before each test.
+execMake('playwright-prepare');     // once per run: DB + fileadmin + schema + page caches
+execMake('playwright-reset');       // between tests: databases + volatile database state
+execMake('playwright-reset-files'); // only for tests that modify files: reset + fileadmin
 ```
 
-A reset takes roughly 20 seconds and counts towards the test timeout, so keep
+Resets invoked by a spec count towards the test timeout, so keep
 `timeout` in `playwright.config.ts` in mind when adding one to a slow spec.
 
 ---

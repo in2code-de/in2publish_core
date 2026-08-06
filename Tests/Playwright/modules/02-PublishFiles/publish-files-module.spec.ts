@@ -6,8 +6,10 @@ import { resetEnvironment } from '../../shared/helpers';
 
 test.describe('Publish Files Module', () => {
 
+    test.use({ autoRestore: false });
+
     test.beforeEach(async ({ page }) => {
-        await resetEnvironment(page);
+        await resetEnvironment(page, 'playwright-reset-files');
     });
 
     /**

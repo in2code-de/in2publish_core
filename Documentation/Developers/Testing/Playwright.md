@@ -1,212 +1,189 @@
-# Playwright Testing for in2publish_core
+# Playwright testing
 
-We have started to migrate our browser tests from Codeception to Playwright to improve stability, speed, and debugging capabilities.
-This document contains the documentation for end-to-end browser tests for in2publish_core using Playwright.
+The Playwright suites test publishing between two real TYPO3 installations in a browser. Both
+`in2publish_core` and `in2publish` (Enterprise) have their own isolated Docker Compose stack, their
+own databases and their own host names. They do not use the development stack at the repository
+root.
 
-## Overview
+## Quick start
 
-The test setup runs in Docker. Browser binaries are provided by the Playwright
-container and are not installed on the host machine.
-
-## Prerequisites
-
-- Docker must be installed and running
-- TYPO3 instances (local/foreign) must be running: `make start`
-- No local Node.js installation required
-
-## Quick Start
-
-All Playwright commands must be run from the `packages/in2publish_core` directory.
-
-### Docker workflow
+Provision each extension-local TYPO3 environment once before its first test run:
 
 ```bash
-# Create the container and install the test dependencies inside it
-make playwright-install
+cd packages/in2publish_core
+make setup
 
-# Run all tests in headless mode in Docker
-make playwright
-
-# Open Playwright UI at http://localhost:<PLAYWRIGHT_UI_PORT>
-make playwright-ui
-
-# Run tests with visible browser (headed mode)
-make playwright-watch
-
-# Debug tests with Playwright Inspector
-make playwright-debug
-
-# View the last test report
-make playwright-report
-
-# Run specific test file
-make playwright FILE="modules/PublishOverview/publish-changed-content.spec.ts"
+cd ../in2publish
+make setup
 ```
 
-`PLAYWRIGHT_UI_PORT` is configured in `.env` (currently `9325`).
+Tests can then be started from the repository root:
 
-## Architecture
+```bash
+# Run both suites, one after the other
+make test-playwright
 
-### Test Structure
+# Run one suite
+make test-playwright-core
+make test-playwright-enterprise
+
+# Run one file in a suite
+make test-playwright-core FILE="Tests/Playwright/modules/01-PublishOverview/publish-changed-content.spec.ts"
+
+# Open the Playwright UI or the latest report
+make playwright-core-ui
+make playwright-core-report
+make playwright-enterprise-ui
+make playwright-enterprise-report
+
+# Stop running Playwright tasks
+make playwright-stop
 ```
-Tests/Playwright/
-├── config.ts                   # Test configuration
-├── global.setup.ts             # Global setup (authentication)
-├── fixtures/                   # Custom fixtures
-│   ├── backend-page.ts         # TYPO3 backend page fixture
-│   └── setup-fixtures.ts       # Setup fixtures
-├── helpers/                    # Test helpers
-│   ├── Environment.ts          # Environment configuration
-│   └── Typo3Helper.ts          # TYPO3-specific helpers
-└── modules/                    # Test files organized by module
-    ├── PublishOverview/
-    └── PublisherTools/
+
+The corresponding commands inside an extension directory are `make test-playwright`,
+`make playwright-ui`, `make playwright-report` and `make playwright-stop`.
+
+## Test stacks
+
+Each stack represents the normal Content Publisher setup:
+
+```text
+local TYPO3  ---- publishing ---->  foreign TYPO3
 ```
 
-### Configuration
+The following long-running services are started for a test suite:
 
-The test configuration is in `playwright.config.ts` at the project root.
+| Service | Purpose |
+|---|---|
+| `local` | HTTP server for the local TYPO3 installation |
+| `local-php` | PHP runtime for the local TYPO3 installation |
+| `foreign` | HTTP server for the foreign TYPO3 installation |
+| `foreign-php` | PHP runtime for the foreign TYPO3 installation |
+| `mysql` | Holds the separate `local` and `foreign` databases |
+| `mail` | Captures test email |
 
-**Key Configuration:**
-- Base URL: `https://local.v13.in2publish-core.de/typo3/` (override with `PLAYWRIGHT_BASE_URL`)
-- Workers: 1 (sequential execution due to shared database state)
-- Retries: 2 on CI, 0 locally
-- Timeout: 60 seconds per test
+The Enterprise stack additionally starts `local-solr` and `foreign-solr`.
 
-### Environment Isolation
+TYPO3 is stored on the host below the extension directory, not inside an anonymous container
+volume:
 
-The `in2publish_core` tests operate in an isolated environment (`packages/in2publish_core/.env`).
-- **Local System**: `https://local.v13.in2publish-core.de`
-- **Foreign System**: `https://foreign.v13.in2publish-core.de`
+```text
+Build/local/       local TYPO3 installation
+Build/foreign/     foreign TYPO3 installation
+```
 
-The test helper `Environment.ts` automatically handles database resets (`make restore`) before tests run.
+The HTTP services serve `Build/local/public` and `Build/foreign/public`; the PHP services execute
+the corresponding TYPO3 installations. The default backend URLs are:
 
-### Authentication
+| Suite | Local | Foreign |
+|---|---|---|
+| Core | `https://local.v13.in2publish-core.de/typo3/` | `https://foreign.v13.in2publish-core.de/typo3/` |
+| Enterprise | `https://local.v13.in2publish-enterprise.de/typo3/` | `https://foreign.v13.in2publish-enterprise.de/typo3/` |
 
-Tests use authenticated sessions stored in `Tests/Playwright/.auth/login.json`. The authentication is performed once in `global.setup.ts` and reused across all tests for performance.
+The Playwright service is different from the services above. `docker compose run --rm playwright`
+creates a temporary container for the test command. Chromium, Node.js and the test runner execute
+inside it, so Node.js and browser binaries are not required on the host. The container joins the
+same Docker network as TYPO3 and is removed after the command finishes.
 
-## Docker Implementation Details
+## Provisioning and startup
 
-### How It Works
+`make setup` is the one-time, comparatively expensive provisioning step. It recreates the stack,
+installs Composer dependencies, runs `typo3 install:setup` for both TYPO3 installations and restores
+their initial data and files.
 
-The Docker setup uses a dedicated Playwright service in docker-compose:
+A normal Playwright run does not reinstall TYPO3. It:
 
-1. Playwright runs in Microsoft's official Playwright Docker image
-2. The container joins your existing Docker network (`in2publish_core_default`)
-3. Tests access your already-running TYPO3 instances (local + foreign) through the network
-4. Test files and results are mounted via volume at `/work`
-5. The service runs continuously (`sleep infinity`) for fast test execution
+1. acquires the extension-local `.playwright.lock`, preventing two commands from changing the same
+   test environment concurrently;
+2. selects the platform-specific Compose file and verifies that `Build/*/vendor` exists;
+3. builds the Playwright image and starts the extension-local services;
+4. creates the temporary Playwright container, runs `npm install`, and starts `npx playwright test`.
 
-### Docker Compose Service
+Core and Enterprise use different Compose project names, ports, host names and lock files. Their
+suites may therefore exist independently even though `make test-playwright` deliberately runs them
+one after another.
 
-The Playwright service is defined in `.project/docker/docker-compose.*.yaml`:
+## Restore lifecycle
 
-### Environment Variables
+The database dumps and fileadmin fixtures are snapshots of a known test state. Restoring them makes
+tests independent of changes made by earlier tests.
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PLAYWRIGHT_BASE_URL` | Base URL for local TYPO3 instance | `https://local.v13.in2publish-core.de/typo3/` |
-| `PLAYWRIGHT_FOREIGN_BASE_URL` | Base URL for foreign TYPO3 instance | `https://foreign.v13.in2publish-core.de/typo3/` |
-| `CI` | Enable CI mode (retries, forbidOnly) | `0` (set to `1` in CI) |
-| `HOST_LOCAL` | Hostname for local instance | From `.env` file |
-| `HOST_FOREIGN` | Hostname for foreign instance | From `.env` file |
+### Once per test run: `playwright-prepare`
 
-### Accessing Both Instances in Tests
+The Playwright setup project calls `make playwright-prepare` before the browser tests start. It:
 
-Tests can access both local and foreign instances using the config helper:
+1. restores both databases;
+2. restores local and foreign `fileadmin`;
+3. creates and empties tables that must exist but are intentionally absent from the foreign dump;
+4. applies pending TYPO3 database schema changes;
+5. clears TYPO3 page caches.
+
+Core also authenticates once during global setup and stores the browser session in
+`Tests/Playwright/.auth/login.json`. Enterprise normally logs in through its test fixture.
+
+### Before each test: `playwright-reset`
+
+The automatic fixture calls `make playwright-reset` before each test. This faster reset:
+
+- imports the local and foreign database snapshots again;
+- recreates the required empty foreign tables;
+- clears volatile database state such as caches, sessions, record locks and messenger messages.
+
+It deliberately does not restore fileadmin, update the schema or flush TYPO3 caches through the
+TYPO3 command line. Those expensive operations have already happened during `playwright-prepare`.
+
+Tests run sequentially (`workers: 1`) because they share the same TYPO3 installations and database
+state.
+
+### Tests that change files: `playwright-reset-files`
+
+A test that uploads, renames, moves, deletes or publishes files must also restore fileadmin. It must
+disable the normal automatic reset and request the file reset instead:
 
 ```typescript
-import config from '../config';
+test.use({ autoRestore: false });
 
-// Access local instance (default)
-await page.goto(config.local.baseUrl + 'module/web/In2publishCoreM1');
-
-// Access foreign instance
-await page.goto(config.foreign.baseUrl + 'module/web/In2publishCoreM1');
-```
-
-## Writing Tests
-
-see: https://playwright.dev/docs/writing-tests
-
-### Example Test
-
-```typescript
-import { test, expect } from '../../fixtures/setup-fixtures';
-import config from '../../config';
-
-test.describe('Publish Overview Module', () => {
-  test('should display changed records', async ({ page, backend }) => {
-    await backend.login();
-    await backend.gotoModule('Publish Overview');
-
-    await expect(
-      backend.contentFrame.locator('.record-list')
-    ).toBeVisible();
-  });
+test.beforeEach(async ({ page }) => {
+  await resetEnvironment(page, 'playwright-reset-files');
 });
 ```
 
-## Debugging
+`playwright-reset-files` performs the database/runtime reset and restores fileadmin. Disabling the
+automatic reset avoids importing the databases twice for the same test.
 
-### Playwright UI Mode
-The UI mode lets you explore tests, see the DOM snapshot for each step, and debug effectively.
-```bash
-make playwright-ui
+## Core and Enterprise fixture data
+
+Core restores its own database dumps and fileadmin snapshots directly.
+
+Enterprise is an extension of Core, so its baseline is layered:
+
+```text
+Core fixture data  ->  Enterprise fixture overlay  ->  ready Enterprise test state
 ```
 
-**Important:** In Playwright UI, make sure to check the "chromium" project in the project filter at the top to see all tests.
+For databases, the Core dumps supplied by the Composer-installed `in2publish_core` package are
+imported first, followed by the Enterprise-specific dumps. Fileadmin follows the same rule: Core
+files are restored as the base and Enterprise files are copied over them. This avoids duplicating
+the complete Core fixture set in the Enterprise repository.
 
-### Trace Viewer
-By default, we capture traces on failure. To view the trace of a failed test:
-```bash
-make playwright-report
-```
-Click on the failed test and open the "Trace" tab to time-travel through the test execution.
+## Configuration and debugging
 
-## Troubleshooting
+The relevant files are:
 
-**Tests not visible in UI mode:**
-- Make sure the "chromium" project is checked in the project filter at the top of the UI
-- The UI remembers your selection in browser localStorage
+- `playwright.config.ts`: browser projects, timeouts, reporters and worker count;
+- `.env`: host names, SQL port and Playwright UI port;
+- `.project/docker/docker-compose.*.yaml`: TYPO3 and Playwright services;
+- `Tests/Playwright/global.setup.ts`: once-per-run preparation;
+- `Tests/Playwright/fixtures/setup-fixtures.ts`: per-test restore and login behavior.
 
+Traces, screenshots and videos are retained for failed tests. Use `make playwright-report` in the
+extension directory, or the matching root wrapper, to inspect the latest HTML report. In UI mode,
+select the `chromium` project to see the browser tests.
 
-## Maintenance
+Individual tests may opt out of automatic restore or login through fixture options when their setup
+requires it. Such tests are responsible for establishing a clean state themselves.
 
-### Updating Playwright
+## Further reading
 
-Update the npm package and matching Docker image together:
-Update the image version in `.project/docker/docker-compose.*.yaml` files:
-```yaml
-playwright:
-  image: mcr.microsoft.com/playwright:v1.XX.X-noble
-```
-
-Then recreate the container:
-```bash
-docker compose up -d playwright
-```
-
-### Database Reset
-
-If tests fail due to database state:
-```bash
-make restore
-```
-
-**Note:** In Docker mode (CI=1), the environment reset is skipped since `make` is not available in the Playwright container. 
-
-## Resources
-
-- [Playwright Documentation](https://playwright.dev/)
-- [TYPO3 Testing Documentation](https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/Testing/)
-- [Microsoft Playwright Docker Images](https://mcr.microsoft.com/en-us/product/playwright/about)
-
-## Support
-
-For issues or questions:
-1. Check this documentation
-2. Review the Playwright documentation
-3. Check `playwright.config.ts` for configuration
-4. Check `.project/docker/docker-compose.*.yaml` for Docker service configuration
-5. Ask the team in your communication channel
+- [Playwright documentation](https://playwright.dev/docs/intro)
+- [TYPO3 testing documentation](https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/Testing/)

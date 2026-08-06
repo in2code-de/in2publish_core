@@ -5,13 +5,10 @@ test.describe('Redirects Module', () => {
 
     /**
      * Tests that a redirect without site association can be published with site association.
-     * Mirrors Tests/Browser/RedirectsModule/RedirectsModuleTest.php
-     *
-     * @todo All redirects in the current DB dump are already published (status shows ✓, no
-     *       "Publish with site association" action is available for redirect 19).
-     *       Either update the DB dump to have redirect 19 in unpublished state or fix the test data.
+     * Mirrors Tests/Browser/RedirectsModule/RedirectsModuleTest.php.
+     * Redirect 19 exists only in the local fixture so that it starts unpublished.
      */
-    test.skip('Redirect without association can be published with site association', async ({ page, backend }) => {
+    test('Redirect without association can be published with site association', async ({ page, backend }) => {
 
         await test.step('Given I am logged in to the Local Backend', async () => {
             await backend.login(config.local.baseUrl);
@@ -28,7 +25,9 @@ test.describe('Redirects Module', () => {
         });
 
         await test.step('And I click "Publish with site association"', async () => {
-            const publishLink = backend.contentFrame.locator('a[title="Publish with site association"]');
+            const publishLink = backend.contentFrame.locator(
+                'a[title="Publish with site association"][href*="redirect=19"]'
+            );
             await expect(publishLink).toBeVisible();
             await publishLink.click();
         });

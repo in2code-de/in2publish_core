@@ -48,6 +48,10 @@ export class BackendPage {
   }
 
   async searchInPageTreeAndSelectFirstOccurrence(searchText: string): Promise<void> {
+    await this.searchInPageTreeAndSelectOccurrence(searchText, 0);
+  }
+
+  async searchInPageTreeAndSelectOccurrence(searchText: string, occurrence: number): Promise<void> {
     const pageTree = this.page.locator('.scaffold-content-navigation-component');
     await expect(pageTree).toBeVisible({ timeout: 30000 });
 
@@ -56,22 +60,20 @@ export class BackendPage {
     await searchInput.clear({ timeout: 30000 });
     await searchInput.fill(searchText, { timeout: 30000 });
     await searchInput.press('Enter', { timeout: 30000 });
-    await this.page.waitForTimeout(800);
 
     const treeItems = this.page.locator('[role="treeitem"]');
     const matchingTreeItems = treeItems.filter({ hasText: searchText });
-    const count = await matchingTreeItems.count();
+    await expect.poll(
+      () => matchingTreeItems.count(),
+      { message: `Wait for occurrence ${occurrence} of "${searchText}" in the page tree`, timeout: 30000 },
+    ).toBeGreaterThan(occurrence);
 
-    if (count === 0) {
-      throw new Error(`No page tree nodes found matching "${searchText}"`);
-    }
-
-    const firstTreeItem = matchingTreeItems.first();
-    await expect(firstTreeItem).toBeVisible({ timeout: 30000 });
-    await firstTreeItem.waitFor({ state: 'visible', timeout: 15000 });
+    const treeItem = matchingTreeItems.nth(occurrence);
+    await expect(treeItem).toBeVisible({ timeout: 30000 });
+    await treeItem.waitFor({ state: 'visible', timeout: 15000 });
     await this.page.waitForTimeout(500);
 
-    const clickableElement = firstTreeItem.locator('.node-contentlabel').first();
+    const clickableElement = treeItem.locator('.node-contentlabel').first();
     await expect(clickableElement).toBeVisible({ timeout: 15000 });
     await clickableElement.scrollIntoViewIfNeeded({ timeout: 15000 });
     await this.page.waitForTimeout(300);
