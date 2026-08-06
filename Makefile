@@ -65,7 +65,7 @@ playwright-clear-runtime-state: .mysql-wait
 		tables="$$(docker compose exec -T $(MYSQL_ROOT_ENV) mysql mysql -uroot -N -B -e \
 			"SELECT table_name FROM information_schema.tables \
 			 WHERE table_schema = '$$database' \
-			 AND table_name IN ('be_sessions', 'fe_sessions', 'sys_lockedrecords', 'sys_messenger_messages')")"; \
+			 AND table_name IN ('be_sessions', 'cache_in2publish_core', 'fe_sessions', 'sys_lockedrecords', 'sys_messenger_messages')")"; \
 		sql="SET FOREIGN_KEY_CHECKS=0;"; \
 		for table in $$tables; do sql="$$sql DELETE FROM \`$$table\`;"; done; \
 		docker compose exec -T $(MYSQL_ROOT_ENV) mysql mysql -uroot "$$database" \
