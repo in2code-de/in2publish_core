@@ -27,7 +27,9 @@ test.describe('Publish Changed Page Properties', () => {
         });
 
         await test.step('And I publish the record', async () => {
-            const arrowRight = backend.contentFrame.locator('.icon-actions-arrow-right');
+            const arrowRight = backend.contentFrame.locator(
+                '[data-record-identifier="pages-5"] .icon-actions-arrow-right'
+            );
             await expect(arrowRight).toBeVisible();
             await arrowRight.click();
 

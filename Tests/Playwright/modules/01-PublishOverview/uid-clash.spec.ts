@@ -17,7 +17,9 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
             backend.contentFrame.locator('[data-record-identifier="pages-76"]')
         ).toBeVisible({ timeout: 15000 });
 
-        await backend.contentFrame.locator('.icon-actions-arrow-right').click();
+        await backend.contentFrame.locator(
+            '[data-record-identifier="pages-76"] .icon-actions-arrow-right'
+        ).click();
 
         await backend.waitUntilPublishingFinished();
         await expect(backend.contentFrame.locator('body')).toContainText(
@@ -34,7 +36,13 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
             backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
         ).toBeVisible({ timeout: 15000 });
 
-        await backend.contentFrame.locator('.icon-actions-arrow-right').click();
+        await expect(
+            backend.contentFrame.locator('[data-record-identifier="tx_news_domain_model_news-76"]')
+        ).toBeVisible({ timeout: 15000 });
+
+        await backend.contentFrame.locator(
+            '[data-record-identifier="tx_news_domain_model_news-76"] .icon-actions-arrow-right'
+        ).click();
 
         await backend.waitUntilPublishingFinished();
         await expect(backend.contentFrame.locator('body')).toContainText(

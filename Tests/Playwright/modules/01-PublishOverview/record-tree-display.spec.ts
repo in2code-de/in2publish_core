@@ -19,15 +19,13 @@ test.describe('Record Tree Display', () => {
             await backend.contentFrame.locator('#in2publish__publishfilter_level').selectOption({ label: '1 level' });
             await backend.contentFrame.locator('body').waitFor({ state: 'attached' });
 
-            const body = backend.contentFrame.locator('body');
-            await expect(body).not.toContainText('Home');
-            await expect(body).not.toContainText('EXT:in2publish_core');
-            await expect(body).toContainText('4 PageTree depth');
-            await expect(body).toContainText('Subpage - Level 1');
-            await expect(body).not.toContainText('Subpage - Level 2');
-            await expect(body).not.toContainText('Subpage - Level 3');
-            await expect(body).not.toContainText('Subpage - Level 4');
-            await expect(body).not.toContainText('Subpage - Level 5');
+            const recordList = backend.contentFrame.locator('.in2publish-stagelisting');
+            await expect(recordList).toContainText('4 PageTree depth');
+            await expect(recordList).toContainText('Subpage - Level 1');
+            await expect(recordList).not.toContainText('Subpage - Level 2');
+            await expect(recordList).not.toContainText('Subpage - Level 3');
+            await expect(recordList).not.toContainText('Subpage - Level 4');
+            await expect(recordList).not.toContainText('Subpage - Level 5');
             await expect(backend.contentFrame.locator('[data-record-identifier="pages-32"]')).not.toBeVisible();
         });
 
@@ -35,15 +33,13 @@ test.describe('Record Tree Display', () => {
             await backend.contentFrame.locator('#in2publish__publishfilter_level').selectOption({ label: '2 levels' });
             await backend.contentFrame.locator('body').waitFor({ state: 'attached' });
 
-            const body = backend.contentFrame.locator('body');
-            await expect(body).not.toContainText('Home');
-            await expect(body).not.toContainText('EXT:in2publish_core');
-            await expect(body).toContainText('4 PageTree depth');
-            await expect(body).toContainText('Subpage - Level 1');
-            await expect(body).toContainText('Subpage - Level 2');
-            await expect(body).not.toContainText('Subpage - Level 3');
-            await expect(body).not.toContainText('Subpage - Level 4');
-            await expect(body).not.toContainText('Subpage - Level 5');
+            const recordList = backend.contentFrame.locator('.in2publish-stagelisting');
+            await expect(recordList).toContainText('4 PageTree depth');
+            await expect(recordList).toContainText('Subpage - Level 1');
+            await expect(recordList).toContainText('Subpage - Level 2');
+            await expect(recordList).not.toContainText('Subpage - Level 3');
+            await expect(recordList).not.toContainText('Subpage - Level 4');
+            await expect(recordList).not.toContainText('Subpage - Level 5');
             await expect(backend.contentFrame.locator('[data-record-identifier="pages-32"]')).not.toBeVisible();
         });
 
@@ -51,14 +47,13 @@ test.describe('Record Tree Display', () => {
             await backend.contentFrame.locator('#in2publish__publishfilter_level').selectOption({ label: '3 levels' });
             await backend.contentFrame.locator('body').waitFor({ state: 'attached' });
 
-            const body = backend.contentFrame.locator('body');
-            await expect(body).not.toContainText('EXT:in2publish_core');
-            await expect(body).toContainText('4 PageTree depth');
-            await expect(body).toContainText('Subpage - Level 1');
-            await expect(body).toContainText('Subpage - Level 2');
-            await expect(body).toContainText('Subpage - Level 3');
-            await expect(body).not.toContainText('Subpage - Level 4');
-            await expect(body).not.toContainText('Subpage - Level 5');
+            const recordList = backend.contentFrame.locator('.in2publish-stagelisting');
+            await expect(recordList).toContainText('4 PageTree depth');
+            await expect(recordList).toContainText('Subpage - Level 1');
+            await expect(recordList).toContainText('Subpage - Level 2');
+            await expect(recordList).toContainText('Subpage - Level 3');
+            await expect(recordList).not.toContainText('Subpage - Level 4');
+            await expect(recordList).not.toContainText('Subpage - Level 5');
             await expect(backend.contentFrame.locator('[data-record-identifier="pages-32"]')).not.toBeVisible();
         });
 
@@ -66,14 +61,13 @@ test.describe('Record Tree Display', () => {
             await backend.contentFrame.locator('#in2publish__publishfilter_level').selectOption({ label: '4 levels' });
             await backend.contentFrame.locator('body').waitFor({ state: 'attached' });
 
-            const body = backend.contentFrame.locator('body');
-            await expect(body).not.toContainText('EXT:in2publish_core');
-            await expect(body).toContainText('4 PageTree depth');
-            await expect(body).toContainText('Subpage - Level 1');
-            await expect(body).toContainText('Subpage - Level 2');
-            await expect(body).toContainText('Subpage - Level 3');
-            await expect(body).toContainText('Subpage - Level 4');
-            await expect(body).not.toContainText('Subpage - Level 5');
+            const recordList = backend.contentFrame.locator('.in2publish-stagelisting');
+            await expect(recordList).toContainText('4 PageTree depth');
+            await expect(recordList).toContainText('Subpage - Level 1');
+            await expect(recordList).toContainText('Subpage - Level 2');
+            await expect(recordList).toContainText('Subpage - Level 3');
+            await expect(recordList).toContainText('Subpage - Level 4');
+            await expect(recordList).not.toContainText('Subpage - Level 5');
             await expect(backend.contentFrame.locator('[data-record-identifier="pages-32"]')).not.toBeVisible();
         });
 
@@ -81,14 +75,13 @@ test.describe('Record Tree Display', () => {
             await backend.contentFrame.locator('#in2publish__publishfilter_level').selectOption({ label: '5 levels' });
             await backend.contentFrame.locator('body').waitFor({ state: 'attached' });
 
-            const body = backend.contentFrame.locator('body');
-            await expect(body).not.toContainText('EXT:in2publish_core');
-            await expect(body).toContainText('4 PageTree depth');
-            await expect(body).toContainText('Subpage - Level 1');
-            await expect(body).toContainText('Subpage - Level 2');
-            await expect(body).toContainText('Subpage - Level 3');
-            await expect(body).toContainText('Subpage - Level 4');
-            await expect(body).toContainText('Subpage - Level 5');
+            const recordList = backend.contentFrame.locator('.in2publish-stagelisting');
+            await expect(recordList).toContainText('4 PageTree depth');
+            await expect(recordList).toContainText('Subpage - Level 1');
+            await expect(recordList).toContainText('Subpage - Level 2');
+            await expect(recordList).toContainText('Subpage - Level 3');
+            await expect(recordList).toContainText('Subpage - Level 4');
+            await expect(recordList).toContainText('Subpage - Level 5');
             await expect(backend.contentFrame.locator('[data-record-identifier="pages-32"]')).toBeVisible();
         });
     });

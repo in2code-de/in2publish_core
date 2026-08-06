@@ -30,7 +30,9 @@ test.describe('Publish page with textpic', () => {
         });
 
         await test.step('And I publish the record', async () => {
-            const arrowRight = backend.contentFrame.locator('.icon-actions-arrow-right');
+            const arrowRight = backend.contentFrame.locator(
+                '[data-record-identifier="pages-1014"] .icon-actions-arrow-right'
+            );
             await expect(arrowRight).toBeVisible();
             await arrowRight.click();
 
