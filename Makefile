@@ -62,13 +62,13 @@ mysql-restore: .ensure-provisioned .mysql-wait
 playwright-clear-runtime-state: .mysql-wait
 	echo "$(EMOJI_broom) Clearing Playwright runtime state"
 	for database in local foreign; do \
-		tables="$$(docker compose exec -T mysql mysql -uroot -proot -N -B -e \
+		tables="$$(docker compose exec -T $(MYSQL_ROOT_ENV) mysql mysql -uroot -N -B -e \
 			"SELECT table_name FROM information_schema.tables \
 			 WHERE table_schema = '$$database' \
 			 AND table_name IN ('be_sessions', 'fe_sessions', 'sys_lockedrecords', 'sys_messenger_messages')")"; \
 		sql="SET FOREIGN_KEY_CHECKS=0;"; \
 		for table in $$tables; do sql="$$sql DELETE FROM \`$$table\`;"; done; \
-		docker compose exec -T mysql mysql -uroot -proot "$$database" \
+		docker compose exec -T $(MYSQL_ROOT_ENV) mysql mysql -uroot "$$database" \
 			-e "$$sql SET FOREIGN_KEY_CHECKS=1;"; \
 	done
 
@@ -162,7 +162,7 @@ typo3-comparedb:
 # GENERIC COMMANDS
 #############################################################################################
 
-setup: stop destroy .install-packages .create-certificate start .mysql-wait
+setup: playwright-stop stop destroy .install-packages .create-certificate start .mysql-wait
 	@echo "Installing in2publish_core as $(IN2PUBLISH_DEV_VERSION)"
 	docker exec -u1000 $(COMPOSER_AUTH_OPT) -e TYPO3_SKIP_ASSET_PUBLISH=1 in2publish_core-local-php-1 composer u -W
 	docker exec -u1000 $(COMPOSER_AUTH_OPT) -e TYPO3_SKIP_ASSET_PUBLISH=1 in2publish_core-foreign-php-1 composer u -W
@@ -244,18 +244,21 @@ help:
 
 ## Wait for the mysql container to be fully provisioned
 .mysql-wait:
-	echo "$(EMOJI_ping_pong) Checking DB up and running"
+	echo "$(EMOJI_ping_pong) Waiting for the database (initialising a fresh volume takes about 30 seconds)"
 	attempt=0; \
-	while ! error="$$(docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" 2>&1 >/dev/null)"; do \
+	while ! error="$$(docker compose exec -T $(MYSQL_ROOT_ENV) mysql mysql -uroot local -e "SELECT 1;" 2>&1 >/dev/null)"; do \
 		attempt=$$((attempt + 1)); \
-		if [ "$$attempt" -ge 40 ]; then \
-			echo "$(EMOJI_face_with_rolling_eyes) Database is not reachable, giving up. Last error:"; \
+		if [ "$$attempt" -ge $(MYSQL_WAIT_ATTEMPTS) ]; then \
+			echo ""; \
+			echo "$(EMOJI_face_with_rolling_eyes) Database is not reachable after $$attempt attempts, giving up. Last error:"; \
 			echo "$$error"; \
 			exit 1; \
 		fi; \
-		echo "$(EMOJI_face_with_rolling_eyes) Waiting for database ($$attempt/40): $$error"; \
-		sleep 3; \
-	done;
+		printf "."; \
+		sleep $(MYSQL_WAIT_INTERVAL); \
+	done; \
+	echo ""; \
+	echo "$(EMOJI_robot) Database is up and running"
 
 .install-packages:
 	if [[ "$$OSTYPE" == "linux-gnu" ]]; then \
@@ -280,13 +283,13 @@ help:
 ## Ensure empty tables omitted from the foreign dump still exist (empty) on foreign
 .ensure-foreign-empty-tables: .mysql-wait
 	echo "$(EMOJI_robot) Ensuring foreign-only empty tables exist on foreign"
-	local_tables=$$(docker compose exec -T mysql mysql -uroot -proot --batch --skip-column-names -e 'SHOW TABLES IN `local`'); \
+	local_tables=$$(docker compose exec -T $(MYSQL_ROOT_ENV) mysql mysql -uroot --batch --skip-column-names -e 'SHOW TABLES IN `local`'); \
 	sql=""; \
 	for table in $(FOREIGN_ONLY_EMPTY_TABLES); do \
 		grep -qxF "$$table" <<<"$$local_tables" || continue; \
 		sql+="CREATE TABLE IF NOT EXISTS \`foreign\`.\`$$table\` LIKE \`local\`.\`$$table\`; TRUNCATE TABLE \`foreign\`.\`$$table\`;"; \
 	done; \
-	[ -z "$$sql" ] || docker compose exec -T mysql mysql -uroot -proot -e "$$sql"
+	[ -z "$$sql" ] || docker compose exec -T $(MYSQL_ROOT_ENV) mysql mysql -uroot -e "$$sql"
 
 ## Choose the right docker compose file for your environment
 .link-compose-file:
@@ -371,6 +374,10 @@ PHIVE_TRUST_KEYS := 0x97B02DD8E5071466,0x31C7E470E2138192,0xE82B2FB314E9906E,0xA
 # the mounted docker socket (execInContainer / execTypo3Command). Empty on hosts
 # without a docker group; the compose file then falls back to a default.
 export DOCKER_GID := $(shell getent group docker 2>/dev/null | cut -d: -f3)
+
+MYSQL_WAIT_ATTEMPTS := 40
+MYSQL_WAIT_INTERVAL := 3
+MYSQL_ROOT_ENV := -e MYSQL_PWD=$(MYSQL_ROOT_PASSWORD)
 
 # Single source of truth for the pinned Playwright base image, read by .build-playwright-image
 PLAYWRIGHT_DOCKERFILE := .project/docker/playwright/Dockerfile
