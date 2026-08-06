@@ -1,14 +1,14 @@
 import { test as setup, expect } from '@playwright/test';
 import { createGlobalLoginSetup } from './shared/setup/index';
-import { execMake } from './shared/helpers';
+import { resetEnvironment } from './shared/helpers';
 import config from './config';
 
 const performLogin = createGlobalLoginSetup(config, 'Tests/Playwright/.auth/login.json');
 
 setup('reset environment and authenticate', async ({ page }) => {
 
-  // Reset the local + foreign database and fileadmin.
-  execMake('restore');
+  // Restore all mutable state and perform the expensive schema/cache work once per run.
+  await resetEnvironment(page, 'playwright-prepare');
 
   await performLogin(page);
 

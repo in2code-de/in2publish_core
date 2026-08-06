@@ -1,12 +1,7 @@
 import { test, expect } from '../../../fixtures/setup-fixtures';
 import config from '../../../config';
-import { execMake } from '../../../shared/helpers';
 
 test.describe('Page Tree - Context Menu', () => {
-
-    test.beforeAll(async () => {
-        execMake('restore');
-    });
 
     /**
      * Publish the selected page via PageTree ContextMenu

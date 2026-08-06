@@ -124,12 +124,12 @@ packages/
 │   │   ├── 04-Miscellaneous/
 │   │   └── 05-PageTree/
 │   ├── config.ts
-│   └── global.setup.ts                  # Restore + login (runs `make restore` via execMake)
+│   └── global.setup.ts                  # One-time preparation + login
 │
 └── in2publish/Tests/Playwright/
     ├── fixtures/
     │   ├── backend-page.ts             # Enterprise BackendPage (extends core BackendPage)
-    │   └── setup-fixtures.ts           # Adds auto restore/login (runs `make restore`)
+    │   └── setup-fixtures.ts           # Adds lightweight per-test reset/login
     ├── tests/                           # Enterprise test files (by feature)
     │   ├── 00-PublisherTools/
     │   ├── 01-PublishNewPage/
@@ -170,28 +170,13 @@ the Playwright container via `execMake()`. The Playwright image ships the Docker
 host Docker socket, so `make` (run at the extension root) can reach the sibling containers.
 
 **Restore targets** (defined in each extension Makefile):
-- `make restore` — databases + fileadmin (plus `ensure-foreign-empty-tables`)
-- `make restore-db` — databases only, no fileadmin; used by core specs that don't touch files
-- `make restore` — container-safe restore entry point used by the enterprise auto-fixture
+- `make playwright-prepare` — once per run: databases, fileadmin, schema and page caches
+- `make playwright-reset` — before each test: databases and volatile session/lock state; caches stay warm
+- `make playwright-reset-files` — reset plus fileadmin for tests that modify files
+- `make restore` — complete manual restore
 
-**Suite-level restore (automatic):**
-`make playwright-core` / `make playwright-enterprise` run `make restore` once before the suite
-(alongside `typo3-comparedb` and `typo3-clearcache`) inside the target extension stack.
-
-**Per-test restore:**
-- **Core** specs that mutate data restore explicitly in `beforeEach` / `beforeAll`:
-
-  ```typescript
-  import { execMake } from '../../shared/helpers';
-
-  test.beforeEach(() => {
-      execMake('restore-db');   // or 'restore' for DB + fileadmin
-  });
-  ```
-
-- **Enterprise** specs restore automatically: the `prepareBackend` auto-fixture in
-  `fixtures/setup-fixtures.ts` runs `execMake('restore')` before each test (controlled by the
-  `autoRestore` option), so specs usually don't restore explicitly.
+Both Core and Enterprise fixtures run the lightweight reset automatically before every test.
+File-changing specs disable `autoRestore` and invoke `playwright-reset-files` explicitly.
 
 **What the restore does** (see `mysql-restore` / `fileadmin-restore` / `ensure-foreign-empty-tables`
 in the Makefile):
@@ -298,12 +283,12 @@ individual tests only.
 **Tests fail due to stale database state:**
 
 ```bash
-# Manual restore from the monorepo root
-make restore
+# Lightweight database reset from the extension directory
+make playwright-reset
 ```
 
-The same target also works from inside an extension directory; both invocations use the monorepo
-dumps.
+Use `make playwright-reset-files` if the test changed files. `make restore` remains available for a
+complete manual restore including schema updates and page-cache invalidation.
 
 **`LOAD DATA INFILE` permission error:**
 The MySQL container must be started with `--local-infile=1` / `--secure-file-priv=$DUMPS_DIR`

@@ -15,9 +15,9 @@ const BLANK_PAGE = 'about:blank';
  * failed before its cleanup) guarantees that no request can reach TYPO3 while the databases are being rebuilt.
  *
  * @param page       The active page, used to reach the browser and its contexts
- * @param makeTarget 'restore' for databases + fileadmin + caches, 'restore-db' for databases only
+ * @param makeTarget Make target controlling whether only database state or fileadmin is reset
  */
-export async function resetEnvironment(page: Page, makeTarget: string = 'restore'): Promise<void> {
+export async function resetEnvironment(page: Page, makeTarget: string = 'playwright-reset'): Promise<void> {
   const activeContext = page.context();
 
   for (const context of activeContext.browser()?.contexts() ?? []) {

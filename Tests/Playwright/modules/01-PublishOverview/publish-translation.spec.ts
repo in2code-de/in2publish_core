@@ -1,14 +1,8 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { execMake } from '../../shared/helpers';
 
 test.describe('Publish Translation', () => {
-
-    // Each test publishes a translation record, so DB must be restored between tests
-    test.beforeEach(async () => {
-        execMake('restore-db');
-    });
 
     /**
      * Test Case 1d.1: Translated content in free mode can be published.

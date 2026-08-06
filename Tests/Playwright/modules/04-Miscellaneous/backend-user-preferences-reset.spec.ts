@@ -1,12 +1,7 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import config from '../../config';
-import { execMake } from '../../shared/helpers';
 
 test.describe('Backend User Preferences Reset', () => {
-
-    test.beforeAll(async () => {
-        execMake('restore');
-    });
 
     /**
      * Regression test: Backend user settings can be reset without errors.

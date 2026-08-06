@@ -1,7 +1,7 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { execInContainer, execMake } from '../../shared/helpers';
+import { execInContainer, resetEnvironment } from '../../shared/helpers';
 import { existsSync, renameSync } from 'fs';
 import { resolve } from 'path';
 
@@ -48,16 +48,11 @@ test.describe('Publish Files Module', () => {
     // File operations + foreign verification + DB/fileadmin restore overhead needs more time
     test.describe.configure({ timeout: 120000 });
 
+    test.use({ autoRestore: false });
+
     // Each file test modifies state (upload, rename, move, delete), so restore before each test.
-    // Uses direct restore for both databases and fileadmin to ensure a clean state.
-    // Environment.reset() is skipped in CI, so we must restore explicitly.
-    test.beforeEach(async ({ backend }) => {
-        execMake('restore');
-        // Flush TYPO3 caches via the backend UI after restore.
-        // The PHP-FPM processes may have OPcache or in-memory state from the previous test
-        // that doesn't reflect the freshly restored database/fileadmin state.
-        await backend.login(config.local.baseUrl);
-        await backend.clearCaches();
+    test.beforeEach(async ({ page }) => {
+        await resetEnvironment(page, 'playwright-reset-files');
     });
 
     /**

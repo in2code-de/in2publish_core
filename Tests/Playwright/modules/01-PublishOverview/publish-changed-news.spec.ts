@@ -1,13 +1,8 @@
 import { test, expect } from '../../fixtures/setup-fixtures';
 import { BackendPage } from '../../fixtures/backend-page';
 import config from '../../config';
-import { execMake } from '../../shared/helpers';
 
 test.describe('Publish Changed News', () => {
-    test.beforeEach(async () => {
-        execMake('restore');
-    });
-
     /**
      * Test Case 1c: Changed news record with image can be published.
      * Mirrors Tests/Browser/PublishChangedNewsTest.php

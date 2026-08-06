@@ -29,10 +29,6 @@ import { execMake } from '../../shared/helpers';
 ```typescript
 test.describe('Publish Changed Page Properties', () => {
 
-    test.beforeAll(() => {
-        execMake('restore');  // Restores DB + fileadmin via the Makefile
-    });
-
     test('Test case description', async ({ page, backend, browser }) => {
 
         await test.step('Given I am logged in', async () => {
@@ -52,7 +48,8 @@ test.describe('Publish Changed Page Properties', () => {
 
 **Rules:**
 - Tests run sequentially (`workers: 1`, `fullyParallel: false`) — DB state is shared
-- `test.beforeAll` resets the environment once per describe block
+- The fixture restores database state automatically before every test
+- File-changing specs use `test.use({ autoRestore: false })` plus `playwright-reset-files`
 - Use `test.step()` for complex multi-step flows
 
 ---
@@ -261,15 +258,10 @@ config.foreign.baseUrl // Foreign backend URL (e.g. https://foreign.v13.in2publi
 // (which has the Docker CLI + socket). execMake runs `make <target>` at the extension root.
 import { execMake } from '../../shared/helpers';
 
-// Full restore (DB + fileadmin):
-test.beforeAll(() => {
-    execMake('restore');
-});
-
-// For per-test DB-only reset (e.g. tests that modify data):
-test.beforeEach(() => {
-    execMake('restore-db');
-});
+// The setup project performs the expensive preparation once. The fixture resets DB state per test.
+execMake('playwright-prepare');     // once per run: DB + fileadmin + schema + page caches
+execMake('playwright-reset');       // between tests: DB + volatile state; TYPO3 caches stay warm
+execMake('playwright-reset-files'); // only for tests that modify files: reset + fileadmin
 
 // Run an arbitrary command in a compose service (e.g. ad-hoc SQL):
 import { execInContainer } from '../../shared/helpers';
