@@ -189,7 +189,7 @@ typo3-comparedb:
 # GENERIC COMMANDS
 #############################################################################################
 
-setup: stop destroy .install-packages .create-certificate start .mysql-wait
+setup: playwright-stop stop destroy .install-packages .create-certificate start .mysql-wait
 	@echo "Installing in2publish_core as $(IN2PUBLISH_DEV_VERSION)"
 	docker exec -u1000 $(COMPOSER_AUTH_OPT) in2publish_core-local-php-1 composer u -W
 	docker exec -u1000 $(COMPOSER_AUTH_OPT) in2publish_core-foreign-php-1 composer u -W
