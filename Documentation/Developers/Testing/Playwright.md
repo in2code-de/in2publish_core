@@ -127,10 +127,13 @@ The automatic fixture calls `make playwright-reset` before each test. This faste
 
 - imports the local and foreign database snapshots again;
 - recreates the required empty foreign tables;
-- clears volatile database state such as caches, sessions, record locks and messenger messages.
+- clears volatile database state: backend/frontend sessions, record locks and messenger messages.
 
-It deliberately does not restore fileadmin, update the schema or flush TYPO3 caches through the
-TYPO3 command line. Those expensive operations have already happened during `playwright-prepare`.
+It deliberately does not clear TYPO3 cache tables (including `cache_pages` and
+`cache_pagesection`), restore fileadmin, update the schema or flush TYPO3 caches through the TYPO3
+command line. Those expensive operations have already happened during `playwright-prepare`.
+Additional cache tables should only be reset if a reproducible cross-test dependency proves that
+this is necessary.
 
 Tests run sequentially (`workers: 1`) because they share the same TYPO3 installations and database
 state.

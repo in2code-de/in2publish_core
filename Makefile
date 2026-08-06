@@ -74,15 +74,14 @@ mysql-restore: .ensure-provisioned .mysql-wait
 	echo "$(EMOJI_robot) Restoring the foreign database"
 	docker compose exec local-php /app/Build/local/vendor/bin/mysql-loader import -Hmysql -uroot -proot -Dforeign -f/$(DUMPS_DIR)/foreign/
 
-## Clear database-backed caches and volatile state excluded from fixture dumps without booting TYPO3
+## Clear volatile state excluded from fixture dumps without booting TYPO3
 playwright-clear-runtime-state: .mysql-wait
 	echo "$(EMOJI_broom) Clearing Playwright runtime state"
 	for database in local foreign; do \
 		tables="$$(docker compose exec -T mysql mysql -uroot -proot -N -B -e \
 			"SELECT table_name FROM information_schema.tables \
 			 WHERE table_schema = '$$database' \
-			 AND (table_name LIKE 'cache\\\\_%' ESCAPE '\\\\' \
-			 OR table_name IN ('be_sessions', 'fe_sessions', 'sys_lockedrecords', 'sys_messenger_messages'))")"; \
+			 AND table_name IN ('be_sessions', 'fe_sessions', 'sys_lockedrecords', 'sys_messenger_messages')")"; \
 		sql="SET FOREIGN_KEY_CHECKS=0;"; \
 		for table in $$tables; do sql="$$sql DELETE FROM \`$$table\`;"; done; \
 		docker compose exec -T mysql mysql -uroot -proot "$$database" \
