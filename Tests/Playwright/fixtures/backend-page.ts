@@ -82,9 +82,30 @@ export class BackendPage extends BaseBackendPage {
    * Replaces the PHP ContentPublisherHelper::waitUntilPublishingFinished().
    */
   async waitUntilPublishingFinished(): Promise<void> {
-    await expect(
-      this.contentFrame.locator('.in2publish-loading-overlay')
-    ).not.toBeVisible({ timeout: 30000 });
+    const activeOverlay = this.contentFrame.locator('.in2publish-loading-overlay--active');
+    const successPattern = /Successfully published\.|has been published (successfully|to the foreign system\.)/;
+    const frameSuccessMessage = this.contentFrame.getByText(successPattern).first();
+    const pageSuccessMessage = this.page.getByText(successPattern).first();
+    const frameErrorMessage = this.contentFrame.locator('.alert-danger, .callout-danger, .alert-error').first();
+    const pageErrorMessage = this.page.locator('.alert-danger, .callout-danger, .alert-error').first();
+
+    // The inactive overlay is hidden before publishing starts, so its hidden state cannot signal
+    // completion. Wait for an explicit result and then ensure that a started overlay is gone.
+    const completionSignal = await Promise.race([
+      frameSuccessMessage.waitFor({ state: 'visible', timeout: 120000 }).then(() => 'success'),
+      pageSuccessMessage.waitFor({ state: 'visible', timeout: 120000 }).then(() => 'success'),
+      frameErrorMessage.waitFor({ state: 'visible', timeout: 120000 }).then(() => 'error'),
+      pageErrorMessage.waitFor({ state: 'visible', timeout: 120000 }).then(() => 'error'),
+    ]);
+
+    if (completionSignal === 'error') {
+      const errorText = (await frameErrorMessage.textContent())
+        || (await pageErrorMessage.textContent())
+        || 'unknown publishing error';
+      throw new Error(`Publishing failed: ${errorText}`);
+    }
+
+    await activeOverlay.waitFor({ state: 'hidden', timeout: 10000 });
   }
 
   /**
