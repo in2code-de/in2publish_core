@@ -43,19 +43,19 @@ jobs:
         run: ls -la /var/run/docker.sock
 
       - name: Composer Local
-        run: docker exec -u$(id -u) -e COMPOSER_AUTH='{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}' in2publish_core-local-php-1 composer install
+        run: docker compose exec -T -u$(id -u) -e COMPOSER_AUTH='{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}' local-php composer install
 
       - name: Composer Foreign
-        run: docker exec -u$(id -u) -e COMPOSER_AUTH='{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}' in2publish_core-foreign-php-1 composer install
+        run: docker compose exec -T -u$(id -u) -e COMPOSER_AUTH='{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}' foreign-php composer install
 
       - name: Wait for Database
         run: while ! docker compose exec -T mysql mysql -uroot -proot local -e "SELECT 1;" &> /dev/null; do  echo "Waiting for database ..."; sleep 3; done;
 
       - name: TYPO3 Setup Local
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
+        run: docker compose exec -T -u$(id -u) local-php vendor/bin/typo3 install:setup --force
 
       - name: TYPO3 Setup Foreign
-        run: docker exec -u$(id -u) in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
+        run: docker compose exec -T -u$(id -u) foreign-php vendor/bin/typo3 install:setup --force
 
       - name: Restore site configurations after setup
         run: git checkout Build/local/config/sites/main/config.yaml && git checkout Build/foreign/config/sites/main/config.yaml
@@ -64,15 +64,15 @@ jobs:
         run: docker compose ps
 
       - name: Unit Tests
-        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
+        run: docker compose exec -T -u$(id -u) local-php vendor/bin/phpunit -c /app/phpunit.unit.xml --testdox
         if: always()
 
 #      - name: Functional Tests
-#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
+#        run: docker compose exec -T -u$(id -u) local-php vendor/bin/phpunit -c /app/phpunit.functional.xml --testdox
 #        if: always()
 
 #      - name: Acceptance Tests
-#        run: docker exec -u$(id -u) in2publish_core-local-php-1 vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
+#        run: docker compose exec -T -u$(id -u) local-php vendor/bin/phpunit -c /app/phpunit.browser.xml --testdox
 #        if: always()
 
       - name: Show me what's up 3
