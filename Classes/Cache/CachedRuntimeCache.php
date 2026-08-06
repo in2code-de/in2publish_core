@@ -48,15 +48,14 @@ class CachedRuntimeCache implements SingletonInterface
     public function get(string $key, Closure $valueFactory, int $ttl = 86400)
     {
         if (!array_key_exists($key, $this->rtc)) {
-            if (!$this->cache->has($key)) {
+            $value = $this->cache->has($key) ? $this->cache->get($key) : false;
+            if (false === $value) {
                 try {
                     $value = $valueFactory();
                     $this->cache->set($key, $value, [], $ttl);
                 } catch (CacheableValueCanNotBeGeneratedException $exception) {
                     $value = $exception->getValue();
                 }
-            } else {
-                $value = $this->cache->get($key);
             }
             $this->rtc[$key] = $value;
         }

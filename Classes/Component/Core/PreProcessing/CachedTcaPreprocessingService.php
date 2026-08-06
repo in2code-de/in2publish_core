@@ -47,11 +47,19 @@ class CachedTcaPreprocessingService
 
         if ($this->cache->has('tca_preprocessing_results')) {
             $cacheEntry = $this->cache->get('tca_preprocessing_results');
-            if ($this->isCacheValid($cacheEntry['compatibleTca'])) {
+            if (
+                is_array($cacheEntry)
+                && isset($cacheEntry['compatibleTca'], $cacheEntry['incompatibleTca'])
+                && is_array($cacheEntry['compatibleTca'])
+                && is_array($cacheEntry['incompatibleTca'])
+                && $this->isCacheValid($cacheEntry['compatibleTca'])
+            ) {
                 $this->compatibleTca = $cacheEntry['compatibleTca'];
                 $this->incompatibleTca = $cacheEntry['incompatibleTca'];
                 return;
             }
+
+            $this->cache->remove('tca_preprocessing_results');
         }
 
         $tcaPreProcessingService = GeneralUtility::makeInstance(TcaPreProcessingService::class);
