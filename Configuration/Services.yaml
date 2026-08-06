@@ -37,6 +37,9 @@ services:
   In2code\In2publishCore\Service\Permission\PermissionService:
     public: true
 
+  In2code\In2publishCore\Middleware\InjectLoadingOverlayMiddleware:
+    public: true
+
   cache.in2publish_core:
     class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
     factory: [ '@TYPO3\CMS\Core\Cache\CacheManager', 'getCache' ]
