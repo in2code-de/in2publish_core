@@ -70,7 +70,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 
         $command = $this->prepareCommand($request);
 
-        $command = rtrim($command, ';') . '; echo -en "\n"CODE_$?_CODE;';
+        $command = rtrim($command, ';') . "; printf '\nCODE_%d_CODE;' $?";
 
         $this->logger->debug('Executing ssh command', ['full_command' => $command]);
 
