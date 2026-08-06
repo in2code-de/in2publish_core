@@ -103,6 +103,7 @@ services:
       dockerfile: Dockerfile
     command: sleep infinity
     user: ${USER_ID:-1000}
+    shm_size: 2gb
     group_add:
       - "${DOCKER_GID:-999}"
     volumes:
