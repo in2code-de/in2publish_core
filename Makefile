@@ -112,14 +112,14 @@ qa-setup:
 ## Starts composer-update
 composer-update:
 	echo "$(EMOJI_package) updating composer dependencies"
-	docker exec -u1000 $(COMPOSER_AUTH_OPT) in2publish_core-local-php-1 composer u -W
-	docker exec -u1000 $(COMPOSER_AUTH_OPT) in2publish_core-foreign-php-1 composer u -W
+	docker compose exec -u1000 $(COMPOSER_AUTH_OPT) local-php composer u -W
+	docker compose exec -u1000 $(COMPOSER_AUTH_OPT) foreign-php composer u -W
 
 ## Starts composer-install
 composer-install:
 	echo "$(EMOJI_package) Installing composer dependencies"
-	docker exec -u1000 $(COMPOSER_AUTH_OPT) in2publish_core-local-php-1 composer install
-	docker exec -u1000 $(COMPOSER_AUTH_OPT) in2publish_core-foreign-php-1 composer install
+	docker compose exec -u1000 $(COMPOSER_AUTH_OPT) local-php composer install
+	docker compose exec -u1000 $(COMPOSER_AUTH_OPT) foreign-php composer install
 
 
 
@@ -164,12 +164,12 @@ typo3-comparedb:
 
 setup: playwright-stop stop destroy .install-packages .create-certificate start .mysql-wait
 	@echo "Installing in2publish_core as $(IN2PUBLISH_DEV_VERSION)"
-	docker exec -u1000 $(COMPOSER_AUTH_OPT) -e TYPO3_SKIP_ASSET_PUBLISH=1 in2publish_core-local-php-1 composer u -W
-	docker exec -u1000 $(COMPOSER_AUTH_OPT) -e TYPO3_SKIP_ASSET_PUBLISH=1 in2publish_core-foreign-php-1 composer u -W
-	docker exec -u1000 in2publish_core-local-php-1 vendor/bin/typo3 install:setup --force
-	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 install:setup --force
-	docker exec -u1000 in2publish_core-local-php-1 vendor/bin/typo3 asset:publish
-	docker exec -u1000 in2publish_core-foreign-php-1 vendor/bin/typo3 asset:publish
+	docker compose exec -u1000 $(COMPOSER_AUTH_OPT) -e TYPO3_SKIP_ASSET_PUBLISH=1 local-php composer u -W
+	docker compose exec -u1000 $(COMPOSER_AUTH_OPT) -e TYPO3_SKIP_ASSET_PUBLISH=1 foreign-php composer u -W
+	docker compose exec -u1000 local-php vendor/bin/typo3 install:setup --force
+	docker compose exec -u1000 foreign-php vendor/bin/typo3 install:setup --force
+	docker compose exec -u1000 local-php vendor/bin/typo3 asset:publish
+	docker compose exec -u1000 foreign-php vendor/bin/typo3 asset:publish
 	git checkout Build/local/config/sites/main/config.yaml
 	git checkout Build/foreign/config/sites/main/config.yaml
 	make restore

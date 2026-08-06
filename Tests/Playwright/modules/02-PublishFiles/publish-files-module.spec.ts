@@ -5,7 +5,7 @@ import { execInContainer, resetEnvironment } from '../../shared/helpers';
 import { existsSync, renameSync } from 'fs';
 import { resolve } from 'path';
 
-const COMPOSE_PROJECT = process.env.COMPOSE_PROJECT_NAME ?? 'in2publish_core';
+const COMPOSE_PROJECT = process.env.COMPOSE_PROJECT_NAME ?? 'in2publish_core_v14';
 
 const LOCAL_FILEADMIN_DIR = resolve(
     process.cwd(),

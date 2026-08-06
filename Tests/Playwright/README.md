@@ -9,19 +9,19 @@ and the shared fixture architecture — see:
 
 ## TL;DR
 
-Playwright runs in the `in2publish_core` Docker stack. You can invoke it from this directory or via
+Playwright runs in the `in2publish_core_v14` Docker stack. You can invoke it from this directory or via
 the monorepo root wrapper. Core uses a package-local `.playwright.lock` and restores only the core
 local/foreign TYPO3 instances from the monorepo root dump/fileadmin sources. `make restore`
 (and `make restore-db`) also recreate the foreign-only empty tables defined in the
 `FOREIGN_ONLY_EMPTY_TABLES` Makefile variable.
 
 ```bash
-make setup-tests                          # From this directory
-make playwright
-make playwright FILE="Tests/Playwright/modules/01-PublishOverview/publish-changed-content.spec.ts"
-make playwright-ui                        # UI mode, http://localhost:9425
+make setup                                # Required once
+make test-playwright
+make test-playwright FILE="Tests/Playwright/modules/01-PublishOverview/publish-changed-content.spec.ts"
+make playwright-ui                        # UI mode, http://localhost:9424
 make playwright-report                    # Open last HTML report
 
 # Or from the monorepo root
-make playwright-core
+make test-playwright-core
 ```
