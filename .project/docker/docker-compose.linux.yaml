@@ -1,4 +1,4 @@
-name: in2publish_core
+name: ${COMPOSE_PROJECT_NAME}
 
 services:
   local:
@@ -134,10 +134,10 @@ services:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
       PLAYWRIGHT_BASE_URL: https://${HOST_LOCAL}/typo3/
       PLAYWRIGHT_FOREIGN_BASE_URL: https://${HOST_FOREIGN}/typo3/
-      COMPOSE_PROJECT_NAME: in2publish_core
+      COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
       LOCAL_FILEADMIN_DIR: /work/Build/local/public/fileadmin
     ports:
-      - "${PLAYWRIGHT_UI_PORT:-9425}:9323"
+      - "${PLAYWRIGHT_UI_PORT:-9423}:9323"
     networks:
       default:
         aliases:
