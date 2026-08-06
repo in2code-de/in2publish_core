@@ -6,8 +6,9 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
 
      test.setTimeout(120000);
     async function publishPage76(backend: BackendPage) {
-        await backend.gotoModule('Publish Overview');
+        await backend.gotoModule('Page');
         await backend.searchInPageTreeAndSelectFirstOccurrence('24 Page with Category 1 and Category 2');
+        await backend.gotoModule('Publish Overview');
 
         await expect(
             backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
@@ -29,19 +30,20 @@ test.describe('UID Clash Test: verify publishing of relations to records with sa
     }
 
     async function publishNews76(backend: BackendPage) {
-        await backend.gotoModule('Publish Overview');
+        await backend.gotoModule('List');
         await backend.searchInPageTreeAndSelectFirstOccurrence('News Folder Core');
+        await backend.gotoModule('Publish Overview');
 
         await expect(
             backend.contentFrame.locator('text=TYPO3 Content Publisher - publish pages and records overview')
         ).toBeVisible({ timeout: 15000 });
 
         await expect(
-            backend.contentFrame.locator('[data-record-identifier="tx_news_domain_model_news-76"]')
+            backend.contentFrame.locator('[data-record-identifier="pages-33"]')
         ).toBeVisible({ timeout: 15000 });
 
         await backend.contentFrame.locator(
-            '[data-record-identifier="tx_news_domain_model_news-76"] .icon-actions-arrow-right'
+            '[data-record-identifier="pages-33"] .icon-actions-arrow-right'
         ).click();
 
         await backend.waitUntilPublishingFinished();
