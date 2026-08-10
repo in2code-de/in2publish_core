@@ -57,7 +57,6 @@ export class BackendPage extends BaseBackendPage {
     const moduleLink = moduleIdentifiers[moduleName]
       ? this.page.locator(`#modulemenu a.modulemenu-action[data-moduleroute-identifier="${moduleIdentifiers[moduleName]}"]`).first()
       : this.page.locator(`#modulemenu a.modulemenu-action[title="${resolvedName}"]`).first();
-    const visibleMenuItem = this.page.getByRole('menuitem', { name: resolvedName, exact: true }).first();
     const parentGroup = moduleGroups[moduleName];
 
     await expect(this.page.locator('#typo3-contentIframe')).toBeVisible({ timeout: 45000 });
@@ -72,23 +71,24 @@ export class BackendPage extends BaseBackendPage {
         await groupToggle.click({ timeout: 30000 });
       }
 
-      const groupedMenuItem = groupMenu.getByRole('menuitem', { name: resolvedName, exact: true }).first();
-      if (await groupedMenuItem.isVisible().catch(() => false)) {
-        await groupedMenuItem.click({ timeout: 30000 });
-      } else if (moduleIdentifiers[moduleName] && await visibleMenuItem.isVisible().catch(() => false)) {
-        await visibleMenuItem.click({ timeout: 30000 });
-      } else {
-        await moduleLink.click({ timeout: 30000 });
-      }
-    } else if (moduleIdentifiers[moduleName] && await visibleMenuItem.isVisible().catch(() => false)) {
-      await visibleMenuItem.click({ timeout: 30000 });
-    } else {
-      await moduleLink.click({ timeout: 30000 });
     }
 
-    // TYPO3 v14 loads modules in the content iframe. Its 'src' is set as soon as the switch starts, so waiting for
-    // the embedded document itself is what actually proves the new module is rendered.
-    await this.waitForModuleDocument(await this.resolveModulePath(moduleLink));
+    await expect(moduleLink).toBeVisible({ timeout: 30000 });
+    const modulePath = await this.resolveModulePath(moduleLink);
+
+    // Clicking the ARIA menu item can update TYPO3's active menu state without navigating the content iframe.
+    // Use the actual module link and retry once when the iframe remains on the previous module (usually Dashboard).
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      await moduleLink.click({ timeout: 30000 });
+      try {
+        await this.waitForModuleDocument(modulePath, attempt === 1 ? 15000 : 45000);
+        break;
+      } catch (error) {
+        if (attempt === 2) {
+          throw error;
+        }
+      }
+    }
 
     await expect(this.page.locator('#typo3-contentIframe')).toBeAttached({ timeout: 45000 });
     await this.contentFrame.locator('body').waitFor({ state: 'visible', timeout: 45000 });

@@ -49,7 +49,7 @@ export class BackendPage {
    * rendered inside it. Without waiting for the embedded document itself, assertions can still run against the
    * old module.
    */
-  protected async waitForModuleDocument(modulePath: string): Promise<void> {
+  protected async waitForModuleDocument(modulePath: string, timeout: number = 45000): Promise<void> {
     await this.page.waitForFunction(
       (expectedPath) => {
         const iframe = document.querySelector('iframe#typo3-contentIframe') as HTMLIFrameElement | null;
@@ -60,7 +60,7 @@ export class BackendPage {
           && iframeDocument.location.pathname === expectedPath;
       },
       modulePath,
-      { timeout: 45000 },
+      { timeout },
     );
   }
 
