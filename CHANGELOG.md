@@ -1,5 +1,29 @@
 # In2publish Core Change Log
 
+14.0.4
+- [META] Set the EM conf version number to 14.0.4
+- [DOCS] Update Changelog.md
+- [DEV][TEST] harden playwright tests
+- [TEST][BUGFIX] Fix Publish Overview navigation and record selection
+- [TEST]  Clear in2publish core cache between Playwright tests
+- [CI][BUGFIX] fix failing ci actions by replacing fixed container names with services
+- [DEV][TEST] upport improvements for playwright test setup from typo3_13
+- [TEST][BUGFIX] Eliminate warning: Undefined global variable $TYPO3_CONF_VARS in /app/Build/local/vendor/typo3/cms-core/Classes/Crypto/HashService during execution of functional tests
+- [TEST][BUGFIX] Wait for explicit Playwright publishing result
+- [TEST][BUGFIX] Rebuild invalid cached values
+- [TEST][DEV] improve database polling in make setup task
+- [TEST] fix playwright tests
+- [TEST][DEV] increase speed of playwright tests by limiting restores to those necessary for passing the tests
+- [BUGFIX] Use portable printf for SSH exit status output
+- [DEV][TEST] adjust playwright helper methods
+- [DEV] use playwright version configured in playwright/Dockerfile when building playwright-image
+- Merge pull request #134 from in2code-de/dependabot/npm_and_yarn/Resources/Private/Build/immutable-5.1.9
+- [TASK] Complete the dependency requirement list in the PhpStorm meta file
+- [TEST] adjust Unit tests to reflect adjusted dependency handling
+- [BUGFIX] Do not block publishing on shortcuts targets which are deleted in local database
+- [BUGFIX] Do not block publishing on dependency targets which exist in neither database
+- Bump immutable from 5.1.5 to 5.1.9 in /Resources/Private/Build
+
 14.0.3
 [META] Set the EM conf version number to 14.0.3
 [DOCS] update Changelog.md
