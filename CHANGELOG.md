@@ -1,5 +1,64 @@
 # In2publish Core Change Log
 
+- [META] Set the EM conf version number to 13.4.1
+- [DOCS] Update Changelog.md
+- [DEV] use composer install instead of composer update during make setup and update composer.lock files
+- [DOC] adjust documentation for playwright tests
+- [BUGFIX] Defer FlexResolver dependencies after unserialization
+- [BUGFIX] make InjectLoadingOverlayMiddleware public in order to eliminate DI errors
+- [CI][BUGFIX] fix failing ci actions by replacing fixed container names with services
+- [TEST] improve database polling during make setup task
+- [TEST] add make task build-playwright-image
+- [TEST][DEV] adjust and improve settings for playwright tests
+- [TEST][BUGFIX] Wait for explicit Playwright publishing result
+- [DEV][TEST] use unique ports and compose project names in order to be able to run playwright suites in parallel
+- [TEST][BUGFIX] Stop Playwright runs before setup
+- [TEST][DEV] exclude cache_* tables from make task playwright-clear-runtime-state in order to increase test performance
+- [TEST] adjust dumps to fix failing playwright tests
+- [TEST][DEV] increase speed of playwright tests by limiting restores to those necessary for passing the tests
+- [DEV][META] update composer packages for local test setup
+- [BUGFIX] Use portable printf for SSH exit status output
+- [TEST][DEV] adjust dump for be_users to add email for no-publisher
+- [TEST] fix test publish-record-with-dependency.spec.ts by waiting for completed publishing before checking for visibility of icons
+- [TASK] use associative array keys for TCA items
+- [TEST][AI] adjust SKILLS.md for generating playwright tests
+- [TEST][WORKAROUND] fix publish-files-mdoule.spec.ts by adding second selection step
+- [TEST] stabilise Playwright suite against environment reset
+- [BUGFIX] eliminate undefined array key errors
+- [BUGFIX][CI] use mysql loader for DB restore in order to fix failing CI pipelines
+- [TEST] increase test timeout in order to fix some failing tests
+- [TEST] fix functional tests
+- [DEV] add .playwright.lock to .gitignore
+- [TEST][BUGFIX] Eliminate warning: Undefined global variable $TYPO3_CONF_VARS in /app/Build/local/vendor/typo3/cms-core/Classes/Crypto/HashService during execution of functional tests
+- [DEV] commit composer.lock for dev instances to avoid drift of packages between local development and CI
+- Merge remote-tracking branch 'origin/feature/81586-playwright-backport' into typo3_13
+- [DEV][AI] stop tracking settings.local.json
+- [DEV] update playwright image and eliminate local playwright setup
+- [TEST] adjust Unit tests to reflect adjusted dependency handling
+- [BUGFIX] Do not block publishing on shortcuts targets which are deleted in local database
+- [BUGFIX] Do not block publishing on dependency targets which exist in neither database
+- [TASK] Improve the notifications during the context menu publishing
+- [BUGFIX] Fix publishing a page via the context menu
+- [DEV] add make task for running a single unit test
+- [TASK] Guard the news cache task against missing configuration keys
+- [TEST] Add unit test for FlushFrontendPageCacheTask
+- [TASK] Report a frontend cache flush task without PID as failed
+- [BUGFIX] Fix TypeError in the frontend page cache flush task
+- [TEST] backport of playwright and playwright tests to typo3_13
+- [TASK] update package-lock.json
+- [DEV] update phive packages
+- [DEV] add trusted keys for phive package installation to restore setup-qa task
+- [TASK] adjust composer requirements for co-stack packages
+- [DEV] mount local composer auth.json to docker for test setup
+- [TASK] add branch alias to composer.json
+- [BUGFIX] Disable original constructor in Registry mock
+- [TEST] Add performance regression test for recursive dependency check
+- [BUGFIX] Memoize recursive dependency check while publishing
+- [BUGFIX] add backendGlobal.js only in backend context
+- [CLEANUP] remove selenium containers from docker setup
+- [BUGFIX] Use stricter typing when comparing records (PR #128)
+- [TASK] Bump picomatch in /Resources/Private/Build (PR #131 )
+
 13.4.0
 - [META] Set the EM conf version number to 13.4.0
 - [DOCS] Update Changelog.md
@@ -108,7 +167,7 @@
 - [BUGFIX] remove StopwatchAlreadyStartedException keep the startTime if already set
 - [BUGFIX] Fix implicit nullable in Builder
 - [BUGFIX] Prevent exception if request is not set in LanguageAugmentations
-- 
+-
 13.0.1
 
 - [META] Set the EM conf version number to 13.0.1
