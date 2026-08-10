@@ -1,7 +1,11 @@
 # In2publish Core Change Log
 
-- [META] Set the EM conf version number to 13.4.1
+13.4.2
+
+- [META] Set the EM conf version number to 13.4.2
 - [DOCS] Update Changelog.md
+- [TEST] remove workaround in PublishFiles tests after bugfix #82332 has been implemented
+- [BUGFIX] Clean up processed files after FAL publishing
 - [DEV] use composer install instead of composer update during make setup and update composer.lock files
 - [DOC] adjust documentation for playwright tests
 - [BUGFIX] Defer FlexResolver dependencies after unserialization
@@ -58,6 +62,9 @@
 - [CLEANUP] remove selenium containers from docker setup
 - [BUGFIX] Use stricter typing when comparing records (PR #128)
 - [TASK] Bump picomatch in /Resources/Private/Build (PR #131 )
+
+13.4.1
+- This tag was removed
 
 13.4.0
 - [META] Set the EM conf version number to 13.4.0
