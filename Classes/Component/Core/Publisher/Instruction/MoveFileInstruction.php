@@ -9,7 +9,7 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function trim;
 
-class MoveFileInstruction implements PublishInstruction
+class MoveFileInstruction implements PublishInstruction, ProcessedFileCleanupInstruction
 {
     protected int $storage;
     protected string $oldFileIdentifier;
@@ -42,5 +42,20 @@ class MoveFileInstruction implements PublishInstruction
             'oldFileIdentifier' => $this->oldFileIdentifier,
             'newFileIdentifier' => $this->newFileIdentifier,
         ];
+    }
+
+    public function getStorage(): int
+    {
+        return $this->storage;
+    }
+
+    public function getFileIdentifiersForProcessedFileCleanup(): array
+    {
+        return [$this->oldFileIdentifier];
+    }
+
+    public function getFolderIdentifiersForProcessedFileCleanup(): array
+    {
+        return [];
     }
 }

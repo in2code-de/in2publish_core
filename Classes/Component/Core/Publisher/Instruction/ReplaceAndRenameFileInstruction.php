@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Component\Core\Publisher\Instruction;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverService;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
-class ReplaceAndRenameFileInstruction implements PublishInstruction
+class ReplaceAndRenameFileInstruction implements PublishInstruction, ProcessedFileCleanupInstruction
 {
     protected int $storage;
     protected string $oldFileIdentifier;
@@ -42,5 +42,20 @@ class ReplaceAndRenameFileInstruction implements PublishInstruction
             'foreignTargetFileIdentifier' => $this->foreignTargetFileIdentifier,
             'foreignTemporaryFileIdentifier' => $this->foreignTemporaryFileIdentifier,
         ];
+    }
+
+    public function getStorage(): int
+    {
+        return $this->storage;
+    }
+
+    public function getFileIdentifiersForProcessedFileCleanup(): array
+    {
+        return [$this->oldFileIdentifier];
+    }
+
+    public function getFolderIdentifiersForProcessedFileCleanup(): array
+    {
+        return [];
     }
 }

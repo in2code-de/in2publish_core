@@ -6,7 +6,7 @@ namespace In2code\In2publishCore\Component\Core\Publisher\Instruction;
 
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverService;
 
-class DeleteFileInstruction implements PublishInstruction
+class DeleteFileInstruction implements PublishInstruction, ProcessedFileCleanupInstruction
 {
     protected int $storage;
     protected string $fileIdentifier;
@@ -29,5 +29,20 @@ class DeleteFileInstruction implements PublishInstruction
             'storage' => $this->storage,
             'fileIdentifier' => $this->fileIdentifier,
         ];
+    }
+
+    public function getStorage(): int
+    {
+        return $this->storage;
+    }
+
+    public function getFileIdentifiersForProcessedFileCleanup(): array
+    {
+        return [$this->fileIdentifier];
+    }
+
+    public function getFolderIdentifiersForProcessedFileCleanup(): array
+    {
+        return [];
     }
 }

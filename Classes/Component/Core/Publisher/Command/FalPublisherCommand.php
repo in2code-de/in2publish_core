@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Publisher\Command;
 
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
+use In2code\In2publishCore\CommonInjection\ProcessedFileCleanupServiceInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverServiceInjection;
 use In2code\In2publishCore\Component\Core\Publisher\Instruction\PublishInstruction;
+use In2code\In2publishCore\Component\Core\Publisher\Instruction\ProcessedFileCleanupInstruction;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use ReflectionClass;
 use Symfony\Component\Console\Command\Command;
@@ -26,6 +28,7 @@ class FalPublisherCommand extends Command
     use LocalDatabaseInjection;
     use ContextServiceInjection;
     use FalDriverServiceInjection;
+    use ProcessedFileCleanupServiceInjection;
 
     public function isEnabled(): bool
     {
@@ -64,6 +67,9 @@ class FalPublisherCommand extends Command
         }
 
         foreach ($instructions as $instruction) {
+            if ($instruction instanceof ProcessedFileCleanupInstruction) {
+                $this->processedFileCleanupService->cleanup($instruction, $this->falDriverService);
+            }
             $instruction->execute($this->falDriverService);
         }
         return Command::SUCCESS;
