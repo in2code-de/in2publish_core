@@ -191,8 +191,8 @@ typo3-comparedb:
 
 setup: playwright-stop stop destroy .install-packages .create-certificate start .mysql-wait
 	@echo "Installing in2publish_core as $(IN2PUBLISH_DEV_VERSION)"
-	docker compose exec -u1000 $(COMPOSER_AUTH_OPT) local-php composer u -W
-	docker compose exec -u1000 $(COMPOSER_AUTH_OPT) foreign-php composer u -W
+	docker compose exec -u1000 $(COMPOSER_AUTH_OPT) local-php composer install
+	docker compose exec -u1000 $(COMPOSER_AUTH_OPT) foreign-php composer install
 	docker compose exec -u1000 local-php vendor/bin/typo3 install:setup --force
 	docker compose exec -u1000 foreign-php vendor/bin/typo3 install:setup --force
 	git checkout Build/local/config/sites/main/config.yaml
