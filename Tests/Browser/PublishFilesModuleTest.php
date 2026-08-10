@@ -200,8 +200,6 @@ class PublishFilesModuleTest extends AbstractBrowserTestCase
         TYPO3Helper::backendLogin($foreignDriver, 'https://foreign.v13.in2publish-core.de/typo3', 'admin', 'password');
         TYPO3Helper::selectModuleByText($foreignDriver, 'Filelist');
         TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases', '2b_published_file']);
-        // Workaround: when selecting file for the first time, there is an error "File has been deleted"
-        TYPO3Helper::selectInFileStorageTree($foreignDriver, ['fileadmin', 'Testcases', '2b_published_file']);
         TYPO3Helper::inContentIFrameContext($foreignDriver, static function (WebDriver $driver): void {
             self::assertElementIsVisible(
                 $driver,
