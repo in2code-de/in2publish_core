@@ -209,10 +209,14 @@ test.describe('Publish Files Module', () => {
             // Verify via direct HTTP URL check (avoids FAL indexing delays in Filelist UI)
             const foreignContext = await browser.newContext({ ignoreHTTPSErrors: true });
             const foreignPage = await foreignContext.newPage();
-            const fileUrl = config.foreign.baseUrl.replace('/typo3/', '')
-                + '/fileadmin/Testcases/2b_published_file/renamed-1523151-unsplash.jpg';
-            const response = await foreignPage.goto(fileUrl);
-            expect(response?.status()).toBe(200);
+            const foreignBackend = new BackendPage(foreignPage);
+            await foreignBackend.login(config.foreign.baseUrl);
+            await foreignBackend.gotoModule('Filelist');
+            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
+
+            await expect(
+                foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2b_published_file/renamed-1523151-unsplash.jpg"]')
+            ).toBeVisible({ timeout: 10000 });
             await foreignContext.close();
         });
     });
