@@ -19,6 +19,8 @@ use TYPO3\CMS\Core\Service\FlexFormService;
 #[CoversMethod(FlexResolver::class, 'getTargetTables')]
 #[CoversMethod(FlexResolver::class, 'configure')]
 #[CoversMethod(FlexResolver::class, 'resolve')]
+#[CoversMethod(FlexResolver::class, '__serialize')]
+#[CoversMethod(FlexResolver::class, '__unserialize')]
 class FlexResolverTest extends UnitTestCase
 {
     public function testTargetTables(): void
@@ -50,6 +52,22 @@ class FlexResolverTest extends UnitTestCase
         $this->assertSame('table_foo', $table->getValue($flexResolver));
         $this->assertSame('column_foo', $column->getValue($flexResolver));
         $this->assertSame(['tca_key1' => 'tca_value1'], $processedTca->getValue($flexResolver));
+    }
+
+    public function testUnserializeDefersRuntimeDependencyResolution(): void
+    {
+        $flexResolver = new FlexResolver();
+        $flexResolver->__unserialize([
+            'metaInfo' => [],
+            'table' => 'table_foo',
+            'column' => 'column_foo',
+            'processedTca' => ['tca_key1' => 'tca_value1'],
+        ]);
+
+        foreach (['resolverService', 'flexFormFlatteningService', 'flexFormService', 'flexFormTools'] as $propertyName) {
+            $property = new ReflectionProperty(FlexResolver::class, $propertyName);
+            $this->assertFalse($property->isInitialized($flexResolver));
+        }
     }
 
     public function testResolveDoesNotResolveFileRecords()

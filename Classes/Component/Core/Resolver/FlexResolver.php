@@ -60,6 +60,7 @@ class FlexResolver extends AbstractResolver
         if (!($record instanceof DatabaseEntityRecord)) {
             return;
         }
+        $this->initializeRuntimeDependencies();
         $dataStructureIdentifierJson = $this->flexFormTools->getDataStructureIdentifier(
             ['config' => $this->processedTca],
             $this->table,
@@ -116,6 +117,22 @@ class FlexResolver extends AbstractResolver
         }
     }
 
+    protected function initializeRuntimeDependencies(): void
+    {
+        if (!isset($this->resolverService)) {
+            $this->injectResolverService(GeneralUtility::makeInstance(ResolverService::class));
+        }
+        if (!isset($this->flexFormFlatteningService)) {
+            $this->injectFlexFormFlatteningService(GeneralUtility::makeInstance(FlexFormFlatteningService::class));
+        }
+        if (!isset($this->flexFormService)) {
+            $this->injectFlexFormService(GeneralUtility::makeInstance(FlexFormService::class));
+        }
+        if (!isset($this->flexFormTools)) {
+            $this->injectFlexFormTools(GeneralUtility::makeInstance(FlexFormTools::class));
+        }
+    }
+
     protected function flattenFlexFormData(array $data, array $path = []): array
     {
         $newData = [];
@@ -161,9 +178,5 @@ class FlexResolver extends AbstractResolver
             $data['column'],
             $data['processedTca'],
         );
-        $this->injectResolverService(GeneralUtility::makeInstance(ResolverService::class));
-        $this->injectFlexFormFlatteningService(GeneralUtility::makeInstance(FlexFormFlatteningService::class));
-        $this->injectFlexFormService(GeneralUtility::makeInstance(FlexFormService::class));
-        $this->injectFlexFormTools(GeneralUtility::makeInstance(FlexFormTools::class));
     }
 }
