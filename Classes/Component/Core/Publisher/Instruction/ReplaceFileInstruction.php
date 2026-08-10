@@ -6,7 +6,7 @@ namespace In2code\In2publishCore\Component\Core\Publisher\Instruction;
 
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\FalDriverService;
 
-class ReplaceFileInstruction implements PublishInstruction
+class ReplaceFileInstruction implements PublishInstruction, ProcessedFileCleanupInstruction
 {
     protected int $storage;
     protected string $foreignTargetFileIdentifier;
@@ -36,5 +36,20 @@ class ReplaceFileInstruction implements PublishInstruction
             'foreignTargetFileIdentifier' => $this->foreignTargetFileIdentifier,
             'foreignTemporaryFileIdentifier' => $this->foreignTemporaryFileIdentifier,
         ];
+    }
+
+    public function getStorage(): int
+    {
+        return $this->storage;
+    }
+
+    public function getFileIdentifiersForProcessedFileCleanup(): array
+    {
+        return [$this->foreignTargetFileIdentifier];
+    }
+
+    public function getFolderIdentifiersForProcessedFileCleanup(): array
+    {
+        return [];
     }
 }
