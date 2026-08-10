@@ -60,6 +60,22 @@ class FlexResolverTest extends UnitTestCase
     /**
      * @covers ::resolve
      */
+    public function testUnserializeDefersRuntimeDependencyResolution(): void
+    {
+        $flexResolver = new FlexResolver();
+        $flexResolver->__unserialize([
+            'metaInfo' => [],
+            'table' => 'table_foo',
+            'column' => 'column_foo',
+            'processedTca' => ['tca_key1' => 'tca_value1'],
+        ]);
+
+        foreach (['resolverService', 'flexFormFlatteningService', 'flexFormService', 'flexFormTools'] as $propertyName) {
+            $property = new ReflectionProperty(FlexResolver::class, $propertyName);
+            $this->assertFalse($property->isInitialized($flexResolver));
+        }
+    }
+
     public function testResolveDoesNotResolveFileRecords()
     {
         $flexResolver = new FlexResolver();
