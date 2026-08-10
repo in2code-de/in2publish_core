@@ -201,9 +201,6 @@ test.describe('Publish Files Module', () => {
             await foreignBackend.gotoModule('Filelist');
             await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
 
-            // Second selection as a workaround. see: https://projekte.in2code.de/issues/82332
-            await foreignBackend.selectInFileStorageTree(['fileadmin', 'Testcases', '2b_published_file']);
-
             await expect(
                 foreignBackend.contentFrame.locator('[data-filelist-identifier="1:/Testcases/2b_published_file/renamed-1523151-unsplash.jpg"]')
             ).toBeVisible({ timeout: 10000 });
