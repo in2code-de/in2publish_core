@@ -10,6 +10,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -324,6 +325,69 @@ class DependencyTest extends UnitTestCase
         $actualLabel = $reasons->getAll()[0]->getLabel();
 
         self::assertSame($expectedReasonLabel, $actualLabel);
+    }
+
+    public static function equivalentEmptyFrontendGroupValuesDataProvider(): array
+    {
+        return [
+            'null and empty string' => [null, ''],
+            'null and integer zero' => [null, 0],
+            'null and string zero' => [null, '0'],
+            'empty string and integer zero' => ['', 0],
+            'empty string and string zero' => ['', '0'],
+            'integer zero and string zero' => [0, '0'],
+        ];
+    }
+
+    #[DataProvider('equivalentEmptyFrontendGroupValuesDataProvider')]
+    public function testEquivalentEmptyFrontendGroupValuesDoNotBlockPublishing(
+        mixed $localValue,
+        mixed $foreignValue,
+    ): void {
+        $dependency = new Dependency(
+            $this->createMock(Record::class),
+            'classification',
+            ['uid' => 1],
+            Dependency::REQ_ENABLECOLUMNS,
+            'Enable columns differ',
+            static fn(): array => [],
+        );
+        $GLOBALS['TCA']['classification']['ctrl']['enablecolumns'] = ['fe_group'];
+
+        $record = $this->createMock(DatabaseRecord::class);
+        $record->method('getState')->willReturn(Record::S_CHANGED);
+        $record->method('getLocalProps')->willReturn(['fe_group' => $localValue]);
+        $record->method('getForeignProps')->willReturn(['fe_group' => $foreignValue]);
+        $recordCollection = $this->createMock(RecordCollection::class);
+        $recordCollection->method('getRecordsByProperties')->willReturn([$record]);
+
+        $dependency->fulfill($recordCollection);
+
+        self::assertTrue($dependency->isFulfilled());
+    }
+
+    public function testFrontendGroupRestrictionsStillBlockPublishing(): void
+    {
+        $dependency = new Dependency(
+            $this->createMock(Record::class),
+            'classification',
+            ['uid' => 1],
+            Dependency::REQ_ENABLECOLUMNS,
+            'Enable columns differ',
+            static fn(): array => [],
+        );
+        $GLOBALS['TCA']['classification']['ctrl']['enablecolumns'] = ['fe_group'];
+
+        $record = $this->createMock(DatabaseRecord::class);
+        $record->method('getState')->willReturn(Record::S_CHANGED);
+        $record->method('getLocalProps')->willReturn(['fe_group' => '0']);
+        $record->method('getForeignProps')->willReturn(['fe_group' => '-1']);
+        $recordCollection = $this->createMock(RecordCollection::class);
+        $recordCollection->method('getRecordsByProperties')->willReturn([$record]);
+
+        $dependency->fulfill($recordCollection);
+
+        self::assertFalse($dependency->isFulfilled());
     }
 
     public function testAreSupersededDependenciesFulfilled(): void
