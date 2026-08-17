@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+14.0.5
+- [META] Set the EM conf version number to 14.0.5
+- [DOCS] Update Changelog.md
+- [BUGFIX] Loosen strict comparison for empty fe_group values
+- [TEST] remove workaround in PublishFiles tests after bugfix #82332 has been implemented
+- [BUGFIX] Clean up processed files after FAL publishing
+
 14.0.4
 - [META] Set the EM conf version number to 14.0.4
 - [DOCS] Update Changelog.md
