@@ -98,7 +98,7 @@
 		"co-stack/build-essentials": "@dev",
 		"co-stack/mysql-loader": "@dev",
 		"co-stack/process-manager": "@dev",
-		"co-stack/stack-test": "dev-master",
+		"co-stack/stack-test": "dev-typo3_12",
 		"mikey179/vfsstream": "^v1.6"
 	},
 	"autoload-dev": {
