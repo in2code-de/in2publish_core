@@ -42,7 +42,7 @@ use function func_get_args;
 
 class PublishItemProvider extends AbstractProvider
 {
-    private const string LLL_FILE = 'LLL:EXT:in2publish_core/Resources/Private/Language/Features/ContextMenuPublishEntry.xlf';
+    private const LLL_FILE = 'LLL:EXT:in2publish_core/Resources/Private/Language/Features/ContextMenuPublishEntry.xlf';
 
     protected $itemsConfiguration = [
         'publish' => [
