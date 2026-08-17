@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+12.9.1
+- [META] Set the EM conf version number to 12.9.1
+- [DOCS] Update Changelog.md
+- [TEST][DEV] use branch typo3_12 for packacke stack-test in acceptance test setup
+- [BUGFIX] Defer FlexResolver dependencies after unserialization
+
 12.9.0
 - [META] Set the EM conf version number to 12.9.0
 - [DOCS] Update Changelog.md
