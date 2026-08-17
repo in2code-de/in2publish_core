@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+13.4.3
+- [META] Set the EM conf version number to 13.4.3
+- [DOCS] Update Changelog.md
+- [BUGFIX] Restore PHP 8.2 compatibility
+- [BUGFIX] Loosen strict comparison for empty fe_group values
+- [TEST][BUGFIX] Reproduce empty frontend group mismatch
+
 13.4.2
 
 - [META] Set the EM conf version number to 13.4.2
