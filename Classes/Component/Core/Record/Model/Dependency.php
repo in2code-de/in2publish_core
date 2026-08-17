@@ -204,12 +204,26 @@ class Dependency
             $localProps = $record->getLocalProps();
             $foreignProps = $record->getForeignProps();
             foreach ($enableFields as $enableField) {
-                if (($localProps[$enableField] ?? null) !== ($foreignProps[$enableField] ?? null)) {
+                $localValue = $localProps[$enableField] ?? null;
+                $foreignValue = $foreignProps[$enableField] ?? null;
+                if (
+                    'fe_group' === $enableField
+                    && self::isEmptyFrontendGroupValue($localValue)
+                    && self::isEmptyFrontendGroupValue($foreignValue)
+                ) {
+                    continue;
+                }
+                if ($localValue !== $foreignValue) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    private static function isEmptyFrontendGroupValue(mixed $value): bool
+    {
+        return in_array($value, [null, '', 0, '0'], true);
     }
 
     public function isFulfilled(): bool
