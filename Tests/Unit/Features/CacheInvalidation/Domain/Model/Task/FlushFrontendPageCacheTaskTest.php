@@ -40,37 +40,77 @@ class FlushFrontendPageCacheTaskTest extends UnitTestCase
 {
     /** @var array<string> */
     protected array $executedCacheCommands = [];
+    /** @var array<int> */
+    protected array $registeredPageIds = [];
+    protected int $processedCommandMaps = 0;
 
     public static function configurationDataProvider(): array
     {
         return [
-            'integer pid' => [4711, ['4711']],
-            'string pid' => ['4711', ['4711']],
-            'comma separated pid list' => ['1, 2 ,3', ['1', '2', '3']],
-            'comma separated pid list with empty values' => ['1,,3,', ['1', '3']],
-            'clear cache command' => ['pages', ['pages']],
-            'cache tag command' => ['cacheTag:pagetag1', ['cacheTag:pagetag1']],
+            // pid, expected registered page ids, expected cache commands, expected process_cmdmap calls
+            'integer pid' => [4711, [4711], [], 1],
+            'string pid' => ['4711', [4711], [], 1],
+            'comma separated pid list' => ['1, 2 ,3', [1, 2, 3], [], 1],
+            'comma separated pid list with empty values' => ['1,,3,', [1, 3], [], 1],
+            'clear cache command' => ['pages', [], ['pages'], 0],
+            'cache tag command' => ['cacheTag:pagetag1', [], ['cacheTag:pagetag1'], 0],
+            'mixed pid and cache tag command' => ['12,cacheTag:pagetag1', [12], ['cacheTag:pagetag1'], 1],
         ];
     }
 
     /**
      * @param int|string $pid
+     * @param array<int> $expectedRegisteredPageIds
      * @param array<string> $expectedCacheCommands
      */
     #[DataProvider('configurationDataProvider')]
-    public function testTaskFlushesCacheForAllConfiguredCommands($pid, array $expectedCacheCommands): void
-    {
+    public function testTaskFlushesCacheForAllConfiguredCommands(
+        $pid,
+        array $expectedRegisteredPageIds,
+        array $expectedCacheCommands,
+        int $expectedProcessedCommandMaps
+    ): void {
         $task = $this->createTask(['pid' => $pid]);
 
         $success = $task->execute();
 
-        $expectedMessages = [];
-        foreach ($expectedCacheCommands as $expectedCacheCommand) {
-            $expectedMessages[] = 'Cleared frontend cache with configuration clearCacheCmd=' . $expectedCacheCommand;
-        }
         $this->assertTrue($success);
+        $this->assertSame($expectedRegisteredPageIds, $this->registeredPageIds);
         $this->assertSame($expectedCacheCommands, $this->executedCacheCommands);
+        $this->assertSame($expectedProcessedCommandMaps, $this->processedCommandMaps);
+    }
+
+    /**
+     * @param int|string $pid
+     * @param array<string> $expectedMessages
+     */
+    #[DataProvider('messageDataProvider')]
+    public function testTaskReportsEveryFlushedCommand($pid, array $expectedMessages): void
+    {
+        $task = $this->createTask(['pid' => $pid]);
+
+        $task->execute();
+
         $this->assertSame($expectedMessages, $task->getMessages());
+    }
+
+    public static function messageDataProvider(): array
+    {
+        return [
+            'integer pid' => [4711, ['Cleared frontend cache with configuration clearCacheCmd=4711']],
+            'comma separated pid list' => [
+                '1, 2 ,3',
+                [
+                    'Cleared frontend cache with configuration clearCacheCmd=1',
+                    'Cleared frontend cache with configuration clearCacheCmd=2',
+                    'Cleared frontend cache with configuration clearCacheCmd=3',
+                ],
+            ],
+            'cache tag command' => [
+                'cacheTag:pagetag1',
+                ['Cleared frontend cache with configuration clearCacheCmd=cacheTag:pagetag1'],
+            ],
+        ];
     }
 
     public static function emptyConfigurationDataProvider(): array
@@ -90,7 +130,9 @@ class FlushFrontendPageCacheTaskTest extends UnitTestCase
         $success = $task->execute();
 
         $this->assertFalse($success);
+        $this->assertSame([], $this->registeredPageIds);
         $this->assertSame([], $this->executedCacheCommands);
+        $this->assertSame(0, $this->processedCommandMaps);
         $this->assertSame(
             ['Skipped flushing the frontend cache because the task configuration contains no PID'],
             $task->getMessages(),
@@ -102,10 +144,21 @@ class FlushFrontendPageCacheTaskTest extends UnitTestCase
      */
     protected function createTask(array $configuration): FlushFrontendPageCacheTask
     {
-        $dataHandler = $this->createMock(DataHandler::class);
+        $dataHandler = $this->createStub(DataHandler::class);
         $dataHandler->method('clear_cacheCmd')->willReturnCallback(
             function ($cacheCmd): void {
                 $this->executedCacheCommands[] = $cacheCmd;
+            },
+        );
+        $dataHandler->method('registerRecordIdForPageCacheClearing')->willReturnCallback(
+            function (string $table, $uid): void {
+                $this->assertSame('pages', $table);
+                $this->registeredPageIds[] = $uid;
+            },
+        );
+        $dataHandler->method('process_cmdmap')->willReturnCallback(
+            function (): void {
+                ++$this->processedCommandMaps;
             },
         );
 
