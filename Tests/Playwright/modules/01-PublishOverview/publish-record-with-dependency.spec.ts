@@ -54,13 +54,16 @@ test.describe('Publish Record With Dependency', () => {
 
             const recordRow = backend.contentFrame.locator('[data-record-identifier="pages-36"]');
             await expect(recordRow).toContainText(
-                '"5c.1 Parent not published" must be published first'
+                'The page "5c.1 Parent not published" [pages:35] must be published first.'
             );
             await expect(recordRow).toContainText(
-                '"5c.1.1 Child Ready to Publish" is published first'
+                'Affected records: "Header on not published Parent page 5c.1" [tt_content:21], "5c.1.1 Child Ready to Publish" [pages:36]'
             );
             await expect(recordRow).toContainText(
-                'The record "Header on not published Parent page 5c.1" is a target of the shortcut record'
+                '"Insert Record on Child Ready to Publish 5c.1.1" [tt_content:22] requires that the page "5c.1.1 Child Ready to Publish" [pages:36] is published first'
+            );
+            await expect(recordRow).toContainText(
+                'The record "Header on not published Parent page 5c.1" [tt_content:21] is a target of the shortcut record "Insert Record on Child Ready to Publish 5c.1.1" [tt_content:22]'
             );
         });
 
