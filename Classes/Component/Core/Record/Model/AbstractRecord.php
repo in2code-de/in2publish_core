@@ -428,14 +428,14 @@ abstract class AbstractRecord implements Record
         if ($total > $maxDisplay + 2) {
             $displayed = array_slice($names, 0, $maxDisplay);
             $remaining = $total - $maxDisplay;
-            $list = '"' . implode('", "', $displayed) . '"';
+            $list = implode(', ', $displayed);
             return LocalizationUtility::translate(
                 self::LLL_PREFIX . 'grouped.and_more',
                 null,
                 [$list, $remaining],
             ) ?? $list . ' and ' . $remaining . ' more';
         }
-        return '"' . implode('", "', $names) . '"';
+        return implode(', ', $names);
     }
 
     /**

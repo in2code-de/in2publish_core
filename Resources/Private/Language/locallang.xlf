@@ -353,25 +353,25 @@
 				<source>Admin tools</source>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.existing" resname="record.reason.requires_translation_parent.existing">
-				<source>&quot;%s&quot; requires that the record &quot;%s&quot; (which is the default language version) is published first.</source>
+				<source>%s requires that the record %s (which is the default language version) is published first.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.consistent_existence" resname="record.reason.requires_translation_parent.consistent_existencerequires_translation_parent.consistent_existence">
-				<source>"%s" requires that the default language record "%s" has consistent existence status across local and foreign databases (present OR absent).</source>
+				<source>%s requires that the default language record %s has consistent existence status across local and foreign databases (present OR absent).</source>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.enablecolumns" resname="record.reason.requires_translation_parent.enablecolumns">
-				<source>The record &quot;%s&quot; cannot be published until all visibility settings (%s) of the default language &quot;%s&quot; have been published.</source>
+				<source>The record %s cannot be published until all visibility settings (%s) of the default language %s have been published.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_published_page.existing" resname="record.reason.requires_published_page.existing">
-				<source>&quot;%s&quot; requires that the page &quot;%s&quot; is published first.</source>
+				<source>%s requires that the page %s is published first.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_published_page.enablecolumns" resname="record.reason.requires_published_page.enablecolumns">
-				<source>&quot;%s&quot; requires that the page &quot;%s&quot; has all of its properties published (%s) which determine if the record is visible.</source>
+				<source>%s requires that the page %s has all of its properties published (%s) which determine if the record is visible.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.missing_dependency" resname="record.reason.missing_dependency">
 				<source>The record with classification &quot;%s&quot; and properties &quot;%s&quot; does not exist.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.shortcut_record" resname="record.reason.shortcut_record">
-				<source>The record &quot;%s&quot; is a target of the shortcut record &quot;%s&quot;. The target must be published before the shortcut record can be published.</source>
+				<source>The record %s is a target of the shortcut record %s. The target must be published before the shortcut record can be published.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.unpublished_deleted_translations_for_this_page" resname="record.reason.unpublished_deleted_translations_for_this_page">
 				<source>There is at least one unpublished deletion of this translation. Please publish all deleted translations first.</source>
@@ -380,22 +380,22 @@
 				<source>There is at least one removed translation (UIDs: %3$s) that still exists on the production system. Please publish the removal first before publishing this new translation.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.requires_published_page.existing" resname="record.reason.grouped.requires_published_page.existing">
-				<source>The page &quot;%1$s&quot; must be published first.</source>
+				<source>The page %1$s must be published first.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.requires_published_page.enablecolumns" resname="record.reason.grouped.requires_published_page.enablecolumns">
-				<source>The page &quot;%1$s&quot; must have all visibility settings published first.</source>
+				<source>The page %1$s must have all visibility settings published first.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.requires_translation_parent.existing" resname="record.reason.grouped.requires_translation_parent.existing">
-				<source>The record &quot;%1$s&quot; (default language version) must be published first.</source>
+				<source>The record %1$s (default language version) must be published first.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.requires_translation_parent.consistent_existence" resname="record.reason.grouped.requires_translation_parent.consistent_existence">
-				<source>The default language record &quot;%1$s&quot; must have consistent existence status across local and foreign databases.</source>
+				<source>The default language record %1$s must have consistent existence status across local and foreign databases.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.requires_translation_parent.enablecolumns" resname="record.reason.grouped.requires_translation_parent.enablecolumns">
-				<source>The default language record &quot;%1$s&quot; must have all visibility settings published first.</source>
+				<source>The default language record %1$s must have all visibility settings published first.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.shortcut_record" resname="record.reason.grouped.shortcut_record">
-				<source>The record &quot;%1$s&quot; must be published first because it is referenced by shortcut records.</source>
+				<source>The record %1$s must be published first because it is referenced by shortcut records.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.affected_records" resname="record.reason.grouped.affected_records">
 				<source>Affected records: %s</source>
