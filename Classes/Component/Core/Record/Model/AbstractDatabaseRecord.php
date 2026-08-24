@@ -123,8 +123,8 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 Dependency::REQ_CONSISTENT_EXISTENCE,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.consistent_existence',
                 fn (Record $record): array => [
-                    $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
-                    $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
+                    $this,
+                    $record,
                 ],
                 $ownerIsBeingDeleted,
             );
@@ -138,9 +138,9 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                     Dependency::REQ_ENABLECOLUMNS,
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.enablecolumns',
                     fn (Record $record): array => [
-                        $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
+                        $this,
                         implode(', ', $enableFieldLabels),
-                        $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
+                        $record,
                     ],
                     $ownerIsBeingDeleted,
                 );
@@ -162,8 +162,8 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 Dependency::REQ_EXISTING,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_published_page.existing',
                 fn (Record $record): array => [
-                    $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
-                    $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
+                    $this,
+                    $record,
                 ],
                 $ownerIsBeingDeleted,
             );
@@ -180,8 +180,8 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 Dependency::REQ_ENABLECOLUMNS,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_published_page.enablecolumns',
                 fn (Record $record): array => [
-                    $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
-                    $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
+                    $this,
+                    $record,
                     implode(', ', $enableFieldLabels),
                 ],
                 $ownerIsBeingDeleted,

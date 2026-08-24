@@ -12,6 +12,7 @@ use In2code\In2publishCore\Component\Core\RecordCollection;
 use function array_keys;
 use function count;
 use function implode;
+use function trim;
 
 use const PHP_EOL;
 
@@ -118,17 +119,26 @@ class Dependency
 
     public function getSourceRecordName(): string
     {
-        $name = $this->record->__toString();
-        return $name !== '' ? $name : $this->record->getClassification() . ' [' . $this->record->getId() . ']';
+        return $this->formatRecordName($this->record);
     }
 
     public function getTargetRecordName(): string
     {
         foreach ($this->selectedRecords as $record) {
-            $name = $record->__toString();
-            return $name !== '' ? $name : $record->getClassification() . ' [' . $record->getId() . ']';
+            return $this->formatRecordName($record);
         }
         return $this->classification . ' [' . $this->getPropertiesAsUidOrString() . ']';
+    }
+
+    private function formatRecordName(Record $record): string
+    {
+        $legacyIdentifier = $record->getClassification() . ' [' . $record->getId() . ']';
+        $identifier = '[' . $record->getClassification() . ':' . $record->getId() . ']';
+        $title = trim($record->__toString());
+        if ($title === '' || $title === $legacyIdentifier) {
+            return $identifier;
+        }
+        return '"' . $title . '" ' . $identifier;
     }
 
     public function getPropertiesAsUidOrString(): string
@@ -165,7 +175,13 @@ class Dependency
         foreach ($records as $record) {
             $this->selectedRecords->addRecord($record);
             if (!$this->recordMatchesRequirements($record)) {
-                $this->reasons->addReason(new Reason($this->label, ($this->labelArgumentsFactory)($record)));
+                $labelArguments = ($this->labelArgumentsFactory)($record);
+                foreach ($labelArguments as $key => $labelArgument) {
+                    if ($labelArgument instanceof Record) {
+                        $labelArguments[$key] = $this->formatRecordName($labelArgument);
+                    }
+                }
+                $this->reasons->addReason(new Reason($this->label, $labelArguments));
             }
         }
     }

@@ -473,32 +473,32 @@
 				<target>Administrationswerkzeuge</target>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.existing" resname="record.reason.requires_translation_parent.existing">
-				<source>&quot;%s&quot; requires that the record &quot;%s&quot; (default language) is published first.</source>
-				<target>&quot;%s&quot; erfordert, dass der Datensatz &quot;%s&quot; (Standardsprachversion) zuerst veröffentlicht wird.</target>
+				<source>%s requires that the record %s (default language) is published first.</source>
+				<target>%s erfordert, dass der Datensatz %s (Standardsprachversion) zuerst veröffentlicht wird.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.consistent_existence" resname="record.reason.requires_translation_parent.consistent_existencerequires_translation_parent.consistent_existence">
-				<source>"%s" requires that the default language record "%s" has consistent existence status across local and foreign databases (present OR absent).</source>
-				<target>"%s" erfordert, dass der Datensatz der Standardsprache "%s" einen konsistenten Status in der lokalen und der entfernten Datenbank hat (entweder beide vorhanden oder beide gelöscht).</target>
+				<source>%s requires that the default language record %s has consistent existence status across local and foreign databases (present OR absent).</source>
+				<target>%s erfordert, dass der Datensatz der Standardsprache %s einen konsistenten Status in der lokalen und der entfernten Datenbank hat (entweder beide vorhanden oder beide gelöscht).</target>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_translation_parent.enablecolumns" resname="record.reason.requires_translation_parent.enablecolumns">
-				<source>The record &quot;%s&quot; cannot be published until all visibility settings (%s) of the default language &quot;%s&quot; have been published.</source>
-				<target>Der Datensatz &quot;%s&quot; kann nicht veröffentlicht werden, bevor nicht alle Sichtbarkeitseinstellung (%s) der Standardsprache &quot;%s&quot; veröffentlicht wurden.</target>
+				<source>The record %s cannot be published until all visibility settings (%s) of the default language %s have been published.</source>
+				<target>Der Datensatz %s kann nicht veröffentlicht werden, bevor nicht alle Sichtbarkeitseinstellung (%s) der Standardsprache %s veröffentlicht wurden.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_published_page.existing" resname="record.reason.requires_published_page.existing">
-				<source>&quot;%s&quot; requires that the page &quot;%s&quot; is published first.</source>
-				<target>&quot;%s&quot; erfordert, dass die Seite &quot;%s&quot; zuerst veröffentlicht wird.</target>
+				<source>%s requires that the page %s is published first.</source>
+				<target>%s erfordert, dass die Seite %s zuerst veröffentlicht wird.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.requires_published_page.enablecolumns" resname="record.reason.requires_published_page.enablecolumns">
-				<source>&quot;%s&quot; requires that the page &quot;%s&quot; has all of its properties published (%s) which determine if the record is visible.</source>
-				<target>&quot;%s&quot; setzt voraus, dass die Seite &quot;%s&quot; alle seine Eigenschaften veröffentlicht hat (%s), die bestimmen, ob der Datensatz sichtbar ist.</target>
+				<source>%s requires that the page %s has all of its properties published (%s) which determine if the record is visible.</source>
+				<target>%s setzt voraus, dass die Seite %s alle seine Eigenschaften veröffentlicht hat (%s), die bestimmen, ob der Datensatz sichtbar ist.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.missing_dependency" resname="record.reason.missing_dependency">
 				<source>The record with classification &quot;%s&quot; and properties &quot;%s&quot; does not exist.</source>
 				<target>Der Datensatz mit der klassifizierung &quot;%s&quot; und Eigenschaften &quot;%s&quot; existiert nicht.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.shortcut_record" resname="record.reason.shortcut_record">
-				<source>The record &quot;%s&quot; is a target of the shortcut record &quot;%s&quot;. The target must be published before the shortcut record can be published.</source>
-				<target>Der Datensatz &quot;%s&quot; ist ein Ziel des Verknüpfungsdatensatzes &quot;%s&quot;. Das Ziel muss veröffentlicht werden, bevor der Verknüpfungsdatensatz veröffentlicht werden kann.</target>
+				<source>The record %s is a target of the shortcut record %s. The target must be published before the shortcut record can be published.</source>
+				<target>Der Datensatz %s ist ein Ziel des Verknüpfungsdatensatzes %s. Das Ziel muss veröffentlicht werden, bevor der Verknüpfungsdatensatz veröffentlicht werden kann.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.unpublished_deleted_translations_for_this_page" resname="record.reason.unpublished_deleted_translations_for_this_page">
 				<source>There is at least one unpublished deletion of this translation. Please publish all deleted translations first.</source>
@@ -509,28 +509,28 @@
 				<target>Es existiert mindestens eine entfernte Übersetzung (UIDs: %3$s), die noch auf dem Live-System vorhanden ist. Bitte veröffentlichen Sie die Entfernung zuerst, bevor Sie diese neue Übersetzung veröffentlichen.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.requires_published_page.existing" resname="record.reason.grouped.requires_published_page.existing">
-				<source>The page &quot;%1$s&quot; must be published first.</source>
-				<target>Die Seite &quot;%1$s&quot; muss zuerst veröffentlicht werden.</target>
+				<source>The page %1$s must be published first.</source>
+				<target>Die Seite %1$s muss zuerst veröffentlicht werden.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.requires_published_page.enablecolumns" resname="record.reason.grouped.requires_published_page.enablecolumns">
-				<source>The page &quot;%1$s&quot; must have all visibility settings published first.</source>
-				<target>Die Seite &quot;%1$s&quot; muss zuerst alle Sichtbarkeitseinstellungen veröffentlicht haben.</target>
+				<source>The page %1$s must have all visibility settings published first.</source>
+				<target>Die Seite %1$s muss zuerst alle Sichtbarkeitseinstellungen veröffentlicht haben.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.requires_translation_parent.existing" resname="record.reason.grouped.requires_translation_parent.existing">
-				<source>The record &quot;%1$s&quot; (default language version) must be published first.</source>
-				<target>Der Datensatz &quot;%1$s&quot; (Standardsprachversion) muss zuerst veröffentlicht werden.</target>
+				<source>The record %1$s (default language version) must be published first.</source>
+				<target>Der Datensatz %1$s (Standardsprachversion) muss zuerst veröffentlicht werden.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.requires_translation_parent.consistent_existence" resname="record.reason.grouped.requires_translation_parent.consistent_existence">
-				<source>The default language record &quot;%1$s&quot; must have consistent existence status across local and foreign databases.</source>
-				<target>Der Datensatz der Standardsprache &quot;%1$s&quot; muss einen konsistenten Status in der lokalen und der entfernten Datenbank haben.</target>
+				<source>The default language record %1$s must have consistent existence status across local and foreign databases.</source>
+				<target>Der Datensatz der Standardsprache %1$s muss einen konsistenten Status in der lokalen und der entfernten Datenbank haben.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.requires_translation_parent.enablecolumns" resname="record.reason.grouped.requires_translation_parent.enablecolumns">
-				<source>The default language record &quot;%1$s&quot; must have all visibility settings published first.</source>
-				<target>Der Datensatz der Standardsprache &quot;%1$s&quot; muss zuerst alle Sichtbarkeitseinstellungen veröffentlicht haben.</target>
+				<source>The default language record %1$s must have all visibility settings published first.</source>
+				<target>Der Datensatz der Standardsprache %1$s muss zuerst alle Sichtbarkeitseinstellungen veröffentlicht haben.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.shortcut_record" resname="record.reason.grouped.shortcut_record">
-				<source>The record &quot;%1$s&quot; must be published first because it is referenced by shortcut records.</source>
-				<target>Der Datensatz &quot;%1$s&quot; muss zuerst veröffentlicht werden, da es Verweise (Shortcuts) auf ihn gibt.</target>
+				<source>The record %1$s must be published first because it is referenced by shortcut records.</source>
+				<target>Der Datensatz %1$s muss zuerst veröffentlicht werden, da es Verweise (Shortcuts) auf ihn gibt.</target>
 			</trans-unit>
 			<trans-unit id="record.reason.grouped.affected_records" resname="record.reason.grouped.affected_records">
 				<source>Affected records: %s</source>
