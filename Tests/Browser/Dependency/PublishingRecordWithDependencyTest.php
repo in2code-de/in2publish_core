@@ -54,22 +54,22 @@ class PublishingRecordWithDependencyTest extends AbstractBrowserTestCase
             );
             self::assertElementContains(
                 $driver,
-                'The page "5c.1 Parent not published" must be published first.',
+                'The page "5c.1 Parent not published" [pages:35] must be published first.',
                 WebDriverBy::xpath('//*[@data-record-identifier="pages-36"]'),
             );
             self::assertElementContains(
                 $driver,
-                'Affected records: "Header on not published Parent page 5c.1", "5c.1.1 Child Ready to Publish"',
+                'Affected records: "Header on not published Parent page 5c.1" [tt_content:21], "5c.1.1 Child Ready to Publish" [pages:36]',
                 WebDriverBy::xpath('//*[@data-record-identifier="pages-36"]'),
             );
             self::assertElementContains(
                 $driver,
-                '"Insert Record on Child Ready to Publish 5c.1.1" requires that the page "5c.1.1 Child Ready to Publish" is published first.',
+                '"Insert Record on Child Ready to Publish 5c.1.1" [tt_content:22] requires that the page "5c.1.1 Child Ready to Publish" [pages:36] is published first.',
                 WebDriverBy::xpath('//*[@data-record-identifier="pages-36"]'),
             );
             self::assertElementContains(
                 $driver,
-                'The record "Header on not published Parent page 5c.1" is a target of the shortcut record "Insert Record on Child Ready to Publish 5c.1.1". The target must be published before the shortcut record can be published.',
+                'The record "Header on not published Parent page 5c.1" [tt_content:21] is a target of the shortcut record "Insert Record on Child Ready to Publish 5c.1.1" [tt_content:22]. The target must be published before the shortcut record can be published.',
                 WebDriverBy::xpath('//*[@data-record-identifier="pages-36"]'),
             );
         });

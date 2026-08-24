@@ -19,6 +19,9 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 #[CoversMethod(Dependency::class, '__construct')]
 #[CoversMethod(Dependency::class, 'addSupersedingDependency')]
 #[CoversMethod(Dependency::class, 'getPropertiesAsUidOrString')]
+#[CoversMethod(Dependency::class, 'getSourceRecordName')]
+#[CoversMethod(Dependency::class, 'getTargetRecordName')]
+#[CoversMethod(Dependency::class, 'formatRecordName')]
 #[CoversMethod(Dependency::class, 'fulfill')]
 #[CoversMethod(Dependency::class, 'isFulfilled')]
 #[CoversMethod(Dependency::class, 'recordMatchesRequirements')]
@@ -27,6 +30,98 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 #[CoversMethod(Dependency::class, 'isReachable')]
 class DependencyTest extends UnitTestCase
 {
+    public function testSourceRecordNameIncludesTitleTableAndUid(): void
+    {
+        $record = $this->createMock(Record::class);
+        $record->method('__toString')->willReturn('Content title');
+        $record->method('getClassification')->willReturn('tt_content');
+        $record->method('getId')->willReturn(42);
+
+        $dependency = new Dependency(
+            $record,
+            'pages',
+            ['uid' => 12],
+            Dependency::REQ_EXISTING,
+            'label',
+            static fn (): array => [],
+        );
+
+        self::assertSame('"Content title" [tt_content:42]', $dependency->getSourceRecordName());
+    }
+
+    public function testTargetRecordNameIncludesTitleTableAndUid(): void
+    {
+        $dependency = new Dependency(
+            $this->createMock(Record::class),
+            'pages',
+            ['uid' => 12],
+            Dependency::REQ_EXISTING,
+            'label',
+            static fn (): array => [],
+        );
+        $target = $this->createMock(Record::class);
+        $target->method('__toString')->willReturn('Target page');
+        $target->method('getClassification')->willReturn('pages');
+        $target->method('getId')->willReturn(12);
+        $target->method('getState')->willReturn(Record::S_ADDED);
+        $recordCollection = $this->createMock(RecordCollection::class);
+        $recordCollection->method('getRecordsByProperties')->willReturn([$target]);
+        $dependency->fulfill($recordCollection);
+
+        self::assertSame('"Target page" [pages:12]', $dependency->getTargetRecordName());
+    }
+
+    public function testRecordNameWithoutTitleOnlyContainsTableAndUid(): void
+    {
+        $record = $this->createMock(Record::class);
+        $record->method('__toString')->willReturn('tt_content [42]');
+        $record->method('getClassification')->willReturn('tt_content');
+        $record->method('getId')->willReturn(42);
+
+        $dependency = new Dependency(
+            $record,
+            'pages',
+            ['uid' => 12],
+            Dependency::REQ_EXISTING,
+            'label',
+            static fn (): array => [],
+        );
+
+        self::assertSame('[tt_content:42]', $dependency->getSourceRecordName());
+    }
+
+    public function testRecordArgumentsOfUngroupedReasonUseGenericRecordNames(): void
+    {
+        $source = $this->createMock(Record::class);
+        $source->method('__toString')->willReturn(' Shortcut (copy 1) ');
+        $source->method('getClassification')->willReturn('tt_content');
+        $source->method('getId')->willReturn(9022);
+        $target = $this->createMock(Record::class);
+        $target->method('__toString')->willReturn('Target page');
+        $target->method('getClassification')->willReturn('pages');
+        $target->method('getId')->willReturn(1013);
+        $target->method('getState')->willReturn(Record::S_ADDED);
+        $dependency = new Dependency(
+            $source,
+            'pages',
+            ['uid' => 1013],
+            Dependency::REQ_EXISTING,
+            'label',
+            static fn (Record $record): array => [$source, $record],
+        );
+        $recordCollection = $this->createMock(RecordCollection::class);
+        $recordCollection->method('getRecordsByProperties')->willReturn([$target]);
+
+        $dependency->fulfill($recordCollection);
+
+        $reasonsProperty = new ReflectionProperty(Dependency::class, 'reasons');
+        $reasons = $reasonsProperty->getValue($dependency);
+        self::assertSame(
+            ['"Shortcut (copy 1)" [tt_content:9022]', '"Target page" [pages:1013]'],
+            $reasons->getAll()[0]->getLabelArguments(),
+        );
+    }
+
     public function testDependencyCanBeInstantiated(): void
     {
         self::assertInstanceOf(
