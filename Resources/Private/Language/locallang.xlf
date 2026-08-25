@@ -446,6 +446,15 @@
 			<trans-unit id="module_m1_filter_field_title">
 				<source>Filter by title</source>
 			</trans-unit>
+			<trans-unit id="dirty_properties_stage">
+				<source>Stage</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_live">
+				<source>Live</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_none">
+				<source>No differences between Stage and Live were detected.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

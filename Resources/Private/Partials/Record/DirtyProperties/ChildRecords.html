@@ -7,7 +7,7 @@
 <f:comment>
 	Show children records with dirty properties
 </f:comment>
-<f:for each="{record.children}" key="tableName" as="relatedRecords">
+<f:for each="{publish:record.getChangedDescendants(record: record, maxDepth: 8)}" key="tableName" as="relatedRecords">
 	<f:if condition="{publish:Miscellaneous.HasChangedRecords(records:relatedRecords)}">
 		<table class="table table-striped">
 			<thead>
@@ -29,7 +29,7 @@
 			<tbody>
 			<f:for each="{relatedRecords}" as="relatedRecord">
 				<f:if condition="{relatedRecord.changed}">
-					<tr>
+					<tr data-record-row="{relatedRecord.classification}-{relatedRecord.id}">
 						<td>
 							<f:if condition="{stagingLevel} == 'local'">
 								<f:then>
@@ -48,10 +48,20 @@
 											</button>
 										</f:else>
 									</f:if>
+									<f:if condition="{relatedRecord.state} == 'changed'">
+										<button type="button" class="btn btn-default btn-sm"
+												data-action="togglechangedproperties"
+												data-record-changes="{relatedRecord.classification}-{relatedRecord.id}"
+												aria-expanded="false">
+											<core:icon identifier="actions-info"></core:icon>
+										</button>
+									</f:if>
 								</f:then>
 								<f:else>
 									<f:comment>Empty button for non-local stages to match row height</f:comment>
-									<button class="btn btn-sm invisible w-0"></button>
+									<button type="button" class="btn btn-default btn-sm invisible float-end">
+										<core:icon identifier="actions-info"></core:icon>
+									</button>
 								</f:else>
 							</f:if>
 							<f:if condition="{stagingLevel} == 'local'">
@@ -63,6 +73,20 @@
 								</f:else>
 							</f:if>
 							<publish:Tca.GetLabelFieldFromRecord record="{relatedRecord}" stagingLevel="{stagingLevel}"/>
+							<f:if condition="{relatedRecord.state} == 'changed'">
+								<div class="d-none mt-1" data-record-changes-content="{relatedRecord.classification}-{relatedRecord.id}">
+									<ul class="list-unstyled mb-0">
+										<f:for each="{relatedRecord.changedProps}" as="fieldName">
+											<li data-record-identifier="{relatedRecord.classification}-{relatedRecord.id}" data-field-name="{fieldName}">
+												<strong><publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{relatedRecord.classification}"/>:</strong>
+												<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{relatedRecord.classification}">
+													<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{relatedRecord}" propertyName="{fieldName}" stagingLevel="{stagingLevel}"/>
+												</publish:Tca.FormatPropertyByTcaDefinition>
+											</li>
+										</f:for>
+									</ul>
+								</div>
+							</f:if>
 						</td>
 					</tr>
 				</f:if>

@@ -594,6 +594,18 @@
 				<source>Filter by title</source>
 				<target>Filterung nach Name</target>
 			</trans-unit>
+			<trans-unit id="dirty_properties_stage">
+				<source>Stage</source>
+				<target>Stage</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_live">
+				<source>Live</source>
+				<target>Live</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_none">
+				<source>No differences between Stage and Live were detected.</source>
+				<target>Es wurden keine Unterschiede zwischen Stage und Live erkannt.</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
