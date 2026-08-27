@@ -1,5 +1,16 @@
 # In2publish Core Change Log
 
+13.4.4
+
+- [META] Set the EM conf version number to 13.4.4
+- [DOCS] Update Changelog.md
+- [TEST] add Unit and Playwright tests covering the display of the changed properties of child records in overview module
+- [TASK] Display information about changed properties of child records in OverviewModule
+- [DEV] add file with changed creation date to foreign sys_file dump
+- [TEST] adjust and add tests for output of dependency warnings including uid and table information
+- [BUGFIX] Restore uid and table information in dependency warnings
+- [BUGFIX] Clear sibling and parent page caches after publishing
+
 13.4.3
 - [META] Set the EM conf version number to 13.4.3
 - [DOCS] Update Changelog.md
