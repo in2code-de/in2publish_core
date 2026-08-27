@@ -16,7 +16,7 @@
 				</thead>
 				<tbody>
 				<f:for each="{record.changedProps}" as="fieldName">
-					<tr>
+					<tr data-record-row="{record.classification}-{record.id}-{fieldName}">
 						<td>
 							<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}"/>
 							<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.classification}">

@@ -34,8 +34,39 @@ test.describe('Publish Textpic', () => {
             const infoIcon = recordRow.locator('[data-action="opendirtypropertieslistcontainer"]');
             await infoIcon.click();
 
+            await expect(recordRow.locator('.in2publish-dirty-properties-stage-header th')).toHaveText('Stage');
+            await expect(recordRow.locator('.in2publish-dirty-properties-live-header th')).toHaveText('Live');
             await expect(recordRow).toContainText('9b news about maxim berg');
             await expect(recordRow).toContainText('maxim-berg-9XunOfueKKI-unsplash.jpg');
+            // sys_file_reference uid 10 has a different crdate in the Local and Foreign fixtures.
+            const changedReferenceDetails = recordRow.locator(
+                '.in2publish-dirty-properties-local [data-record-changes-content="sys_file_reference-10"]',
+            );
+            await expect(changedReferenceDetails).toBeHidden();
+            await recordRow.locator(
+                '.in2publish-dirty-properties-local [data-action="togglechangedproperties"]' +
+                '[data-record-changes="sys_file_reference-10"]',
+            ).click();
+            await expect(
+                changedReferenceDetails.locator(
+                    '[data-record-identifier="sys_file_reference-10"][data-field-name="crdate"]',
+                ),
+            ).toContainText('Crdate: 1719843334');
+            // The related sys_file uid 5 has a persistently different creation_date in the Core dumps.
+            const changedFileDetails = recordRow.locator(
+                '.in2publish-dirty-properties-foreign [data-record-changes-content="sys_file-5"]',
+            );
+            await expect(changedFileDetails).toBeHidden();
+            await recordRow.locator(
+                '.in2publish-dirty-properties-local [data-action="togglechangedproperties"]' +
+                '[data-record-changes="sys_file-5"]',
+            ).click();
+            await expect(changedFileDetails).toBeVisible();
+            await expect(
+                changedFileDetails.locator(
+                    '[data-record-identifier="sys_file-5"][data-field-name="creation_date"]',
+                ),
+            ).toContainText('Creation_date: 1700000000');
         });
 
         await test.step('And I publish the record', async () => {

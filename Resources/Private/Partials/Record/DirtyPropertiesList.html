@@ -5,14 +5,30 @@
 >
 	<f:render partial="Record/ShowReasonsWhyNotPublishable" arguments="{record: record}" />
 	<f:render partial="Record/Breadcrumbs" arguments="{config: config, breadcrumbs: record.breadcrumbs}" />
-	<div class="row gx-0">
-		<div class="col-6 in2publish-dirty-properties-local">
-			<f:render partial="Record/DirtyProperties/ParentRecords" arguments="{record: record, stagingLevel: 'local'}" />
-			<f:render partial="Record/DirtyProperties/ChildRecords" arguments="{record: record, stagingLevel: 'local'}" />
-		</div>
-		<div class="col-6 in2publish-dirty-properties-foreign">
-			<f:render partial="Record/DirtyProperties/ParentRecords" arguments="{record: record, stagingLevel: 'foreign'}" />
-			<f:render partial="Record/DirtyProperties/ChildRecords" arguments="{record: record, stagingLevel: 'foreign'}" />
-		</div>
-	</div>
+	<f:variable name="changedDescendants" value="{publish:record.getChangedDescendants(record: record, maxDepth: 8)}" />
+	<f:if condition="{record.changedProps} || {changedDescendants}">
+		<f:then>
+			<div class="row gx-0">
+				<div class="col-6 in2publish-dirty-properties-local">
+					<table class="table mb-0 in2publish-dirty-properties-stage-header">
+						<thead><tr><th><f:translate key="dirty_properties_stage">Stage</f:translate></th></tr></thead>
+					</table>
+					<f:render partial="Record/DirtyProperties/ParentRecords" arguments="{record: record, stagingLevel: 'local'}" />
+					<f:render partial="Record/DirtyProperties/ChildRecords" arguments="{record: record, stagingLevel: 'local'}" />
+				</div>
+				<div class="col-6 in2publish-dirty-properties-foreign">
+					<table class="table mb-0 in2publish-dirty-properties-live-header">
+						<thead><tr><th><f:translate key="dirty_properties_live">Live</f:translate></th></tr></thead>
+					</table>
+					<f:render partial="Record/DirtyProperties/ParentRecords" arguments="{record: record, stagingLevel: 'foreign'}" />
+					<f:render partial="Record/DirtyProperties/ChildRecords" arguments="{record: record, stagingLevel: 'foreign'}" />
+				</div>
+			</div>
+		</f:then>
+		<f:else>
+			<div class="alert alert-info mb-0">
+				<f:translate key="dirty_properties_none">No differences between Stage and Live were detected.</f:translate>
+			</div>
+		</f:else>
+	</f:if>
 </html>

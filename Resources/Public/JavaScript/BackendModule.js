@@ -25,6 +25,8 @@ class In2publishCoreModule {
 
 	static initialize() {
 		this.toggleDirtyPropertiesListContainerListener();
+		this.synchronizeChangedFieldDetails();
+		this.initializeChangedRecordRowHeightSync();
 		if (this.isPublishFilesModule) {
 			this.filterItemsByStatus();
 			this.setupFilterListeners();
@@ -40,6 +42,62 @@ class In2publishCoreModule {
 			this.addLevelFilterListener();
 			this.addSearchListener();
 		}
+	}
+
+	static synchronizeChangedFieldDetails() {
+		document.querySelectorAll('[data-action="togglechangedproperties"]').forEach(button => {
+			button.addEventListener('click', event => {
+				const source = event.currentTarget;
+				const row = source.closest('.in2publish-page');
+				if (!row) return;
+
+				const expanded = source.getAttribute('aria-expanded') !== 'true';
+				source.setAttribute('aria-expanded', String(expanded));
+				row.querySelectorAll('[data-record-changes-content]').forEach(content => {
+					if (content.dataset.recordChangesContent === source.dataset.recordChanges) {
+						content.classList.toggle('d-none', !expanded);
+					}
+				});
+				this.scheduleChangedRecordRowHeightSync();
+			});
+		});
+	}
+
+	static initializeChangedRecordRowHeightSync() {
+		this.scheduleChangedRecordRowHeightSync();
+		window.addEventListener('resize', () => this.scheduleChangedRecordRowHeightSync());
+
+		const stageListing = document.querySelector('.in2publish-stagelisting');
+		if (stageListing) {
+			new MutationObserver(() => this.scheduleChangedRecordRowHeightSync())
+				.observe(stageListing, {childList: true, subtree: true});
+		}
+	}
+
+	static scheduleChangedRecordRowHeightSync() {
+		if (this.changedRecordRowHeightSyncFrame) {
+			cancelAnimationFrame(this.changedRecordRowHeightSyncFrame);
+		}
+		this.changedRecordRowHeightSyncFrame = requestAnimationFrame(() => {
+			this.changedRecordRowHeightSyncFrame = null;
+			this.synchronizeChangedRecordRowHeights();
+		});
+	}
+
+	static synchronizeChangedRecordRowHeights() {
+		document.querySelectorAll('.in2publish-page--open').forEach(page => {
+			const rowsByRecord = new Map();
+			page.querySelectorAll('[data-record-row]').forEach(row => {
+				row.style.height = 'auto';
+				const rows = rowsByRecord.get(row.dataset.recordRow) || [];
+				rows.push(row);
+				rowsByRecord.set(row.dataset.recordRow, rows);
+			});
+			rowsByRecord.forEach(rows => {
+				const height = Math.max(...rows.map(row => row.getBoundingClientRect().height));
+				rows.forEach(row => row.style.height = `${height}px`);
+			});
+		});
 	}
 
 
@@ -103,6 +161,7 @@ class In2publishCoreModule {
 		if (!row) return;
 
 		row.classList.toggle('in2publish-page--open');
+		this.scheduleChangedRecordRowHeightSync();
 	}
 
 	static openOrCloseStageListingDropdownContainer(container) {

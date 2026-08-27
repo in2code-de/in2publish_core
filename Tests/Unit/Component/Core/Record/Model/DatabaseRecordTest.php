@@ -6,9 +6,10 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Model;
 
 use Exception;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
-
 use PHPUnit\Framework\Attributes\CoversMethod;
+
 use function bin2hex;
 use function random_bytes;
 
@@ -114,5 +115,27 @@ class DatabaseRecordTest extends UnitTestCase
         $actual = $record->getPageId();
 
         $this->assertSame(2, $actual);
+    }
+
+    public function testCrdateDifferenceIsReportedAsChangedProperty(): void
+    {
+        $record = new DatabaseRecord('sys_file', 1, ['crdate' => 1720000000], ['crdate' => 1710000000], []);
+
+        $this->assertSame(['crdate'], $record->getChangedProps());
+        $this->assertSame(Record::S_CHANGED, $record->getState());
+    }
+
+    public function testIgnoredCrdateDifferenceDoesNotChangeRecord(): void
+    {
+        $record = new DatabaseRecord(
+            'sys_file',
+            1,
+            ['crdate' => 1720000000],
+            ['crdate' => 1710000000],
+            ['crdate'],
+        );
+
+        $this->assertSame([], $record->getChangedProps());
+        $this->assertSame(Record::S_UNCHANGED, $record->getState());
     }
 }
