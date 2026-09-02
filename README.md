@@ -72,17 +72,13 @@ See for more details:
 
 ### Screenshots
 
-<img src="https://www.in2code.de/fileadmin/content/images/produkte/contentpublisher/content_publisher_screenshot04_prev.png" width="600" />
+<img src="https://www.in2code.de/fileadmin/10_Pages/in2code_de/Products/content_publisher/content_publisher_screenshot04_prev.png" width="600" />
 
 Example overview module with details
 
-<img src="https://www.in2code.de/fileadmin/content/images/produkte/contentpublisher/content_publisher_screenshot03_prev.png" width="600" />
+<img src="https://www.in2code.de/fileadmin/10_Pages/in2code_de/Products/content_publisher/content_publisher_screenshot03_prev.png" width="600" />
 
 Example workflow feature (part of the enterprise version)
-
-<img src="https://box.everhelper.me/attachment/915970/84725fb7-0b3e-4c40-b52e-29d7620777bb/262407-93UtQ9cPeb0NCY1e/screen.png" width="600" />
-
-Browser notifications after asynchronous publishing (part of the enterprise version)
 
 ## Installation
 
