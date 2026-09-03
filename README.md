@@ -15,8 +15,6 @@ Content Publishing in TYPO3 - the easy way:
 * Future proof
 * Supports all extensions (with correct TCA)
 
-![index_publisher_screen.png](Documentation/_img/index_publisher_screen.png)
-
 ## Support
 
 This TYPO3 Extension is free to use. We as in2code and our developers highly appreciate your feedback and work hard to
@@ -72,13 +70,31 @@ See for more details:
 
 ### Screenshots
 
-<img src="https://www.in2code.de/fileadmin/10_Pages/in2code_de/Products/content_publisher/content_publisher_screenshot04_prev.png" width="600" />
+_Publish Overview Module_
+![Publisher Overview Module](Documentation/_img/module_publish_overview.png)
 
-Example overview module with details
+_Publish Redirects Module_
+![Publisher Redirects Module](Documentation/_img/module_publish_redirects.png)
 
-<img src="https://www.in2code.de/fileadmin/10_Pages/in2code_de/Products/content_publisher/content_publisher_screenshot03_prev.png" width="600" />
+_Publish Files Module_
+![Publisher Files Module](Documentation/_img/module_publish_files.png)
 
-Example workflow feature (part of the enterprise version)
+_Publisher Tools Module_
+![Publisher Tools Module](Documentation/_img/module_publisher_tools.png)
+
+**Enterprise Edition only:**
+
+_Publish Workflow Module_
+![Publish Workflow Module](Documentation/_img/module_publish_workflow.png)
+
+_Publisher Integration into List Module_
+![Publisher List Module](Documentation/_img/module_list_workflow.png)
+
+_Publisher Integration into Page Module_
+![Publisher Page Module](Documentation/_img/module_page_workflow.png)
+
+_Compare Pages Module_
+![Publisher Compare Pages Module](Documentation/_img/module_compare_pages.png)
 
 ## Installation
 
