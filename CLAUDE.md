@@ -98,7 +98,7 @@ Configuration/
 
 - **PHPUnit**: Via stack-test package (^9.6/^10.4/^11.5)
 - **Playwright**: Browser tests in `Tests/Playwright/`
-- **Gulp + Sass**: Frontend build in `Resources/Private/Build/`
+- **CSS**: Edit `Resources/Public/Css/*.css` directly; no frontend build step is required.
 - No PHP CS Fixer, PHPStan, or Rector installed
 
 ### Test Structure
