@@ -67,7 +67,7 @@
 		"branch-alias": {
 			"dev-develop": "13.2.x-dev",
 			"dev-master": "13.2.x-dev",
-			"dev-typo3_13": "13.3.x-dev"
+			"dev-typo3_13": "13.5.x-dev"
 		}
 	}
 }
