@@ -125,14 +125,17 @@ CREATE TABLE `pages` (
   `sitemap_changefreq` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `link` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb3''),
   `tx_styleguide_containsdemo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `no_search_sub_entries` smallint unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`uid`),
   KEY `determineSiteRoot` (`is_siteroot`),
   KEY `language_identifier` (`l10n_parent`,`sys_language_uid`),
   KEY `parent` (`pid`,`deleted`,`hidden`),
   KEY `slug` (`slug`(127)),
   KEY `t3ver_oid` (`t3ver_oid`,`t3ver_wsid`),
-  KEY `translation_source` (`l10n_source`),
-  KEY `contentFromPid` (`content_from_pid`)
+  KEY `contentFromPid` (`content_from_pid`),
+  KEY `content_from_pid_deleted` (`content_from_pid`,`deleted`),
+  KEY `doktype_no_search_deleted` (`doktype`,`no_search`,`deleted`),
+  KEY `translation_source` (`l10n_source`,`l10n_parent`,`sys_language_uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 CREATE TABLE `sys_file` (
   `uid` int unsigned NOT NULL AUTO_INCREMENT,
