@@ -24,6 +24,9 @@ use TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask;
         return;
     }
 
+    $GLOBALS['TYPO3_CONF_VARS']['BE']['stylesheets']['in2publish_core'] =
+        'EXT:in2publish_core/Resources/Public/Css/Backend.css';
+
     /************************************************ Record Extension ************************************************/
     $file = Environment::getVarPath() . '/cache/code/content_publisher/record_extension_trait.php';
     if (file_exists($file)) {
