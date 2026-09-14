@@ -853,11 +853,6 @@ div#typo3-docbody.stopScrolling {
   max-width:calc(200px - .5rem)
 }
 
-.in2publish-page-group__children .in2publish-page--level-1 .in2publish-page__col--stage-page {
-  width:calc(200px - .5rem);
-  max-width:calc(200px - .5rem)
-}
-
 .in2publish-page-group__children .in2publish-page--level-2 .in2publish-page__col--stage-page {
   width:calc(200px - 1rem);
   max-width:calc(200px - 1rem)
