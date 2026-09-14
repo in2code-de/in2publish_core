@@ -75,7 +75,7 @@
 			"extension-key": "in2publish_core"
 		},
 		"branch-alias": {
-			"dev-main": "14.0-dev"
+			"dev-main": "14.1.x-dev"
 		}
 	}
 }
