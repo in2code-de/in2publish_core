@@ -227,6 +227,7 @@ class SingleDatabaseRepositoryTest extends FunctionalTestCase
                 'sitemap_changefreq' => "",
                 'link' => "",
                 'tx_styleguide_containsdemo' => "",
+                'no_search_sub_entries' => 0,
             ],
         ], $rows);
     }
