@@ -15,6 +15,7 @@ use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\Folder
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\MissingFileInfo;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\ForeignFileInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\ForeignFolderInfoServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\HiddenFilesAndFoldersServiceInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\LocalFileInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\LocalFolderInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
@@ -38,6 +39,7 @@ class FilesInFolderDemandResolver implements DemandResolver
     use LocalFileInfoServiceInjection;
     use ForeignFileInfoServiceInjection;
     use RecordIndexInjection;
+    use HiddenFilesAndFoldersServiceInjection;
 
     public function resolveDemand(Demands $demands, RecordCollection $recordCollection): void
     {
@@ -114,7 +116,10 @@ class FilesInFolderDemandResolver implements DemandResolver
                         $mergedFiles[$identifier]['foreign'] = $foreignFile;
                     }
                 }
-                foreach ($mergedFiles as $mergedFile) {
+                foreach ($mergedFiles as $identifier => $mergedFile) {
+                    if ($this->hiddenFilesAndFoldersService->shouldBeSkipped($identifier)) {
+                        continue;
+                    }
                     $fileRecord = $this->recordFactory->createFileRecord(
                         $mergedFile['local']->toArray(),
                         $mergedFile['foreign']->toArray(),
