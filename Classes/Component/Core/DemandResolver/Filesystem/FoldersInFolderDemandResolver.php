@@ -11,6 +11,7 @@ use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\Filesy
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\FolderInfo;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Model\MissingFolderInfo;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\ForeignFolderInfoServiceInjection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\HiddenFilesAndFoldersServiceInjection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Filesystem\Service\LocalFolderInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
@@ -25,6 +26,7 @@ class FoldersInFolderDemandResolver implements DemandResolver
     use RecordFactoryInjection;
     use LocalFolderInfoServiceInjection;
     use ForeignFolderInfoServiceInjection;
+    use HiddenFilesAndFoldersServiceInjection;
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -67,7 +69,10 @@ class FoldersInFolderDemandResolver implements DemandResolver
                         $mergedFolders[$identifier]['foreign'] = $foreignFolder;
                     }
                 }
-                foreach ($mergedFolders as $mergedFolder) {
+                foreach ($mergedFolders as $identifier => $mergedFolder) {
+                    if ($this->hiddenFilesAndFoldersService->shouldBeSkipped($identifier)) {
+                        continue;
+                    }
                     $folderRecord = $this->recordFactory->createFolderRecord(
                         $mergedFolder['local']->toArray(),
                         $mergedFolder['foreign']->toArray(),

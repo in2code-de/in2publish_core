@@ -44,6 +44,7 @@
                     \TYPO3\CMS\Extbase\Utility\ExtensionUtility,
                     \TYPO3\CMS\Extbase\Utility\LocalizationUtility,
                     \TYPO3\CMS\Extbase\Reflection\ObjectAccess,
+                    \TYPO3\CMS\Core\Resource\Filter\FileNameFilter,
                     \In2code\In2publishCore\Component\ConfigContainer\Node\Specific\AbsSpecNode,
                     \In2code\In2publishCore\Domain\Model\Record,
                     \In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope,
