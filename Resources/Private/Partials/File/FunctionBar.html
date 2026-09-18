@@ -1,5 +1,4 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
@@ -9,7 +8,7 @@
 				<label for="filter-search" class="form-label">
 					<f:translate key="record.search"/>
 				</label>
-				<input type="search" id="filter-search" class="form-control js-form-search" placeholder="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.enterSearchString')}" aria-label="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.enterSearchString')}" aria-describedby="search-input-addon">
+				<input type="search" id="filter-search" class="form-control js-form-search" placeholder="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.enterSearchString')}" aria-label="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.enterSearchString')}">
 			</div>
 			<f:if condition="{config.view.records.filterButtons}">
 				<div class="form-group d-flex flex-column align-self-stretch">
