@@ -46,10 +46,8 @@ export class BackendPage extends BaseBackendPage {
       const treeNode = fileTree.locator(`[data-id="${encodeURIComponent(identifier)}"]`);
       await expect(treeNode).toBeVisible({ timeout: 10000 });
       await this.expandFileStorageTreeNode(treeNode);
-      await this.selectFileStorageTreeNode(treeNode);
+      await this.selectFileStorageTreeNode(treeNode, identifier);
     }
-
-    await this.page.waitForTimeout(1000);
   }
 
   /**
@@ -68,13 +66,47 @@ export class BackendPage extends BaseBackendPage {
 
   /**
    * Select a file storage tree node to load its content into the module.
+   *
+   * Wait for the navigation of the selected folder and for the new document to be fully loaded.
+   *
+   * @param treeNode
+   * @param identifier Combined storage identifier of the folder, e.g. '1:/Testcases/2b_published_file/'
    */
-  private async selectFileStorageTreeNode(treeNode: Locator): Promise<void> {
+  private async selectFileStorageTreeNode(treeNode: Locator, identifier: string): Promise<void> {
     const label = treeNode.locator('.node-contentlabel').first();
     await expect(label).toBeVisible({ timeout: 5000 });
     await label.scrollIntoViewIfNeeded();
+
+    const navigation = this.page.waitForResponse(
+      (response) => response.request().isNavigationRequest()
+        && new URL(response.url()).searchParams.get('id') === identifier,
+      { timeout: 30000 },
+    );
+
     await label.click({ force: true });
-    await this.page.waitForTimeout(500);
+
+    await navigation;
+    await this.waitUntilContentFrameShowsFolder(identifier);
+  }
+
+  /**
+   * Wait until the document inside the content iframe belongs to the given folder and has finished loading.
+   *
+   * @param identifier Combined storage identifier of the folder, e.g. '1:/Testcases/2b_published_file/'
+   */
+  private async waitUntilContentFrameShowsFolder(identifier: string): Promise<void> {
+    await this.page.waitForFunction(
+      (expectedIdentifier) => {
+        const iframe = document.querySelector('iframe#typo3-contentIframe') as HTMLIFrameElement | null;
+        const iframeDocument = iframe?.contentDocument ?? null;
+
+        return iframeDocument !== null
+          && iframeDocument.readyState === 'complete'
+          && new URL(iframeDocument.location.href).searchParams.get('id') === expectedIdentifier;
+      },
+      identifier,
+      { timeout: 30000 },
+    );
   }
 
   /**
