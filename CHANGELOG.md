@@ -1,5 +1,24 @@
 # In2publish Core Change Log
 
+14.1.0
+- [META] Set the EM conf version number to 14.1.0
+- [DOCS] Update Changelog.md
+- [TEST] Expect the new pages column in SingleDatabaseRepositoryTest
+- [CLEANUP] Remove leftovers of the v14 filter restyling
+- [BUGFIX] Respect the backend user setting showHiddenFilesAndFolders in the Publish Files module
+- [CLEANUP] remove redundant CSS
+- [DEV][AI] stop tracking CLAUDE.md
+- [DEV][TEST] update dumps for local development and testing
+- [META] adjust branch alias in composer.json
+- [TASK] add loading overlay to publish button in OverviewModule
+- [TASK] move modal-body css rule to globally registered Backend.css
+- [TASK] Replace Sass/Gulp toolchain with uncompiled CSS
+- [DOCS] replace external links to screenshots with updated, local screenshots
+- [DOCS] update screenshot target paths
+- [TEST] adjust and add tests for output of dependency warnings including uid and table information
+- [BUGFIX] Restore uid and table information in dependency warnings
+- [BUGFIX] Clear sibling and parent page caches after publishing
+
 14.0.5
 - [META] Set the EM conf version number to 14.0.5
 - [DOCS] Update Changelog.md
