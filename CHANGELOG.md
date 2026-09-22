@@ -1,7 +1,18 @@
 # In2publish Core Change Log
 
-13.4.4
+13.5.0
+- [META] Set the EM conf version number to 13.5.0
+- [DOCS] Update Changelog.md
+- [TEST] replace static timeout in selectFileStorageTreeNode with dynamic wait
+- [BUGFIX] Respect the backend user setting showHiddenFilesAndFolders in the Publish Files module
+- [TASK] add loading overlay to publish button in OverviewModule
+- [META] update branch alias
+- [TASK] move modal-body css rule to globally registered Backend.css
+- [TASK] Replace Sass/Gulp toolchain with uncompiled CSS
+- [DOCS] replace external links to screenshots with updated, local screenshots
+- [DOCS] update screenshot target paths
 
+13.4.4
 - [META] Set the EM conf version number to 13.4.4
 - [DOCS] Update Changelog.md
 - [TEST] add Unit and Playwright tests covering the display of the changed properties of child records in overview module
