@@ -1,9 +1,11 @@
 import { expect } from '../playwright';
-import type { Page } from '../playwright';
+import type { Locator, Page } from '../playwright';
 import { backendLogin } from '../helpers/backend-login.helper';
 import { Typo3TestConfig } from '../types';
 
 export class BackendPage {
+  private static readonly SHARED_FILE_STORAGE_ROOT_IDENTIFIER = '1:/';
+
   readonly moduleNavigation;
   readonly contentFrame;
 
@@ -45,6 +47,103 @@ export class BackendPage {
       { timeout: 45000 },
     );
     await this.page.waitForTimeout(1000);
+  }
+
+  /**
+   * Navigate through the file storage tree by storage identifier.
+   */
+  async selectInFileStorageTree(pathSegments: string[]): Promise<void> {
+    const fileTree = this.page.locator('.scaffold-content-navigation-component');
+    await expect(fileTree).toBeVisible({ timeout: 10000 });
+
+    let identifier = BackendPage.SHARED_FILE_STORAGE_ROOT_IDENTIFIER;
+
+    for (const [index, segment] of pathSegments.entries()) {
+      if (index > 0) {
+        identifier += `${segment}/`;
+      }
+
+      const treeNode = fileTree.locator(`[data-id="${encodeURIComponent(identifier)}"]`);
+      await expect(treeNode).toBeVisible({ timeout: 10000 });
+      await this.expandSharedFileStorageTreeNode(treeNode);
+      await this.selectSharedFileStorageTreeNode(treeNode, identifier);
+    }
+  }
+
+  private async expandSharedFileStorageTreeNode(treeNode: Locator): Promise<void> {
+    const chevron = treeNode.locator('.node-toggle');
+    const isExpandable = await chevron.count() > 0;
+    const isExpanded = await treeNode.getAttribute('aria-expanded') === 'true';
+
+    if (isExpandable && !isExpanded) {
+      await chevron.click();
+      await this.page.waitForTimeout(500);
+    }
+  }
+
+  private async selectSharedFileStorageTreeNode(treeNode: Locator, identifier: string): Promise<void> {
+    const label = treeNode.locator('.node-contentlabel').first();
+    await expect(label).toBeVisible({ timeout: 5000 });
+    await label.scrollIntoViewIfNeeded();
+
+    const navigation = this.page.waitForResponse(
+      (response) => response.request().isNavigationRequest()
+        && new URL(response.url()).searchParams.get('id') === identifier,
+      { timeout: 30000 },
+    );
+
+    await label.click({ force: true });
+    await navigation;
+    await this.waitUntilSharedContentFrameShowsFolder(identifier);
+  }
+
+  private async waitUntilSharedContentFrameShowsFolder(identifier: string): Promise<void> {
+    await this.page.waitForFunction(
+      (expectedIdentifier) => {
+        const iframe = document.querySelector('iframe#typo3-contentIframe') as HTMLIFrameElement | null;
+        const iframeDocument = iframe?.contentDocument ?? null;
+
+        return iframeDocument !== null
+          && iframeDocument.readyState === 'complete'
+          && new URL(iframeDocument.location.href).searchParams.get('id') === expectedIdentifier;
+      },
+      identifier,
+      { timeout: 30000 },
+    );
+  }
+
+  async waitUntilPublishingFinished(): Promise<void> {
+    const activeOverlay = this.contentFrame.locator('.in2publish-loading-overlay--active');
+    const successPattern = /Successfully published\.|has been published (successfully|to the foreign system\.)/;
+    const frameSuccessMessage = this.contentFrame.getByText(successPattern).first();
+    const pageSuccessMessage = this.page.getByText(successPattern).first();
+    const frameErrorMessage = this.contentFrame.locator('.alert-danger, .callout-danger, .alert-error').first();
+    const pageErrorMessage = this.page.locator('.alert-danger, .callout-danger, .alert-error').first();
+
+    const completionSignal = await Promise.race([
+      frameSuccessMessage.waitFor({ state: 'visible', timeout: 120000 }).then(() => 'success'),
+      pageSuccessMessage.waitFor({ state: 'visible', timeout: 120000 }).then(() => 'success'),
+      frameErrorMessage.waitFor({ state: 'visible', timeout: 120000 }).then(() => 'error'),
+      pageErrorMessage.waitFor({ state: 'visible', timeout: 120000 }).then(() => 'error'),
+    ]);
+
+    if (completionSignal === 'error') {
+      const errorText = (await frameErrorMessage.textContent())
+        || (await pageErrorMessage.textContent())
+        || 'unknown publishing error';
+      throw new Error(`Publishing failed: ${errorText}`);
+    }
+
+    await activeOverlay.waitFor({ state: 'hidden', timeout: 10000 });
+  }
+
+  async clickModalButton(buttonText: string): Promise<void> {
+    const modal = this.page.locator('typo3-backend-modal .modal, .modal.show').last();
+    await expect(modal).toBeVisible({ timeout: 10000 });
+    const button = modal.locator(`button:has-text("${buttonText}"), input[value="${buttonText}"]`).last();
+    await expect(button).toBeVisible();
+    await button.click();
+    await this.page.waitForTimeout(500);
   }
 
   async searchInPageTreeAndSelectFirstOccurrence(searchText: string): Promise<void> {
