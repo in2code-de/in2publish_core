@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Model;
 use In2code\In2publishCore\Component\Core\Reason\Reason;
 use In2code\In2publishCore\Component\Core\Record\Iterator\RecordIterator;
 use In2code\In2publishCore\Component\Core\Record\Model\AbstractDatabaseRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\AbstractRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Dependency;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
@@ -28,6 +29,8 @@ use function iterator_to_array;
 #[CoversMethod(AbstractDatabaseRecord::class, 'calculateParentRecordDependencies')]
 #[CoversMethod(AbstractDatabaseRecord::class, 'getStateRecursive')]
 #[CoversMethod(AbstractDatabaseRecord::class, 'getAllDependencies')]
+#[CoversMethod(AbstractRecord::class, 'isInPublishingScope')]
+#[CoversMethod(Dependency::class, 'canBeFulfilledBy')]
 class AbstractDatabaseRecordTest extends UnitTestCase
 {
     public function testCalculateDependenciesAddsDependencyForTranslation(): void
@@ -503,6 +506,63 @@ class AbstractDatabaseRecordTest extends UnitTestCase
             $testRecord->hasUnfulfilledDependenciesRecursively(),
             'A language parent which is deleted on local but present on foreign must still block',
         );
+    }
+
+    public function testTranslationIsNotBlockedByNewLanguageParentWhichIsPublishedTogether(): void
+    {
+        // Scenario: a new page contains a new content element, which references a new file. The new file's
+        // translated sys_file_metadata depends on the new default language sys_file_metadata. Both are nested
+        // children of the page, so publishing the page publishes the language parent, too.
+        $root = $this->createTreeWithNestedTranslationAndLanguageParent();
+        $this->dispatchNoReasons();
+
+        self::assertFalse($root->hasUnfulfilledDependenciesRecursively());
+        self::assertTrue($root->isPublishable());
+    }
+
+    public function testTranslationIsBlockedByNewLanguageParentWhichIsNotPublishedTogether(): void
+    {
+        $root = $this->createTreeWithNestedTranslationAndLanguageParent(false);
+        $this->dispatchNoReasons();
+
+        self::assertTrue($root->hasUnfulfilledDependenciesRecursively());
+        self::assertFalse($root->isPublishable());
+    }
+
+    protected function createTreeWithNestedTranslationAndLanguageParent(
+        bool $addLanguageParentToTree = true
+    ): AbstractDatabaseRecord {
+        $root = $this->createRecord('foo', 100, ['uid' => 100], [], []);
+        $intermediate = $this->createRecord('bar', 150, ['uid' => 150], [], []);
+        $languageParent = $this->createRecord('baz', 200, ['uid' => 200, 'sys_lang' => 0], [], []);
+        $translation = $this->createRecord(
+            'baz',
+            201,
+            ['uid' => 201, 'sys_lang' => 1, 'sys_lang_parent' => 200],
+            [],
+            [],
+        );
+        $root->addChild($intermediate);
+        $intermediate->addChild($translation);
+        if ($addLanguageParentToTree) {
+            $intermediate->addChild($languageParent);
+        }
+
+        $recordCollection = new RecordCollection([$root, $intermediate, $languageParent, $translation]);
+        $this->fulfillDependencies($root, $recordCollection);
+
+        return $root;
+    }
+
+    protected function dispatchNoReasons(): void
+    {
+        $eventDispatcherMock = $this->createMock(EventDispatcher::class);
+        $eventDispatcherMock->method('dispatch')->willReturnCallback(
+            static function (CollectReasonsWhyTheRecordIsNotPublishable $event): CollectReasonsWhyTheRecordIsNotPublishable {
+                return $event;
+            },
+        );
+        GeneralUtility::setSingletonInstance(EventDispatcherInterface::class, $eventDispatcherMock);
     }
 
     protected function createRecord(

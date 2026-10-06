@@ -301,6 +301,47 @@ abstract class AbstractRecord implements Record
         }
     }
 
+    /**
+     * Returns true if the given record will be published together with this record, i.e. it is this record or one of
+     * its (recursive) non-page children. The traversal is the same as in getAllDependencies().
+     *
+     * This must not evaluate getReasonsWhyTheRecordIsNotPublishable() of the given record: listeners of
+     * CollectReasonsWhyTheRecordIsNotPublishable (e.g. the workflow voter) call isPublishable() on parent records,
+     * which would lead to an infinite recursion.
+     */
+    public function isInPublishingScope(Record $record): bool
+    {
+        if ($record === $this) {
+            return true;
+        }
+        if (!isset($this->rtc['publishingScope'])) {
+            $this->rtc['publishingScope'] = [];
+            $this->collectPublishingScope($this, $this->rtc['publishingScope']);
+        }
+        $scopedRecord = $this->rtc['publishingScope'][$record->getClassification()][$record->getId()] ?? null;
+        return $scopedRecord === $record;
+    }
+
+    /**
+     * @param array<string, array<int|string, Record>> $scope
+     */
+    private function collectPublishingScope(Record $record, array &$scope): void
+    {
+        $classification = $record->getClassification();
+        $id = $record->getId();
+        if (isset($scope[$classification][$id])) {
+            return;
+        }
+        $scope[$classification][$id] = $record;
+        foreach ($record->getChildren() as $childClassification => $children) {
+            if ('pages' !== $childClassification) {
+                foreach ($children as $child) {
+                    $this->collectPublishingScope($child, $scope);
+                }
+            }
+        }
+    }
+
     public function getDependencyTree(array &$visited = [], array &$dependencyTree = []): array
     {
         $classification = $this->getClassification();

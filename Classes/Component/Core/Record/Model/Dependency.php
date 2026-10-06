@@ -274,14 +274,21 @@ class Dependency
         return true;
     }
 
+    /**
+     * A dependency can be fulfilled by publishing $record, if all selected target records either already match the
+     * requirements or are published together with $record (the record itself or one of its non-page children, e.g. the
+     * default language sys_file_metadata of a new file, which is referenced by a new content element on a new page).
+     */
     public function canBeFulfilledBy(Record $record): bool
     {
         if ($this->selectedRecords->isEmpty()) {
             return false;
         }
         foreach ($this->selectedRecords as $selectedRecord) {
+            $isPublishedTogether = $record === $selectedRecord
+                || ($record instanceof AbstractRecord && $record->isInPublishingScope($selectedRecord));
             if (
-                $record !== $selectedRecord
+                !$isPublishedTogether
                 && !$this->recordMatchesRequirements($selectedRecord)
             ) {
                 return false;
