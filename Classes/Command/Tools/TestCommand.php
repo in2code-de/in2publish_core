@@ -39,6 +39,8 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
+use function in_array;
+
 use const PHP_EOL;
 
 class TestCommand extends Command
@@ -64,19 +66,23 @@ class TestCommand extends Command
         try {
             $testingResults = $this->testingService->runAllTests();
             $success = true;
+            $warnings = false;
 
             foreach ($testingResults as $testingResult) {
+                if (in_array($testingResult->getSeverity(), [TestResult::WARNING, TestResult::SKIPPED], true)) {
+                    $warnings = true;
+                }
                 if ($testingResult->getSeverity() === TestResult::ERROR) {
                     $success = false;
-                    break;
                 }
             }
         } catch (Throwable $e) {
             $testingResults = [];
             $success = false;
+            $warnings = false;
         }
 
-        $this->environmentService->setTestResult($success);
+        $this->environmentService->setTestResult($success, $warnings);
 
         if (true !== $success) {
             foreach ($testingResults as $testingResult) {
@@ -88,7 +94,8 @@ class TestCommand extends Command
             return static::EXIT_TESTS_FAILED;
         }
 
-        $output->writeln('All tests passed', OutputInterface::VERBOSITY_VERBOSE);
+        $message = $warnings ? 'All tests passed with warnings' : 'All tests passed';
+        $output->writeln($message, OutputInterface::VERBOSITY_VERBOSE);
         return Command::SUCCESS;
     }
 }

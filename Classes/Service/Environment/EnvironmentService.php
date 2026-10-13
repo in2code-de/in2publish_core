@@ -45,6 +45,8 @@ class EnvironmentService implements SingletonInterface
     use ConfigContainerInjection;
     use RegistryInjection;
 
+    public const STATE_TESTS_CHANGED = 'tests_changed';
+    public const STATE_TESTS_WARNING = 'tests_warning';
     public const STATE_TESTS_FAILING = 'tests_failing';
     public const STATE_TESTS_NEVER_RAN = 'tests_never_ran';
     public const STATE_PACKAGES_CHANGED = 'environment_changed';
@@ -60,13 +62,15 @@ class EnvironmentService implements SingletonInterface
         $this->packageManager = $packageManager;
     }
 
-    public function setTestResult(bool $success): void
+    public function setTestResult(bool $success, bool $warnings = false): void
     {
         $this->registry->set(
             'tx_in2publishcore',
             'test_result',
             [
                 'success' => $success,
+                'warnings' => $warnings,
+                'tests_hash' => $this->getTestsHash(),
                 'packages_hash' => $this->getPackagesHash(),
                 'configuration_hash' => $this->getConfigurationHash(),
             ],
@@ -81,6 +85,9 @@ class EnvironmentService implements SingletonInterface
         if ($testResults === false) {
             return [static::STATE_TESTS_NEVER_RAN];
         }
+        if (($testResults['tests_hash'] ?? null) !== $this->getTestsHash()) {
+            $statusArray[] = static::STATE_TESTS_CHANGED;
+        }
         if ($testResults['packages_hash'] !== $this->getPackagesHash()) {
             $statusArray[] = static::STATE_PACKAGES_CHANGED;
         }
@@ -90,7 +97,25 @@ class EnvironmentService implements SingletonInterface
         if ($testResults['success'] !== true) {
             $statusArray[] = static::STATE_TESTS_FAILING;
         }
+        if ($testResults['warnings'] ?? false) {
+            $statusArray[] = static::STATE_TESTS_WARNING;
+        }
         return $statusArray;
+    }
+
+    protected function getTestsHash(): string
+    {
+        return sha1(serialize($GLOBALS['in2publish_core']['tests'] ?? []));
+    }
+
+    public function getTestWarningIdentifier(): string
+    {
+        return sha1(serialize([
+            $this->registry->get('tx_in2publishcore', 'test_result', false),
+            $this->getTestsHash(),
+            $this->getPackagesHash(),
+            $this->getConfigurationHash(),
+        ]));
     }
 
     /** @codeCoverageIgnore */

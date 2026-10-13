@@ -1,12 +1,8 @@
 <?php
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
-use In2code\In2publishCore\Controller\FileController;
-use In2code\In2publishCore\Controller\RecordController;
 use In2code\In2publishCore\Features\AdminTools\Backend\Form\DescriptionCompatibilityAugmentation;
-use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
 use In2code\In2publishCore\Features\ContextMenuPublishEntry\ContextMenu\PublishItemProvider;
-use In2code\In2publishCore\Features\RedirectsSupport\Controller\RedirectController;
 use In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest;
@@ -22,6 +18,7 @@ use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest;
 use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationMigrationTest;
 use In2code\In2publishCore\Testing\Tests\Configuration\ForeignConfigurationFormatTest;
 use In2code\In2publishCore\Testing\Tests\Database\DatabaseDifferencesTest;
+use In2code\In2publishCore\Testing\Tests\Database\FileUidSequenceTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\Database\TableGarbageCollectorTest;
@@ -34,9 +31,7 @@ use TYPO3\CMS\Backend\Form\FormDataProvider\EvaluateDisplayConditions;
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaColumnsProcessFieldDescriptions;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 (static function (): void {
     /***************************************************** Guards *****************************************************/
@@ -85,6 +80,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     $GLOBALS['in2publish_core']['tests'][] = LocalDatabaseTest::class;
     $GLOBALS['in2publish_core']['tests'][] = ForeignDatabaseTest::class;
     $GLOBALS['in2publish_core']['tests'][] = DatabaseDifferencesTest::class;
+    $GLOBALS['in2publish_core']['tests'][] = FileUidSequenceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = RemoteAdapterTest::class;
     $GLOBALS['in2publish_core']['tests'][] = TransmissionAdapterTest::class;
     $GLOBALS['in2publish_core']['tests'][] = LocalInstanceTest::class;

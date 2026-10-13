@@ -455,6 +455,21 @@
 				<source>The configuration for following adapters is invalid or the adapter could not be loaded</source>
 			</trans-unit>
 
+			<trans-unit id="database.file_uid_sequence.ok" resname="database.file_uid_sequence.ok">
+				<source>The foreign sys_file AUTO_INCREMENT does not exceed local.</source>
+			</trans-unit>
+			<trans-unit id="database.file_uid_sequence.foreign_ahead" resname="database.file_uid_sequence.foreign_ahead">
+				<source>The foreign sys_file AUTO_INCREMENT (%s) exceeds local (%s).</source>
+			</trans-unit>
+			<trans-unit id="database.file_uid_sequence.collision_risk" resname="database.file_uid_sequence.collision_risk">
+				<source>Files uploaded directly on foreign can cause UID collisions and display the wrong files. Upload files on local and publish them to foreign.</source>
+			</trans-unit>
+			<trans-unit id="database.file_uid_sequence.unavailable" resname="database.file_uid_sequence.unavailable">
+				<source>The sys_file AUTO_INCREMENT could not be determined on both instances.</source>
+			</trans-unit>
+			<trans-unit id="database.file_uid_sequence.disabled" resname="database.file_uid_sequence.disabled">
+				<source>The foreign file UID sequence check is disabled.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
