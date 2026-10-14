@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Record\Factory;
 
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
@@ -32,6 +33,7 @@ class RecordFactoryTest extends UnitTestCase
     public function testCreateRootTreeRecord(): void
     {
         $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
+        $recordFactory->injectConfigContainer($this->createStub(ConfigContainer::class));
 
         $recordIndex = $this->createMock(RecordIndex::class);
         $recordIndex->expects($this->once())->method('addRecord');
@@ -51,6 +53,7 @@ class RecordFactoryTest extends UnitTestCase
     {
         $databaseRecordFactoryFactory = $this->createMock(DatabaseRecordFactoryFactory::class);
         $recordFactory = new RecordFactory($databaseRecordFactoryFactory);
+        $recordFactory->injectConfigContainer($this->createStub(ConfigContainer::class));
 
         $table = 'table_foo';
 
@@ -84,6 +87,7 @@ class RecordFactoryTest extends UnitTestCase
     {
         $databaseRecordFactoryFactory = $this->createMock(DatabaseRecordFactoryFactory::class);
         $recordFactory = new RecordFactory($databaseRecordFactoryFactory);
+        $recordFactory->injectConfigContainer($this->createStub(ConfigContainer::class));
 
         $table = 'table_foo';
 
@@ -120,6 +124,7 @@ class RecordFactoryTest extends UnitTestCase
     public function testMmRecordIsCreatedAndAddedToRecordIndex(): void
     {
         $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
+        $recordFactory->injectConfigContainer($this->createStub(ConfigContainer::class));
 
         $table = 'mm_table';
 
@@ -140,6 +145,7 @@ class RecordFactoryTest extends UnitTestCase
     public function testFileRecordIsCreatedAndAddedToRecordIndex(): void
     {
         $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
+        $recordFactory->injectConfigContainer($this->createStub(ConfigContainer::class));
 
         $recordIndex = $this->createMock(RecordIndex::class);
         $recordIndex->expects($this->once())->method('addRecord');
@@ -162,6 +168,7 @@ class RecordFactoryTest extends UnitTestCase
     public function testFolderRecordIsCreatedAndAddedToRecordIndex(): void
     {
         $recordFactory = new RecordFactory($this->createMock(DatabaseRecordFactoryFactory::class));
+        $recordFactory->injectConfigContainer($this->createStub(ConfigContainer::class));
 
         $recordIndex = $this->createMock(RecordIndex::class);
         $recordIndex->expects($this->once())->method('addRecord');

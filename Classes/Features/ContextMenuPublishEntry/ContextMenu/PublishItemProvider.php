@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\ContextMenu;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use TYPO3\CMS\Backend\ContextMenu\ItemProviders\AbstractProvider;
@@ -42,6 +42,8 @@ use function func_get_args;
 
 class PublishItemProvider extends AbstractProvider
 {
+    use ConfigContainerInjection;
+
     protected $itemsConfiguration = [
         'publish' => [
             'label' => 'LLL:EXT:in2publish_core/Resources/Private/Language/Features/ContextMenuPublishEntry.xlf:publish_page',
@@ -71,8 +73,7 @@ class PublishItemProvider extends AbstractProvider
 
     public function addItems(array $items): array
     {
-        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        if (!$configContainer->get('features.contextMenuPublishEntry.enable')) {
+        if (!$this->configContainer->get('features.contextMenuPublishEntry.enable')) {
             return $items;
         }
         if (!$this->permissionService->isUserAllowedToPublish()) {

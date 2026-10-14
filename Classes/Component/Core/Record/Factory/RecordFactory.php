@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Component\Core\Record\Factory;
  */
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
@@ -43,7 +43,6 @@ use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\RecordWasCreated;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /** @SuppressWarnings(PHPMD.CouplingBetweenObjects) */
 class RecordFactory
@@ -51,6 +50,7 @@ class RecordFactory
     use RecordIndexInjection;
     use EventDispatcherInjection;
     use IgnoredFieldsServiceInjection;
+    use ConfigContainerInjection;
 
     protected DatabaseRecordFactoryFactory $databaseRecordFactoryFactory;
 
@@ -161,9 +161,7 @@ class RecordFactory
 
     protected function isRemovedAndDeletedRecord(Record $record): bool
     {
-        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-
-        if (!$configContainer->get('features.hideRecordsDeletedDifferently.enable')) {
+        if (!$this->configContainer->get('features.hideRecordsDeletedDifferently.enable')) {
             return false;
         }
         $deleteField = $GLOBALS['TCA'][$record->getClassification()]['ctrl']['delete'] ?? null;
