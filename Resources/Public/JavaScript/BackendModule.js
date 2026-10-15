@@ -120,7 +120,36 @@ class In2publishCoreModule {
 
 	static toggleDirtyPropertiesListContainerListener() {
 		document.querySelectorAll('[data-action="opendirtypropertieslistcontainer"]')
-			.forEach(el => el.addEventListener('click', (event) => this.toggleDirtyPropertiesListContainer(event)));
+			.forEach(el => {
+				el.addEventListener('click', (event) => this.toggleDirtyPropertiesListContainer(event));
+				el.dataset.in2publishDpcCoreBound = '1';
+				this.unlockDirtyPropertiesListButton(el);
+			});
+	}
+
+	/**
+	 * Info buttons are rendered disabled with a loader icon, because a click before the click handlers are bound
+	 * would submit the surrounding publishBagForm. Buttons with data-in2publish-dpc-unlock="enterprise" also wait
+	 * for the handler of EXT:in2publish.
+	 */
+	static unlockDirtyPropertiesListButton(button) {
+		if (!button.classList.contains('js-in2publish-dpc-pending')) {
+			return;
+		}
+		if (button.dataset.in2publishDpcCoreBound !== '1') {
+			return;
+		}
+		if (
+			button.dataset.in2publishDpcUnlock === 'enterprise'
+			&& button.dataset.in2publishDpcEnterpriseBound !== '1'
+		) {
+			return;
+		}
+
+		button.querySelector('.js-in2publish-dpc-loader')?.classList.add('d-none');
+		button.querySelector('.js-in2publish-dpc-icon')?.classList.remove('d-none');
+		button.removeAttribute('disabled');
+		button.classList.remove('js-in2publish-dpc-pending');
 	}
 
 	static toggleDirtyPropertiesListContainer(event) {
