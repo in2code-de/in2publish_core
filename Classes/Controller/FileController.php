@@ -40,7 +40,6 @@ use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
 use In2code\In2publishCore\Controller\Traits\FileControllerModuleTemplate;
-use In2code\In2publishCore\Controller\Traits\PublisherTestWarning;
 use In2code\In2publishCore\Service\Error\FailureCollectorInjection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
@@ -66,7 +65,6 @@ use const JSON_THROW_ON_ERROR;
 class FileController extends ActionController
 {
     use CommonViewVariables;
-    use PublisherTestWarning;
     use ControllerFilterStatus;
     use FileControllerModuleTemplate;
     use DeactivateErrorFlashMessage;
@@ -77,7 +75,7 @@ class FileController extends ActionController
 
     public function indexAction(): ResponseInterface
     {
-        $this->assignPublisherTestWarning();
+        $this->moduleTemplate->assign('testStatus', []);
         $pid = BackendUtility::getPageIdentifier();
         try {
             $recordTree = $this->defaultFalFinder->findFolderRecord($pid === 0 ? null : $pid);

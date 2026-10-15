@@ -594,14 +594,6 @@
 				<source>Some Publisher Tests reported warnings or were skipped.</source>
 				<target>Einige Publisher Tests melden Warnungen oder wurden übersprungen.</target>
 			</trans-unit>
-			<trans-unit id="test_warning.review" resname="test_warning.review">
-				<source>Please run and review the Publisher Tests in Publish Tools. You can accept this notice for your backend user.</source>
-				<target>Bitte führen Sie die Publisher Tests in Publish Tools aus und prüfen Sie die Ergebnisse. Sie können diesen Hinweis für Ihren Backend-Benutzer akzeptieren.</target>
-			</trans-unit>
-			<trans-unit id="test_warning.accept" resname="test_warning.accept">
-				<source>Accept notice</source>
-				<target>Hinweis akzeptieren</target>
-			</trans-unit>
 			<trans-unit id="test_state_error.tests_changed" resname="test_state_error.tests_changed">
 				<source>The Publisher Test suite changed. Please run all tests again.</source>
 				<target>Die Publisher Tests wurden verändert. Bitte führen Sie alle Tests erneut aus.</target>

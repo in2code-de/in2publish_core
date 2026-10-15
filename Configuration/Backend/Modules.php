@@ -60,7 +60,7 @@ return [
         'extensionName' => 'in2publish_core',
         'iconIdentifier' => 'in2publish-core-overview-module',
         'controllerActions' => [
-            RecordController::class => ['index', 'acceptTestWarning', 'detail', 'publishRecord', 'toggleFilterStatus', 'updateOverviewFilters'],
+            RecordController::class => ['index', 'detail', 'publishRecord', 'toggleFilterStatus', 'updateOverviewFilters'],
         ],
     ],
     'in2publish_core_m3' => [
@@ -75,7 +75,7 @@ return [
         'extensionName' => 'in2publish_core',
         'iconIdentifier' => 'in2publish-core-file-module',
         'controllerActions' => [
-            FileController::class => ['index', 'acceptTestWarning', 'publishFolder', 'publishFile', 'toggleFilterStatus'],
+            FileController::class => ['index', 'publishFolder', 'publishFile', 'toggleFilterStatus'],
         ],
     ],
     'in2publish_core_m4' => [

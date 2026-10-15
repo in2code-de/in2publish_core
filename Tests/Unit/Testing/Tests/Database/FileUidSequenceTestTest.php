@@ -14,15 +14,11 @@ use TYPO3\CMS\Core\Database\Connection;
 #[CoversClass(FileUidSequenceTest::class)]
 class FileUidSequenceTestTest extends UnitTestCase
 {
-    public function testDisabledOrAcceptedCheckDoesNotQueryEitherDatabase(): void
+    public function testDisabledCheckDoesNotQueryEitherDatabase(): void
     {
         self::assertSame(
             TestResult::SKIPPED,
-            FileUidSequenceTest::check(false, false)->getSeverity(),
-        );
-        self::assertSame(
-            TestResult::SKIPPED,
-            FileUidSequenceTest::check(true, true)->getSeverity(),
+            FileUidSequenceTest::check(false)->getSeverity(),
         );
     }
 
@@ -59,7 +55,7 @@ class FileUidSequenceTestTest extends UnitTestCase
         }
         self::assertSame(
             $expected,
-            FileUidSequenceTest::check(true, false, $localDatabase, $foreignDatabase)->getSeverity(),
+            FileUidSequenceTest::check(true, $localDatabase, $foreignDatabase)->getSeverity(),
         );
     }
 }

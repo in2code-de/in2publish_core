@@ -247,12 +247,6 @@ tca:
 # Toggle additional features for the content publisher
 features:
 
-  # Check for a foreign sys_file UID sequence ahead of local when opening publish modules.
-  # Set enable to FALSE to disable this check and its warning.
-  foreignFileUidCheck:
-    enable: TRUE
-
-
   # Adds a new entry to the right click menu in the page tree to quickly publish a single page.
   contextMenuPublishEntry:
     # Disabled by default. See Documentation/KnownIssues.md first before activation.

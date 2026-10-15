@@ -38,15 +38,13 @@ class FileUidSequenceTest implements TestCaseInterface
     {
         $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $enabled = $configContainer->get('features.foreignFileUidCheck.enable');
-        $accepted = isset($GLOBALS['BE_USER'])
-            && ($GLOBALS['BE_USER']->getModuleData('tx_in2publishcore_test_warning')['accepted'] ?? false) === true;
 
-        return static::check($enabled, $accepted);
+        return static::check($enabled);
     }
 
-    public static function check(bool $enabled, bool $accepted, ?Connection $local = null, ?Connection $foreign = null): TestResult
+    public static function check(bool $enabled, ?Connection $local = null, ?Connection $foreign = null): TestResult
     {
-        if (!$enabled || $accepted) {
+        if (!$enabled) {
             return new TestResult('database.file_uid_sequence.disabled', TestResult::SKIPPED);
         }
 

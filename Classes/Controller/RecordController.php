@@ -41,7 +41,6 @@ use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
-use In2code\In2publishCore\Controller\Traits\PublisherTestWarning;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\StopwatchWasNotStartedException;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatchInjection;
 use In2code\In2publishCore\In2publishCoreException;
@@ -78,7 +77,6 @@ class RecordController extends ActionController
     use ControllerModuleTemplate;
     use DeactivateErrorFlashMessage;
     use CommonViewVariables;
-    use PublisherTestWarning;
     use RecordIndexInjection;
     use RecordTreeBuilderInjection;
     use PageRendererInjection;
@@ -134,7 +132,7 @@ class RecordController extends ActionController
      */
     public function indexAction(int $pageRecursionLimit, string $freeText = '', string $state = '', string $language = ''): ResponseInterface
     {
-        $this->assignPublisherTestWarning();
+        $this->moduleTemplate->assign('testStatus', []);
         $pid = BackendUtility::getPageIdentifier();
         if (!is_int($pid)) {
             $pid = 0;
