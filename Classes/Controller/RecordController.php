@@ -132,6 +132,7 @@ class RecordController extends ActionController
      */
     public function indexAction(int $pageRecursionLimit, string $freeText = '', string $state = '', string $language = ''): ResponseInterface
     {
+        $this->moduleTemplate->assign('testStatus', []);
         $pid = BackendUtility::getPageIdentifier();
         if (!is_int($pid)) {
             $pid = 0;

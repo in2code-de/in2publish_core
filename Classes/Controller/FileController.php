@@ -75,6 +75,7 @@ class FileController extends ActionController
 
     public function indexAction(): ResponseInterface
     {
+        $this->moduleTemplate->assign('testStatus', []);
         $pid = BackendUtility::getPageIdentifier();
         try {
             $recordTree = $this->defaultFalFinder->findFolderRecord($pid === 0 ? null : $pid);

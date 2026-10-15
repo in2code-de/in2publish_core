@@ -443,6 +443,12 @@
 			<trans-unit id="module_m1_filter_field_search">
 				<source>Search</source>
 			</trans-unit>
+			<trans-unit id="test_state_error.tests_warning" resname="test_state_error.tests_warning">
+				<source>Some Publisher Tests reported warnings or were skipped.</source>
+			</trans-unit>
+			<trans-unit id="test_state_error.tests_changed" resname="test_state_error.tests_changed">
+				<source>The Publisher Test suite changed. Please run all tests again.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

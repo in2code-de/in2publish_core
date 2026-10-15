@@ -35,6 +35,8 @@ use In2code\In2publishCore\Testing\Service\TestingServiceInjection;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Psr\Http\Message\ResponseInterface;
 
+use function in_array;
+
 class TestController extends AbstractAdminToolsController
 {
     use EnvironmentServiceInjection;
@@ -46,15 +48,18 @@ class TestController extends AbstractAdminToolsController
         $testingResults = $this->testingService->runAllTests();
 
         $success = true;
+        $warnings = false;
 
         foreach ($testingResults as $testingResult) {
+            if (in_array($testingResult->getSeverity(), [TestResult::WARNING, TestResult::SKIPPED], true)) {
+                $warnings = true;
+            }
             if ($testingResult->getSeverity() === TestResult::ERROR) {
                 $success = false;
-                break;
             }
         }
 
-        $this->environmentService->setTestResult($success);
+        $this->environmentService->setTestResult($success, $warnings);
         $this->moduleTemplate->assignMultiple([
             'testingResults' => $testingResults,
         ]);

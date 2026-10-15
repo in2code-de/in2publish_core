@@ -204,6 +204,10 @@ class In2publishCoreDefiner implements DefinerServiceInterface
                           'features',
                           Builder::start()
                                  ->addArray(
+                                     'foreignFileUidCheck',
+                                     Builder::start()->addBoolean('enable', true),
+                                 )
+                                 ->addArray(
                                      'contextMenuPublishEntry',
                                      Builder::start()
                                             ->addBoolean('enable', false),

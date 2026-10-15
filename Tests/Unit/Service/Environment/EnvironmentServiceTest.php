@@ -60,11 +60,13 @@ class EnvironmentServiceTest extends UnitTestCase
             ->onlyMethods(['set'])
             ->disableOriginalConstructor()
             ->getMock();
-        $registry->expects($this->once())->method('set')->with(
+        $registry->expects(self::once())->method('set')->with(
             'tx_in2publishcore',
             'test_result',
             [
                 'success' => true,
+                'warnings' => false,
+                'tests_hash' => sha1(serialize($GLOBALS['in2publish_core']['tests'] ?? [])),
                 'packages_hash' => $packagesHash,
                 'configuration_hash' => $configurationHash,
             ],
@@ -103,6 +105,7 @@ class EnvironmentServiceTest extends UnitTestCase
                     'packages_hash' => 'other',
                     'configuration_hash' => $configurationHash,
                     'success' => true,
+                    'tests_hash' => sha1(serialize($GLOBALS['in2publish_core']['tests'] ?? [])),
                 ],
             ],
             'only_configuration_hash_wrong' => [
@@ -113,6 +116,7 @@ class EnvironmentServiceTest extends UnitTestCase
                     'packages_hash' => $packagesHash,
                     'configuration_hash' => 'other',
                     'success' => true,
+                    'tests_hash' => sha1(serialize($GLOBALS['in2publish_core']['tests'] ?? [])),
                 ],
             ],
             'only_tests_failed' => [
@@ -123,6 +127,7 @@ class EnvironmentServiceTest extends UnitTestCase
                     'packages_hash' => $packagesHash,
                     'configuration_hash' => $configurationHash,
                     'success' => false,
+                    'tests_hash' => sha1(serialize($GLOBALS['in2publish_core']['tests'] ?? [])),
                 ],
             ],
             'tests_failed_and_packages_changed' => [
@@ -134,6 +139,7 @@ class EnvironmentServiceTest extends UnitTestCase
                     'packages_hash' => 'other',
                     'configuration_hash' => $configurationHash,
                     'success' => false,
+                    'tests_hash' => sha1(serialize($GLOBALS['in2publish_core']['tests'] ?? [])),
                 ],
             ],
             'tests_failed_and_configuration_changed' => [
@@ -145,6 +151,7 @@ class EnvironmentServiceTest extends UnitTestCase
                     'packages_hash' => $packagesHash,
                     'configuration_hash' => 'other',
                     'success' => false,
+                    'tests_hash' => sha1(serialize($GLOBALS['in2publish_core']['tests'] ?? [])),
                 ],
             ],
             'tests_failed_and_packages_and_config_changed' => [
@@ -157,6 +164,25 @@ class EnvironmentServiceTest extends UnitTestCase
                     'packages_hash' => 'other',
                     'configuration_hash' => 'other',
                     'success' => false,
+                    'tests_hash' => sha1(serialize($GLOBALS['in2publish_core']['tests'] ?? [])),
+                ],
+            ],
+            'older_result_does_not_cover_current_tests' => [
+                [EnvironmentService::STATE_TESTS_CHANGED],
+                [
+                    'packages_hash' => $packagesHash,
+                    'configuration_hash' => $configurationHash,
+                    'success' => true,
+                ],
+            ],
+            'warnings_without_errors' => [
+                [EnvironmentService::STATE_TESTS_WARNING],
+                [
+                    'packages_hash' => $packagesHash,
+                    'configuration_hash' => $configurationHash,
+                    'success' => true,
+                    'tests_hash' => sha1(serialize($GLOBALS['in2publish_core']['tests'] ?? [])),
+                    'warnings' => true,
                 ],
             ],
             'all_good' => [
@@ -165,6 +191,7 @@ class EnvironmentServiceTest extends UnitTestCase
                     'packages_hash' => $packagesHash,
                     'configuration_hash' => $configurationHash,
                     'success' => true,
+                    'tests_hash' => sha1(serialize($GLOBALS['in2publish_core']['tests'] ?? [])),
                 ],
             ],
         ];
@@ -179,7 +206,7 @@ class EnvironmentServiceTest extends UnitTestCase
     {
         /** @var Registry|MockObject $registry */
         $registry = $this->createMock(Registry::class);
-        $registry->expects($this->once())->method('get')->willReturn($registryReturn);
+        $registry->expects(self::once())->method('get')->willReturn($registryReturn);
 
         $packagesArray = ['foo' => ['bar' => ['baz' => 'buz']]];
 
@@ -195,6 +222,6 @@ class EnvironmentServiceTest extends UnitTestCase
         $environmentService->injectConfigContainer($configContainer);
         $environmentService->injectRegistry($registry);
 
-        $this->assertSame($expected, $environmentService->getTestStatus());
+        self::assertSame($expected, $environmentService->getTestStatus());
     }
 }

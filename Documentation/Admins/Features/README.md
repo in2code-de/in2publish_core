@@ -14,6 +14,10 @@ The `in2publish_core` extension offers a variety of configurable features, each 
 ## ContextMenuPublishEntry
 - Enhances the TYPO3 context menu with publishing options.
 
+## [**Foreign File UID Check**](ForeignFileUidCheck.md)
+- Checks whether the foreign `sys_file` UID sequence is ahead of local and warns about possible UID collisions.
+- Enabled by default; each backend user can accept the warning, or administrators can disable the check in the local configuration.
+
 ## FileEdgeCacheInvalidator
 - Handles invalidation of edge caches for files, ensuring clearing of caches on foreign systems after publishing
 
