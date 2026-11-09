@@ -38,8 +38,8 @@ class PublishEventLogger
             0,
             'Record "{title}" ({classification}:{id}) was published by user {username} ({user})',
             [
-                'user' => $backendUser->user['uid'],
-                'username' => $backendUser->user[$backendUser->username_column],
+                'user' => $backendUser->user['uid'] ?? 0,
+                'username' => $backendUser->user[$backendUser->username_column] ?? '_cli_',
                 'title' => $rootRecord->__toString(),
                 'classification' => $classification,
                 'id' => $id,
