@@ -25,7 +25,6 @@ class FileRecordListenerTest extends UnitTestCase
         $fileRecordListener = new FileRecordListener();
 
         $fileRecords = new ReflectionProperty($fileRecordListener, 'fileRecords');
-        $fileRecords->setAccessible(true);
 
         $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42,], []);
         $file2 = new FileRecord(['identifier' => 'file2', 'storage' => 42,], []);
@@ -52,7 +51,6 @@ class FileRecordListenerTest extends UnitTestCase
         $fileRecordListener = new FileRecordListener();
 
         $fileRecords = new ReflectionProperty($fileRecordListener, 'fileRecords');
-        $fileRecords->setAccessible(true);
 
         $sysFileRecord = new DatabaseRecord('sys_file', 1, [], [], []);
         $recordWasCreated = new RecordWasCreated($sysFileRecord);

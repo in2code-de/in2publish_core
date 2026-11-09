@@ -87,7 +87,6 @@ class EnvelopeDispatcher
             throw new StorageIsOfflineException((int)$request['storage']);
         }
         $driverReflection = new ReflectionProperty(get_class($storage), 'driver');
-        $driverReflection->setAccessible(true);
         /** @var DriverInterface $driver */
         return $driverReflection->getValue($storage);
     }

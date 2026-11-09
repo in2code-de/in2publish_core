@@ -24,10 +24,6 @@ class StaticJoinResolverTest extends UnitTestCase
         $joinTable = new ReflectionProperty(StaticJoinResolver::class, 'joinTable');
         $additionalWhere = new ReflectionProperty(StaticJoinResolver::class, 'additionalWhere');
         $property = new ReflectionProperty(StaticJoinResolver::class, 'property');
-        $mmTable->setAccessible(true);
-        $joinTable->setAccessible(true);
-        $additionalWhere->setAccessible(true);
-        $property->setAccessible(true);
 
         $staticJoinResolver->configure(
             'mmTable',

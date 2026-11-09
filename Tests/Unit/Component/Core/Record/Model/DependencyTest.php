@@ -163,7 +163,6 @@ class DependencyTest extends UnitTestCase
         );
         $dependency->addSupersedingDependency($supersedingDependency);
         $reflectionProperty = new ReflectionProperty(Dependency::class, 'supersededBy');
-        $reflectionProperty->setAccessible(true);
         self::assertSame(
             [$supersedingDependency],
             $reflectionProperty->getValue($dependency),
@@ -228,7 +227,6 @@ class DependencyTest extends UnitTestCase
         self::assertTrue($dependency->isFulfilled());
 
         $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
-        $reflectionProperty->setAccessible(true);
         $reasons = $reflectionProperty->getValue($dependency);
 
         self::assertFalse($reasons->isEmpty());
@@ -323,7 +321,6 @@ class DependencyTest extends UnitTestCase
         self::assertTrue($dependency->isFulfilled());
 
         $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
-        $reflectionProperty->setAccessible(true);
         $reasons = $reflectionProperty->getValue($dependency);
 
         self::assertTrue($reasons->isEmpty());
@@ -352,7 +349,6 @@ class DependencyTest extends UnitTestCase
 
         // assert: reasons were collected (informational), but isFulfilled() still returns true
         $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
-        $reflectionProperty->setAccessible(true);
         $reasons = $reflectionProperty->getValue($dependency);
         self::assertFalse($reasons->isEmpty(), 'Reasons should still be collected for informational display');
         self::assertTrue($dependency->isFulfilled(), 'A dependency owned by a deleted record must always be considered fulfilled');
@@ -414,7 +410,6 @@ class DependencyTest extends UnitTestCase
         self::assertFalse($dependency->isFulfilled());
 
         $reflectionProperty = new ReflectionProperty(Dependency::class, 'reasons');
-        $reflectionProperty->setAccessible(true);
         $reasons = $reflectionProperty->getValue($dependency);
         $expectedReasonLabel = 'Label for my dependency';
         $actualLabel = $reasons->getAll()[0]->getLabel();
@@ -519,14 +514,12 @@ class DependencyTest extends UnitTestCase
             $dependencyWithFulfilledDependencies,
             'supersededBy',
         );
-        $fulfilledSupersedingDependencies->setAccessible(true);
         $fulfilledSupersedingDependencies->setValue($dependencyWithFulfilledDependencies, [$dependency1, $dependency2]);
 
         $unfulfilledSupersedingDependencies = new ReflectionProperty(
             $dependencyWithUnfulfilledDependencies,
             'supersededBy',
         );
-        $unfulfilledSupersedingDependencies->setAccessible(true);
         $unfulfilledSupersedingDependencies->setValue(
             $dependencyWithUnfulfilledDependencies,
             [$dependency2, $dependency3],
@@ -542,10 +535,8 @@ class DependencyTest extends UnitTestCase
         );
 
         // act
-        $testMethodUnfulfilled->setAccessible(true);
         $actualResultUnfilled = $testMethodUnfulfilled->invoke($dependencyWithUnfulfilledDependencies);
 
-        $testMethodFulfilled->setAccessible(true);
         $actualResultFulfilled = $testMethodFulfilled->invoke($dependencyWithFulfilledDependencies);
 
         // assert

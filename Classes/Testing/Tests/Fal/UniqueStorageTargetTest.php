@@ -97,7 +97,6 @@ class UniqueStorageTargetTest implements TestCaseInterface
                 continue;
             }
             $driverProperty = new ReflectionProperty(get_class($storageObject), 'driver');
-            $driverProperty->setAccessible(true);
             /** @var DriverInterface $localDriver */
             $localDriver = $driverProperty->getValue($storageObject);
 

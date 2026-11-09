@@ -28,15 +28,10 @@ class SelectMmResolverTest extends UnitTestCase
     {
         $selectMmResolver = new SelectMmResolver();
         $foreignTableWhere = new ReflectionProperty(SelectMmResolver::class, 'foreignTableWhere');
-        $foreignTableWhere->setAccessible(true);
         $column = new ReflectionProperty(SelectMmResolver::class, 'column');
-        $column->setAccessible(true);
         $mmTable = new ReflectionProperty(SelectMmResolver::class, 'mmTable');
-        $mmTable->setAccessible(true);
         $foreignTable = new ReflectionProperty(SelectMmResolver::class, 'foreignTable');
-        $foreignTable->setAccessible(true);
         $selectField = new ReflectionProperty(SelectMmResolver::class, 'selectField');
-        $selectField->setAccessible(true);
 
         $selectMmResolver->configure(
             'foreignTableWhere',

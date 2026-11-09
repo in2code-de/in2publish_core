@@ -80,7 +80,6 @@ class ContextServiceTest extends UnitTestCase
         }
 
         $environmentReflection = new ReflectionProperty(Environment::class, 'context');
-        $environmentReflection->setAccessible(true);
         $environmentReflection->setValue(null, $applicationContext);
     }
 

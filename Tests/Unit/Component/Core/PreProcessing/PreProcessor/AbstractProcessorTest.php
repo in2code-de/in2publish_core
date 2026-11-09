@@ -26,7 +26,6 @@ class AbstractProcessorTest extends UnitTestCase
         $abstractProcessor = $this->getMockAbstractProcessorWithJoinResolver();
 
         $forbidden = new ReflectionProperty(AbstractProcessor::class, 'forbidden');
-        $forbidden->setAccessible(true);
         $forbidden->setValue(
             $abstractProcessor,
             ['forbidden_key_1' => 'first_reason', 'forbidden_key_2' => 'second_reason'],
@@ -51,7 +50,6 @@ class AbstractProcessorTest extends UnitTestCase
         $abstractProcessor = $this->getMockAbstractProcessorWithJoinResolver();
 
         $required = new ReflectionProperty(AbstractProcessor::class, 'required');
-        $required->setAccessible(true);
         $required->setValue($abstractProcessor, ['key_1' => 'Key 1 is required', 'key_2' => 'Key 2 is required']);
 
         $tca = ['type' => 'inline'];
@@ -104,15 +102,12 @@ class AbstractProcessorTest extends UnitTestCase
         $abstractProcessor = $this->getMockAbstractProcessor();
 
         $requiredFields = new ReflectionProperty(AbstractProcessor::class, 'required');
-        $requiredFields->setAccessible(true);
         $requiredFields->setValue($abstractProcessor, ['key_1' => 'Key 1 is required', 'key_2' => 'Key 2 is required']);
 
         $allowedFields = new ReflectionProperty(AbstractProcessor::class, 'allowed');
-        $allowedFields->setAccessible(true);
         $allowedFields->setValue($abstractProcessor, ['allowed_field_1', 'allowed_field_2']);
 
         $getImportantFields = new ReflectionMethod(AbstractProcessor::class, 'getImportantFields');
-        $getImportantFields->setAccessible(true);
 
         $expectedImportantFields = ['type', 'key_1', 'key_2', 'allowed_field_1', 'allowed_field_2'];
         $this->assertSame($expectedImportantFields, $getImportantFields->invoke($abstractProcessor));

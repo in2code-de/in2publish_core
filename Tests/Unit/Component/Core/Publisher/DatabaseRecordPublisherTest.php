@@ -117,7 +117,6 @@ class DatabaseRecordPublisherTest extends UnitTestCase
     {
         $foreignDatabase = $this->createMock(Connection::class);
         $reflection = new \ReflectionProperty(DatabaseRecordPublisher::class, 'foreignDatabase');
-        $reflection->setAccessible(true);
         $reflection->setValue($databaseRecordPublisher, $foreignDatabase);
         return $foreignDatabase;
     }

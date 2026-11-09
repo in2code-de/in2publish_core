@@ -126,7 +126,6 @@ class FolderRecordPublisherTest extends UnitTestCase
     {
         $foreignDatabase = $this->createMock(Connection::class);
         $reflection = new \ReflectionProperty(FolderRecordPublisher::class, 'foreignDatabase');
-        $reflection->setAccessible(true);
         $reflection->setValue($folderRecordPublisher, $foreignDatabase);
         return $foreignDatabase;
     }

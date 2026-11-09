@@ -35,7 +35,6 @@ class TfContentDatabaseRecordFactoryTest extends UnitTestCase
             [],
         );
         $reflectionProperty = new ReflectionProperty($databaseRecord, 'ignoredProps');
-        $reflectionProperty->setAccessible(true);
         $ignoredProps = $reflectionProperty->getValue($databaseRecord);
 
         $this->assertInstanceOf(TtContentDatabaseRecord::class, $databaseRecord);

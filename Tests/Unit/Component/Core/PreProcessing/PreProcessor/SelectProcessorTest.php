@@ -188,7 +188,6 @@ class SelectProcessorTest extends UnitTestCase
         $selectProcessor = new SelectProcessor($this->createStub(Container::class));
         // access protected method isSysCategoryField()
         $reflectionMethod = new ReflectionMethod(SelectProcessor::class, 'isSysCategoryField');
-        $reflectionMethod->setAccessible(true);
         $isSysCategoryField = $reflectionMethod->invoke($selectProcessor, $config);
 
         $this->assertEquals($expectation, $isSysCategoryField);

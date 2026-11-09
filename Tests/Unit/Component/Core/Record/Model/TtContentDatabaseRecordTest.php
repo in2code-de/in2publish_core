@@ -42,7 +42,6 @@ class TtContentDatabaseRecordTest extends UnitTestCase
         $this->assertSame([], $ttContentDatabaseRecord->getDependencies());
 
         $reflectionProperty = new ReflectionProperty(TtContentDatabaseRecord::class, 'ignoredProps');
-        $reflectionProperty->setAccessible(true);
         $this->assertSame(['prop3' => 'value3'], $reflectionProperty->getValue($ttContentDatabaseRecord));
     }
 
