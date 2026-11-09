@@ -86,7 +86,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
         $propsBySide = $record->getPropsBySide($this->arguments['side']);
         $language = $propsBySide[$languageField] ?? $record->getProp($languageField);
 
-        $systemLanguage = $systemLanguages[$language] ?? null;
+        $systemLanguage = null === $language ? null : $systemLanguages[$language] ?? null;
         if (null === $systemLanguage) {
             return $this->iconFactory->getIcon('flags-multiple', IconSize::SMALL, 'overlay-edit')->render();
         }

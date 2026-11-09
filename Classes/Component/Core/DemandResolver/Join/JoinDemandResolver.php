@@ -158,7 +158,10 @@ class JoinDemandResolver implements DemandResolver
                         }
                     }
                     $mapValue = $mmRecord->getProp($property);
-                    foreach ($valueMaps[$mapValue] as $parent) {
+                    if (null === $mapValue) {
+                        continue;
+                    }
+                    foreach ($valueMaps[$mapValue] ?? [] as $parent) {
                         $parent->addChild($mmRecord);
                     }
                 }

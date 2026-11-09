@@ -54,7 +54,10 @@ class MmDemandResolver implements DemandResolver
                         }
                     }
                     $mapValue = $mmRecord->getProp($field);
-                    foreach ($valueMaps[$mapValue] as $parent) {
+                    if (null === $mapValue) {
+                        continue;
+                    }
+                    foreach ($valueMaps[$mapValue] ?? [] as $parent) {
                         $parent->addChild($mmRecord);
                     }
                 }
