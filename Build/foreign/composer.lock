@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "63ed48ee9221beb29faa657ac863fde1",
+    "content-hash": "6910266e8eb6e03c315ce93b2392d442",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1472,13 +1472,13 @@
             "dist": {
                 "type": "path",
                 "url": "../..",
-                "reference": "0ba8e987ad75d2a2337d1e7d175e0c73e67a0509"
+                "reference": "57fa1f3825669867139ea0ce122d530cf4252928"
             },
             "require": {
                 "ext-json": "*",
                 "ext-pdo": "*",
                 "ext-zip": "*",
-                "php": ">= 8.2.0 <= 8.4.99",
+                "php": ">= 8.2.0 <= 8.5.99",
                 "symfony/yaml": "^7.1",
                 "typo3/cms-backend": "^13.4.19",
                 "typo3/cms-core": "^13.4.19",
@@ -1493,7 +1493,7 @@
                 "branch-alias": {
                     "dev-develop": "13.2.x-dev",
                     "dev-master": "13.2.x-dev",
-                    "dev-typo3_13": "13.3.x-dev"
+                    "dev-typo3_13": "13.5.x-dev"
                 }
             },
             "autoload": {
@@ -10272,11 +10272,11 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">= 8.2.0 <= 8.4.99",
+        "php": ">= 8.2.0 <= 8.5.99",
         "ext-json": "*",
         "ext-pdo": "*",
         "ext-zip": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }
