@@ -50,9 +50,9 @@ class InlineMultiValueResolver extends AbstractResolver
             $additionalWhere = $matches['where'];
         }
 
-        $localValue = $record->getLocalProps()[$this->column];
+        $localValue = (string)($record->getLocalProps()[$this->column] ?? '');
         $localValues = GeneralUtility::trimExplode(',', $localValue, true);
-        $foreignValue = $record->getLocalProps()[$this->column];
+        $foreignValue = (string)($record->getForeignProps()[$this->column] ?? '');
         $foreignValues = GeneralUtility::trimExplode(',', $foreignValue, true);
         $values = array_unique(array_merge($localValues, $foreignValues));
         foreach ($values as $value) {

@@ -48,7 +48,7 @@ class FileRecordListener
                     if (null !== $localFileId) {
                         $localParentFileIds[$localFileId] = true;
                     }
-                    $foreignFileId = $parent->getLocalProps()['identifier'] ?? null;
+                    $foreignFileId = $parent->getForeignProps()['identifier'] ?? null;
                     if (null !== $foreignFileId) {
                         $foreignParentFileIds[$foreignFileId] = true;
                     }
@@ -68,7 +68,7 @@ class FileRecordListener
             if (
                 null !== $foreignStorage
                 && null !== $foreignIdentifier
-                && !isset($foreignParentFileIds[$localIdentifier])
+                && !isset($foreignParentFileIds[$foreignIdentifier])
             ) {
                 $demands->addDemand(new FileDemand($foreignStorage, $foreignIdentifier, $record));
             }
