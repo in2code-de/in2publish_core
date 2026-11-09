@@ -1,5 +1,20 @@
 # In2publish Core Change Log
 
+13.6.0
+- [META] Set the EM conf version number to 13.6.0
+- [DOCS] Update Changelog.md
+- [TASK] Run the test environment on PHP 8.5
+- [TASK] Update build lock files for PHP 8.5
+- [TASK] Allow PHP 8.5
+- [BUGFIX] Log publishing events without an authenticated backend user
+- [BUGFIX] Prevent warnings and TypeErrors for missing values
+- [BUGFIX] Use foreign properties when resolving foreign relations
+- [BUGFIX] Prevent null array offsets deprecated in PHP 8.5
+- [TASK] Remove reflection calls deprecated in PHP 8.5
+- [BUGFIX] Allow dependencies to be fulfilled by any record published together
+- [TEST][BUGFIX] Fix header title for record on page on Page 5c.3
+- [TEST][REFACTOR] move helper method selectInFileStorageTree to shared fixtures
+
 13.5.0
 - [META] Set the EM conf version number to 13.5.0
 - [DOCS] Update Changelog.md
