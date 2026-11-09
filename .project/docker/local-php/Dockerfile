@@ -1,4 +1,4 @@
-FROM in2code/php-dev:8.3-fpm AS base
+FROM in2code/php-dev:8.5-fpm AS base
 
 RUN mkdir -m 700 -p /home/app/.ssh/
 COPY --chown=1000:1000 id_ed25519 id_ed25519.pub /home/app/.ssh/
