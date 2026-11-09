@@ -170,7 +170,7 @@ class DefaultFalFinder
         $foreignProps = $fileInformation->toArray();
 
         $fileRecord = $this->recordFactory->createFileRecord($localProps, $foreignProps);
-        if (null === $fileRecord) {
+        if (null === $fileRecord || ($localProps === [] && $foreignProps === [])) {
             return new RecordTree();
         }
 
