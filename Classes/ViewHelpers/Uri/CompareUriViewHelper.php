@@ -73,6 +73,7 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
         if (
             null !== $languageField
             && null !== $transOrigPointerField
+            && null !== $page
             && array_key_exists($languageField, $page)
             && $page[$languageField] > 0
         ) {

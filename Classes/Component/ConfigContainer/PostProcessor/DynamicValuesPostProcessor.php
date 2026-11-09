@@ -79,7 +79,7 @@ class DynamicValuesPostProcessor implements PostProcessorServiceInterface, Logge
     /** Logs missing provider keys. Only once per request to avoid log flooding.*/
     protected function logMissingDynamicValueProvider(string $providerKey): void
     {
-        if (!$this->rtc['missing'][$providerKey]) {
+        if (empty($this->rtc['missing'][$providerKey])) {
             $this->rtc['missing'][$providerKey] = true;
             $this->logger->error(
                 'Identified dynamic configuration provider key but no provider was registered for it',
