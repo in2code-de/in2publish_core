@@ -110,7 +110,7 @@ class SelectDemandResolver implements DemandResolver
                 $mapValues = array_unique([$localMapValue, $foreignMapValue]);
 
                 foreach ($mapValues as $mapValue) {
-                    if (array_key_exists($mapValue, $valueMaps)) {
+                    if (null !== $mapValue && array_key_exists($mapValue, $valueMaps)) {
                         foreach ($valueMaps[$mapValue] as $parent) {
                             $parent->addChild($record);
                         }
