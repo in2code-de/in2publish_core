@@ -62,6 +62,9 @@ class TcaExporter implements SystemInformationExporter
                 $properties = [];
                 $reflectionObject = new ReflectionObject($value);
                 foreach ($reflectionObject->getProperties() as $property) {
+                    if (!$property->isInitialized($value)) {
+                        continue;
+                    }
                     $propertyValue = $property->getValue($value);
                     if (is_object($propertyValue)) {
                         $propertyValue = get_class($propertyValue);

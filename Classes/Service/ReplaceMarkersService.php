@@ -151,7 +151,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
             $marker = [
                 'PAGE_TSCONFIG_ID' => fn ($input): int => (int)$input,
                 'PAGE_TSCONFIG_IDLIST' => fn ($input): string => implode(',', GeneralUtility::intExplode(',', (string)$input)),
-                'PAGE_TSCONFIG_STR' => fn ($input): string => $this->localDatabase->quote($input),
+                'PAGE_TSCONFIG_STR' => fn ($input): string => $this->localDatabase->quote((string)$input),
             ];
 
             $pageTsConfig = $this->getPagesTsConfig($record->getPageId());
@@ -193,8 +193,8 @@ class ReplaceMarkersService implements LoggerAwareInterface
 
             $marker = [
                 'PAGE_TSCONFIG_ID' => static fn ($input): string => (string)(int)$input,
-                'PAGE_TSCONFIG_IDLIST' => fn ($input): string => implode(',', GeneralUtility::intExplode(',', $input)),
-                'PAGE_TSCONFIG_STR' => fn ($input): string => $this->localDatabase->quote($input),
+                'PAGE_TSCONFIG_IDLIST' => fn ($input): string => implode(',', GeneralUtility::intExplode(',', (string)$input)),
+                'PAGE_TSCONFIG_STR' => fn ($input): string => $this->localDatabase->quote((string)$input),
             ];
 
             $pageTs = BackendUtility::getPagesTSconfig($record->getPageId());
