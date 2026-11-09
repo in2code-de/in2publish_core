@@ -45,8 +45,8 @@ class GroupMmMultiTableResolver extends AbstractResolver
 
     public function resolve(Demands $demands, Record $record): void
     {
-        $localValue = $record->getLocalProps()[$this->column] ?? '';
-        $foreignValue = $record->getForeignProps()[$this->column] ?? '';
+        $localValue = (string)($record->getLocalProps()[$this->column] ?? '');
+        $foreignValue = (string)($record->getForeignProps()[$this->column] ?? '');
 
         $localEntries = GeneralUtility::trimExplode(',', $localValue, true);
         $foreignEntries = GeneralUtility::trimExplode(',', $foreignValue, true);

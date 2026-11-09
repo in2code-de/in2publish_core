@@ -64,6 +64,7 @@ class FlexProcessor extends AbstractProcessor
                 $parsedFlexForm = $this->flexFormTools->parseDataStructureByIdentifier($dataStructureIdentifier);
             } catch (InvalidIdentifierException $e) {
                 // Skip invalid flex form configs
+                continue;
             }
             $flattenedFlexForm = $this->flexFormFlatteningService->flattenFlexFormDefinition($parsedFlexForm);
 

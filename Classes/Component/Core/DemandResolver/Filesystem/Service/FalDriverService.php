@@ -51,7 +51,7 @@ class FalDriverService
 
     protected function createFalDriver(array $storage): DriverInterface
     {
-        $storageConfiguration = $this->convertFlexFormDataToConfigurationArray($storage['configuration'] ?? []);
+        $storageConfiguration = $this->convertFlexFormDataToConfigurationArray((string)($storage['configuration'] ?? ''));
         $driver = $this->getDriverObject($storage['driver'], $storageConfiguration);
         $driver->setStorageUid($storage['uid']);
 

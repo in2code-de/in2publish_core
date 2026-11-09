@@ -138,7 +138,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
     {
         $responseText = $response->getOutputString();
         $responseParts = explode(':', $responseText);
-        $serializedSite = base64_decode($responseParts[1]);
+        $serializedSite = base64_decode($responseParts[1] ?? '');
         $result = unserialize($serializedSite, ['allowed_classes' => self::UNSERIALIZE_ALLOWED_CLASS]);
         if (false === $result) {
             throw new SiteNotFoundException();

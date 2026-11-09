@@ -15,6 +15,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\Record\Model\VirtualFlexFormRecord;
 use In2code\In2publishCore\Component\Core\Service\ResolverService;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
+use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_keys;
@@ -162,7 +163,7 @@ class FlexResolver extends AbstractResolver
         );
         $this->injectResolverService(GeneralUtility::makeInstance(ResolverService::class));
         $this->injectFlexFormFlatteningService(GeneralUtility::makeInstance(FlexFormFlatteningService::class));
-        $this->injectFlexFormService($this->flexFormService);
+        $this->injectFlexFormService(GeneralUtility::makeInstance(FlexFormService::class));
         $this->injectFlexFormTools(GeneralUtility::makeInstance(FlexFormTools::class));
     }
 }

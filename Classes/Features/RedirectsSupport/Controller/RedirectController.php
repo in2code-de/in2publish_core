@@ -217,7 +217,7 @@ class RedirectController extends ActionController
         }
 
         if ($this->request->getMethod() === 'POST') {
-            $redirectDto->tx_in2publishcore_foreign_site_id = $properties['siteId'];
+            $redirectDto->tx_in2publishcore_foreign_site_id = $properties['siteId'] ?? null;
             $this->sysRedirectRepo->update($redirectDto);
             $this->addFlashMessage(
                 sprintf(
