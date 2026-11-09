@@ -103,9 +103,14 @@ class FoldersInFolderDemandResolverTest extends UnitTestCase
         );
 
         $demands = $this->createStub(DemandsCollection::class);
-        $demands->method('getDemandsByType')->with(FoldersInFolderDemand::class)->willReturn([
-            self::STORAGE => [
-                self::PARENT_IDENTIFIER => [$parentRecord],
+        $demands->method('getDemandsByType')->willReturnMap([
+            [
+                FoldersInFolderDemand::class,
+                [
+                    self::STORAGE => [
+                        self::PARENT_IDENTIFIER => [$parentRecord],
+                    ],
+                ],
             ],
         ]);
 

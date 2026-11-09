@@ -84,7 +84,7 @@ class FileDemandResolverTest extends UnitTestCase
                 '/file.txt' => [$parentFile2],
             ],
         ];
-        $demands->method('getDemandsByType')->with(FileDemand::class)->willReturn($fileDemand);
+        $demands->method('getDemandsByType')->willReturnMap([[FileDemand::class, $fileDemand]]);
         $recordCollection = new RecordCollection();
         $fileDemandResolver->resolveDemand($demands, $recordCollection);
 

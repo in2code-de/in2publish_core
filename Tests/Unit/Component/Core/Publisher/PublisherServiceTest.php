@@ -136,8 +136,10 @@ class PublisherServiceTest extends UnitTestCase
     protected function createFileRecord(string $identifier, int $storage = 1): FileRecord
     {
         $record = $this->createStub(FileRecord::class);
-        $record->method('getProp')->with('storage')->willReturn($storage);
-        $record->method('getProp')->with('identifier')->willReturn($identifier);
+        $record->method('getProp')->willReturnMap([
+            ['storage', $storage],
+            ['identifier', $identifier],
+        ]);
         return $record;
     }
 
