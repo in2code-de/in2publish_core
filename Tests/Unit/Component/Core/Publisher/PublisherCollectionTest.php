@@ -29,7 +29,6 @@ class PublisherCollectionTest extends UnitTestCase
     {
         $publisherCollection = new PublisherCollection();
         $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
-        $reflectionPropertyPublishers->setAccessible(true);
 
         $maxPublisherCount = 64;
 
@@ -49,7 +48,6 @@ class PublisherCollectionTest extends UnitTestCase
     {
         $publisherCollection = new PublisherCollection();
         $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
-        $reflectionPropertyPublishers->setAccessible(true);
 
         $standardPublisher = $this->createMock(Publisher::class);
         $transactionalPublisher = $this->createMock(DatabaseRecordPublisher::class);
@@ -79,7 +77,6 @@ class PublisherCollectionTest extends UnitTestCase
     {
         $publisherCollection = new PublisherCollection();
         $reflectionPropertyPublishers = new ReflectionProperty($publisherCollection, 'publishers');
-        $reflectionPropertyPublishers->setAccessible(true);
 
         $dbRecord = $this->createMock(DatabaseRecord::class);
 

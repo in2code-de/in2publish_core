@@ -35,7 +35,6 @@ class DefaultDatabaseRecordFactoryTest extends UnitTestCase
             [],
         );
         $reflectionProperty = new ReflectionProperty($databaseRecord, 'ignoredProps');
-        $reflectionProperty->setAccessible(true);
         $ignoredProps = $reflectionProperty->getValue($databaseRecord);
 
         $this->assertInstanceOf(DatabaseRecord::class, $databaseRecord);

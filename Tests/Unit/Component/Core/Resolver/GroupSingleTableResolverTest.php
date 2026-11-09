@@ -29,9 +29,7 @@ class GroupSingleTableResolverTest extends UnitTestCase
     {
         $resolver = new GroupSingleTableResolver();
         $column = new ReflectionProperty(GroupSingleTableResolver::class, 'column');
-        $column->setAccessible(true);
         $foreignTable = new ReflectionProperty(GroupSingleTableResolver::class, 'foreignTable');
-        $foreignTable->setAccessible(true);
 
         $resolver->configure('column_foo', 'foreign_table');
 

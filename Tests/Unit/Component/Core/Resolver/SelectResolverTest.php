@@ -22,7 +22,6 @@ class SelectResolverTest extends UnitTestCase
     {
         $selectResolver = new SelectResolver();
         $foreignTable = new ReflectionProperty(SelectResolver::class, 'foreignTable');
-        $foreignTable->setAccessible(true);
 
         $selectResolver->configure(
             'column_foo',
@@ -37,11 +36,8 @@ class SelectResolverTest extends UnitTestCase
     {
         $selectResolver = new SelectResolver();
         $column = new ReflectionProperty(SelectResolver::class, 'column');
-        $column->setAccessible(true);
         $foreignTable = new ReflectionProperty(SelectResolver::class, 'foreignTable');
-        $foreignTable->setAccessible(true);
         $foreignTableWhere = new ReflectionProperty(SelectResolver::class, 'foreignTableWhere');
-        $foreignTableWhere->setAccessible(true);
 
         $selectResolver->configure(
             'column_foo',

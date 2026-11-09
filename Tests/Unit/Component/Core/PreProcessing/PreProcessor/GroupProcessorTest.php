@@ -412,7 +412,6 @@ class GroupProcessorTest extends UnitTestCase
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
         $reflectionMethod = new ReflectionMethod(GroupProcessor::class, 'isSingleTable');
-        $reflectionMethod->setAccessible(true);
 
         $allowedTables = 'table1';
         $this->assertTrue($reflectionMethod->invoke($groupProcessor, $allowedTables));

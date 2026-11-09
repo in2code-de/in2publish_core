@@ -32,7 +32,6 @@ class DatabaseRecordFactoryFactoryTest extends UnitTestCase
         $factoryFactory->addFactory($factory3);
 
         $reflectionProperty = new ReflectionProperty(DatabaseRecordFactoryFactory::class, 'factories');
-        $reflectionProperty->setAccessible(true);
         $factories = $reflectionProperty->getValue($factoryFactory);
         $expectedFactoryOrder = [
             10 => [$factory3],

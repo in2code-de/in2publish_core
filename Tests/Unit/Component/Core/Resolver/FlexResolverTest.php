@@ -44,9 +44,6 @@ class FlexResolverTest extends UnitTestCase
         $table = new ReflectionProperty(FlexResolver::class, 'table');
         $column = new ReflectionProperty(FlexResolver::class, 'column');
         $processedTca = new ReflectionProperty(FlexResolver::class, 'processedTca');
-        $table->setAccessible(true);
-        $column->setAccessible(true);
-        $processedTca->setAccessible(true);
 
         $flexResolver->configure('table_foo', 'column_foo', ['tca_key1' => 'tca_value1']);
         $this->assertSame('table_foo', $table->getValue($flexResolver));
@@ -153,9 +150,6 @@ class FlexResolverTest extends UnitTestCase
         $table = new ReflectionProperty(FlexResolver::class, 'table');
         $column = new ReflectionProperty(FlexResolver::class, 'column');
         $processedTca = new ReflectionProperty(FlexResolver::class, 'processedTca');
-        $table->setAccessible(true);
-        $column->setAccessible(true);
-        $processedTca->setAccessible(true);
 
         $flexResolver->configure('table_foo', 'column_foo', $tca);
         return $flexResolver;

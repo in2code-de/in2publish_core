@@ -86,8 +86,7 @@ class BackendUtilityTest extends UnitTestCase
         $connection->method('createQueryBuilder')->willReturn($queryBuilder);
 
         $reflection = new ReflectionProperty(ConnectionPool::class, 'connections');
-        $reflection->setAccessible(true);
-        $reflection->setValue(['Default' => $connection]);
+        $reflection->setValue(null, ['Default' => $connection]);
 
         // Create a base request mock
         $this->request = new ServerRequest();
