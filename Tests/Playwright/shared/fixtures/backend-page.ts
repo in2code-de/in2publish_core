@@ -79,7 +79,7 @@ export class BackendPage {
     ).first();
     await expect(fileTree).toBeVisible({ timeout: 10000 });
 
-    for (const segment of pathSegments) {
+    for (const [index, segment] of pathSegments.entries()) {
       const exactText = new RegExp(`^\\s*${escapeRegExp(segment)}\\s*$`);
       const treeNode = fileTree.locator('[role="treeitem"]').filter({
         has: this.page.locator('.node-contentlabel').filter({ hasText: exactText }),
@@ -102,8 +102,34 @@ export class BackendPage {
       await expect(label).toBeVisible({ timeout: 5000 });
       await label.scrollIntoViewIfNeeded();
       await label.click({ force: true });
+      await this.waitForFolderDocument(pathSegments.slice(1, index + 1));
       await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
     }
+  }
+
+  /**
+   * Wait until the content iframe really shows the folder below the storage root given by its path segments.
+   *
+   * Modules remember the last selected folder, so the old document can already show the requested folder while
+   * the navigation triggered by the folder tree is still pending. Interacting with that old document breaks as
+   * soon as it gets replaced, e.g. a confirmation modal then runs its callback in a discarded document.
+   */
+  protected async waitForFolderDocument(folderSegments: string[], timeout: number = 30000): Promise<void> {
+    const expectedSuffix = `:/${folderSegments.map((segment) => `${segment}/`).join('')}`;
+    await this.page.waitForFunction(
+      (suffix) => {
+        const iframe = document.querySelector('iframe#typo3-contentIframe') as HTMLIFrameElement | null;
+        const iframeDocument = iframe?.contentDocument ?? null;
+        if (iframeDocument === null || iframeDocument.readyState !== 'complete') {
+          return false;
+        }
+        const folderIdentifier = new URLSearchParams(iframeDocument.location.search).get('id') ?? '';
+
+        return folderIdentifier.endsWith(suffix);
+      },
+      expectedSuffix,
+      { timeout },
+    );
   }
 
   /**
