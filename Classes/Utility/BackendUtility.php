@@ -276,10 +276,11 @@ class BackendUtility
         }
 
         if ($hasPreviewConfiguration) {
+            $useDefaultLanguageRecord = (bool)($previewConfiguration['useDefaultLanguageRecord'] ?? false);
             foreach ($previewConfiguration['fieldToParameterMap.'] ?? [] as $field => $parameterName) {
                 $value = $row[$field] ?? null;
                 if ($field === 'uid') {
-                    $value = ($previewConfiguration['useDefaultLanguageRecord'] ?? true) ? $languageParent : $identifier;
+                    $value = $useDefaultLanguageRecord ? $languageParent : $identifier;
                 }
                 $additionalQueryParams[$parameterName] = $value;
             }
